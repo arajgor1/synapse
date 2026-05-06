@@ -14,12 +14,16 @@ spec/
 │   ├── pivot.schema.json                 Direction change mid-task
 │   ├── belief.schema.json                World-model assertion
 │   ├── block.schema.json                 Stuck, need help
+│   ├── conflict.schema.json              Scope overlap / claim collision
 │   ├── resolution.schema.json            Action completed
 │   └── cost_report.schema.json           Token/wall-clock cost telemetry
-└── adapter.md                            InferenceAdapter contract
+├── adapter.md                            InferenceAdapter contract
+├── conflict-semantics.md                 Scope matching rules + read/write modifiers
+├── positioning.md                        Synapse vs MCP / A2A / LangGraph / AutoGen
+└── adr/                                  Architectural Decision Records
 ```
 
-## The Seven Message Types
+## The Eight Message Types
 
 | Type | When emitted | Default routing |
 |---|---|---|
@@ -28,8 +32,11 @@ spec/
 | PIVOT | Plan changes mid-task | Routed to anyone affected |
 | BELIEF | World-model assertion | Diffed against others' beliefs |
 | BLOCK | Stuck, need help | Coordinator + capable agents |
+| CONFLICT | Scope overlap / claim collision detected | Routed to the agent whose intention triggered it |
 | RESOLUTION | After tool call completes | Routed to dependents |
 | COST_REPORT | After signal handled | Coordinator (telemetry) |
+
+> **CONFLICT vs BLOCK** — these are distinct on purpose. `BLOCK` is *"I am stuck, please help me"*. `CONFLICT` is *"the router/coordinator detected your intention collides with another agent's claim"*. The first is initiated by the agent itself; the second is initiated by the runtime.
 
 ## Versioning
 

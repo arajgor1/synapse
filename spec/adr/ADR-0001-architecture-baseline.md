@@ -14,7 +14,7 @@ The v1.0 architecture is locked with the following components and choices:
 
 ### Components
 
-1. Protocol — 7 message types, JSON Schema, ULID-keyed envelope
+1. Protocol — 8 message types, JSON Schema, ULID-keyed envelope
 2. Message Bus — Redis Streams
 3. State Graph — Postgres with JSONB, GIN-indexed scope[]
 4. Router — three layers: L1 rules, L2 SQL conflict, L3 Haiku semantic
@@ -58,8 +58,13 @@ The v1.0 architecture is locked with the following components and choices:
 
 ## Action Items
 
-1. [x] Lock the seven message schemas
+1. [x] Lock the eight message schemas
 2. [x] Lock the InferenceAdapter interface
 3. [x] Lock the BackendCapabilities schema
-4. [ ] Phase 1: Hosted adapter (Anthropic) + Redis bus + minimal SDK
-5. [ ] Phase 2: L1/L2 router + state graph + first reproducible coordination demo
+4. [ ] Phase 1: SDK skeleton + bus + state graph + L1/L2 router + mocked-backend conflict demo
+5. [ ] Phase 2: Hosted adapter (Anthropic) + L3 semantic router
+
+## Revision Notes
+
+- **2026-05-06**: Added CONFLICT as 8th message type. Earlier draft referenced CONFLICT in the INTENTION schema description but did not define it as a payload type. Spec inconsistency caught during external review and resolved before any implementation depended on it.
+- **2026-05-06**: Phase 1 scope narrowed to mocked-backend end-to-end demo (was: Anthropic adapter). Real adapter slips to Phase 2 to accelerate proof-of-protocol.

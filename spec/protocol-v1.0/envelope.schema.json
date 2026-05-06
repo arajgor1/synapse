@@ -28,10 +28,11 @@
         "PIVOT",
         "BELIEF",
         "BLOCK",
+        "CONFLICT",
         "RESOLUTION",
         "COST_REPORT"
       ],
-      "description": "Selects the payload schema. Experimental types must use the 'x-' prefix."
+      "description": "Selects the payload schema. CONFLICT is distinct from BLOCK: CONFLICT means 'your action collides with someone else's claim'; BLOCK means 'I am stuck and need help'. Experimental types must use the 'x-' prefix."
     },
     "version": {
       "type": "string",
