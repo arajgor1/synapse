@@ -1,7 +1,11 @@
 {
   "C:\\C3\\synapse\\examples\\two_agents_conflict_demo.py": {
-    "mtime": 1778101821.9881587,
-    "hash": "ecd647c5087d50486bb09becd771ab25"
+    "mtime": 1778102873.4528935,
+    "hash": "f12e724ea4bbe4e5ce31ad42ded017f6"
+  },
+  "C:\\C3\\synapse\\examples\\two_agents_with_real_llm.py": {
+    "mtime": 1778104411.314062,
+    "hash": "73c6bfba29396526455aa5c480111c04"
   },
   "C:\\C3\\synapse\\runtime\\__init__.py": {
     "mtime": 1778101757.7913697,
@@ -48,12 +52,28 @@
     "hash": "900dde0b74d2ccba048a2c425d09f15e"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\__init__.py": {
-    "mtime": 1778101686.4188392,
-    "hash": "5ed84da25a14f858afcaec8750f9d2a9"
+    "mtime": 1778103826.958302,
+    "hash": "ed378b6953823d4212cd6483a33dd516"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\anthropic_adapter.py": {
+    "mtime": 1778103791.623914,
+    "hash": "9c1d161ab263acf772433960cdd1b86e"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\gemini_adapter.py": {
+    "mtime": 1778104402.2908866,
+    "hash": "92f66eed11524af40c6ba4ad545924b1"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\__init__.py": {
+    "mtime": 1778103754.7308533,
+    "hash": "fed927d287f52bd8f136772abc516c94"
   },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_envelope_and_messages.py": {
     "mtime": 1778101944.7253542,
     "hash": "709dc57d83bec21e9c9743460963c12b"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_adapters.py": {
+    "mtime": 1778103891.39735,
+    "hash": "a911679dee4a861e4bf96f71e610cfc2"
   },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_mock_adapter.py": {
     "mtime": 1778101957.3916583,

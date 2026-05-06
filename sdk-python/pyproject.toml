@@ -34,6 +34,16 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.10",
 ]
+hosted = [
+    "anthropic>=0.40",
+    "google-genai>=1.0",
+]
+local = [
+    "httpx>=0.27",         # Ollama HTTP API
+]
+all = [
+    "synapse-protocol[hosted,local]",
+]
 
 [project.urls]
 Homepage = "https://github.com/arajgor1/synapse"
