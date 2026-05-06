@@ -48,17 +48,29 @@ def _section(title: str) -> None:
     print(f"\n{'=' * 70}\n  {title}\n{'=' * 70}")
 
 
-async def _wait_for_postgres_ready(state: StateGraph, retries: int = 20) -> None:
-    """Smooth over docker-compose startup race."""
+async def _wait_for_ready(name: str, connect_fn, retries: int = 60, delay_s: float = 1.0) -> None:
+    """Generic wait-for-ready: retries `connect_fn()` until it succeeds or retries exhaust.
+
+    Default 60s total to cover Docker Desktop cold-start (Redis + Postgres both
+    take noticeable time on first boot).
+    """
     last_err: Exception | None = None
-    for _ in range(retries):
+    for attempt in range(retries):
         try:
-            await state.connect()
+            await connect_fn()
+            if attempt > 0:
+                print(f"  [{name}] connected after {attempt + 1} attempt(s)")
             return
         except Exception as e:
             last_err = e
-            await asyncio.sleep(0.5)
-    raise RuntimeError(f"Postgres not ready: {last_err}")
+            if attempt == 0:
+                print(f"  [{name}] not ready yet (waiting up to {retries * delay_s:.0f}s)…")
+            await asyncio.sleep(delay_s)
+    raise RuntimeError(
+        f"{name} not ready after {retries * delay_s:.0f}s. "
+        f"Is Docker Desktop running? `docker compose ps` should show both containers healthy. "
+        f"Last error: {last_err}"
+    )
 
 
 async def main() -> int:
@@ -72,8 +84,8 @@ async def main() -> int:
 
     bus = Bus(REDIS_URL)
     state = StateGraph(POSTGRES_DSN)
-    await bus.connect()
-    await _wait_for_postgres_ready(state)
+    await _wait_for_ready("redis", bus.connect)
+    await _wait_for_ready("postgres", state.connect)
 
     backend_a = MockAdapter(scripted_response="Agent A initial work")
     backend_b = MockAdapter(scripted_response="Agent B initial work")
