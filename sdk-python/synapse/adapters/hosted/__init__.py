@@ -9,5 +9,6 @@ hit rate (see spec/adapter.md).
 
 from synapse.adapters.hosted.anthropic_adapter import AnthropicAdapter
 from synapse.adapters.hosted.gemini_adapter import GeminiAdapter
+from synapse.adapters.hosted.openai_adapter import OpenAIAdapter
 
-__all__ = ["AnthropicAdapter", "GeminiAdapter"]
+__all__ = ["AnthropicAdapter", "GeminiAdapter", "OpenAIAdapter"]

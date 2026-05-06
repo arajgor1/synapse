@@ -3,6 +3,10 @@
     "mtime": 1778106909.6788182,
     "hash": "ab5d31384567562ef5c7bc1889e5fe9b"
   },
+  "C:\\C3\\synapse\\examples\\l3_router_demo.py": {
+    "mtime": 1778107178.9015596,
+    "hash": "472b8ee82feec7fb7cea484b2776f8f0"
+  },
   "C:\\C3\\synapse\\examples\\multi_backend_demo.py": {
     "mtime": 1778105688.4098427,
     "hash": "436bba683fa960ff8e4b300f9d240919"
@@ -42,6 +46,10 @@
   "C:\\C3\\synapse\\runtime\\modal\\__init__.py": {
     "mtime": 1778104915.8835323,
     "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\C3\\synapse\\runtime\\router\\l3_semantic.py": {
+    "mtime": 1778107365.3561344,
+    "hash": "c348787ba61b75b26f430159e1af99ee"
   },
   "C:\\C3\\synapse\\runtime\\router\\worker.py": {
     "mtime": 1778101792.792553,
@@ -91,9 +99,13 @@
     "mtime": 1778104402.2908866,
     "hash": "92f66eed11524af40c6ba4ad545924b1"
   },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\openai_adapter.py": {
+    "mtime": 1778107073.7904263,
+    "hash": "22ca811e9bb7387b92457420611615e3"
+  },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\__init__.py": {
-    "mtime": 1778103754.7308533,
-    "hash": "fed927d287f52bd8f136772abc516c94"
+    "mtime": 1778107078.3684387,
+    "hash": "35afb16c764adff295fb46033f2f79fe"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\local\\ollama_adapter.py": {
     "mtime": 1778104912.642789,
@@ -122,6 +134,10 @@
   "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_adapters.py": {
     "mtime": 1778103891.39735,
     "hash": "a911679dee4a861e4bf96f71e610cfc2"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_l3_router.py": {
+    "mtime": 1778107098.3684907,
+    "hash": "0cc9f24320e3a98c125c17057c6ce8d0"
   },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_local_native_adapters.py": {
     "mtime": 1778104999.8898315,
