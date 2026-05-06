@@ -92,8 +92,8 @@
     "hash": "ed378b6953823d4212cd6483a33dd516"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\anthropic_adapter.py": {
-    "mtime": 1778103791.623914,
-    "hash": "9c1d161ab263acf772433960cdd1b86e"
+    "mtime": 1778109322.8734682,
+    "hash": "a0690e9e4ff3a3c4d1d07769d5a97d7d"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\gemini_adapter.py": {
     "mtime": 1778104402.2908866,
@@ -134,6 +134,10 @@
   "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_adapters.py": {
     "mtime": 1778103891.39735,
     "hash": "a911679dee4a861e4bf96f71e610cfc2"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_contracts.py": {
+    "mtime": 1778109377.174978,
+    "hash": "3ac00e6b0cea96ec0e8372247017b828"
   },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_l3_router.py": {
     "mtime": 1778107098.3684907,

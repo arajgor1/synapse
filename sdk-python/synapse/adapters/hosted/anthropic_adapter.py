@@ -135,16 +135,24 @@ class AnthropicAdapter:
 
         try:
             async for event in stream:
-                # Anthropic stream events have varied shapes; we only surface
-                # text deltas as Token. Other events (input_json_delta, etc.)
-                # are passed silently for v1.
+                # Anthropic stream events: content_block_delta carries a delta
+                # object with its own type field. Only 'text_delta' is plain
+                # generated text. Other delta types we currently ignore:
+                #   - 'input_json_delta' (tool-use args streaming)
+                #   - 'thinking_delta'   (extended-thinking models)
+                # Per Anthropic streaming docs.
                 event_type = getattr(event, "type", None)
-                if event_type == "content_block_delta":
-                    delta = getattr(event, "delta", None)
-                    if delta is not None and hasattr(delta, "text"):
-                        text = delta.text
-                        state["partial"] += text
-                        yield Token(text=text)
+                if event_type != "content_block_delta":
+                    continue
+                delta = getattr(event, "delta", None)
+                if delta is None:
+                    continue
+                if getattr(delta, "type", None) != "text_delta":
+                    continue
+                text = getattr(delta, "text", None)
+                if text:
+                    state["partial"] += text
+                    yield Token(text=text)
         except Exception as e:
             # Stream cancelled or errored. Caller can still read state["partial"].
             logger.debug("Stream %s ended: %s", handle.request_id, e)
