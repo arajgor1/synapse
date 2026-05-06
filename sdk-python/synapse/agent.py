@@ -18,6 +18,8 @@ from synapse.adapters.base import InferenceAdapter
 from synapse.bus import Bus
 from synapse.messages import (
     AgentRegistration,
+    Belief,
+    Block,
     Conflict,
     ConflictingIntention,
     Envelope,
@@ -209,6 +211,84 @@ class Agent:
         )
         await self._bus.publish_session(envelope)
         return envelope.msg_id
+
+    # -----------------------------------------------------------------
+    # Belief / Block emission
+    # -----------------------------------------------------------------
+    async def emit_belief(
+        self,
+        *,
+        key: str,
+        value: Any,
+        confidence: float = 0.9,
+        source: str = "observed",
+        evidence: Optional[str] = None,
+    ) -> str:
+        """Emit a BELIEF. The coordinator persists and runs divergence detection."""
+        if self._bus is None:
+            raise RuntimeError("Agent requires a Bus for emit_belief")
+        belief = Belief(
+            key=key, value=value, confidence=confidence,
+            source=source, evidence=evidence,  # type: ignore[arg-type]
+        )
+        env = Envelope.make(
+            type=MessageType.BELIEF,
+            agent_id=self.id,
+            session_id=self.session,
+            payload=belief,
+            tenant_id=self.tenant_id,
+        )
+        await self._bus.publish_session(env)
+        return env.msg_id
+
+    async def emit_block(
+        self,
+        *,
+        blocker: str,
+        needed: str,
+        attempted: Optional[list[str]] = None,
+        urgency: str = "medium",
+        topics: Optional[list[str]] = None,
+    ) -> str:
+        """Emit a BLOCK signal. Coordinator routes to capable peers and
+        synthesizes guidance via LLM if available."""
+        if self._bus is None:
+            raise RuntimeError("Agent requires a Bus for emit_block")
+        block = Block(
+            blocker=blocker, needed=needed,
+            attempted=attempted or [],
+            urgency=urgency,  # type: ignore[arg-type]
+            topics=topics or [],
+        )
+        env = Envelope.make(
+            type=MessageType.BLOCK,
+            agent_id=self.id,
+            session_id=self.session,
+            payload=block,
+            tenant_id=self.tenant_id,
+        )
+        await self._bus.publish_session(env)
+        return env.msg_id
+
+    async def wait_for_signal(
+        self, *, types: Optional[list[MessageType]] = None, timeout_s: float = 5.0
+    ) -> Optional[Envelope]:
+        """Drain inbox until a signal of the given type(s) arrives or timeout.
+
+        Returns the first matching envelope or None on timeout.
+        """
+        if self._bus is None:
+            return None
+        deadline = asyncio.get_event_loop().time() + timeout_s
+        types_set = set(types) if types else None
+        while asyncio.get_event_loop().time() < deadline:
+            entries = await self._bus.drain_inbox(self.id, last_id=self._inbox_cursor)
+            for entry_id, env in entries:
+                self._inbox_cursor = entry_id
+                if types_set is None or env.type in types_set:
+                    return env
+            await asyncio.sleep(0.05)
+        return None
 
     # -----------------------------------------------------------------
     # Inbox helpers

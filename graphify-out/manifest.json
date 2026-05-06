@@ -1,4 +1,8 @@
 {
+  "C:\\C3\\synapse\\examples\\coordinator_demo.py": {
+    "mtime": 1778106909.6788182,
+    "hash": "ab5d31384567562ef5c7bc1889e5fe9b"
+  },
   "C:\\C3\\synapse\\examples\\multi_backend_demo.py": {
     "mtime": 1778105688.4098427,
     "hash": "436bba683fa960ff8e4b300f9d240919"
@@ -14,6 +18,18 @@
   "C:\\C3\\synapse\\runtime\\__init__.py": {
     "mtime": 1778101757.7913697,
     "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\C3\\synapse\\runtime\\coordinator\\agent.py": {
+    "mtime": 1778106855.607879,
+    "hash": "10e7b3e46934586fedcc58b59236f5ff"
+  },
+  "C:\\C3\\synapse\\runtime\\coordinator\\belief_divergence.py": {
+    "mtime": 1778106803.9918234,
+    "hash": "af468369fbfa6ce698cea5f47bae419b"
+  },
+  "C:\\C3\\synapse\\runtime\\coordinator\\__init__.py": {
+    "mtime": 1778106789.24452,
+    "hash": "0aed7d1628be9a878dcd24593e95a08c"
   },
   "C:\\C3\\synapse\\runtime\\migrations\\0001_initial_schema.sql": {
     "mtime": 1778092393.499512,
@@ -36,8 +52,8 @@
     "hash": "2ca3020e1f1f7bb8ba2d5d364af504bd"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\agent.py": {
-    "mtime": 1778101746.0555437,
-    "hash": "c7e9df58d49a72151e95529cb9c53036"
+    "mtime": 1778106874.2324145,
+    "hash": "2a0b9bb6922927f737af8af5b0231cd6"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\bus.py": {
     "mtime": 1778101649.6961062,
@@ -94,6 +110,10 @@
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\native\\__init__.py": {
     "mtime": 1778104871.4210355,
     "hash": "b0c5f71a40ff3aa3256e2234cf598880"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_coordinator.py": {
+    "mtime": 1778106929.922534,
+    "hash": "0c420fea443f652aa366f00a9e4d01ca"
   },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_envelope_and_messages.py": {
     "mtime": 1778101944.7253542,
