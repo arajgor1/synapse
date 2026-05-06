@@ -1,0 +1,1324 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "CONTRIBUTING.md",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L1",
+      "id": "contributing_md",
+      "community": 3,
+      "norm_label": "contributing.md"
+    },
+    {
+      "label": "Contributing to Synapse",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L1",
+      "id": "synapse_contributing_contributing_to_synapse",
+      "community": 3,
+      "norm_label": "contributing to synapse"
+    },
+    {
+      "label": "Before opening a PR",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L5",
+      "id": "synapse_contributing_before_opening_a_pr",
+      "community": 3,
+      "norm_label": "before opening a pr"
+    },
+    {
+      "label": "Local development",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L12",
+      "id": "synapse_contributing_local_development",
+      "community": 3,
+      "norm_label": "local development"
+    },
+    {
+      "label": "code:bash (# Bring up Redis + Postgres)",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L14",
+      "id": "synapse_contributing_codeblock_1",
+      "community": 3,
+      "norm_label": "code:bash (# bring up redis + postgres)"
+    },
+    {
+      "label": "Repository conventions",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L25",
+      "id": "synapse_contributing_repository_conventions",
+      "community": 3,
+      "norm_label": "repository conventions"
+    },
+    {
+      "label": "How to propose a new message type",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L32",
+      "id": "synapse_contributing_how_to_propose_a_new_message_type",
+      "community": 3,
+      "norm_label": "how to propose a new message type"
+    },
+    {
+      "label": "License",
+      "file_type": "document",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L42",
+      "id": "synapse_contributing_license",
+      "community": 3,
+      "norm_label": "license"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 0,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "Synapse",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "synapse_readme_synapse",
+      "community": 0,
+      "norm_label": "synapse"
+    },
+    {
+      "label": "What is this?",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L8",
+      "id": "synapse_readme_what_is_this",
+      "community": 0,
+      "norm_label": "what is this?"
+    },
+    {
+      "label": "What it does",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "id": "synapse_readme_what_it_does",
+      "community": 0,
+      "norm_label": "what it does"
+    },
+    {
+      "label": "Architecture at a glance",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L22",
+      "id": "synapse_readme_architecture_at_a_glance",
+      "community": 0,
+      "norm_label": "architecture at a glance"
+    },
+    {
+      "label": "code:block1 (\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L24",
+      "id": "synapse_readme_codeblock_1",
+      "community": 0,
+      "norm_label": "code:block1 (\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510)"
+    },
+    {
+      "label": "Status",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L45",
+      "id": "synapse_readme_status",
+      "community": 0,
+      "norm_label": "status"
+    },
+    {
+      "label": "Quickstart (when implemented)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L60",
+      "id": "synapse_readme_quickstart_when_implemented",
+      "community": 0,
+      "norm_label": "quickstart (when implemented)"
+    },
+    {
+      "label": "code:bash (# Install)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L62",
+      "id": "synapse_readme_codeblock_2",
+      "community": 0,
+      "norm_label": "code:bash (# install)"
+    },
+    {
+      "label": "Repository layout",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L87",
+      "id": "synapse_readme_repository_layout",
+      "community": 0,
+      "norm_label": "repository layout"
+    },
+    {
+      "label": "code:block3 (synapse/)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L89",
+      "id": "synapse_readme_codeblock_3",
+      "community": 0,
+      "norm_label": "code:block3 (synapse/)"
+    },
+    {
+      "label": "Design principles",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L106",
+      "id": "synapse_readme_design_principles",
+      "community": 0,
+      "norm_label": "design principles"
+    },
+    {
+      "label": "Contributing",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L114",
+      "id": "synapse_readme_contributing",
+      "community": 0,
+      "norm_label": "contributing"
+    },
+    {
+      "label": "License",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L118",
+      "id": "synapse_readme_license",
+      "community": 0,
+      "norm_label": "license"
+    },
+    {
+      "label": "Author",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L122",
+      "id": "synapse_readme_author",
+      "community": 0,
+      "norm_label": "author"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "adapters/hosted/README.md",
+      "source_location": "L1",
+      "id": "adapters_hosted_readme_md",
+      "community": 7,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "adapters/hosted",
+      "file_type": "document",
+      "source_file": "adapters/hosted/README.md",
+      "source_location": "L1",
+      "id": "hosted_readme_adapters_hosted",
+      "community": 7,
+      "norm_label": "adapters/hosted"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "adapters/local/README.md",
+      "source_location": "L1",
+      "id": "adapters_local_readme_md",
+      "community": 8,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "adapters/local",
+      "file_type": "document",
+      "source_file": "adapters/local/README.md",
+      "source_location": "L1",
+      "id": "local_readme_adapters_local",
+      "community": 8,
+      "norm_label": "adapters/local"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "adapters/native/README.md",
+      "source_location": "L1",
+      "id": "adapters_native_readme_md",
+      "community": 9,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "adapters/native",
+      "file_type": "document",
+      "source_file": "adapters/native/README.md",
+      "source_location": "L1",
+      "id": "native_readme_adapters_native",
+      "community": 9,
+      "norm_label": "adapters/native"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "bench/README.md",
+      "source_location": "L1",
+      "id": "bench_readme_md",
+      "community": 10,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "bench",
+      "file_type": "document",
+      "source_file": "bench/README.md",
+      "source_location": "L1",
+      "id": "bench_readme_bench",
+      "community": 10,
+      "norm_label": "bench"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "examples/README.md",
+      "source_location": "L1",
+      "id": "examples_readme_md",
+      "community": 11,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "examples",
+      "file_type": "document",
+      "source_file": "examples/README.md",
+      "source_location": "L1",
+      "id": "examples_readme_examples",
+      "community": 11,
+      "norm_label": "examples"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "runtime/README.md",
+      "source_location": "L1",
+      "id": "runtime_readme_md",
+      "community": 12,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "runtime",
+      "file_type": "document",
+      "source_file": "runtime/README.md",
+      "source_location": "L1",
+      "id": "runtime_readme_runtime",
+      "community": 12,
+      "norm_label": "runtime"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L1",
+      "id": "sdk_python_readme_md",
+      "community": 5,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "Synapse Python SDK",
+      "file_type": "document",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L1",
+      "id": "sdk_python_readme_synapse_python_sdk",
+      "community": 5,
+      "norm_label": "synapse python sdk"
+    },
+    {
+      "label": "Planned shape",
+      "file_type": "document",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L5",
+      "id": "sdk_python_readme_planned_shape",
+      "community": 5,
+      "norm_label": "planned shape"
+    },
+    {
+      "label": "code:python (import synapse)",
+      "file_type": "document",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L7",
+      "id": "sdk_python_readme_codeblock_1",
+      "community": 5,
+      "norm_label": "code:python (import synapse)"
+    },
+    {
+      "label": "Module layout (planned)",
+      "file_type": "document",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L29",
+      "id": "sdk_python_readme_module_layout_planned",
+      "community": 5,
+      "norm_label": "module layout (planned)"
+    },
+    {
+      "label": "code:block2 (synapse/)",
+      "file_type": "document",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L31",
+      "id": "sdk_python_readme_codeblock_2",
+      "community": 5,
+      "norm_label": "code:block2 (synapse/)"
+    },
+    {
+      "label": "Status",
+      "file_type": "document",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L54",
+      "id": "sdk_python_readme_status",
+      "community": 5,
+      "norm_label": "status"
+    },
+    {
+      "label": "adapter.md",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L1",
+      "id": "spec_adapter_md",
+      "community": 1,
+      "norm_label": "adapter.md"
+    },
+    {
+      "label": "InferenceAdapter Contract",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L1",
+      "id": "spec_adapter_inferenceadapter_contract",
+      "community": 1,
+      "norm_label": "inferenceadapter contract"
+    },
+    {
+      "label": "Status",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L5",
+      "id": "spec_adapter_status",
+      "community": 1,
+      "norm_label": "status"
+    },
+    {
+      "label": "The Three Tiers",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L9",
+      "id": "spec_adapter_the_three_tiers",
+      "community": 1,
+      "norm_label": "the three tiers"
+    },
+    {
+      "label": "Interface",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L17",
+      "id": "spec_adapter_interface",
+      "community": 1,
+      "norm_label": "interface"
+    },
+    {
+      "label": "code:python (from typing import Protocol, AsyncIterator)",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L19",
+      "id": "spec_adapter_codeblock_1",
+      "community": 1,
+      "norm_label": "code:python (from typing import protocol, asynciterator)"
+    },
+    {
+      "label": "Capability Flags",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L83",
+      "id": "spec_adapter_capability_flags",
+      "community": 6,
+      "norm_label": "capability flags"
+    },
+    {
+      "label": "`supports_midstream_inject`",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L85",
+      "id": "spec_adapter_supports_midstream_inject",
+      "community": 6,
+      "norm_label": "`supports_midstream_inject`"
+    },
+    {
+      "label": "`supports_partial_preservation`",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L89",
+      "id": "spec_adapter_supports_partial_preservation",
+      "community": 6,
+      "norm_label": "`supports_partial_preservation`"
+    },
+    {
+      "label": "`multi_tenant_isolation`",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L101",
+      "id": "spec_adapter_multi_tenant_isolation",
+      "community": 6,
+      "norm_label": "`multi_tenant_isolation`"
+    },
+    {
+      "label": "Reasoning-Model Behavior",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L111",
+      "id": "spec_adapter_reasoning_model_behavior",
+      "community": 1,
+      "norm_label": "reasoning-model behavior"
+    },
+    {
+      "label": "Cost Reporting",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L122",
+      "id": "spec_adapter_cost_reporting",
+      "community": 1,
+      "norm_label": "cost reporting"
+    },
+    {
+      "label": "Failure Modes",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L134",
+      "id": "spec_adapter_failure_modes",
+      "community": 1,
+      "norm_label": "failure modes"
+    },
+    {
+      "label": "Implementing a New Adapter",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L142",
+      "id": "spec_adapter_implementing_a_new_adapter",
+      "community": 1,
+      "norm_label": "implementing a new adapter"
+    },
+    {
+      "label": "Reference Implementations",
+      "file_type": "document",
+      "source_file": "spec/adapter.md",
+      "source_location": "L150",
+      "id": "spec_adapter_reference_implementations",
+      "community": 1,
+      "norm_label": "reference implementations"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L1",
+      "id": "spec_readme_md",
+      "community": 4,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "Synapse Protocol Specification",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L1",
+      "id": "spec_readme_synapse_protocol_specification",
+      "community": 4,
+      "norm_label": "synapse protocol specification"
+    },
+    {
+      "label": "Layout",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L5",
+      "id": "spec_readme_layout",
+      "community": 4,
+      "norm_label": "layout"
+    },
+    {
+      "label": "code:block1 (spec/)",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L7",
+      "id": "spec_readme_codeblock_1",
+      "community": 4,
+      "norm_label": "code:block1 (spec/)"
+    },
+    {
+      "label": "The Seven Message Types",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L22",
+      "id": "spec_readme_the_seven_message_types",
+      "community": 4,
+      "norm_label": "the seven message types"
+    },
+    {
+      "label": "Versioning",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L34",
+      "id": "spec_readme_versioning",
+      "community": 4,
+      "norm_label": "versioning"
+    },
+    {
+      "label": "Validation",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L40",
+      "id": "spec_readme_validation",
+      "community": 4,
+      "norm_label": "validation"
+    },
+    {
+      "label": "Reading Order",
+      "file_type": "document",
+      "source_file": "spec/README.md",
+      "source_location": "L44",
+      "id": "spec_readme_reading_order",
+      "community": 4,
+      "norm_label": "reading order"
+    },
+    {
+      "label": "ADR-0001-architecture-baseline.md",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L1",
+      "id": "spec_adr_adr_0001_architecture_baseline_md",
+      "community": 2,
+      "norm_label": "adr-0001-architecture-baseline.md"
+    },
+    {
+      "label": "ADR-0001: v1.0 Architecture Baseline",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L1",
+      "id": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
+      "community": 2,
+      "norm_label": "adr-0001: v1.0 architecture baseline"
+    },
+    {
+      "label": "Context",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L7",
+      "id": "adr_adr_0001_architecture_baseline_context",
+      "community": 2,
+      "norm_label": "context"
+    },
+    {
+      "label": "Decision",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L11",
+      "id": "adr_adr_0001_architecture_baseline_decision",
+      "community": 2,
+      "norm_label": "decision"
+    },
+    {
+      "label": "Components",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L15",
+      "id": "adr_adr_0001_architecture_baseline_components",
+      "community": 2,
+      "norm_label": "components"
+    },
+    {
+      "label": "Key Mechanisms",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L27",
+      "id": "adr_adr_0001_architecture_baseline_key_mechanisms",
+      "community": 2,
+      "norm_label": "key mechanisms"
+    },
+    {
+      "label": "Resolved Open Questions",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L34",
+      "id": "adr_adr_0001_architecture_baseline_resolved_open_questions",
+      "community": 2,
+      "norm_label": "resolved open questions"
+    },
+    {
+      "label": "Consequences",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L43",
+      "id": "adr_adr_0001_architecture_baseline_consequences",
+      "community": 2,
+      "norm_label": "consequences"
+    },
+    {
+      "label": "Action Items",
+      "file_type": "document",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L59",
+      "id": "adr_adr_0001_architecture_baseline_action_items",
+      "community": 2,
+      "norm_label": "action items"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "ui/README.md",
+      "source_location": "L1",
+      "id": "ui_readme_md",
+      "community": 13,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "ui",
+      "file_type": "document",
+      "source_file": "ui/README.md",
+      "source_location": "L1",
+      "id": "ui_readme_ui",
+      "community": 13,
+      "norm_label": "ui"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "contributing_md",
+      "target": "synapse_contributing_contributing_to_synapse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "synapse_contributing_contributing_to_synapse",
+      "target": "synapse_contributing_before_opening_a_pr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "synapse_contributing_contributing_to_synapse",
+      "target": "synapse_contributing_local_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "synapse_contributing_contributing_to_synapse",
+      "target": "synapse_contributing_repository_conventions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "synapse_contributing_contributing_to_synapse",
+      "target": "synapse_contributing_how_to_propose_a_new_message_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "synapse_contributing_contributing_to_synapse",
+      "target": "synapse_contributing_license",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CONTRIBUTING.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "synapse_contributing_local_development",
+      "target": "synapse_contributing_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "synapse_readme_synapse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_what_is_this",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_what_it_does",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_architecture_at_a_glance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_status",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_quickstart_when_implemented",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_repository_layout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L106",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_design_principles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_contributing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_license",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "synapse_readme_synapse",
+      "target": "synapse_readme_author",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "synapse_readme_architecture_at_a_glance",
+      "target": "synapse_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "synapse_readme_quickstart_when_implemented",
+      "target": "synapse_readme_codeblock_2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "synapse_readme_repository_layout",
+      "target": "synapse_readme_codeblock_3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "adapters/hosted/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "adapters_hosted_readme_md",
+      "target": "hosted_readme_adapters_hosted",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "adapters/local/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "adapters_local_readme_md",
+      "target": "local_readme_adapters_local",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "adapters/native/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "adapters_native_readme_md",
+      "target": "native_readme_adapters_native",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "bench/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "bench_readme_md",
+      "target": "bench_readme_bench",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "examples/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "examples_readme_md",
+      "target": "examples_readme_examples",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "runtime/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "runtime_readme_md",
+      "target": "runtime_readme_runtime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "sdk_python_readme_md",
+      "target": "sdk_python_readme_synapse_python_sdk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "sdk_python_readme_synapse_python_sdk",
+      "target": "sdk_python_readme_planned_shape",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "sdk_python_readme_synapse_python_sdk",
+      "target": "sdk_python_readme_module_layout_planned",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "sdk_python_readme_synapse_python_sdk",
+      "target": "sdk_python_readme_status",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "sdk_python_readme_planned_shape",
+      "target": "sdk_python_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "sdk-python/README.md",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "sdk_python_readme_module_layout_planned",
+      "target": "sdk_python_readme_codeblock_2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "spec_adapter_md",
+      "target": "spec_adapter_inferenceadapter_contract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_status",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_the_three_tiers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_interface",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_capability_flags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_reasoning_model_behavior",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_cost_reporting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_failure_modes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L142",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_implementing_a_new_adapter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L150",
+      "weight": 1.0,
+      "source": "spec_adapter_inferenceadapter_contract",
+      "target": "spec_adapter_reference_implementations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "spec_adapter_interface",
+      "target": "spec_adapter_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "spec_adapter_capability_flags",
+      "target": "spec_adapter_supports_midstream_inject",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "spec_adapter_capability_flags",
+      "target": "spec_adapter_supports_partial_preservation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adapter.md",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "spec_adapter_capability_flags",
+      "target": "spec_adapter_multi_tenant_isolation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "spec_readme_md",
+      "target": "spec_readme_synapse_protocol_specification",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/README.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "spec_readme_synapse_protocol_specification",
+      "target": "spec_readme_layout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/README.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "spec_readme_synapse_protocol_specification",
+      "target": "spec_readme_the_seven_message_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/README.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "spec_readme_synapse_protocol_specification",
+      "target": "spec_readme_versioning",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "spec_readme_synapse_protocol_specification",
+      "target": "spec_readme_validation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/README.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "spec_readme_synapse_protocol_specification",
+      "target": "spec_readme_reading_order",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/README.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "spec_readme_layout",
+      "target": "spec_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "spec_adr_adr_0001_architecture_baseline_md",
+      "target": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
+      "target": "adr_adr_0001_architecture_baseline_context",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
+      "target": "adr_adr_0001_architecture_baseline_decision",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
+      "target": "adr_adr_0001_architecture_baseline_consequences",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
+      "target": "adr_adr_0001_architecture_baseline_action_items",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "adr_adr_0001_architecture_baseline_decision",
+      "target": "adr_adr_0001_architecture_baseline_components",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "adr_adr_0001_architecture_baseline_decision",
+      "target": "adr_adr_0001_architecture_baseline_key_mechanisms",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "adr_adr_0001_architecture_baseline_decision",
+      "target": "adr_adr_0001_architecture_baseline_resolved_open_questions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ui/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "ui_readme_md",
+      "target": "ui_readme_ui",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/intention.schema.json",
+  "title": "INTENTION payload",
+  "description": "Emitted before any tool call or major step. Declares what the agent is about to do, what it touches, and whether it requires acknowledgment. The most important message type; drives all conflict detection.",
+  "type": "object",
+  "required": ["action", "scope", "expected_outcome"],
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["tool", "args"],
+          "additionalProperties": false,
+          "properties": {
+            "tool": {
+              "type": "string",
+              "description": "Name of the tool/function the agent intends to call."
+            },
+            "args": {
+              "type": "object",
+              "description": "Arguments that will be passed to the tool."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["description"],
+          "additionalProperties": false,
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Free-text description for actions that do not map to a single tool call."
+            }
+          }
+        }
+      ],
+      "description": "What the agent is about to do. Either a structured tool call or a free-text description."
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Resources or domains this action touches. Used for scope-overlap conflict detection. Use dotted paths (e.g., 'auth.middleware', 'db.users.schema'). The router queries for active intentions with overlapping scopes."
+    },
+    "expected_outcome": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Brief description of what the agent expects to result from this action. Used by the coordinator to detect divergent execution paths."
+    },
+    "estimated_duration_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional. The agent's estimate of how long this action will take. Used for scheduling and for stale-claim cleanup."
+    },
+    "blocking": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, the SDK pauses up to 50ms after emitting to wait for CONFLICT or BLOCK signals from peers/coordinator before executing the action."
+    },
+    "uncertainty": {
+      "type": "string",
+      "description": "Optional. Things the agent is unsure about. Surfaces ambiguity to peers and coordinator."
+    },
+    "blocks_others": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional. Scopes/resources that other agents should not modify until this intention resolves. Stronger claim than 'scope'."
+    }
+  }
+}

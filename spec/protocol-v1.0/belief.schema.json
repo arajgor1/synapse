@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/belief.schema.json",
+  "title": "BELIEF payload",
+  "description": "Asserts an agent's current understanding of a shared fact. The state graph indexes beliefs by (key, agent). When two agents hold conflicting values for the same key, the divergence detector surfaces it.",
+  "type": "object",
+  "required": ["key", "value", "confidence", "source"],
+  "additionalProperties": false,
+  "properties": {
+    "key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "description": "Dotted-path identifier for the fact (e.g., 'db.type', 'auth.method', 'env.production')."
+    },
+    "value": {
+      "description": "The asserted value. Any JSON type. Compared structurally for divergence detection."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Agent's confidence in this belief. Used by the coordinator to weight resolution decisions."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["observed", "inferred", "assumed"],
+      "description": "How the belief was formed. 'observed' = directly read from a tool/file. 'inferred' = derived from observations. 'assumed' = no evidence, default assumption."
+    },
+    "evidence": {
+      "type": "string",
+      "description": "Optional. Where the belief came from (file path, tool result excerpt, prior reasoning)."
+    }
+  }
+}

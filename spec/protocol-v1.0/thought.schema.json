@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/thought.schema.json",
+  "title": "THOUGHT payload",
+  "description": "Compressed, periodic snapshot of the agent's reasoning. Streamed at a throttled rate (default: every 2 seconds or every 500 tokens of internal reasoning, whichever is sooner). High volume — by default routed only to the coordinator and the L3 semantic router.",
+  "type": "object",
+  "required": ["summary"],
+  "additionalProperties": false,
+  "properties": {
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "description": "Compressed natural-language summary of what the agent is currently reasoning about."
+    },
+    "raw_excerpt": {
+      "type": "string",
+      "description": "Optional. A short verbatim excerpt of the reasoning. Useful for debugging; usually omitted in production."
+    },
+    "topics": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Topic tags for routing (e.g., 'auth', 'db.schema'). Used by L1 router."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Optional. Agent's self-rated confidence in its current direction."
+    }
+  }
+}

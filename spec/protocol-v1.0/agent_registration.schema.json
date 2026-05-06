@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/agent_registration.schema.json",
+  "title": "Agent Registration",
+  "description": "Sent once when an agent connects to a session. Establishes identity, subscriptions, claimed scopes, and backend capabilities for routing decisions.",
+  "type": "object",
+  "required": ["agent_id", "session_id", "capabilities"],
+  "additionalProperties": false,
+  "properties": {
+    "agent_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "session_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "tenant_id": { "type": "string" },
+    "subscribes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Topic patterns this agent wants signals about. Glob syntax (e.g., 'auth.*', 'db.users.**'). Used by L1 router."
+    },
+    "scopes_owned": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Scopes this agent considers itself responsible for. Other agents touching these get routed to this agent for visibility."
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["backend_id", "tier", "supports_midstream_inject", "is_reasoning_model", "avg_overhead_per_signal", "multi_tenant_isolation"],
+      "additionalProperties": false,
+      "properties": {
+        "backend_id": {
+          "type": "string",
+          "description": "Backend identifier (e.g., 'vllm', 'ollama', 'anthropic', 'openai', 'gemini')."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Specific model name (e.g., 'claude-sonnet-4.6', 'llama-3.1-70b')."
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["native", "local_api", "hosted"],
+          "description": "Determines how mid-stream injection works for this agent."
+        },
+        "supports_midstream_inject": {
+          "type": "boolean",
+          "description": "Whether the adapter can inject signals into a running generation. False for reasoning models during their thinking phase."
+        },
+        "supports_partial_preservation": {
+          "type": "boolean",
+          "description": "Whether partial output is preserved on cancel. Affects routing thresholds."
+        },
+        "is_reasoning_model": {
+          "type": "boolean",
+          "description": "True for o1/o3/Claude-extended-thinking. Signals queue during thinking phases."
+        },
+        "prompt_cache_available": {
+          "type": "boolean",
+          "description": "Whether the backend supports prompt caching. Critical for hosted-tier cost."
+        },
+        "avg_overhead_per_signal": {
+          "type": "number",
+          "minimum": 1.0,
+          "description": "Multiplier on baseline cost per signal injection. Native ~1.05, Local-API ~1.08, Hosted ~1.10-1.30."
+        },
+        "multi_tenant_isolation": {
+          "type": "string",
+          "enum": ["process", "request_id", "none"],
+          "description": "How the adapter isolates tenants. 'process' = each agent has its own engine instance. 'request_id' = shared engine, validation per call. 'none' = single-tenant only."
+        }
+      }
+    }
+  }
+}

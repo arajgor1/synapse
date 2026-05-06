@@ -1,0 +1,62 @@
+{
+  "C:\\C3\\synapse\\runtime\\migrations\\0001_initial_schema.sql": {
+    "mtime": 1778092393.499512,
+    "hash": "9b90daf1a7b996ef5d7ff01023b18924"
+  },
+  "C:\\C3\\synapse\\CONTRIBUTING.md": {
+    "mtime": 1778092428.4869244,
+    "hash": "ca54402633077613decbd8a64c678568"
+  },
+  "C:\\C3\\synapse\\docker-compose.yml": {
+    "mtime": 1778092373.8159778,
+    "hash": "9287e8cc489876e1867dc9d2c17c66d1"
+  },
+  "C:\\C3\\synapse\\README.md": {
+    "mtime": 1778092195.7916718,
+    "hash": "4baa83db2527fa91797289453711c47a"
+  },
+  "C:\\C3\\synapse\\adapters\\hosted\\README.md": {
+    "mtime": 1778092445.5247893,
+    "hash": "fa8a1003b2ba403d342a833e839281f9"
+  },
+  "C:\\C3\\synapse\\adapters\\local\\README.md": {
+    "mtime": 1778092445.4943159,
+    "hash": "8b30c9e1bd8a7e7d2789bef474c8cb5b"
+  },
+  "C:\\C3\\synapse\\adapters\\native\\README.md": {
+    "mtime": 1778092445.4624898,
+    "hash": "f23c02d713cf93d81797a2336c649e6e"
+  },
+  "C:\\C3\\synapse\\bench\\README.md": {
+    "mtime": 1778092445.5859747,
+    "hash": "017c1230f4947739b3ff9abfd6e95187"
+  },
+  "C:\\C3\\synapse\\examples\\README.md": {
+    "mtime": 1778092445.6144211,
+    "hash": "b95f59db1e7adf031b6d9d25336a8124"
+  },
+  "C:\\C3\\synapse\\runtime\\README.md": {
+    "mtime": 1778092445.4313462,
+    "hash": "cbfb215cc7b3a1536b7802cc2fe26d0b"
+  },
+  "C:\\C3\\synapse\\sdk-python\\README.md": {
+    "mtime": 1778092440.3477817,
+    "hash": "516fc8bb276054cc59675c61687b01a8"
+  },
+  "C:\\C3\\synapse\\spec\\adapter.md": {
+    "mtime": 1778092350.2231994,
+    "hash": "3210ea2e959c978dc1facaf6adb7300a"
+  },
+  "C:\\C3\\synapse\\spec\\README.md": {
+    "mtime": 1778092365.6755288,
+    "hash": "aca5c0cb1d4ddc67dd539801d350ca4d"
+  },
+  "C:\\C3\\synapse\\spec\\adr\\ADR-0001-architecture-baseline.md": {
+    "mtime": 1778092416.8305788,
+    "hash": "1bece3c144e1317eaea368bf7ec92888"
+  },
+  "C:\\C3\\synapse\\ui\\README.md": {
+    "mtime": 1778092445.5550644,
+    "hash": "430d73d0b91b8ac9c983fd035c56dac9"
+  }
+}

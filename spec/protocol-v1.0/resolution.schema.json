@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/resolution.schema.json",
+  "title": "RESOLUTION payload",
+  "description": "Emitted after an INTENTION's action completes (success, failure, or partial). Releases the claimed scopes in the state graph and notifies any agents whose work depended on this resolving.",
+  "type": "object",
+  "required": ["intention_id", "outcome"],
+  "additionalProperties": false,
+  "properties": {
+    "intention_id": {
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "The msg_id of the INTENTION this resolves."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["success", "failure", "partial"],
+      "description": "How the action concluded."
+    },
+    "state_diff": {
+      "type": "object",
+      "description": "Optional. Structured description of what changed in the world (e.g., files modified, records created). Used by peers to update their mental model."
+    },
+    "side_effects": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Notable side effects beyond the primary state diff (e.g., 'sent email to user', 'invalidated cache key X')."
+    },
+    "next_intention_hint": {
+      "type": "string",
+      "description": "Optional. The agent's suggestion for what should happen next. Useful for handoffs to peers."
+    },
+    "error": {
+      "type": "object",
+      "description": "Required when outcome = 'failure' or 'partial'. Describes what went wrong.",
+      "properties": {
+        "kind": { "type": "string" },
+        "message": { "type": "string" },
+        "recoverable": { "type": "boolean" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "outcome": { "enum": ["failure", "partial"] } }
+      },
+      "then": { "required": ["error"] }
+    }
+  ]
+}

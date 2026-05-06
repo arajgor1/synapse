@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/envelope.schema.json",
+  "title": "Synapse Message Envelope",
+  "description": "Common envelope wrapping every Synapse protocol message. The 'type' field selects the payload schema.",
+  "type": "object",
+  "required": [
+    "msg_id",
+    "type",
+    "version",
+    "agent_id",
+    "session_id",
+    "timestamp_ms",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "msg_id": {
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "ULID. Sortable lexically by time. No central coordinator required."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "THOUGHT",
+        "INTENTION",
+        "PIVOT",
+        "BELIEF",
+        "BLOCK",
+        "RESOLUTION",
+        "COST_REPORT"
+      ],
+      "description": "Selects the payload schema. Experimental types must use the 'x-' prefix."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Protocol version. Minor versions are additive and backward-compatible; majors require migration."
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Stable identifier for the emitting agent within the session."
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Unit of multi-tenancy and isolation. All routing is scoped to a session."
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Optional. Ties this message to a logical task within the session."
+    },
+    "parent_msg_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "Optional. The msg_id of the message that caused this one. Used for replay and causality."
+    },
+    "timestamp_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Wall-clock emission time in milliseconds since epoch. Used for display only; ULID prefix is authoritative ordering."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Type-specific payload. Validated against the schema selected by 'type'."
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Optional. Used for multi-tenant deployments. All bus keys and DB rows are scoped by this."
+    }
+  }
+}

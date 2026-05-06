@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/pivot.schema.json",
+  "title": "PIVOT payload",
+  "description": "Emitted when an agent changes direction mid-task. The router immediately notifies any agents whose work was downstream of the original direction.",
+  "type": "object",
+  "required": ["from_intention_id", "to_intention", "reason"],
+  "additionalProperties": false,
+  "properties": {
+    "from_intention_id": {
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "The msg_id of the INTENTION being abandoned or changed."
+    },
+    "to_intention": {
+      "$ref": "intention.schema.json",
+      "description": "The new intention replacing the original. Same schema as INTENTION payload."
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Why the pivot. Critical for the coordinator and peers to understand the change."
+    },
+    "affects": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Agent IDs or scopes that this pivot impacts."
+    },
+    "frees": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Scopes that were claimed by the original intention and are now released."
+    }
+  }
+}

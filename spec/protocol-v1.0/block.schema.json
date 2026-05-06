@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/block.schema.json",
+  "title": "BLOCK payload",
+  "description": "Emitted when an agent is stuck and needs help. Triggers the coordinator immediately and is routed to peers with potentially relevant capabilities.",
+  "type": "object",
+  "required": ["blocker", "needed"],
+  "additionalProperties": false,
+  "properties": {
+    "blocker": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Concise description of what is preventing progress."
+    },
+    "needed": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What would unblock the agent (information, action, decision)."
+    },
+    "attempted": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Approaches the agent has already tried. Helps peers/coordinator avoid suggesting the same."
+    },
+    "urgency": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "default": "medium",
+      "description": "How urgently this block needs resolution. 'high' triggers immediate mid-stream injection to capable peers."
+    },
+    "topics": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Topic tags. Used to route to peers with matching subscriptions."
+    }
+  }
+}

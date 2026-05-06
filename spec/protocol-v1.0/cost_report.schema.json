@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-protocol.org/spec/v1.0/cost_report.schema.json",
+  "title": "COST_REPORT payload",
+  "description": "Reports the actual token/wall-clock cost of handling a coordination signal. Routed to the coordinator. Drives adaptive routing thresholds and developer-facing cost dashboards.",
+  "type": "object",
+  "required": ["signal_id", "mechanism", "tokens_billed", "wall_clock_ms"],
+  "additionalProperties": false,
+  "properties": {
+    "signal_id": {
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "The msg_id of the signal whose handling this reports on."
+    },
+    "mechanism": {
+      "type": "string",
+      "enum": [
+        "inbox_at_decision_point",
+        "native_kv_append",
+        "local_api_context_resume",
+        "hosted_cached_restart",
+        "pre_execution_gate"
+      ],
+      "description": "Which injection/handling mechanism was used."
+    },
+    "tokens_billed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Tokens billed by the inference backend for handling this signal. For hosted backends, includes both cached and non-cached portions."
+    },
+    "tokens_cached": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional. Of tokens_billed, how many hit the prompt cache (charged at reduced rate)."
+    },
+    "wall_clock_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "End-to-end time from signal arrival to handling complete."
+    },
+    "estimated_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Optional. Estimated dollar cost based on current pricing. Calculated by the SDK."
+    }
+  }
+}
