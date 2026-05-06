@@ -90,17 +90,32 @@ See [`spec/positioning.md`](spec/positioning.md) for the full landscape.
 
 See [`spec/`](spec/) for the protocol definitions, adapter contract, and conflict semantics. The full architecture and execution plan are in [`docs/Synapse_Architecture_and_Execution_Plan.docx`](docs/Synapse_Architecture_and_Execution_Plan.docx).
 
-## Quickstart (when Phase 1 ships)
+## Quickstart
+
+Phase 1 has shipped — the conflict demo runs end-to-end with mocked inference.
 
 ```bash
-# Bring up the infrastructure
+# Bring up Redis + Postgres + initial schema
 docker compose up -d
 
-# Run the conflict demo (Phase 1 deliverable)
+# Install the SDK
+pip install -e sdk-python
+
+# Run the conflict demo
 python examples/two_agents_conflict_demo.py
 ```
 
-When Phase 1 ships, you'll see two agents both claim `auth.middleware`, the router detect the overlap, and the second agent receive a `CONFLICT` signal and pivot — all without any human in the loop.
+You'll see two agents both claim `auth.middleware`, the router detect the overlap, the second agent receive a `CONFLICT` signal during its 500ms pre-execution gate, and pivot to `auth.logging` — all without any human in the loop.
+
+See [`examples/README.md`](examples/README.md) for expected output and how it works.
+
+### Run the unit tests (no Docker needed)
+
+```bash
+pytest sdk-python/tests/
+```
+
+39 tests covering scope matching, envelope construction, message models, and the mock adapter.
 
 ## Repository layout
 

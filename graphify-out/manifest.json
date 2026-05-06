@@ -1,7 +1,71 @@
 {
+  "C:\\C3\\synapse\\examples\\two_agents_conflict_demo.py": {
+    "mtime": 1778101821.9881587,
+    "hash": "ecd647c5087d50486bb09becd771ab25"
+  },
+  "C:\\C3\\synapse\\runtime\\__init__.py": {
+    "mtime": 1778101757.7913697,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
   "C:\\C3\\synapse\\runtime\\migrations\\0001_initial_schema.sql": {
     "mtime": 1778092393.499512,
     "hash": "9b90daf1a7b996ef5d7ff01023b18924"
+  },
+  "C:\\C3\\synapse\\runtime\\router\\worker.py": {
+    "mtime": 1778101792.792553,
+    "hash": "9316576e41293d2316becb26836c7b24"
+  },
+  "C:\\C3\\synapse\\runtime\\router\\__init__.py": {
+    "mtime": 1778101765.965973,
+    "hash": "2ca3020e1f1f7bb8ba2d5d364af504bd"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\agent.py": {
+    "mtime": 1778101746.0555437,
+    "hash": "c7e9df58d49a72151e95529cb9c53036"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\bus.py": {
+    "mtime": 1778101649.6961062,
+    "hash": "4fd56e5359291f31cc140baf30d40871"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\messages.py": {
+    "mtime": 1778101627.6644952,
+    "hash": "9cf913d63df89e107ba934568d2e5a18"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\state.py": {
+    "mtime": 1778101681.3096201,
+    "hash": "47f5c74b0968ff63517a8fccfa80906d"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\__init__.py": {
+    "mtime": 1778101596.2664495,
+    "hash": "51ea75896ad314252d75e835f8e0b67f"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\base.py": {
+    "mtime": 1778101697.2240894,
+    "hash": "69d13946baad8ccf58435cb1abdeb657"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\mock.py": {
+    "mtime": 1778101715.0044203,
+    "hash": "900dde0b74d2ccba048a2c425d09f15e"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\__init__.py": {
+    "mtime": 1778101686.4188392,
+    "hash": "5ed84da25a14f858afcaec8750f9d2a9"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_envelope_and_messages.py": {
+    "mtime": 1778101944.7253542,
+    "hash": "709dc57d83bec21e9c9743460963c12b"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_mock_adapter.py": {
+    "mtime": 1778101957.3916583,
+    "hash": "1e5277b54e87a64328240d637f45d8c9"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_scope_matcher.py": {
+    "mtime": 1778101908.4819076,
+    "hash": "b70b84508d15753a94cc7803d0be63d5"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\__init__.py": {
+    "mtime": 1778101887.2687757,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "C:\\C3\\synapse\\CONTRIBUTING.md": {
     "mtime": 1778092428.4869244,
@@ -12,8 +76,8 @@
     "hash": "9287e8cc489876e1867dc9d2c17c66d1"
   },
   "C:\\C3\\synapse\\README.md": {
-    "mtime": 1778092195.7916718,
-    "hash": "4baa83db2527fa91797289453711c47a"
+    "mtime": 1778102021.1525834,
+    "hash": "0908658ada538179391e62e45f839892"
   },
   "C:\\C3\\synapse\\adapters\\hosted\\README.md": {
     "mtime": 1778092445.5247893,
@@ -32,28 +96,36 @@
     "hash": "017c1230f4947739b3ff9abfd6e95187"
   },
   "C:\\C3\\synapse\\examples\\README.md": {
-    "mtime": 1778092445.6144211,
-    "hash": "b95f59db1e7adf031b6d9d25336a8124"
+    "mtime": 1778102012.6441555,
+    "hash": "874d577e579c55b181c3813c377b2261"
   },
   "C:\\C3\\synapse\\runtime\\README.md": {
     "mtime": 1778092445.4313462,
     "hash": "cbfb215cc7b3a1536b7802cc2fe26d0b"
   },
   "C:\\C3\\synapse\\sdk-python\\README.md": {
-    "mtime": 1778092440.3477817,
-    "hash": "516fc8bb276054cc59675c61687b01a8"
+    "mtime": 1778102041.7751338,
+    "hash": "1cd60b7c834ca0f3737ae728dcd3c58b"
   },
   "C:\\C3\\synapse\\spec\\adapter.md": {
     "mtime": 1778092350.2231994,
     "hash": "3210ea2e959c978dc1facaf6adb7300a"
   },
+  "C:\\C3\\synapse\\spec\\conflict-semantics.md": {
+    "mtime": 1778101496.8519852,
+    "hash": "f1a8badce129367087b295f336dd899c"
+  },
+  "C:\\C3\\synapse\\spec\\positioning.md": {
+    "mtime": 1778101534.3048632,
+    "hash": "fa6ac73e41065b65e08f49d6b983ee96"
+  },
   "C:\\C3\\synapse\\spec\\README.md": {
-    "mtime": 1778092365.6755288,
-    "hash": "aca5c0cb1d4ddc67dd539801d350ca4d"
+    "mtime": 1778101383.2318387,
+    "hash": "6446fde0b6fcd71b074e6c31972a752f"
   },
   "C:\\C3\\synapse\\spec\\adr\\ADR-0001-architecture-baseline.md": {
-    "mtime": 1778092416.8305788,
-    "hash": "1bece3c144e1317eaea368bf7ec92888"
+    "mtime": 1778101404.3126304,
+    "hash": "33e6ccfba5d3b9cfae0165365a284991"
   },
   "C:\\C3\\synapse\\ui\\README.md": {
     "mtime": 1778092445.5550644,

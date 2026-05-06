@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "synapse-protocol"
+version = "0.1.0a0"
+description = "Real-time coordination protocol for parallel AI agents"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Aadit Rajgor", email = "aadityarajgor27@gmail.com" }]
+requires-python = ">=3.11"
+keywords = ["agents", "multi-agent", "coordination", "protocol", "ai"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+]
+
+dependencies = [
+    "pydantic>=2.6,<3",
+    "redis[hiredis]>=5.0,<6",
+    "asyncpg>=0.29,<0.31",
+    "python-ulid>=2.2,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+
+[project.urls]
+Homepage = "https://github.com/arajgor1/synapse"
+Repository = "https://github.com/arajgor1/synapse"
+Issues = "https://github.com/arajgor1/synapse/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["synapse"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
