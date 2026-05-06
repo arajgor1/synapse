@@ -35,6 +35,14 @@
     "mtime": 1778106789.24452,
     "hash": "0aed7d1628be9a878dcd24593e95a08c"
   },
+  "C:\\C3\\synapse\\runtime\\gateway\\server.py": {
+    "mtime": 1778109798.7324004,
+    "hash": "1c37db1440441f24be12f0b3d65d2018"
+  },
+  "C:\\C3\\synapse\\runtime\\gateway\\__init__.py": {
+    "mtime": 1778109758.5181038,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
   "C:\\C3\\synapse\\runtime\\migrations\\0001_initial_schema.sql": {
     "mtime": 1778092393.499512,
     "hash": "9b90daf1a7b996ef5d7ff01023b18924"
@@ -159,6 +167,58 @@
     "mtime": 1778101887.2687757,
     "hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
+  "C:\\C3\\synapse\\ui\\next-env.d.ts": {
+    "mtime": 1778110191.33847,
+    "hash": "a64595e6014adce3002d3bf762d2dbeb"
+  },
+  "C:\\C3\\synapse\\ui\\next.config.js": {
+    "mtime": 1778109824.3239102,
+    "hash": "26d9b2dca512d65f58a52b674edf9c9f"
+  },
+  "C:\\C3\\synapse\\ui\\postcss.config.js": {
+    "mtime": 1778109834.361799,
+    "hash": "8640f9b2e6475cc3f5b1ff4548925765"
+  },
+  "C:\\C3\\synapse\\ui\\tailwind.config.ts": {
+    "mtime": 1778109831.481614,
+    "hash": "352274ac975931d37f51e9c1eea86bff"
+  },
+  "C:\\C3\\synapse\\ui\\src\\app\\layout.tsx": {
+    "mtime": 1778109898.707022,
+    "hash": "4f031b2957f3808c19f5638fa49be725"
+  },
+  "C:\\C3\\synapse\\ui\\src\\app\\page.tsx": {
+    "mtime": 1778109914.2444608,
+    "hash": "0ed7a9ae7892c4e6d881fb791d25f9e1"
+  },
+  "C:\\C3\\synapse\\ui\\src\\app\\sessions\\[id]\\page.tsx": {
+    "mtime": 1778110005.136771,
+    "hash": "72a424074d1d67e0146d02c28c2d9efb"
+  },
+  "C:\\C3\\synapse\\ui\\src\\components\\AgentGrid.tsx": {
+    "mtime": 1778109928.4618266,
+    "hash": "f5888f6bfb7596e82c9ef7d2f68d21a8"
+  },
+  "C:\\C3\\synapse\\ui\\src\\components\\BeliefPanel.tsx": {
+    "mtime": 1778109990.2976358,
+    "hash": "861df1736d994db60880943241252a5c"
+  },
+  "C:\\C3\\synapse\\ui\\src\\components\\EventStream.tsx": {
+    "mtime": 1778109954.4651976,
+    "hash": "7946647bc3a5b0de29885b5afc5aede1"
+  },
+  "C:\\C3\\synapse\\ui\\src\\components\\IntentionsTable.tsx": {
+    "mtime": 1778109967.1846344,
+    "hash": "f70a22a254484d7c7bdc300dba641a24"
+  },
+  "C:\\C3\\synapse\\ui\\src\\lib\\types.ts": {
+    "mtime": 1778109854.311658,
+    "hash": "9b708f46f45aaffa1135ab9fe28fd896"
+  },
+  "C:\\C3\\synapse\\ui\\src\\lib\\useSession.ts": {
+    "mtime": 1778110163.091316,
+    "hash": "f07c990d1abbaf44191ca170ac66efc0"
+  },
   "C:\\C3\\synapse\\CONTRIBUTING.md": {
     "mtime": 1778092428.4869244,
     "hash": "ca54402633077613decbd8a64c678568"
@@ -195,6 +255,10 @@
     "mtime": 1778092445.4313462,
     "hash": "cbfb215cc7b3a1536b7802cc2fe26d0b"
   },
+  "C:\\C3\\synapse\\runtime\\gateway\\README.md": {
+    "mtime": 1778110053.6360412,
+    "hash": "e9f8bf0fdbe76f53a8ae07358137acbf"
+  },
   "C:\\C3\\synapse\\sdk-python\\README.md": {
     "mtime": 1778102041.7751338,
     "hash": "1cd60b7c834ca0f3737ae728dcd3c58b"
@@ -220,7 +284,7 @@
     "hash": "33e6ccfba5d3b9cfae0165365a284991"
   },
   "C:\\C3\\synapse\\ui\\README.md": {
-    "mtime": 1778092445.5550644,
-    "hash": "430d73d0b91b8ac9c983fd035c56dac9"
+    "mtime": 1778110041.0091045,
+    "hash": "5d2934a1d613ec5130ddab3f3c7fd0b9"
   }
 }

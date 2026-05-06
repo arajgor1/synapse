@@ -37,9 +37,14 @@ dev = [
 hosted = [
     "anthropic>=0.40",
     "google-genai>=1.0",
+    "openai>=1.50",
 ]
 local = [
     "httpx>=0.27",         # Ollama HTTP API
+]
+gateway = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
 ]
 all = [
     "synapse-protocol[hosted,local]",
