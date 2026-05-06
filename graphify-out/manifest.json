@@ -1,4 +1,8 @@
 {
+  "C:\\C3\\synapse\\examples\\multi_backend_demo.py": {
+    "mtime": 1778105688.4098427,
+    "hash": "436bba683fa960ff8e4b300f9d240919"
+  },
   "C:\\C3\\synapse\\examples\\two_agents_conflict_demo.py": {
     "mtime": 1778102873.4528935,
     "hash": "f12e724ea4bbe4e5ce31ad42ded017f6"
@@ -14,6 +18,14 @@
   "C:\\C3\\synapse\\runtime\\migrations\\0001_initial_schema.sql": {
     "mtime": 1778092393.499512,
     "hash": "9b90daf1a7b996ef5d7ff01023b18924"
+  },
+  "C:\\C3\\synapse\\runtime\\modal\\vllm_engine.py": {
+    "mtime": 1778105216.0287504,
+    "hash": "5586ae82cb94ab696c675d2103876c44"
+  },
+  "C:\\C3\\synapse\\runtime\\modal\\__init__.py": {
+    "mtime": 1778104915.8835323,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "C:\\C3\\synapse\\runtime\\router\\worker.py": {
     "mtime": 1778101792.792553,
@@ -67,6 +79,22 @@
     "mtime": 1778103754.7308533,
     "hash": "fed927d287f52bd8f136772abc516c94"
   },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\local\\ollama_adapter.py": {
+    "mtime": 1778104912.642789,
+    "hash": "9e1682d2c43395df98f8fdedc7409f73"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\local\\__init__.py": {
+    "mtime": 1778104862.5999303,
+    "hash": "dfac5e9f1291e76d4d23b1033719bcdb"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\native\\vllm_modal_adapter.py": {
+    "mtime": 1778105090.8690426,
+    "hash": "9e491428cfe6519bd417d1c3e5586a52"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\native\\__init__.py": {
+    "mtime": 1778104871.4210355,
+    "hash": "b0c5f71a40ff3aa3256e2234cf598880"
+  },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_envelope_and_messages.py": {
     "mtime": 1778101944.7253542,
     "hash": "709dc57d83bec21e9c9743460963c12b"
@@ -74,6 +102,10 @@
   "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_adapters.py": {
     "mtime": 1778103891.39735,
     "hash": "a911679dee4a861e4bf96f71e610cfc2"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_local_native_adapters.py": {
+    "mtime": 1778104999.8898315,
+    "hash": "7960544cf621bd31b34105a2750a2e87"
   },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_mock_adapter.py": {
     "mtime": 1778101957.3916583,
