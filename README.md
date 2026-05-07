@@ -25,37 +25,44 @@ See [`spec/positioning.md`](spec/positioning.md) for the full landscape.
 
 ## Status
 
-**Pre-alpha — Phase 0 (spec lock) complete. Phase 1 (runnable demo) in progress.**
+**v0.1.0-alpha — feature-complete.** v0.2 in planning: re-position around audit + observability, BYO-LLM, framework-agnostic via OpenInference. See [`docs/roadmap/v0.2-observability-and-safety.md`](docs/roadmap/v0.2-observability-and-safety.md) and [`spec/adr/ADR-0003-byo-llm-and-audit-first.md`](spec/adr/ADR-0003-byo-llm-and-audit-first.md).
 
-### What works today
+### What works today (v0.1)
 
-- Protocol specification (`spec/protocol-v1.0/`): 8 JSON Schemas covering envelope, agent registration, and 8 message types (THOUGHT, INTENTION, PIVOT, BELIEF, BLOCK, CONFLICT, RESOLUTION, COST_REPORT)
-- Inference Adapter contract (`spec/adapter.md`): three-tier abstraction (Native / Local-API / Hosted)
-- Conflict semantics (`spec/conflict-semantics.md`): scope matching rules
-- Postgres state graph schema (`runtime/migrations/0001_initial_schema.sql`)
-- Docker Compose stack (Redis 7.4 + Postgres 16) — brings up infrastructure only
+- **Protocol** — 8 message types (THOUGHT, INTENTION, PIVOT, BELIEF, BLOCK, CONFLICT, RESOLUTION, COST_REPORT) with frozen v1.0 schemas (`spec/protocol-v1.0/`)
+- **Python SDK** (`sdk-python/`) — bus, state graph, Agent class, 5 inference adapters (Mock, Anthropic, OpenAI, Gemini, Ollama) — 123 tests passing
+- **TypeScript SDK** (`sdk-typescript/`) — full mirror of Python SDK — 20 tests passing
+- **Router** — L1 (rules) + L2 (SQL conflict, GIN-indexed scope[]) + L3 (LLM-mediated semantic), with `stale_base_overwrite` detection for sequential same-resource overwrites
+- **Coordinator** — event-driven, belief-divergence detection, BLOCK escalation
+- **Gateway** — FastAPI WebSocket + REST, broadcasts session events
+- **Observability UI** — Next.js dashboard with AgentGrid, IntentionsTable, BeliefPanel, EventStream, CostChart, ReplayScrubber
+- **CLI** — `synapse spec validate`, `synapse bench`
+- **Framework integrations**:
+  - **Hermes Agent** (Python): `wrap_tool_call_for_synapse` with multi-agent registry
+  - **Paperclip AI** (TypeScript): `wrapAdapterWithSynapse`
+  - **OpenClaw** (TypeScript): `wrapExtensionWithSynapse` + `makeSynapseExtension`
+  - **LangGraph**, **CrewAI**: `@synapse_node` / `synapse_task` decorators
+- **Realistic product-dev tests** — 4-agent Instagram-clone backend + 4-agent data-analysis pipeline running real Anthropic Haiku 4.5 calls in Modal sandboxes (`runtime/modal/_payloads/real_app_*.py`)
 
-### What does not work yet
+### Where v0.2 is going
 
-- Python SDK is a stub — implementation lands in Phase 1
-- Router (L1/L2/L3) — Phase 1 (L1+L2), Phase 5 (L3)
-- Coordinator agent — Phase 4
-- Inference adapters (Anthropic, vLLM, Ollama, OpenAI, Gemini) — Phases 2-5
-- Observability UI — Phase 6
-- Benchmark CLI — Phase 6
+The honest distillation after pressure-testing v0.1 against five real multi-agent personas:
 
-### Roadmap
+> **Synapse is the missing observability + safety layer for any multi-agent stack, with conflict detection as the headline safety feature.**
+>
+> Not a coordination protocol that happens to come with a dashboard.
 
-| Phase | Scope | Target |
-|---|---|---|
-| 0 — Spec lock | Protocol schemas, adapter contract, ADRs | **Complete** |
-| 1 — Runnable demo | SDK skeleton, bus, state graph, L1/L2 router, mocked backend, two-agent conflict demo | In progress |
-| 2 — Real backend | Anthropic hosted adapter + append-and-continue | Weeks 3-4 |
-| 3 — Multi-backend | vLLM (native) + Ollama (local-API) adapters | Weeks 5-6 |
-| 4 — Coordinator | Sonnet-class LLM coordinator + cost telemetry + belief divergence | Weeks 7-8 |
-| 5 — Smart router | L3 semantic relevance + OpenAI/Gemini adapters | Weeks 9-10 |
-| 6 — Adoption surface | UI + LangGraph/CrewAI integrations + benchmark CLI | Weeks 11-12 |
-| 7 — Public release | Docs, blog posts, Show HN | Week 13 |
+v0.2 ships in 5 weeks of focused work:
+
+| Week | Ship |
+|---|---|
+| 1 | `synapse audit` CLI — read-only conflict report on any framework's trace export (OpenInference / LangSmith / JSONL) |
+| 2 | Universal `synapse.intend()` SDK + `synapse.set_llm()` (BYO-LLM) + LangGraph adapter |
+| 3 | `synapse up` (one-line self-hosted) + dashboard re-positioning + CrewAI / AutoGen / OpenAI Assistants adapters |
+| 4 | `MergePolicy.{redirect, wait, abort, auto_merge}` + `critical_scopes` selective enforcement |
+| 5 | BELIEF divergence on integration path — catches semantic conflicts that scope-overlap detection misses |
+
+See the [v0.2 roadmap](docs/roadmap/v0.2-observability-and-safety.md) for the full plan, demo gallery, and what we're explicitly *not* doing.
 
 ## What it does (when complete)
 
