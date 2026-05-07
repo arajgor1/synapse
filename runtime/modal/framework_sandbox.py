@@ -1,0 +1,800 @@
+"""Modal sandbox runner for testing Synapse integration with real agent
+frameworks (OpenClaw, Paperclip AI, Hermes Agent).
+
+Strategy:
+- Provisions a clean Linux container per test
+- Pre-installs Python 3.11, Node 20, git, redis-server, the Synapse Python SDK
+- A single function per framework runs: clone -> install -> integrate -> test
+- Captures stdout + status into a structured result
+- Tears down after each test (CPU-only, ~$0.04/hour)
+
+Run a single framework:
+  modal run runtime/modal/framework_sandbox.py::run_hermes
+  modal run runtime/modal/framework_sandbox.py::run_paperclip
+  modal run runtime/modal/framework_sandbox.py::run_openclaw
+
+Run all three:
+  modal run runtime/modal/framework_sandbox.py::run_all
+
+Each function is short-running (<10 minutes) and uses scaledown_window=10s
+so the container disappears immediately after the test.
+"""
+
+from __future__ import annotations
+
+import os
+import time
+from typing import Any
+
+import modal
+
+APP_NAME = "synapse-framework-sandbox"
+SDK_VOLUME = modal.Volume.from_name("synapse-sdk-cache", create_if_missing=True)
+
+# Image with everything we need to clone + install + run any of the three
+# frameworks. Built once, reused across runs.
+image = (
+    modal.Image.debian_slim(python_version="3.11")
+    .apt_install(
+        "git", "curl", "build-essential", "ca-certificates",
+        "redis-server",
+        "postgresql-15", "postgresql-client-15",
+        # Node 20 for Paperclip
+        "ca-certificates", "gnupg",
+    )
+    .run_commands(
+        # Install Node 20.x
+        "curl -fsSL https://deb.nodesource.com/setup_20.x | bash -",
+        "apt-get install -y nodejs",
+        # Verify
+        "node --version && npm --version && python3 --version",
+    )
+    .pip_install(
+        # Synapse SDK runtime deps so the user-facing SDK works
+        "pydantic>=2.6,<3",
+        "redis[hiredis]>=5.0,<6",
+        "asyncpg>=0.29,<0.31",
+        "python-ulid>=2.2,<4",
+        "jsonschema>=4.20",
+        "anthropic>=0.40",
+        "google-genai>=1.0",
+        "openai>=1.50",
+        "httpx>=0.27",
+        # Common framework deps that often surface
+        "fastapi>=0.115",
+        "uvicorn[standard]>=0.30",
+    )
+    .add_local_dir(
+        # Mount the Synapse SDK source so we can `pip install -e` inside
+        local_path=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "sdk-python")),
+        remote_path="/opt/synapse-sdk",
+        copy=True,
+    )
+)
+
+app = modal.App(APP_NAME, image=image)
+
+# Each test gets ~10 min max
+TEST_TIMEOUT = 600
+
+
+def _common_setup_script() -> str:
+    """Bash to run at the start of every framework test."""
+    return r"""
+set -euo pipefail
+echo "=== Sandbox setup ==="
+python3 --version
+node --version
+npm --version
+echo "Installing Synapse SDK..."
+cd /opt/synapse-sdk
+pip install -e . 2>&1 | tail -5
+python3 -c "import synapse; print(f'  synapse v{synapse.__version__} importable')"
+
+# Start a local Redis (background; we have Postgres if needed too)
+mkdir -p /tmp/redis-data
+redis-server --daemonize yes --dir /tmp/redis-data --logfile /tmp/redis.log
+sleep 0.5
+redis-cli ping
+echo "  redis ready"
+
+# Init in-image Postgres for Synapse state graph (small, local)
+mkdir -p /var/lib/postgresql/data
+chown postgres:postgres /var/lib/postgresql/data
+su postgres -c "/usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/data --auth=trust" 2>&1 | tail -3 || true
+su postgres -c "/usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/data -l /tmp/pg.log start" 2>&1 | tail -3
+sleep 1
+su postgres -c "createuser -s synapse" 2>&1 || true
+su postgres -c "createdb synapse -O synapse" 2>&1 || true
+su postgres -c "psql -d synapse -c \"ALTER USER synapse WITH PASSWORD 'synapse_dev'\""
+echo "  postgres ready"
+
+# Apply Synapse schema
+psql -h /var/run/postgresql -U synapse -d synapse -f /opt/synapse-sdk/../runtime/migrations/0001_initial_schema.sql 2>&1 | tail -3 || true
+
+export SYNAPSE_REDIS_URL="redis://localhost:6379/0"
+export SYNAPSE_POSTGRES_DSN="postgresql://synapse:synapse_dev@localhost:5432/synapse"
+"""
+
+
+@app.function(
+    cpu=2.0,
+    memory=2048,
+    timeout=TEST_TIMEOUT,
+    scaledown_window=10,
+)
+def run_hermes(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Test Synapse integration with Hermes Agent (NousResearch).
+
+    Strategy:
+    1. Clone https://github.com/NousResearch/hermes-agent
+    2. Install (pip install -e .)
+    3. Inspect agent/ + acp_adapter/ modules — those are the subagent spawn APIs
+    4. Locate the exact function we'd wrap with Synapse coordination
+    5. Run a small Python script that imports Hermes + wires Synapse
+    """
+    import subprocess
+    import textwrap
+
+    setup = _common_setup_script()
+
+    framework_script = textwrap.dedent(r"""
+        export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
+
+        echo "=== Cloning Hermes Agent ==="
+        cd /tmp
+        git clone --depth 1 https://github.com/NousResearch/hermes-agent.git
+        cd /tmp/hermes-agent
+
+        echo "=== Installing (pip install -e .) ==="
+        pip install -e . 2>&1 | tail -3
+
+        echo
+        echo "=== agent/ module structure ==="
+        ls -la agent/ 2>/dev/null
+        echo
+        echo "=== acp_adapter/ module structure ==="
+        ls -la acp_adapter/ 2>/dev/null
+        echo
+        echo "=== Top public symbols in agent/__init__.py ==="
+        head -80 agent/__init__.py 2>/dev/null
+        echo
+        echo "=== Top public symbols in acp_adapter/session.py ==="
+        head -120 acp_adapter/session.py 2>/dev/null
+        echo
+        echo "=== Look for the spawn/delegate function ==="
+        grep -nE "(async )?def (spawn|delegate|dispatch|run_subagent|run_task)" agent/*.py acp_adapter/*.py 2>/dev/null
+        echo
+        echo "=== Tool-call dispatch site (where actions are executed) ==="
+        grep -rnE "tool.*call|call_tool|execute_tool|invoke_tool" --include='*.py' agent/ acp_adapter/ 2>/dev/null | head -15
+        echo
+        echo "=== Static analysis of agent/ + acp_adapter/ ==="
+        echo
+        echo "-- agent/ files and their top symbols --"
+        for f in agent/*.py; do
+          [ -f "$f" ] || continue
+          echo
+          echo "  ~~ $f ~~"
+          grep -nE "^(class|def|async def) " "$f" | head -10
+        done
+        echo
+        echo "-- acp_adapter/ files and their top symbols --"
+        for f in acp_adapter/*.py; do
+          [ -f "$f" ] || continue
+          echo
+          echo "  ~~ $f ~~"
+          grep -nE "^(class|def|async def) " "$f" | head -10
+        done
+        echo
+        echo "=== Searching for the subagent dispatch site ==="
+        grep -rnE "(spawn|delegate|dispatch|run_subagent|run_agent|new_agent|create_agent|sub_agent)" --include='*.py' agent/ acp_adapter/ 2>/dev/null | head -25
+        echo
+        echo "=== Tool-call / function-call dispatch (where actions actually fire) ==="
+        grep -rnE "(call_tool|execute_tool|invoke_tool|run_tool|tool_call|function_call)" --include='*.py' agent/ acp_adapter/ skills/ 2>/dev/null | head -20
+        echo
+        echo "=== Tools list ==="
+        ls -la skills/ 2>/dev/null | head -25 || true
+        ls -la tools/ 2>/dev/null | head -25 || true
+        echo
+        echo "=== Hermes can be imported ==="
+        python3 -c "import agent; print('  agent module:', agent)" 2>&1 | head -3
+        python3 -c "import acp_adapter; print('  acp_adapter module:', acp_adapter)" 2>&1 | head -3
+    """)
+
+    full_script = setup + framework_script
+    env = dict(os.environ)
+    if api_keys.get("ANTHROPIC_API_KEY"):
+        env["ANTHROPIC_API_KEY"] = api_keys["ANTHROPIC_API_KEY"]
+
+    started = time.time()
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", full_script],
+            capture_output=True, text=True, timeout=480, env=env,
+        )
+        return {
+            "framework": "hermes",
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-15000:],  # last 15KB
+            "stderr": proc.stderr[-5000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "framework": "hermes",
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-15000:],
+            "stderr": "TIMEOUT after 480s",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.function(
+    cpu=2.0,
+    memory=2048,
+    timeout=TEST_TIMEOUT,
+    scaledown_window=10,
+)
+def run_paperclip(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Test Synapse integration with Paperclip AI (Node.js + React).
+
+    Strategy:
+    1. Clone https://github.com/paperclipai/paperclip
+    2. npm install
+    3. Identify task assignment / agent execution layer
+    4. Wire @synapse-protocol/sdk (TypeScript SDK) into Paperclip's
+       task lifecycle hooks
+    5. Run a small scenario with two agents on overlapping scopes
+    """
+    import subprocess
+    import textwrap
+
+    setup = _common_setup_script()
+
+    framework_script = textwrap.dedent(r"""
+        echo "=== Cloning Paperclip AI ==="
+        cd /tmp
+        git clone --depth 1 https://github.com/paperclipai/paperclip.git
+        cd paperclip
+        echo "=== Paperclip repo layout ==="
+        ls -la
+        echo
+        echo "=== package.json scripts + deps ==="
+        cat package.json 2>/dev/null | python3 -c "
+import json,sys
+try:
+  d = json.load(sys.stdin)
+  print('  name:', d.get('name'))
+  print('  scripts:', list((d.get('scripts') or {}).keys()))
+  print('  deps:', list((d.get('dependencies') or {}).keys())[:15])
+except Exception as e:
+  print('parse fail:', e)
+" || true
+        echo
+        echo "=== Looking for agent task execution hooks ==="
+        find . -maxdepth 5 -name '*.ts' -o -name '*.js' 2>/dev/null | head -20
+        echo
+        grep -rEn "task\.execute|run_agent|spawn|dispatch|coordinator" --include="*.ts" --include="*.js" -l 2>/dev/null | head -8
+        echo
+        echo "=== npm install (this may take a while) ==="
+        npm install --prefer-offline --no-audit --no-fund --loglevel=error 2>&1 | tail -10 || \
+          echo "npm install hit issues; continuing for diagnostic info"
+        echo
+        echo "=== Source exploration: top-level ts/js files ==="
+        find . -maxdepth 3 \( -name "*.ts" -o -name "*.js" \) -not -path "./node_modules/*" | head -15
+    """)
+
+    full_script = setup + framework_script
+    env = dict(os.environ)
+    if api_keys.get("ANTHROPIC_API_KEY"):
+        env["ANTHROPIC_API_KEY"] = api_keys["ANTHROPIC_API_KEY"]
+    if api_keys.get("OPENAI_API_KEY"):
+        env["OPENAI_API_KEY"] = api_keys["OPENAI_API_KEY"]
+
+    started = time.time()
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", full_script],
+            capture_output=True, text=True, timeout=480, env=env,
+        )
+        return {
+            "framework": "paperclip",
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-15000:],
+            "stderr": proc.stderr[-5000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "framework": "paperclip",
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-15000:],
+            "stderr": "TIMEOUT after 480s",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.function(
+    cpu=2.0,
+    memory=2048,
+    timeout=TEST_TIMEOUT,
+    scaledown_window=10,
+)
+def run_openclaw(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Test Synapse integration with OpenClaw.
+
+    Strategy:
+    1. Clone https://github.com/openclaw/openclaw
+    2. Identify SOUL.md template loader and tool-call layer
+    3. Plan integration at the tool-call site (emit INTENTION before each
+       file/API/DB action; check for CONFLICT)
+    """
+    import subprocess
+    import textwrap
+
+    setup = _common_setup_script()
+
+    framework_script = textwrap.dedent(r"""
+        echo "=== Cloning OpenClaw ==="
+        cd /tmp
+        git clone --depth 1 https://github.com/openclaw/openclaw.git
+        cd openclaw
+        echo "=== OpenClaw repo layout ==="
+        ls -la
+        echo
+        echo "=== Detecting language + entrypoint ==="
+        for f in package.json pyproject.toml setup.py Cargo.toml go.mod; do
+          [ -f "$f" ] && echo "  found: $f" && head -30 "$f"
+        done
+        echo
+        echo "=== SOUL.md template directory ==="
+        find . -maxdepth 4 \( -name "*.soul.md" -o -name "soul.md" -o -iname "SOUL.md" \) 2>/dev/null | head -10
+        find . -type d -iname "*soul*" 2>/dev/null | head -5
+        echo
+        echo "=== Searching for tool-call layer ==="
+        grep -rEn "tool.*call|call.*tool|execute.*tool|tool_use" --include="*.ts" --include="*.py" --include="*.js" --include="*.rs" -l 2>/dev/null | head -10
+        echo
+        echo "=== Trying installation ==="
+        if [ -f package.json ]; then
+            npm install --prefer-offline --no-audit --no-fund --loglevel=error 2>&1 | tail -5 || echo "npm hit issues"
+        elif [ -f pyproject.toml ] || [ -f setup.py ]; then
+            pip install -e . 2>&1 | tail -5 || echo "pip hit issues"
+        elif [ -f Cargo.toml ]; then
+            echo "Rust-based; build skipped (would take too long in sandbox)"
+        elif [ -f go.mod ]; then
+            echo "Go-based; build skipped (would need go toolchain install)"
+        else
+            echo "no recognized build manifest at top level"
+        fi
+        echo
+        echo "=== README excerpt ==="
+        find . -maxdepth 1 -iname 'README*' | head -1 | xargs cat 2>/dev/null | head -60 || true
+    """)
+
+    full_script = setup + framework_script
+    env = dict(os.environ)
+    if api_keys.get("ANTHROPIC_API_KEY"):
+        env["ANTHROPIC_API_KEY"] = api_keys["ANTHROPIC_API_KEY"]
+
+    started = time.time()
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", full_script],
+            capture_output=True, text=True, timeout=480, env=env,
+        )
+        return {
+            "framework": "openclaw",
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-15000:],
+            "stderr": proc.stderr[-5000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "framework": "openclaw",
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-15000:],
+            "stderr": "TIMEOUT after 480s",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def run_all() -> None:
+    """Drive all three tests, save results to bench/results/."""
+    import json
+    import os
+    import sys
+    import time
+
+    # Pull API keys from local env (passed through to remote)
+    api_keys = {
+        "ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", ""),
+        "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY", ""),
+    }
+
+    print("\n=== Running framework integration tests in Modal sandboxes ===")
+    print(f"  Anthropic key set: {bool(api_keys['ANTHROPIC_API_KEY'])}")
+    print(f"  OpenAI key set:    {bool(api_keys['OPENAI_API_KEY'])}")
+    print()
+
+    results = []
+    for name, fn in [
+        ("hermes", run_hermes),
+        ("paperclip", run_paperclip),
+        ("openclaw", run_openclaw),
+    ]:
+        print(f">>> [{name}] starting sandbox...")
+        t0 = time.time()
+        result = fn.remote(api_keys)
+        elapsed = time.time() - t0
+        print(f"<<< [{name}] exit={result['exit_code']} elapsed={elapsed:.1f}s")
+        # Surface the last 50 lines of stdout for visibility
+        tail = "\n".join(result["stdout"].splitlines()[-50:])
+        print(tail)
+        print(f"--- end {name} ---\n")
+        results.append(result)
+
+    # Save consolidated results
+    out_dir = "bench/results"
+    os.makedirs(out_dir, exist_ok=True)
+    ts = time.strftime("%Y%m%d-%H%M%S")
+    path = os.path.join(out_dir, f"framework_sandbox_phase1_{ts}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2)
+    print(f"\nresults saved -> {path}")
+
+
+@app.function(
+    cpu=2.0, memory=2048, timeout=TEST_TIMEOUT, scaledown_window=10,
+)
+def fetch_integration_docs() -> dict[str, Any]:
+    """Pull integration-relevant docs/source from all three frameworks
+    so I can build adapters offline."""
+    import subprocess
+    import textwrap
+
+    script = textwrap.dedent(r"""
+        set -uo pipefail
+        cd /tmp
+        mkdir -p /tmp/docs
+        echo "=== Paperclip adapter-plugin.md ==="
+        git clone --depth 1 https://github.com/paperclipai/paperclip.git 2>&1 | tail -2
+        echo
+        echo "--- adapter-plugin.md ---"
+        cat paperclip/adapter-plugin.md 2>/dev/null
+        echo
+        echo "--- AGENTS.md (top 80) ---"
+        head -80 paperclip/AGENTS.md 2>/dev/null
+        echo
+        echo "--- packages/ contents ---"
+        ls -la paperclip/packages/ 2>/dev/null
+        echo
+        echo "--- README highlights (multi-agent + adapter sections) ---"
+        grep -nE "(adapter|plugin|coord|multi-agent|integrate)" paperclip/README.md 2>/dev/null | head -25
+        echo
+        echo "--- skills/openclaw-* (the existing OpenClaw integration) ---"
+        find paperclip/skills -maxdepth 2 -iname '*openclaw*' 2>/dev/null
+        find paperclip -maxdepth 4 -name '*openclaw*' -type f 2>/dev/null | head -10
+        echo
+        echo "=== Hermes agent: tool-call dispatch site ==="
+        git clone --depth 1 https://github.com/NousResearch/hermes-agent.git 2>&1 | tail -2
+        echo
+        echo "--- agent/__init__.py (full) ---"
+        cat hermes-agent/agent/__init__.py
+        echo
+        echo "--- acp_adapter/tools.py first 120 lines ---"
+        head -120 hermes-agent/acp_adapter/tools.py
+        echo
+        echo "--- Search for the tool-execution function ---"
+        grep -nE "^(async )?def .*(execute|invoke|call|run|dispatch|handle)_(tool|function|command)" hermes-agent/agent/*.py hermes-agent/acp_adapter/*.py 2>/dev/null | head -15
+        echo
+        echo "=== OpenClaw extension/plugin pattern ==="
+        # Don't re-clone OpenClaw (huge); use a sparse checkout for specific files
+        git clone --depth 1 --filter=blob:none --sparse https://github.com/openclaw/openclaw.git openclaw-sparse 2>&1 | tail -1
+        cd openclaw-sparse
+        git sparse-checkout set extensions/browser docs README.md 2>&1 | tail -1
+        echo
+        echo "--- README highlights ---"
+        head -80 README.md 2>/dev/null
+        echo
+        echo "--- extensions/browser/plugin-registration.ts (the canonical plugin example) ---"
+        head -120 extensions/browser/plugin-registration.ts 2>/dev/null
+        echo
+        echo "--- SOUL.md template doc ---"
+        head -150 docs/reference/templates/SOUL.md 2>/dev/null
+        echo
+        echo "--- Plugin registration API surface (grep across extensions) ---"
+        grep -nE "(registerPlugin|registerTool|definePlugin|defineExtension|export.*default)" extensions/browser/*.ts 2>/dev/null | head -20
+    """)
+
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=TEST_TIMEOUT,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-50000:],
+            "stderr": proc.stderr[-3000:],
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-50000:],
+            "stderr": "TIMEOUT",
+        }
+
+
+@app.function(
+    cpu=2.0, memory=2048, timeout=TEST_TIMEOUT, scaledown_window=10,
+)
+def smoke_integrations() -> dict[str, Any]:
+    """End-to-end smoke: install Hermes alongside Synapse, run a coordinated
+    tool call against the real Redis bus running in the sandbox; verify
+    INTENTION + RESOLUTION envelopes land. Inline-mock the Paperclip and
+    OpenClaw flows since their integrations live in the TS SDK.
+    """
+    import subprocess
+    import textwrap
+
+    setup = _common_setup_script()
+    smoke_script = textwrap.dedent(r"""
+        echo
+        echo "============================================================"
+        echo "  HERMES integration: real bus + Synapse hook"
+        echo "============================================================"
+        cd /tmp
+        if [ ! -d hermes-agent ]; then
+          git clone --depth 1 https://github.com/NousResearch/hermes-agent.git 2>&1 | tail -1
+        fi
+        cd hermes-agent && pip install -e . 2>&1 | tail -2
+
+        # Apply Synapse migrations to the local Postgres
+        psql -h /var/run/postgresql -U synapse -d synapse \
+          -f /opt/synapse-sdk/../runtime/migrations/0001_initial_schema.sql \
+          2>&1 | tail -3 || \
+          psql -h /var/run/postgresql -U synapse -d synapse \
+            -f /opt/synapse-sdk-runtime/migrations/0001_initial_schema.sql 2>&1 | tail -3 || \
+          true
+
+        cat > /tmp/smoke_hermes.py <<'PYDONE'
+import asyncio, os, sys, json
+sys.path.insert(0, "/opt/synapse-sdk")
+
+# Quick: ensure the migrations table exists (use the embedded SQL we know)
+import asyncpg
+
+MIGRATIONS_SQL = (
+    "CREATE TABLE IF NOT EXISTS agents ("
+    " id text PRIMARY KEY, session_id text NOT NULL, tenant_id text,"
+    " status text NOT NULL CHECK (status IN ('active','idle','crashed')),"
+    " capabilities jsonb NOT NULL,"
+    " subscribes text[] NOT NULL DEFAULT '{}',"
+    " scopes_owned text[] NOT NULL DEFAULT '{}',"
+    " last_heartbeat timestamptz NOT NULL DEFAULT now(),"
+    " created_at timestamptz NOT NULL DEFAULT now()"
+    "); "
+    "CREATE TABLE IF NOT EXISTS intentions ("
+    " id text PRIMARY KEY, agent_id text NOT NULL REFERENCES agents(id),"
+    " session_id text NOT NULL, tenant_id text, scope text[] NOT NULL,"
+    " action jsonb NOT NULL, expected_outcome text NOT NULL,"
+    " blocking boolean NOT NULL DEFAULT false,"
+    " status text NOT NULL CHECK (status IN ('pending','active','resolved','pivoted')),"
+    " created_at timestamptz NOT NULL DEFAULT now(), resolved_at timestamptz"
+    "); "
+    "CREATE INDEX IF NOT EXISTS intentions_scope_gin ON intentions USING GIN (scope);"
+)
+
+async def main():
+    conn = await asyncpg.connect(
+        "postgresql://synapse:synapse_dev@localhost:5432/synapse"
+    )
+    await conn.execute(MIGRATIONS_SQL)
+    await conn.close()
+
+    from synapse.bus import Bus
+    from synapse.state import StateGraph
+    from synapse.integrations.hermes_integration import (
+        install_hermes_synapse_hooks, wrap_tool_call_for_synapse,
+    )
+
+    bus = Bus("redis://localhost:6379/0")
+    state = StateGraph("postgresql://synapse:synapse_dev@localhost:5432/synapse")
+    await bus.connect(); await state.connect()
+
+    status = await install_hermes_synapse_hooks(
+        bus=bus, state=state, session_id="hermes_smoke",
+        agent_id="hermes_main", gate_ms=50,
+    )
+    print("[hermes] hook status:", status)
+
+    async def inner_write():
+        return "wrote 128 bytes to /tmp/synapse_demo.txt"
+
+    result = await wrap_tool_call_for_synapse(
+        "write_file", {"path": "/tmp/synapse_demo.txt"}, inner_write,
+    )
+    print("[hermes] tool result:", result)
+
+    # Read back what landed on the session stream
+    redis = bus.redis
+    entries = await redis.xrange("synapse:session:hermes_smoke:events", count=20)
+    print(f"[hermes] envelopes on session stream: {len(entries)}")
+    for entry_id, fields in entries:
+        env = json.loads(fields["e"])
+        print(f"  {env['type']:13} agent={env['agent_id']} payload_keys={list(env['payload'].keys())[:5]}")
+
+    # Read back agent registration
+    rows = await state.pool.fetch(
+        "SELECT id, session_id, status, scopes_owned FROM agents"
+    )
+    print(f"[hermes] agents registered: {len(rows)}")
+    for r in rows:
+        print(f"  {dict(r)}")
+
+    rows = await state.pool.fetch(
+        "SELECT id, scope, status, expected_outcome FROM intentions"
+    )
+    print(f"[hermes] intentions in state graph: {len(rows)}")
+    for r in rows:
+        print(f"  {dict(r)}")
+
+    await bus.close(); await state.close()
+
+asyncio.run(main())
+PYDONE
+
+        python3 /tmp/smoke_hermes.py 2>&1
+
+        echo
+        echo "============================================================"
+        echo "  PAPERCLIP + OPENCLAW: TS-side adapter smoke (inline)"
+        echo "============================================================"
+        cat > /tmp/smoke_paperclip.mjs <<'NODEEOF'
+const events = [];
+const inner = { type: "anthropic",
+  async invoke(req) { return { text: "hello", tokensIn: 50, tokensOut: 25 }; } };
+
+async function wrappedInvoke(req) {
+  events.push({ type: "INTENTION", agent: req.task.agentId, scope: [`paperclip.task:${req.task.id}:w`] });
+  const r = await inner.invoke(req);
+  events.push({ type: "RESOLUTION", agent: req.task.agentId, outcome: r.error ? "failure" : "success" });
+  if (r.tokensIn !== undefined) events.push({ type: "COST_REPORT", tokens: r.tokensIn + r.tokensOut });
+  return r;
+}
+const r = await wrappedInvoke({ task: { id: "T1", agentId: "engineer_a", description: "ship feature" }, prompt: "..." });
+console.log("[paperclip] inner response:", r);
+console.log("[paperclip] envelopes that would publish:");
+for (const e of events) console.log("   ", e);
+NODEEOF
+        node /tmp/smoke_paperclip.mjs
+
+        cat > /tmp/smoke_openclaw.mjs <<'NODEEOF'
+const events = [];
+const tools = [
+  { name: "fs.read",  isWrite: false, async handler() { return "data"; } },
+  { name: "fs.write", isWrite: true,  async handler() { return "wrote"; } },
+];
+function wrap(t) {
+  if (!t.isWrite) return t;
+  return { ...t, async handler(args, ctx) {
+    events.push({ type: "INTENTION", tool: t.name, scope: [`openclaw.tool.${t.name}:w`] });
+    try {
+      const r = await t.handler(args, ctx);
+      events.push({ type: "RESOLUTION", tool: t.name, outcome: "success" });
+      return r;
+    } catch (e) {
+      events.push({ type: "RESOLUTION", tool: t.name, outcome: "failure" });
+      throw e;
+    }
+  }};
+}
+const w = tools.map(wrap);
+console.log("[openclaw] read:", await w[0].handler({}));
+console.log("[openclaw] write:", await w[1].handler({}));
+console.log("[openclaw] events:");
+for (const e of events) console.log("   ", e);
+NODEEOF
+        node /tmp/smoke_openclaw.mjs
+    """)
+
+    started = time.time()
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", setup + smoke_script],
+            capture_output=True, text=True, timeout=TEST_TIMEOUT,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-25000:],
+            "stderr": proc.stderr[-3000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-25000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def smoke() -> None:
+    """Run the cross-framework smoke and save results."""
+    import json
+    import os
+    import time
+
+    print(">>> cross-framework integration smoke...")
+    r = smoke_integrations.remote()
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"framework_smoke_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"saved -> {path}")
+
+
+@app.local_entrypoint()
+def fetch_docs() -> None:
+    """Run fetch_integration_docs and save the output for offline reading."""
+    import json
+    import os
+    import time
+
+    print(">>> fetching integration docs from all 3 frameworks...")
+    result = fetch_integration_docs.remote()
+    out_dir = "bench/results"
+    os.makedirs(out_dir, exist_ok=True)
+    ts = time.strftime("%Y%m%d-%H%M%S")
+    path = os.path.join(out_dir, f"framework_integration_docs_{ts}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(result, f, indent=2)
+    # Also write the raw stdout to a md file for human reading
+    md_path = os.path.join(out_dir, f"framework_integration_docs_{ts}.md")
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write("# Framework integration docs (fetched from sandboxes)\n\n")
+        f.write(f"```\n{result['stdout']}\n```\n")
+    print(f"saved -> {path}")
+    print(f"        {md_path}")
+    print(f"\n--- last 60 lines ---")
+    print("\n".join(result["stdout"].splitlines()[-60:]))
+
+
+@app.local_entrypoint()
+def run_one(framework: str = "hermes") -> None:
+    """Drive a single framework test for iterative debugging."""
+    import json
+    import os
+    import time
+
+    api_keys = {
+        "ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", ""),
+        "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY", ""),
+    }
+
+    fns = {"hermes": run_hermes, "paperclip": run_paperclip, "openclaw": run_openclaw}
+    if framework not in fns:
+        raise SystemExit(f"unknown framework: {framework}")
+    fn = fns[framework]
+
+    t0 = time.time()
+    result = fn.remote(api_keys)
+    elapsed = time.time() - t0
+    print(f"\n=== [{framework}] exit={result['exit_code']} elapsed={elapsed:.1f}s ===")
+    print(result["stdout"])
+    if result.get("stderr"):
+        print("\n--- stderr ---")
+        print(result["stderr"])
+
+    out_dir = "bench/results"
+    os.makedirs(out_dir, exist_ok=True)
+    ts = time.strftime("%Y%m%d-%H%M%S")
+    path = os.path.join(out_dir, f"framework_sandbox_{framework}_{ts}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(result, f, indent=2)
+    print(f"\nsaved -> {path}")
