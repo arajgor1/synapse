@@ -22,12 +22,20 @@
  * Note: OpenClaw's exact plugin-registration API has shifted across
  * versions. We model the adapter against a minimal duck-typed interface so
  * the integration works across plugin API revisions.
+ *
+ * v0.2 INTERNALS — this module routes wrapped tool dispatches through
+ * `synapse.intendWith()` so they automatically pick up the install()-time
+ * MergePolicy, critical_scopes, and BELIEF auto-extraction. The public
+ * surface (`wrapExtensionWithSynapse`, `makeSynapseExtension`) is unchanged
+ * for backward compatibility with v0.1 consumers.
  */
 
 import type { Bus } from "../bus.js";
 import { Agent } from "../agent.js";
 import type { InferenceAdapter } from "../adapters/base.js";
 import { MockAdapter } from "../adapters/mock.js";
+import { intendWith, _runtime } from "../intend.js";
+import { SynapseConflict } from "../policies/base.js";
 
 // ---------------------------------------------------------------------------
 // Minimal OpenClaw plugin shape (duck-typed; matches what
@@ -98,6 +106,34 @@ function defaultScope(tool: OpenClawTool, args: Record<string, unknown>): string
   return [`openclaw.tool.${tool.name}:w`];
 }
 
+/**
+ * Pre-populate `_runtime.agents` so the next `intendWith()` call for
+ * (sessionId, agentId) returns our Agent (constructed with the user's bus
+ * + backend) instead of going through `_ensureConnected()`. This preserves
+ * the v0.1 contract where the caller passes their own Bus.
+ */
+function ensureAgentInRuntime(
+  agentId: string,
+  sessionId: string,
+  bus: Bus,
+  backend: InferenceAdapter,
+): Agent {
+  const cacheKey = `${sessionId}::${agentId}`;
+  const agents = _runtime.agents ?? new Map<string, Agent>();
+  if (!_runtime.agents) _runtime.agents = agents;
+  const cached = agents.get(cacheKey);
+  if (cached) return cached;
+  const agent = new Agent({
+    id: agentId,
+    session: sessionId,
+    backend,
+    bus,
+    subscribes: ["openclaw.*", "repo.*"],
+  });
+  agents.set(cacheKey, agent);
+  return agent;
+}
+
 // ---------------------------------------------------------------------------
 // Wrap an entire OpenClaw extension's tool list with Synapse coordination.
 // ---------------------------------------------------------------------------
@@ -112,14 +148,10 @@ export function wrapExtensionWithSynapse(
   const failOnConflict = opts.failOnConflict ?? false;
   const synapseBackend = opts.synapseBackend ?? new MockAdapter();
 
-  // Single shared agent across all tools in this extension
-  const agent = new Agent({
-    id: agentId,
-    session: opts.sessionId,
-    backend: synapseBackend,
-    subscribes: ["openclaw.*", "repo.*"],
-    bus: opts.bus,
-  });
+  // Pre-populate the runtime agent cache so intendWith() reuses our Agent
+  // (constructed with the caller's Bus). This bridges the v0.1 contract
+  // (caller supplies bus) with the v0.2 contract (intend() owns the agent).
+  ensureAgentInRuntime(agentId, opts.sessionId, opts.bus, synapseBackend);
 
   const wrappedTools: OpenClawTool[] = extension.tools.map((tool) => {
     if (!isWrite(tool)) {
@@ -129,40 +161,69 @@ export function wrapExtensionWithSynapse(
     return {
       ...tool,
       handler: async (args, ctx) => {
-        const [intentId, conflicts] = await agent.emitIntention({
-          action: { tool: tool.name, args },
-          scope: scopeFromCall(tool, args),
-          expected_outcome: tool.description ?? `openclaw:${tool.name}`,
-          blocking: true,
-          gateMs,
-        });
-        if (conflicts.length > 0) {
-          if (failOnConflict) {
-            throw new Error(
-              `Synapse CONFLICT on ${tool.name}: ` +
-                `${conflicts[0]?.suggested_resolution ?? "pivot"}`,
-            );
-          }
-          // log and continue
-          console.warn(
-            `[synapse] CONFLICT on ${tool.name} but failOnConflict=false; proceeding`,
-          );
-        }
-        let outcome: "success" | "failure" = "success";
-        let errMsg: string | undefined;
         try {
-          const result = await tool.handler(args, ctx);
-          return result;
+          return await intendWith(
+            {
+              scope: scopeFromCall(tool, args),
+              agent: agentId,
+              session: opts.sessionId,
+              expectedOutcome: tool.description ?? `openclaw:${tool.name}`,
+              blocking: true,
+              gateMs,
+              proposedAction: { tool: tool.name, args },
+            },
+            async (handle) => {
+              if (handle.hasConflicts) {
+                if (failOnConflict) {
+                  const c = handle.conflicts[0];
+                  throw new Error(
+                    `Synapse CONFLICT on ${tool.name}: ` +
+                      `${c?.suggested_resolution ?? "pivot"}`,
+                  );
+                }
+                console.warn(
+                  `[synapse] CONFLICT on ${tool.name} but failOnConflict=false; proceeding`,
+                );
+              }
+              // If a MergePolicy with auto_merge ran, prefer the merged args.
+              const effectiveArgs =
+                (handle.mergedAction &&
+                  (handle.mergedAction["args"] as
+                    | Record<string, unknown>
+                    | undefined)) ??
+                args;
+              try {
+                const result = await tool.handler(effectiveArgs, ctx);
+                // Surface the result to belief auto-extraction (when
+                // `emitBeliefsFromToolResults` is set on install()).
+                if (result !== undefined && result !== null) {
+                  const preview =
+                    typeof result === "string"
+                      ? result.slice(0, 1500)
+                      : JSON.stringify(result).slice(0, 1500);
+                  handle.setStateDiff({ output_preview: preview });
+                }
+                return result;
+              } catch (e) {
+                handle.markFailed((e as Error).message ?? String(e));
+                throw e;
+              }
+            },
+          );
         } catch (e) {
-          outcome = "failure";
-          errMsg = (e as Error).message?.slice(0, 200);
+          // SynapseConflict from a critical_scope hard-block or AbortPolicy
+          // is surfaced as the same Error shape as v0.1 if failOnConflict.
+          // Otherwise, just rethrow — caller's choice.
+          if (e instanceof SynapseConflict && !failOnConflict) {
+            console.warn(
+              `[synapse] CONFLICT hard-block on ${tool.name} (policy=${e.rationale})`,
+            );
+            // Fall through: re-execute the underlying tool unwrapped, since
+            // the user opted out of failOnConflict. This matches v0.1's
+            // "log and continue" semantics.
+            return await tool.handler(args, ctx);
+          }
           throw e;
-        } finally {
-          await agent.emitResolution({
-            intentionId: intentId,
-            outcome,
-            ...(errMsg ? { state_diff: { error: errMsg } } : {}),
-          });
         }
       },
     };

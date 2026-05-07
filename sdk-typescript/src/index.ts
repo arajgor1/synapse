@@ -101,3 +101,32 @@ export type {
   InstallResult,
   FrameworkInstallFn,
 } from "./install.js";
+
+// Framework adapters (self-register on import)
+import "./frameworks/index.js";
+export * as frameworks from "./frameworks/index.js";
+
+// Direct re-exports of the LangGraph.js / LangChain.js adapter for users
+// who want `import { SynapseLangGraphCallback } from "@synapse-protocol/sdk"`.
+export {
+  SynapseLangGraphCallback,
+  getCallback as getLangGraphCallback,
+} from "./frameworks/langgraph.js";
+
+// Direct re-exports of the Vercel AI SDK adapter so users can do
+// `import { synapseTool, wrapVercelTools } from "@synapse-protocol/sdk"`.
+export {
+  synapseTool,
+  synapseToolAsync,
+  wrapVercelTools,
+  getCallback as getVercelAICallback,
+} from "./frameworks/vercelAI.js";
+export type {
+  VercelTool,
+  VercelToolConfig,
+  VercelToolExecute,
+  SynapseToolConfig,
+  SynapseToolExtras,
+  WrapVercelToolsOptions,
+  VercelAIInstallOptions,
+} from "./frameworks/vercelAI.js";

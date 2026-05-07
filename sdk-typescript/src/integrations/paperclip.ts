@@ -12,6 +12,12 @@
  *      Paperclip retry/escalation flow handles the pivot.
  *   3. Reports COST (token spend) back through Synapse's COST_REPORT.
  *
+ * v0.2 internals: this module now delegates to `synapse.intendWith()` so
+ *   callers automatically pick up the universal merge-policy machinery
+ *   (auto_merge, redirect, abort, critical_scopes) and belief auto-extraction
+ *   without changing their code. The `wrapAdapterWithSynapse` /
+ *   `makeMockSynapsePaperclipAdapter` public API is unchanged from v0.1.
+ *
  * Usage in a Paperclip server bootstrap:
  *
  *   import { registerServerAdapter } from "paperclip/server/adapters/registry";
@@ -27,15 +33,26 @@
  *   });
  *   registerServerAdapter(wrapped);
  *
- * The wrapped adapter has the same shape as a built-in Paperclip adapter
- * (the framework's adapter type is open-ended per their phase-1 plugin spec)
- * so it slots in without any changes to Paperclip core.
+ * For the v0.2 install() pattern, see `frameworks/paperclip.ts`:
+ *
+ *   import synapse from "@synapse-protocol/sdk";
+ *   import "@synapse-protocol/sdk/frameworks/paperclip";
+ *   synapse.install({
+ *     framework: "paperclip",
+ *     bus: myBus,
+ *     sessionId: "company_123",
+ *     mergePolicy: synapse.MergePolicy.autoMerge,
+ *   });
+ *   // Then call wrapAdapterWithSynapse normally — defaults are picked up.
  */
 
 import type { Bus } from "../bus.js";
 import { Agent } from "../agent.js";
 import type { InferenceAdapter } from "../adapters/base.js";
 import { MockAdapter } from "../adapters/mock.js";
+import { intendWith, _runtime } from "../intend.js";
+import { SynapseConflict, type MergePolicy } from "../policies/base.js";
+import { _paperclipDefaults } from "../frameworks/paperclip.js";
 
 // ---------------------------------------------------------------------------
 // Paperclip adapter contract (replicated structurally — Paperclip uses these
@@ -102,94 +119,164 @@ export interface WrapWithSynapseOptions {
    * communication, not the user-facing generation.
    */
   synapseBackend?: InferenceAdapter;
+  /**
+   * Optional MergePolicy override — falls back to install-time default
+   * configured via `synapse.install({ framework: "paperclip", mergePolicy })`.
+   */
+  mergePolicy?: MergePolicy | string | null;
+  /**
+   * Optional critical-scopes override — falls back to install-time default.
+   */
+  criticalScopes?: string[];
 }
 
 /**
  * Wrap a Paperclip adapter so every task dispatch participates in Synapse
- * coordination.
+ * coordination via `synapse.intendWith()`.
  */
 export function wrapAdapterWithSynapse(
   inner: PaperclipAdapter,
   opts: WrapWithSynapseOptions,
 ): PaperclipAdapter {
   const scopeFromTask =
-    opts.scopeFromTask ?? ((t) => [`paperclip.task:${t.id}:w`]);
-  const failOnConflict = opts.failOnConflict ?? true;
-  const gateMs = opts.gateMs ?? 50;
-  const synapseBackend = opts.synapseBackend ?? new MockAdapter();
+    opts.scopeFromTask ??
+    _paperclipDefaults.scopeFromTask ??
+    ((t) => [`paperclip.task:${t.id}:w`]);
+  const failOnConflict =
+    opts.failOnConflict ?? _paperclipDefaults.failOnConflict ?? true;
+  const gateMs = opts.gateMs ?? _paperclipDefaults.gateMs ?? 50;
+  const synapseBackend =
+    opts.synapseBackend ??
+    _paperclipDefaults.synapseBackend ??
+    new MockAdapter();
+  const mergePolicy =
+    opts.mergePolicy !== undefined
+      ? opts.mergePolicy
+      : _paperclipDefaults.mergePolicy ?? null;
+  const criticalScopes =
+    opts.criticalScopes !== undefined
+      ? opts.criticalScopes
+      : _paperclipDefaults.criticalScopes;
 
   // Per-Paperclip-task agent cache — one Synapse Agent per Paperclip agentId
   // in the session, so multiple tasks for the same agent share an inbox cursor.
-  const agentCache = new Map<string, Agent>();
-
-  async function ensureAgent(agentId: string): Promise<Agent> {
-    let a = agentCache.get(agentId);
-    if (a) return a;
-    a = new Agent({
+  // We pre-seed `_runtime.agents` so `intend()`'s `_getAgent()` picks up our
+  // bus-bound agent on first invoke (cache check happens before bus init).
+  function ensureRuntimeAgent(agentId: string): Agent {
+    const cacheKey = `${opts.sessionId}::${agentId}`;
+    if (!_runtime.agents) _runtime.agents = new Map<string, Agent>();
+    const cached = _runtime.agents.get(cacheKey);
+    if (cached) return cached;
+    const agent = new Agent({
       id: agentId,
       session: opts.sessionId,
       backend: synapseBackend,
       bus: opts.bus,
       subscribes: [`paperclip.*`],
     });
-    agentCache.set(agentId, a);
-    return a;
+    _runtime.agents.set(cacheKey, agent);
+    return agent;
   }
 
   return {
     type: `synapse:${inner.type}`,
     async invoke(request) {
       const t0 = Date.now();
-      const agent = await ensureAgent(request.task.agentId);
+      // Pre-seed the runtime cache before intendWith() looks the agent up.
+      ensureRuntimeAgent(request.task.agentId);
 
-      // Emit INTENTION before the adapter actually fires
-      const [intentionId, conflicts] = await agent.emitIntention({
-        action: { description: `paperclip:${inner.type}:${request.task.id}` },
-        scope: scopeFromTask(request.task),
-        expected_outcome: request.task.description ?? `paperclip task ${request.task.id}`,
-        blocking: true,
-        gateMs,
-      });
+      let response: PaperclipAdapterResponse | undefined;
+      let conflictResponse: PaperclipAdapterResponse | undefined;
+      let intentionId = "";
 
-      if (conflicts.length > 0) {
-        if (failOnConflict) {
-          // Surface as an AdapterError for Paperclip's error pipeline
+      try {
+        await intendWith(
+          {
+            scope: scopeFromTask(request.task),
+            agent: request.task.agentId,
+            session: opts.sessionId,
+            expectedOutcome:
+              request.task.description ?? `paperclip task ${request.task.id}`,
+            blocking: true,
+            gateMs,
+            mergePolicy,
+            ...(criticalScopes !== undefined ? { criticalScopes } : {}),
+            proposedAction: {
+              tool: `paperclip:${inner.type}`,
+              taskId: request.task.id,
+              prompt: request.prompt,
+            },
+          },
+          async (handle) => {
+            intentionId = handle.intentionId;
+
+            // Legacy v0.1 behavior: when failOnConflict=true and no policy
+            // resolved the conflict, surface it as an AdapterError on the
+            // response (Paperclip retry/escalation hook).
+            if (
+              handle.hasConflicts &&
+              handle.mergedAction === undefined &&
+              failOnConflict
+            ) {
+              const c = handle.conflicts[0];
+              conflictResponse = {
+                text: "",
+                error: {
+                  kind: "synapse_conflict",
+                  message: `Scope conflict: ${(c?.overlapping_scopes ?? []).join(", ")}. Suggested: ${c?.suggested_resolution ?? "pivot"}.`,
+                },
+              };
+              handle.setStateDiff({
+                synapse_conflict: true,
+                surfaced_as: "adapter_error",
+              });
+              return;
+            }
+
+            // If a policy produced a merged_action, route the merged content
+            // into the request's prompt for downstream adapters that honor it.
+            const effectiveRequest =
+              handle.mergedAction && typeof handle.mergedAction === "object"
+                ? {
+                    ...request,
+                    ...(typeof handle.mergedAction["prompt"] === "string"
+                      ? { prompt: handle.mergedAction["prompt"] as string }
+                      : {}),
+                    synapseMergedAction: handle.mergedAction,
+                  }
+                : request;
+
+            response = await inner.invoke(effectiveRequest);
+            if (response.error) {
+              handle.markFailed(response.error.message);
+            }
+          },
+        );
+      } catch (err) {
+        // SynapseConflict from policy.ABORT: convert to AdapterError when
+        // failOnConflict is true; otherwise let it propagate.
+        if (err instanceof SynapseConflict && failOnConflict) {
           return {
             text: "",
             error: {
               kind: "synapse_conflict",
-              message: `Scope conflict: ${conflicts[0]?.overlapping_scopes?.join(", ")}. Suggested: ${conflicts[0]?.suggested_resolution ?? "pivot"}.`,
+              message: err.message,
             },
           };
         }
-        // Otherwise just continue — caller's choice
+        throw err;
       }
 
-      // Execute the wrapped adapter
-      let response: PaperclipAdapterResponse;
-      try {
-        response = await inner.invoke(request);
-        // Mark intention resolved on success
-        await agent.emitResolution({
-          intentionId,
-          outcome: response.error ? "failure" : "success",
-          ...(response.error
-            ? { state_diff: { error: response.error.message.slice(0, 200) } }
-            : {}),
-        });
-      } catch (err) {
-        await agent.emitResolution({
-          intentionId,
-          outcome: "failure",
-          state_diff: { error: (err as Error).message.slice(0, 200) },
-        });
-        throw err;
+      if (conflictResponse) return conflictResponse;
+      if (!response) {
+        // Defensive — should not happen unless inner adapter returned undefined.
+        return { text: "" };
       }
 
       // Optionally publish a COST_REPORT envelope back to the bus
       if (response.tokensIn !== undefined || response.tokensOut !== undefined) {
         const wallMs = Date.now() - t0;
-        const env = {
+        const costEnv = {
           msg_id: intentionId, // shares parent for traceability
           type: "COST_REPORT" as const,
           version: "1.0",
@@ -207,7 +294,7 @@ export function wrapAdapterWithSynapse(
             }),
           },
         };
-        await opts.bus.publishSession(env);
+        await opts.bus.publishSession(costEnv);
       }
 
       return response;
