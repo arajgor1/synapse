@@ -1,0 +1,6 @@
+{
+  "exit_code": 127,
+  "stdout": "=== Sandbox setup ===\nPython 3.11.12\nv20.20.2\n10.8.2\nInstalling Synapse SDK...\nInstalling collected packages: synapse-protocol\nSuccessfully installed synapse-protocol-0.1.0a0\n\n[notice] A new release of pip is available: 25.2 -> 26.1.1\n[notice] To update, run: pip install --upgrade pip\n  synapse v0.1.0a0 importable\nPONG\n  redis ready\n\n    /usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/data -l logfile start\n\nwaiting for server to start.... done\nserver started\nALTER ROLE\n  postgres ready\nCREATE TABLE\nCREATE INDEX\nCREATE INDEX\n=== Building TS SDK ===\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.14.0\nnpm notice To update run: npm install -g npm@11.14.0\nnpm notice\n> tsc\n\nsh: 1: tsc: Permission denied\n",
+  "stderr": "",
+  "elapsed_seconds": 8.2
+}

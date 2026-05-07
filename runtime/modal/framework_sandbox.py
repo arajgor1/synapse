@@ -82,6 +82,12 @@ image = (
         remote_path="/opt/synapse-payloads",
         copy=True,
     )
+    .add_local_dir(
+        # Mount the TS SDK source so we can build + link it inside
+        local_path=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "sdk-typescript")),
+        remote_path="/opt/synapse-ts-sdk",
+        copy=True,
+    )
 )
 
 app = modal.App(APP_NAME, image=image)
@@ -573,6 +579,265 @@ def real_product_dev_hermes(api_keys: dict[str, str]) -> dict[str, Any]:
             "stderr": "TIMEOUT",
             "elapsed_seconds": round(time.time() - started, 1),
         }
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=900, scaledown_window=10,
+)
+def real_product_dev_paperclip(api_keys: dict[str, str]) -> dict[str, Any]:
+    """REAL product-dev test for the Paperclip integration.
+
+    3 distinct Paperclip agents (engineer_a/b/c) each invoke their wrapped
+    adapter to design the SAME endpoint. wrapAdapterWithSynapse intercepts
+    every dispatch with INTENTION; a Python sidecar mirrors INTENTIONs to
+    Postgres so the L2 router can detect conflicts and route CONFLICTs to
+    per-agent Redis inboxes.
+
+    Compares no_synapse vs with_synapse modes; measures distinct routes
+    chosen / conflicts caught / envelopes / token spend.
+    """
+    import subprocess
+    import textwrap
+
+    started = time.time()
+    setup = _common_setup_script()
+
+    framework_script = textwrap.dedent(r"""
+        export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
+
+        echo "=== Building TS SDK ==="
+        cp -r /opt/synapse-ts-sdk /tmp/synapse-ts-sdk
+        cd /tmp/synapse-ts-sdk
+        npm install --prefer-offline --no-audit --no-fund --loglevel=error 2>&1 | tail -3
+        # Permission-denied workaround: invoke tsc via node directly (some
+        # mounts strip the executable bit on shebang scripts)
+        node ./node_modules/typescript/bin/tsc 2>&1 | tail -10
+        ls -la dist/ | head -10
+
+        echo "=== Wiring test app (anthropic + linked SDK) ==="
+        mkdir -p /tmp/pp-test
+        cd /tmp/pp-test
+        cat > package.json <<'EOF'
+        {
+          "name": "pp-test",
+          "version": "1.0.0",
+          "type": "module",
+          "private": true,
+          "dependencies": {
+            "@anthropic-ai/sdk": "^0.40.0",
+            "@synapse-protocol/sdk": "file:/tmp/synapse-ts-sdk",
+            "ioredis": "^5.4.1"
+          }
+        }
+        EOF
+        npm install --prefer-offline --no-audit --no-fund --loglevel=error 2>&1 | tail -3
+
+        cp /opt/synapse-payloads/real_product_dev_paperclip.mjs /tmp/pp-test/test.mjs
+
+        echo "=== Starting Python state-mirror + router for the synapse session ==="
+        SESSION_ID="paperclip_pd_$(date +%s)_$$"
+        export SYNAPSE_SESSION_ID="$SESSION_ID"
+        echo "  session: $SESSION_ID"
+
+        python3 /opt/synapse-payloads/state_mirror.py "$SESSION_ID" \
+          > /tmp/state_mirror.log 2>&1 &
+        MIRROR_PID=$!
+        sleep 1
+        if ! kill -0 $MIRROR_PID 2>/dev/null; then
+          echo "ERROR: state_mirror failed to start; log:"
+          cat /tmp/state_mirror.log
+          exit 1
+        fi
+        echo "  state_mirror PID=$MIRROR_PID"
+
+        echo
+        echo "=== Running real product-dev test (Node) ==="
+        cd /tmp/pp-test
+        node test.mjs 2>&1
+        TEST_RC=$?
+
+        echo
+        echo "=== state_mirror log (last 30 lines) ==="
+        tail -30 /tmp/state_mirror.log
+
+        kill $MIRROR_PID 2>/dev/null || true
+        wait $MIRROR_PID 2>/dev/null || true
+        exit $TEST_RC
+    """)
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", setup + framework_script],
+            capture_output=True, text=True, timeout=900, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-30000:],
+            "stderr": proc.stderr[-5000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-30000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=900, scaledown_window=10,
+)
+def real_product_dev_openclaw(api_keys: dict[str, str]) -> dict[str, Any]:
+    """REAL product-dev test for the OpenClaw integration.
+
+    3 OpenClaw extensions, each wrapped with wrapExtensionWithSynapse and
+    a distinct agentId. Each handler calls real Anthropic Haiku to write a
+    Python helper, all writing to the same path. defaultScope() maps the
+    path → repo.fs.<path>:w so the L2 router catches the collision.
+    """
+    import subprocess
+    import textwrap
+
+    started = time.time()
+    setup = _common_setup_script()
+
+    framework_script = textwrap.dedent(r"""
+        export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
+
+        echo "=== Building TS SDK ==="
+        cp -r /opt/synapse-ts-sdk /tmp/synapse-ts-sdk
+        cd /tmp/synapse-ts-sdk
+        npm install --prefer-offline --no-audit --no-fund --loglevel=error 2>&1 | tail -3
+        node ./node_modules/typescript/bin/tsc 2>&1 | tail -5
+        ls -la dist/ | head -5
+
+        echo "=== Wiring test app (anthropic + linked SDK) ==="
+        mkdir -p /tmp/oc-test
+        cd /tmp/oc-test
+        cat > package.json <<'EOF'
+        {
+          "name": "oc-test",
+          "version": "1.0.0",
+          "type": "module",
+          "private": true,
+          "dependencies": {
+            "@anthropic-ai/sdk": "^0.40.0",
+            "@synapse-protocol/sdk": "file:/tmp/synapse-ts-sdk",
+            "ioredis": "^5.4.1"
+          }
+        }
+        EOF
+        npm install --prefer-offline --no-audit --no-fund --loglevel=error 2>&1 | tail -3
+
+        cp /opt/synapse-payloads/real_product_dev_openclaw.mjs /tmp/oc-test/test.mjs
+
+        echo "=== Starting Python state-mirror + router ==="
+        SESSION_ID="openclaw_pd_$(date +%s)_$$"
+        export SYNAPSE_SESSION_ID="$SESSION_ID"
+        echo "  session: $SESSION_ID"
+
+        python3 /opt/synapse-payloads/state_mirror.py "$SESSION_ID" \
+          > /tmp/state_mirror.log 2>&1 &
+        MIRROR_PID=$!
+        sleep 1
+        if ! kill -0 $MIRROR_PID 2>/dev/null; then
+          echo "ERROR: state_mirror failed to start; log:"
+          cat /tmp/state_mirror.log
+          exit 1
+        fi
+
+        echo
+        echo "=== Running real product-dev test (Node) ==="
+        cd /tmp/oc-test
+        node test.mjs 2>&1
+        TEST_RC=$?
+
+        echo
+        echo "=== state_mirror log (last 30 lines) ==="
+        tail -30 /tmp/state_mirror.log
+
+        kill $MIRROR_PID 2>/dev/null || true
+        wait $MIRROR_PID 2>/dev/null || true
+        exit $TEST_RC
+    """)
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", setup + framework_script],
+            capture_output=True, text=True, timeout=900, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-30000:],
+            "stderr": proc.stderr[-5000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-30000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def product_dev_openclaw() -> None:
+    """Run real_product_dev_openclaw against a Modal sandbox."""
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+
+    print(">>> running real product-dev openclaw test in Modal sandbox...")
+    r = real_product_dev_openclaw.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"product_dev_real_openclaw_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")
+
+
+@app.local_entrypoint()
+def product_dev_paperclip() -> None:
+    """Run real_product_dev_paperclip against a Modal sandbox."""
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+
+    print(">>> running real product-dev paperclip test in Modal sandbox...")
+    r = real_product_dev_paperclip.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"product_dev_real_paperclip_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")
 
 
 @app.local_entrypoint()
