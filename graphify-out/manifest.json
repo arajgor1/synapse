@@ -1,4 +1,8 @@
 {
+  "C:\\C3\\synapse\\examples\\anthropic_smoke.py": {
+    "mtime": 1778113901.2295964,
+    "hash": "4094367056d8123cb150c3011db007fe"
+  },
   "C:\\C3\\synapse\\examples\\coordinator_demo.py": {
     "mtime": 1778106909.6788182,
     "hash": "ab5d31384567562ef5c7bc1889e5fe9b"
@@ -10,6 +14,10 @@
   "C:\\C3\\synapse\\examples\\multi_backend_demo.py": {
     "mtime": 1778105688.4098427,
     "hash": "436bba683fa960ff8e4b300f9d240919"
+  },
+  "C:\\C3\\synapse\\examples\\openai_smoke.py": {
+    "mtime": 1778113913.0447707,
+    "hash": "76e3217482a9a360d80b0dc05576ba28"
   },
   "C:\\C3\\synapse\\examples\\two_agents_conflict_demo.py": {
     "mtime": 1778102873.4528935,
@@ -56,8 +64,8 @@
     "hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "C:\\C3\\synapse\\runtime\\router\\l3_semantic.py": {
-    "mtime": 1778107365.3561344,
-    "hash": "c348787ba61b75b26f430159e1af99ee"
+    "mtime": 1778113613.0460234,
+    "hash": "0cff9e48cfc1abc169a4a2a73661862c"
   },
   "C:\\C3\\synapse\\runtime\\router\\worker.py": {
     "mtime": 1778101792.792553,
@@ -104,8 +112,8 @@
     "hash": "a0690e9e4ff3a3c4d1d07769d5a97d7d"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\gemini_adapter.py": {
-    "mtime": 1778104402.2908866,
-    "hash": "92f66eed11524af40c6ba4ad545924b1"
+    "mtime": 1778113605.2521682,
+    "hash": "1005054dc186198338eca6a8e5aa070c"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\openai_adapter.py": {
     "mtime": 1778107073.7904263,
@@ -131,6 +139,34 @@
     "mtime": 1778104871.4210355,
     "hash": "b0c5f71a40ff3aa3256e2234cf598880"
   },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\bench.py": {
+    "mtime": 1778113726.365527,
+    "hash": "01c6cb7a5730ceec005052cebeb33857"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\main.py": {
+    "mtime": 1778113656.9999108,
+    "hash": "be46bc76b27b69914a30cf9ae5befb95"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\spec_validate.py": {
+    "mtime": 1778113676.4911134,
+    "hash": "1aeac55303591f80fd4735863c5acb57"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\__init__.py": {
+    "mtime": 1778113642.0035512,
+    "hash": "181aa6fb9620997fd452c202d9b35b74"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\crewai_integration.py": {
+    "mtime": 1778113846.8018491,
+    "hash": "c1c3cb19e215d7cf4a70386f9d155048"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\langgraph_integration.py": {
+    "mtime": 1778113820.8193228,
+    "hash": "b44dfc569852039b2faf6db4a5c5c5a2"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\__init__.py": {
+    "mtime": 1778113790.3151224,
+    "hash": "0fc7068c7185575499a995e860f87b72"
+  },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_coordinator.py": {
     "mtime": 1778106929.922534,
     "hash": "0c420fea443f652aa366f00a9e4d01ca"
@@ -146,6 +182,10 @@
   "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_contracts.py": {
     "mtime": 1778109377.174978,
     "hash": "3ac00e6b0cea96ec0e8372247017b828"
+  },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_integrations.py": {
+    "mtime": 1778113872.3205073,
+    "hash": "6b019e128532af983a0f1a911eddc38a"
   },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_l3_router.py": {
     "mtime": 1778107098.3684907,
@@ -244,8 +284,8 @@
     "hash": "f23c02d713cf93d81797a2336c649e6e"
   },
   "C:\\C3\\synapse\\bench\\README.md": {
-    "mtime": 1778092445.5859747,
-    "hash": "017c1230f4947739b3ff9abfd6e95187"
+    "mtime": 1778114101.0157146,
+    "hash": "0ca82ce0b3cb67efe60d77a4139fca36"
   },
   "C:\\C3\\synapse\\examples\\README.md": {
     "mtime": 1778102012.6441555,
@@ -282,6 +322,10 @@
   "C:\\C3\\synapse\\spec\\adr\\ADR-0001-architecture-baseline.md": {
     "mtime": 1778101404.3126304,
     "hash": "33e6ccfba5d3b9cfae0165365a284991"
+  },
+  "C:\\C3\\synapse\\spec\\adr\\ADR-0002-protocol-v1.0-freeze.md": {
+    "mtime": 1778113637.7893877,
+    "hash": "6523899fec55d10fc6d3738a8b58c4d1"
   },
   "C:\\C3\\synapse\\ui\\README.md": {
     "mtime": 1778110041.0091045,

@@ -1,0 +1,48 @@
+{
+  "backend": {
+    "id": "mock",
+    "tier": "native",
+    "model_id": "mock-llm-1",
+    "supports_midstream_inject": true,
+    "avg_overhead_per_signal": 1.0,
+    "is_reasoning_model": false
+  },
+  "workload": "conflict-heavy",
+  "session_id": "bench_mock_conflict-heavy_629dc1",
+  "signals_total": 8,
+  "conflicts_detected": 8,
+  "emit_latency_ms": {
+    "p50": 7.816791534423828,
+    "p95": 36.39030456542969,
+    "p99": 36.39030456542969,
+    "mean": 14.09175992012024
+  },
+  "conflict_signal_latency_ms": {
+    "p50": 73.28438758850098,
+    "p95": 115.76294898986816,
+    "p99": 115.76294898986816,
+    "mean": 71.94140553474426
+  },
+  "throughput_signals_per_sec": 7.089405348233978,
+  "wall_seconds": 1.1284444332122803,
+  "raw_emit_latencies_ms": [
+    36.39030456542969,
+    7.621049880981445,
+    13.671636581420898,
+    7.816791534423828,
+    6.39796257019043,
+    28.100252151489258,
+    6.196260452270508,
+    6.539821624755859
+  ],
+  "raw_conflict_latencies_ms": [
+    115.76294898986816,
+    84.72824096679688,
+    81.63118362426758,
+    73.28438758850098,
+    69.46873664855957,
+    67.51394271850586,
+    43.4572696685791,
+    39.68453407287598
+  ]
+}

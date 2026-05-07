@@ -25,7 +25,11 @@ dependencies = [
     "redis[hiredis]>=5.0,<6",
     "asyncpg>=0.29,<0.31",
     "python-ulid>=2.2,<4",
+    "jsonschema>=4.20",
 ]
+
+[project.scripts]
+synapse = "synapse.cli.main:main"
 
 [project.optional-dependencies]
 dev = [

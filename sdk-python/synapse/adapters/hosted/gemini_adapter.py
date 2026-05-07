@@ -118,6 +118,17 @@ class GeminiAdapter:
         }
         if system_instruction:
             config["system_instruction"] = system_instruction
+        # JSON mode: callers pass response_mime_type='application/json' when they
+        # need strict structured output (used by L3 router).
+        rmime = params.get("response_mime_type")
+        if rmime:
+            config["response_mime_type"] = rmime
+        rschema = params.get("response_schema")
+        if rschema:
+            config["response_schema"] = rschema
+        temp = params.get("temperature")
+        if temp is not None:
+            config["temperature"] = temp
 
         # The method is a coroutine that returns an async iterator. await first.
         try:

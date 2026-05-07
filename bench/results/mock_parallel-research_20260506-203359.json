@@ -1,0 +1,32 @@
+{
+  "backend": {
+    "id": "mock",
+    "tier": "native",
+    "model_id": "mock-llm-1",
+    "supports_midstream_inject": true,
+    "avg_overhead_per_signal": 1.0,
+    "is_reasoning_model": false
+  },
+  "workload": "parallel-research",
+  "session_id": "bench_mock_parallel-research_140c79",
+  "signals_total": 6,
+  "conflicts_detected": 0,
+  "emit_latency_ms": {
+    "p50": 7.14421272277832,
+    "p95": 52.544355392456055,
+    "p99": 52.544355392456055,
+    "mean": 18.10447374979655
+  },
+  "conflict_signal_latency_ms": null,
+  "throughput_signals_per_sec": 5.331507425096521,
+  "wall_seconds": 1.1253852844238281,
+  "raw_emit_latencies_ms": [
+    28.095245361328125,
+    52.544355392456055,
+    7.14421272277832,
+    7.874727249145508,
+    6.529092788696289,
+    6.439208984375
+  ],
+  "raw_conflict_latencies_ms": []
+}

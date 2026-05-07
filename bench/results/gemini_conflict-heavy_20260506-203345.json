@@ -1,0 +1,42 @@
+{
+  "backend": {
+    "id": "gemini",
+    "tier": "hosted",
+    "model_id": "gemini-2.5-flash",
+    "supports_midstream_inject": true,
+    "avg_overhead_per_signal": 1.2,
+    "is_reasoning_model": false
+  },
+  "workload": "conflict-heavy",
+  "session_id": "bench_gemini_conflict-heavy_5a36c8",
+  "signals_total": 6,
+  "conflicts_detected": 4,
+  "emit_latency_ms": {
+    "p50": 5.79524040222168,
+    "p95": 61.26260757446289,
+    "p99": 61.26260757446289,
+    "mean": 16.75526301066081
+  },
+  "conflict_signal_latency_ms": {
+    "p50": 10.267496109008789,
+    "p95": 64.3303394317627,
+    "p99": 64.3303394317627,
+    "mean": 22.763311862945557
+  },
+  "throughput_signals_per_sec": 5.41849220346165,
+  "wall_seconds": 1.1073191165924072,
+  "raw_emit_latencies_ms": [
+    18.321514129638672,
+    61.26260757446289,
+    6.256580352783203,
+    4.010915756225586,
+    4.8847198486328125,
+    5.79524040222168
+  ],
+  "raw_conflict_latencies_ms": [
+    64.3303394317627,
+    10.267496109008789,
+    7.884979248046875,
+    8.570432662963867
+  ]
+}

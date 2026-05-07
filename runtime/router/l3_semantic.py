@@ -225,9 +225,16 @@ class L3SemanticRouter:
         )
 
     async def _llm_decide(self, prompt: str) -> dict[str, Any]:
+        # Force JSON output. For Gemini, response_mime_type guarantees parseable
+        # JSON. Other backends ignore unknown params silently — they'll still
+        # work, just with the markdown-fence-tolerant parser below as fallback.
         handle = await self.backend.start_stream(
             messages=[{"role": "user", "content": prompt}],
-            params={"max_tokens": 600, "temperature": 0.0},
+            params={
+                "max_tokens": 800,
+                "temperature": 0.0,
+                "response_mime_type": "application/json",
+            },
         )
         chunks: list[str] = []
         async for tok in self.backend.read_tokens(handle):
