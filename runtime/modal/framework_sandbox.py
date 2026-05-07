@@ -786,6 +786,131 @@ def real_product_dev_openclaw(api_keys: dict[str, str]) -> dict[str, Any]:
         }
 
 
+@app.function(
+    cpu=4.0, memory=4096, timeout=900, scaledown_window=10,
+)
+def real_app_instagram(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Realistic multi-step product-dev workload: 4 specialist engineer
+    agents (db / api / auth / feed) collaboratively build an Instagram-
+    clone FastAPI backend, each doing 3 sequential LLM-driven file writes.
+    Natural overlaps: models/user.py touched by db+api+auth (3-way),
+    api/posts.py touched by api+feed (2-way).
+    """
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\npython3 /opt/synapse-payloads/real_app_instagram.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=900, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-50000:],
+            "stderr": proc.stderr[-3000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-50000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=900, scaledown_window=10,
+)
+def real_app_data_analysis(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Realistic multi-agent data-team workload: data_loader, data_cleaner,
+    analyst, visualizer collaboratively build a sales analysis report.
+    Natural collisions on column-name vocabulary and derived `revenue`
+    column (different formulas).
+    """
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\npython3 /opt/synapse-payloads/real_app_data_analysis.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=900, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-50000:],
+            "stderr": proc.stderr[-3000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-50000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def app_data_analysis() -> None:
+    """Run the realistic 4-agent data-analysis pipeline test."""
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+    print(">>> running realistic 4-agent data-analysis pipeline test...")
+    r = real_app_data_analysis.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"real_app_data_analysis_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")
+
+
+@app.local_entrypoint()
+def app_instagram() -> None:
+    """Run the realistic 4-agent Instagram-clone backend test."""
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+    print(">>> running realistic 4-agent Instagram-clone backend test...")
+    r = real_app_instagram.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"real_app_instagram_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")
+
+
 @app.local_entrypoint()
 def product_dev_openclaw() -> None:
     """Run real_product_dev_openclaw against a Modal sandbox."""

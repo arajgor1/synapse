@@ -192,14 +192,26 @@ class StateGraph:
         agent_id: str,
         session_id: str,
         scope: list[str],
+        resolved_lookback_ms: int = 60_000,
     ) -> list[dict[str, Any]]:
-        """Find active intentions in the same session, by other agents, with overlapping scope.
+        """Find conflicting intentions in the same session, by other agents.
+
+        Two cases get flagged:
+          1. **Active overlap** — another agent currently holds an active
+             intention on the same scope. This is the "two writers at once"
+             collision pattern.
+          2. **Recent resolution** (within `resolved_lookback_ms`) — another
+             agent recently wrote to this scope. The current agent likely
+             hasn't seen that change yet, so its claim is a *stale-base
+             overwrite* unless it has already synced.
 
         Two-step approach:
-        1) Coarse SQL filter via array overlap (GIN-indexed). Catches exact-match
-           and same-prefix scopes.
+        1) Coarse SQL filter via array overlap (GIN-indexed) on (active OR
+           recently-resolved) intentions.
         2) Fine refinement in Python via the conflict-semantics matcher
            (handles wildcards and read/write modifiers).
+
+        Each returned conflict carries `kind: "active" | "recent_resolution"`.
         """
         # Strip modifiers for the coarse SQL match — we check modifiers in step 2.
         bases = [parse_scope(s)[0] for s in scope]
@@ -207,16 +219,25 @@ class StateGraph:
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(
                 """
-                SELECT id, agent_id, scope, EXTRACT(EPOCH FROM created_at)*1000 AS started_ms
+                SELECT id, agent_id, scope, status,
+                       EXTRACT(EPOCH FROM created_at)*1000 AS started_ms,
+                       EXTRACT(EPOCH FROM resolved_at)*1000 AS resolved_ms
                 FROM intentions
                 WHERE session_id = $1
-                  AND status = 'active'
                   AND agent_id != $2
                   AND id != $3
+                  AND (
+                        status = 'active'
+                        OR (
+                          status = 'resolved'
+                          AND resolved_at > now() - ($4 || ' milliseconds')::interval
+                        )
+                      )
                 """,
                 session_id,
                 agent_id,
                 new_intention_id,
+                str(int(resolved_lookback_ms)),
             )
 
         conflicts_out: list[dict[str, Any]] = []
@@ -224,9 +245,11 @@ class StateGraph:
             existing_scopes: list[str] = list(r["scope"])
             overlap = find_overlapping_scopes(scope, existing_scopes)
             if not overlap:
-                # Try the bases too — for cases where SQL would have matched but
-                # the modifier check excluded it. (Belt-and-suspenders.)
                 continue
+            kind = (
+                "active" if r["status"] == "active"
+                else "recent_resolution"
+            )
             conflicts_out.append(
                 {
                     "intention_id": r["id"],
@@ -234,6 +257,10 @@ class StateGraph:
                     "scope": existing_scopes,
                     "started_at_ms": int(r["started_ms"]),
                     "overlapping_scopes": overlap,
+                    "kind": kind,
+                    "resolved_at_ms": (
+                        int(r["resolved_ms"]) if r["resolved_ms"] else None
+                    ),
                 }
             )
         return conflicts_out

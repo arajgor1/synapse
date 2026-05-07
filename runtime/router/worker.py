@@ -112,16 +112,38 @@ class Router:
             )
             overlapping_all.update(c["overlapping_scopes"])
 
+        # Distinguish "active overlap" (concurrent) vs "recent resolution"
+        # (sequential overwrite) for the rationale.
+        active_count = sum(1 for c in conflicts if c.get("kind") == "active")
+        recent_count = sum(1 for c in conflicts if c.get("kind") == "recent_resolution")
+        kind_str = (
+            "scope_overlap" if active_count > 0
+            else "stale_base_overwrite"
+        )
+        if active_count and recent_count:
+            rationale = (
+                f"Your intention's scope {intention.scope} overlaps with "
+                f"{active_count} active and {recent_count} recently-resolved "
+                f"intention(s) by other agent(s)."
+            )
+        elif active_count:
+            rationale = (
+                f"Your intention's scope {intention.scope} overlaps with "
+                f"{active_count} active intention(s) by other agent(s)."
+            )
+        else:
+            rationale = (
+                f"Your intention's scope {intention.scope} was just modified "
+                f"by {recent_count} other agent(s) — your write would clobber "
+                f"their changes unless you pull first."
+            )
         conflict_payload = Conflict(
             intention_id=env.msg_id,
             conflicting_intentions=cis,
-            kind="scope_overlap",
+            kind=kind_str,
             overlapping_scopes=sorted(overlapping_all),
             suggested_resolution="pivot",
-            rationale=(
-                f"Your intention's scope {intention.scope} overlaps with "
-                f"{len(cis)} active intention(s) by other agent(s)."
-            ),
+            rationale=rationale,
         )
         conflict_env = Envelope.make(
             type=MessageType.CONFLICT,
@@ -133,8 +155,10 @@ class Router:
         )
         await self.bus.publish_inbox(env.agent_id, conflict_env)
         logger.warning(
-            "CONFLICT routed to %s: intention=%s overlaps with %d active intention(s) on scopes %s",
-            env.agent_id, env.msg_id, len(cis), sorted(overlapping_all),
+            "CONFLICT (%s) routed to %s: intention=%s overlaps with %d "
+            "intention(s) (%d active, %d recent) on scopes %s",
+            kind_str, env.agent_id, env.msg_id, len(cis),
+            active_count, recent_count, sorted(overlapping_all),
         )
 
 

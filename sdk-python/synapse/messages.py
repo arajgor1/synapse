@@ -84,7 +84,13 @@ class ConflictingIntention(BaseModel):
 class Conflict(BaseModel):
     intention_id: str
     conflicting_intentions: list[ConflictingIntention] = Field(min_length=1)
-    kind: Literal["scope_overlap", "exclusive_claim", "policy_block", "dependency_wait"]
+    kind: Literal[
+        "scope_overlap",
+        "stale_base_overwrite",
+        "exclusive_claim",
+        "policy_block",
+        "dependency_wait",
+    ]
     overlapping_scopes: list[str] = Field(default_factory=list)
     suggested_resolution: Optional[
         Literal["wait", "pivot", "narrow_scope", "coordinate", "abort"]
