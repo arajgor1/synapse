@@ -1,0 +1,739 @@
+{
+  "run_id": "auto_1778196703",
+  "mode": "no_synapse",
+  "duration_s": 120.72,
+  "events": [
+    {
+      "t": 4.356,
+      "kind": "orchestrator_plan",
+      "turn": 1,
+      "thought": "Start with foundational backend: database schema, auth, and core models (User, Tenant, Subscription, Invoice). This unblocks all downstream work.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/db/schema.sql",
+          "spec": "Create tables: users (id, email, password_hash, created_at), tenants (id, name, owner_id, created_at), subscriptions (id, tenant_id, plan_type, seats, status, current_period_start/end, stripe_subscription_id), invoices (id, tenant_id, subscription_id, amount, status, due_date, created_at), invoice_line_items (id, invoice_id, description, quantity, unit_price). Add foreign keys and indexes."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/middleware/auth.js",
+          "spec": "Implement JWT-based auth middleware: generateToken(userId), verifyToken, requireAuth() middleware. Use jsonwebtoken + bcrypt for password hashing. Export for Express use."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/auth.routes.js",
+          "spec": "POST /auth/register (email, password) \u2192 hash password, create user, return JWT. POST /auth/login (email, password) \u2192 verify, return JWT. POST /auth/logout (stub). Include basic validation."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/app.js",
+          "spec": "Express app setup: connect to Postgres pool, mount auth routes, global error handler middleware, CORS enabled for frontend. Export app and pool for testing."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 4.357,
+      "kind": "worker_start",
+      "turn": 1,
+      "agent": "backend_engineer",
+      "file": "src/db/schema.sql",
+      "spec": "Create tables: users (id, email, password_hash, created_at), tenants (id, name, owner_id, created_at), subscriptions (id, tenant_id, plan_type, seats, status, current_period_start/end, stripe_subscription_id), invoices (id, tenant_id, subscription_id, amount, status, due_date, created_at), invoice_line_items (id, invoice_id, description, quantity, unit_price). Add foreign keys and indexes."
+    },
+    {
+      "t": 4.359,
+      "kind": "worker_start",
+      "turn": 1,
+      "agent": "backend_engineer",
+      "file": "src/middleware/auth.js",
+      "spec": "Implement JWT-based auth middleware: generateToken(userId), verifyToken, requireAuth() middleware. Use jsonwebtoken + bcrypt for password hashing. Export for Express use."
+    },
+    {
+      "t": 4.361,
+      "kind": "worker_start",
+      "turn": 1,
+      "agent": "backend_engineer",
+      "file": "src/routes/auth.routes.js",
+      "spec": "POST /auth/register (email, password) \u2192 hash password, create user, return JWT. POST /auth/login (email, password) \u2192 verify, return JWT. POST /auth/logout (stub). Include basic validation."
+    },
+    {
+      "t": 4.362,
+      "kind": "worker_start",
+      "turn": 1,
+      "agent": "backend_engineer",
+      "file": "src/app.js",
+      "spec": "Express app setup: connect to Postgres pool, mount auth routes, global error handler middleware, CORS enabled for frontend. Export app and pool for testing."
+    },
+    {
+      "t": 10.839,
+      "kind": "orchestrator_plan",
+      "turn": 2,
+      "thought": "Auth foundation is solid. Now build tenant/org management, subscription models, and invoice infrastructure before integrating Stripe.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/tenants.routes.js",
+          "spec": "POST /tenants (create org, user is owner), GET /tenants (list user's orgs), GET /tenants/:id (fetch one). Auth required."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/subscriptions.routes.js",
+          "spec": "POST /tenants/:id/subscriptions (create sub: tier + seat_count), GET /tenants/:id/subscriptions, PATCH to update seats. Validate tier exists."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/invoices.routes.js",
+          "spec": "GET /tenants/:id/invoices (list), GET /invoices/:id (detail with line_items). POST /invoices (admin only, manual creation for testing)."
+        },
+        {
+          "agent": "integrations_engineer",
+          "file": "src/services/stripe.service.js",
+          "spec": "Init Stripe SDK, createCustomer(email\u2192stripeId), createSubscription(customerId, priceId, seats), listInvoices(customerId). Export for webhook use."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 10.839,
+      "kind": "worker_start",
+      "turn": 2,
+      "agent": "backend_engineer",
+      "file": "src/routes/tenants.routes.js",
+      "spec": "POST /tenants (create org, user is owner), GET /tenants (list user's orgs), GET /tenants/:id (fetch one). Auth required."
+    },
+    {
+      "t": 10.841,
+      "kind": "worker_start",
+      "turn": 2,
+      "agent": "backend_engineer",
+      "file": "src/routes/subscriptions.routes.js",
+      "spec": "POST /tenants/:id/subscriptions (create sub: tier + seat_count), GET /tenants/:id/subscriptions, PATCH to update seats. Validate tier exists."
+    },
+    {
+      "t": 10.843,
+      "kind": "worker_start",
+      "turn": 2,
+      "agent": "backend_engineer",
+      "file": "src/routes/invoices.routes.js",
+      "spec": "GET /tenants/:id/invoices (list), GET /invoices/:id (detail with line_items). POST /invoices (admin only, manual creation for testing)."
+    },
+    {
+      "t": 10.845,
+      "kind": "worker_start",
+      "turn": 2,
+      "agent": "integrations_engineer",
+      "file": "src/services/stripe.service.js",
+      "spec": "Init Stripe SDK, createCustomer(email\u2192stripeId), createSubscription(customerId, priceId, seats), listInvoices(customerId). Export for webhook use."
+    },
+    {
+      "t": 18.451,
+      "kind": "orchestrator_plan",
+      "turn": 3,
+      "thought": "We have core backend routes and Stripe service foundation. Now we need: (1) webhook handler to sync Stripe events, (2) invoice generation logic, (3) React admin dashboard scaffold, (4) critical path tests. Let's add webhook handler, invoice service, dashboard entry point, and core auth/subscription tests.",
+      "assignments": [
+        {
+          "agent": "integrations_engineer",
+          "file": "src/routes/webhooks.routes.js",
+          "spec": "POST /webhooks/stripe (signature verification), handle invoice.created + customer.subscription.updated events, persist invoice records & update subscription state in DB"
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/services/invoice.service.js",
+          "spec": "generateInvoice(tenantId, subscriptionId, lineItems) \u2192 create invoice record with line items, return invoice object. calculateLineItems(subscription, usage) for usage-based pricing"
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/App.jsx",
+          "spec": "React admin dashboard entry: Auth wrapper, navbar, router with /tenants, /subscriptions, /invoices pages. State mgmt (Context or simple hooks) for authenticated user + tenant selection"
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "src/__tests__/auth.test.js",
+          "spec": "Jest + supertest: POST /auth/register (success, duplicate email), POST /auth/login (success, wrong password), verify JWT token generation & middleware"
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 18.451,
+      "kind": "worker_start",
+      "turn": 3,
+      "agent": "integrations_engineer",
+      "file": "src/routes/webhooks.routes.js",
+      "spec": "POST /webhooks/stripe (signature verification), handle invoice.created + customer.subscription.updated events, persist invoice records & update subscription state in DB"
+    },
+    {
+      "t": 18.453,
+      "kind": "worker_start",
+      "turn": 3,
+      "agent": "backend_engineer",
+      "file": "src/services/invoice.service.js",
+      "spec": "generateInvoice(tenantId, subscriptionId, lineItems) \u2192 create invoice record with line items, return invoice object. calculateLineItems(subscription, usage) for usage-based pricing"
+    },
+    {
+      "t": 18.454,
+      "kind": "worker_start",
+      "turn": 3,
+      "agent": "frontend_engineer",
+      "file": "src/admin/App.jsx",
+      "spec": "React admin dashboard entry: Auth wrapper, navbar, router with /tenants, /subscriptions, /invoices pages. State mgmt (Context or simple hooks) for authenticated user + tenant selection"
+    },
+    {
+      "t": 18.456,
+      "kind": "worker_start",
+      "turn": 3,
+      "agent": "qa_engineer",
+      "file": "src/__tests__/auth.test.js",
+      "spec": "Jest + supertest: POST /auth/register (success, duplicate email), POST /auth/login (success, wrong password), verify JWT token generation & middleware"
+    },
+    {
+      "t": 26.064,
+      "kind": "orchestrator_plan",
+      "turn": 4,
+      "thought": "Core auth & DB models are missing. Need user/tenant/subscription schemas + auth routes before dashboard can work. Start with database models and auth.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/models/index.js",
+          "spec": "Define Sequelize models: User (id, email, password_hash, created_at), Tenant (id, name, owner_id, stripe_customer_id, created_at), Subscription (id, tenant_id, stripe_subscription_id, tier, seat_count, status, current_period_start, current_period_end, created_at), Invoice (id, tenant_id, subscription_id, amount, status, stripe_invoice_id, created_at). Add associations (User.hasMany(Tenant), Tenant.hasMany(Subscription), etc)."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/auth.routes.js",
+          "spec": "POST /auth/register (email, password \u2192 hash + create User, return JWT), POST /auth/login (email, password \u2192 verify + return JWT), POST /auth/logout (clear token). Use bcrypt for hashing, jsonwebtoken for tokens."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/middleware/auth.middleware.js",
+          "spec": "verifyToken middleware: extract JWT from Authorization header, verify signature, attach user to req.user. Return 401 if missing/invalid. Apply to all protected routes."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/LoginPage.jsx",
+          "spec": "Login form (email, password inputs, submit button), POST to /auth/login, store JWT in localStorage, redirect to /dashboard on success, show error message on failure."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 26.064,
+      "kind": "worker_start",
+      "turn": 4,
+      "agent": "backend_engineer",
+      "file": "src/models/index.js",
+      "spec": "Define Sequelize models: User (id, email, password_hash, created_at), Tenant (id, name, owner_id, stripe_customer_id, created_at), Subscription (id, tenant_id, stripe_subscription_id, tier, seat_count, status, current_period_start, current_period_end, created_at), Invoice (id, tenant_id, subscription_id, amount, status, stripe_invoice_id, created_at). Add associations (User.hasMany(Tenant), Tenant.hasMany(Subscription), etc)."
+    },
+    {
+      "t": 26.066,
+      "kind": "worker_start",
+      "turn": 4,
+      "agent": "backend_engineer",
+      "file": "src/routes/auth.routes.js",
+      "spec": "POST /auth/register (email, password \u2192 hash + create User, return JWT), POST /auth/login (email, password \u2192 verify + return JWT), POST /auth/logout (clear token). Use bcrypt for hashing, jsonwebtoken for tokens."
+    },
+    {
+      "t": 26.067,
+      "kind": "worker_start",
+      "turn": 4,
+      "agent": "backend_engineer",
+      "file": "src/middleware/auth.middleware.js",
+      "spec": "verifyToken middleware: extract JWT from Authorization header, verify signature, attach user to req.user. Return 401 if missing/invalid. Apply to all protected routes."
+    },
+    {
+      "t": 26.069,
+      "kind": "worker_start",
+      "turn": 4,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/LoginPage.jsx",
+      "spec": "Login form (email, password inputs, submit button), POST to /auth/login, store JWT in localStorage, redirect to /dashboard on success, show error message on failure."
+    },
+    {
+      "t": 37.362,
+      "kind": "orchestrator_plan",
+      "turn": 5,
+      "thought": "We have auth, models, and basic routes. Now build: tenant management (create/list), subscription CRUD, invoice list endpoints, then wire the dashboard to actually fetch and display data.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/tenants.routes.js",
+          "spec": "POST /tenants (create org, set userId as owner), GET /tenants (list user's tenants), GET /tenants/:id (fetch one with subscriptions). Use auth middleware."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/subscriptions.routes.js",
+          "spec": "POST /subscriptions (tenantId, type='per-seat'|'usage', seatCount or usageLimit), GET /subscriptions (list by tenant), PATCH /subscriptions/:id (update seatCount/usageLimit)."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/invoices.routes.js",
+          "spec": "GET /invoices (list by tenantId query param), GET /invoices/:id (fetch with line items). No POST\u2014invoices auto-generated by subscriptions/webhooks."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/TenantsPage.jsx",
+          "spec": "List tenants in table, 'Create Tenant' button (modal form), click row \u2192 detail page with subscriptions list. Fetch GET /tenants on mount."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 37.363,
+      "kind": "worker_start",
+      "turn": 5,
+      "agent": "backend_engineer",
+      "file": "src/routes/tenants.routes.js",
+      "spec": "POST /tenants (create org, set userId as owner), GET /tenants (list user's tenants), GET /tenants/:id (fetch one with subscriptions). Use auth middleware."
+    },
+    {
+      "t": 37.365,
+      "kind": "worker_start",
+      "turn": 5,
+      "agent": "backend_engineer",
+      "file": "src/routes/subscriptions.routes.js",
+      "spec": "POST /subscriptions (tenantId, type='per-seat'|'usage', seatCount or usageLimit), GET /subscriptions (list by tenant), PATCH /subscriptions/:id (update seatCount/usageLimit)."
+    },
+    {
+      "t": 37.366,
+      "kind": "worker_start",
+      "turn": 5,
+      "agent": "backend_engineer",
+      "file": "src/routes/invoices.routes.js",
+      "spec": "GET /invoices (list by tenantId query param), GET /invoices/:id (fetch with line items). No POST\u2014invoices auto-generated by subscriptions/webhooks."
+    },
+    {
+      "t": 37.368,
+      "kind": "worker_start",
+      "turn": 5,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/TenantsPage.jsx",
+      "spec": "List tenants in table, 'Create Tenant' button (modal form), click row \u2192 detail page with subscriptions list. Fetch GET /tenants on mount."
+    },
+    {
+      "t": 45.518,
+      "kind": "orchestrator_plan",
+      "turn": 6,
+      "thought": "We have auth, tenants, subscriptions, and invoices routes. Now integrate Stripe: webhook handler for events, create subscription/invoice sync logic, then add dashboard pages for subs+invoices, then test critical paths.",
+      "assignments": [
+        {
+          "agent": "integrations_engineer",
+          "file": "src/services/stripe.service.js",
+          "spec": "Stripe SDK init, createCustomer(email), createPrice(tenantId, type, amount), createSubscription(customerId, priceId), listInvoices(customerId). Export all."
+        },
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/webhooks.routes.js",
+          "spec": "POST /webhooks/stripe (verify sig with process.env.STRIPE_WEBHOOK_SECRET), handle customer.subscription.created, customer.subscription.updated, invoice.payment_succeeded\u2014sync to DB."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/SubscriptionsPage.jsx",
+          "spec": "GET /subscriptions, display table (tenantName, type, seats/usage, status, nextBillingDate), 'Create Subscription' button with modal (tenant dropdown, type, seats input)."
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "tests/auth.test.js",
+          "spec": "Jest + supertest: POST /auth/register (success, duplicate email), POST /auth/login (success, wrong password), verifyToken middleware (valid/expired token)."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 45.519,
+      "kind": "worker_start",
+      "turn": 6,
+      "agent": "integrations_engineer",
+      "file": "src/services/stripe.service.js",
+      "spec": "Stripe SDK init, createCustomer(email), createPrice(tenantId, type, amount), createSubscription(customerId, priceId), listInvoices(customerId). Export all."
+    },
+    {
+      "t": 45.521,
+      "kind": "worker_start",
+      "turn": 6,
+      "agent": "backend_engineer",
+      "file": "src/routes/webhooks.routes.js",
+      "spec": "POST /webhooks/stripe (verify sig with process.env.STRIPE_WEBHOOK_SECRET), handle customer.subscription.created, customer.subscription.updated, invoice.payment_succeeded\u2014sync to DB."
+    },
+    {
+      "t": 45.523,
+      "kind": "worker_start",
+      "turn": 6,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/SubscriptionsPage.jsx",
+      "spec": "GET /subscriptions, display table (tenantName, type, seats/usage, status, nextBillingDate), 'Create Subscription' button with modal (tenant dropdown, type, seats input)."
+    },
+    {
+      "t": 45.525,
+      "kind": "worker_start",
+      "turn": 6,
+      "agent": "qa_engineer",
+      "file": "tests/auth.test.js",
+      "spec": "Jest + supertest: POST /auth/register (success, duplicate email), POST /auth/login (success, wrong password), verifyToken middleware (valid/expired token)."
+    },
+    {
+      "t": 54.138,
+      "kind": "orchestrator_plan",
+      "turn": 7,
+      "thought": "We have auth, tenants, subscriptions, invoices routes + Stripe service. Now need: (1) invoice generation logic tied to Stripe, (2) webhook processing for subscription events, (3) complete admin dashboard with subscriptions detail view, (4) critical path tests for subscription\u2192invoice flow.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/services/invoice.service.js",
+          "spec": "createInvoiceFromSubscription(subscriptionId, amount, lineItems) \u2014 generate Invoice record + line items in DB, mark pending. Called by webhook or manual trigger."
+        },
+        {
+          "agent": "integrations_engineer",
+          "file": "src/webhooks/stripeWebhookHandler.js",
+          "spec": "Handle customer.subscription.created, customer.subscription.updated events; extract tenantId from metadata; call invoice.service.createInvoiceFromSubscription() for billing events."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/InvoicesPage.jsx",
+          "spec": "GET /invoices with tenantId filter; table showing (tenantName, amount, status, dueDate, lineItems count); detail modal for line items breakdown."
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "tests/subscriptions.test.js",
+          "spec": "Jest + supertest: POST /subscriptions (success, invalid tenantId), GET /subscriptions; verify DB records created with correct pricing tier."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 54.139,
+      "kind": "worker_start",
+      "turn": 7,
+      "agent": "backend_engineer",
+      "file": "src/services/invoice.service.js",
+      "spec": "createInvoiceFromSubscription(subscriptionId, amount, lineItems) \u2014 generate Invoice record + line items in DB, mark pending. Called by webhook or manual trigger."
+    },
+    {
+      "t": 54.14,
+      "kind": "worker_start",
+      "turn": 7,
+      "agent": "integrations_engineer",
+      "file": "src/webhooks/stripeWebhookHandler.js",
+      "spec": "Handle customer.subscription.created, customer.subscription.updated events; extract tenantId from metadata; call invoice.service.createInvoiceFromSubscription() for billing events."
+    },
+    {
+      "t": 54.142,
+      "kind": "worker_start",
+      "turn": 7,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/InvoicesPage.jsx",
+      "spec": "GET /invoices with tenantId filter; table showing (tenantName, amount, status, dueDate, lineItems count); detail modal for line items breakdown."
+    },
+    {
+      "t": 54.144,
+      "kind": "worker_start",
+      "turn": 7,
+      "agent": "qa_engineer",
+      "file": "tests/subscriptions.test.js",
+      "spec": "Jest + supertest: POST /subscriptions (success, invalid tenantId), GET /subscriptions; verify DB records created with correct pricing tier."
+    },
+    {
+      "t": 61.345,
+      "kind": "orchestrator_plan",
+      "turn": 8,
+      "thought": "We have auth, subscriptions, invoices, and Stripe webhooks. Now we need: (1) the actual subscription creation endpoint that ties to Stripe, (2) invoice generation on subscription events, (3) test coverage for the Stripe integration, (4) admin dashboard for tenants. Let's complete the backend subscription flow and add tenant management.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/subscriptions.routes.js",
+          "spec": "POST /subscriptions (create sub via stripe.service, store in DB, link to tenant); GET /subscriptions (filter by tenantId); GET /subscriptions/:id (fetch one)"
+        },
+        {
+          "agent": "integrations_engineer",
+          "file": "src/webhooks/invoiceWebhookHandler.js",
+          "spec": "Listen to invoice.created, invoice.payment_succeeded; call invoice.service to persist invoice + line items in DB"
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/TenantsPage.jsx",
+          "spec": "GET /tenants; table showing (id, name, email, createdAt); link to subscriptions + invoices; create tenant button"
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "tests/stripe-webhook.test.js",
+          "spec": "Jest + supertest: POST /webhooks/stripe with mock Stripe events (subscription.created, invoice.created); verify DB state + handler calls"
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 61.345,
+      "kind": "worker_start",
+      "turn": 8,
+      "agent": "backend_engineer",
+      "file": "src/routes/subscriptions.routes.js",
+      "spec": "POST /subscriptions (create sub via stripe.service, store in DB, link to tenant); GET /subscriptions (filter by tenantId); GET /subscriptions/:id (fetch one)"
+    },
+    {
+      "t": 61.347,
+      "kind": "worker_start",
+      "turn": 8,
+      "agent": "integrations_engineer",
+      "file": "src/webhooks/invoiceWebhookHandler.js",
+      "spec": "Listen to invoice.created, invoice.payment_succeeded; call invoice.service to persist invoice + line items in DB"
+    },
+    {
+      "t": 61.348,
+      "kind": "worker_start",
+      "turn": 8,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/TenantsPage.jsx",
+      "spec": "GET /tenants; table showing (id, name, email, createdAt); link to subscriptions + invoices; create tenant button"
+    },
+    {
+      "t": 61.35,
+      "kind": "worker_start",
+      "turn": 8,
+      "agent": "qa_engineer",
+      "file": "tests/stripe-webhook.test.js",
+      "spec": "Jest + supertest: POST /webhooks/stripe with mock Stripe events (subscription.created, invoice.created); verify DB state + handler calls"
+    },
+    {
+      "t": 72.934,
+      "kind": "orchestrator_plan",
+      "turn": 9,
+      "thought": "System has core auth, tenants, subscriptions, invoices, and Stripe webhooks. Need: (1) payment method routes + tests, (2) subscription dashboard with real data, (3) critical path test for full billing flow, (4) middleware/error handling. Then we're done.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/payments.routes.js",
+          "spec": "POST /payments/methods (attach card to tenant via Stripe), GET /payments/methods (list), DELETE /payments/methods/:id (detach). Use stripe.service & auth middleware."
+        },
+        {
+          "agent": "integrations_engineer",
+          "file": "src/services/stripe.service.js",
+          "spec": "Helper layer: createCustomer(tenantId, email), attachPaymentMethod(customerId, pmId), chargeCustomer(customerId, amount, invoiceId). Abstract Stripe SDK calls."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/SubscriptionsPage.jsx",
+          "spec": "GET /subscriptions with tenantId filter; table showing (tenantName, plan, status, nextBillingDate, amount); detail modal with payment method + cancel button."
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "tests/billing-flow.test.js",
+          "spec": "Jest + supertest: end-to-end happy path\u2014create tenant \u2192 attach payment method \u2192 create subscription \u2192 verify invoice created \u2192 verify webhook processed \u2192 check invoice.status=paid."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 72.935,
+      "kind": "worker_start",
+      "turn": 9,
+      "agent": "backend_engineer",
+      "file": "src/routes/payments.routes.js",
+      "spec": "POST /payments/methods (attach card to tenant via Stripe), GET /payments/methods (list), DELETE /payments/methods/:id (detach). Use stripe.service & auth middleware."
+    },
+    {
+      "t": 72.936,
+      "kind": "worker_start",
+      "turn": 9,
+      "agent": "integrations_engineer",
+      "file": "src/services/stripe.service.js",
+      "spec": "Helper layer: createCustomer(tenantId, email), attachPaymentMethod(customerId, pmId), chargeCustomer(customerId, amount, invoiceId). Abstract Stripe SDK calls."
+    },
+    {
+      "t": 72.938,
+      "kind": "worker_start",
+      "turn": 9,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/SubscriptionsPage.jsx",
+      "spec": "GET /subscriptions with tenantId filter; table showing (tenantName, plan, status, nextBillingDate, amount); detail modal with payment method + cancel button."
+    },
+    {
+      "t": 72.94,
+      "kind": "worker_start",
+      "turn": 9,
+      "agent": "qa_engineer",
+      "file": "tests/billing-flow.test.js",
+      "spec": "Jest + supertest: end-to-end happy path\u2014create tenant \u2192 attach payment method \u2192 create subscription \u2192 verify invoice created \u2192 verify webhook processed \u2192 check invoice.status=paid."
+    },
+    {
+      "t": 80.401,
+      "kind": "orchestrator_plan",
+      "turn": 10,
+      "thought": "We have auth, tenants, subscriptions, Stripe integration, and webhooks. Now need: invoice retrieval/display, admin invoice page, and critical path tests for auth + invoice generation. Then system is complete.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/invoices.routes.js",
+          "spec": "GET /invoices (list invoices with tenantId filter, pagination); GET /invoices/:id (fetch single invoice with line items); both return 200 or 404."
+        },
+        {
+          "agent": "integrations_engineer",
+          "file": "src/webhooks/chargeWebhookHandler.js",
+          "spec": "Listen to charge.succeeded, charge.failed; update payment status in DB and trigger invoice.created if needed via Stripe API."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/InvoicesPage.jsx",
+          "spec": "GET /invoices with tenantId filter; table showing (invoiceId, tenantName, amount, status, dueDate); detail modal on click."
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "tests/auth-and-invoices.test.js",
+          "spec": "Jest + supertest: auth flow (register \u2192 login \u2192 JWT token); invoice generation flow (create tenant \u2192 attach payment \u2192 create subscription \u2192 verify invoice created)."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 80.401,
+      "kind": "worker_start",
+      "turn": 10,
+      "agent": "backend_engineer",
+      "file": "src/routes/invoices.routes.js",
+      "spec": "GET /invoices (list invoices with tenantId filter, pagination); GET /invoices/:id (fetch single invoice with line items); both return 200 or 404."
+    },
+    {
+      "t": 80.403,
+      "kind": "worker_start",
+      "turn": 10,
+      "agent": "integrations_engineer",
+      "file": "src/webhooks/chargeWebhookHandler.js",
+      "spec": "Listen to charge.succeeded, charge.failed; update payment status in DB and trigger invoice.created if needed via Stripe API."
+    },
+    {
+      "t": 80.405,
+      "kind": "worker_start",
+      "turn": 10,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/InvoicesPage.jsx",
+      "spec": "GET /invoices with tenantId filter; table showing (invoiceId, tenantName, amount, status, dueDate); detail modal on click."
+    },
+    {
+      "t": 80.407,
+      "kind": "worker_start",
+      "turn": 10,
+      "agent": "qa_engineer",
+      "file": "tests/auth-and-invoices.test.js",
+      "spec": "Jest + supertest: auth flow (register \u2192 login \u2192 JWT token); invoice generation flow (create tenant \u2192 attach payment \u2192 create subscription \u2192 verify invoice created)."
+    },
+    {
+      "t": 98.189,
+      "kind": "orchestrator_plan",
+      "turn": 11,
+      "thought": "System has auth, tenants, subscriptions, invoices, Stripe webhooks, and admin UI. Missing: subscription renewal logic (cron/job queue), payment method validation on checkout, and critical path test for subscription\u2192invoice\u2192charge flow. Next: add subscription renewal service, then final integration test.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/services/subscription-renewal.service.js",
+          "spec": "Renewal logic: find due subscriptions, calculate next billing date, create invoice line items, sync to Stripe (create invoice object), return invoice ID. Handle both per-seat and usage-based pricing."
+        },
+        {
+          "agent": "integrations_engineer",
+          "file": "src/jobs/renewal-job.js",
+          "spec": "Node-cron job (runs daily at 00:00 UTC): call subscription-renewal service for all active subscriptions, log successes/failures, emit renewal completion events for monitoring."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/pages/PaymentMethodsPage.jsx",
+          "spec": "List payment methods per tenant (GET /payments/methods); UI to add/remove cards; show Stripe card brand, last 4 digits, expiry. Delete button calls DELETE /payments/methods/:methodId."
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "tests/subscription-to-charge-flow.test.js",
+          "spec": "Jest + supertest: end-to-end test covering create tenant \u2192 add payment method \u2192 create subscription \u2192 trigger renewal job \u2192 verify invoice created \u2192 simulate Stripe charge.succeeded webhook \u2192 verify payment status updated."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 98.189,
+      "kind": "worker_start",
+      "turn": 11,
+      "agent": "backend_engineer",
+      "file": "src/services/subscription-renewal.service.js",
+      "spec": "Renewal logic: find due subscriptions, calculate next billing date, create invoice line items, sync to Stripe (create invoice object), return invoice ID. Handle both per-seat and usage-based pricing."
+    },
+    {
+      "t": 98.191,
+      "kind": "worker_start",
+      "turn": 11,
+      "agent": "integrations_engineer",
+      "file": "src/jobs/renewal-job.js",
+      "spec": "Node-cron job (runs daily at 00:00 UTC): call subscription-renewal service for all active subscriptions, log successes/failures, emit renewal completion events for monitoring."
+    },
+    {
+      "t": 98.193,
+      "kind": "worker_start",
+      "turn": 11,
+      "agent": "frontend_engineer",
+      "file": "src/admin/pages/PaymentMethodsPage.jsx",
+      "spec": "List payment methods per tenant (GET /payments/methods); UI to add/remove cards; show Stripe card brand, last 4 digits, expiry. Delete button calls DELETE /payments/methods/:methodId."
+    },
+    {
+      "t": 98.194,
+      "kind": "worker_start",
+      "turn": 11,
+      "agent": "qa_engineer",
+      "file": "tests/subscription-to-charge-flow.test.js",
+      "spec": "Jest + supertest: end-to-end test covering create tenant \u2192 add payment method \u2192 create subscription \u2192 trigger renewal job \u2192 verify invoice created \u2192 simulate Stripe charge.succeeded webhook \u2192 verify payment status updated."
+    },
+    {
+      "t": 110.02,
+      "kind": "orchestrator_plan",
+      "turn": 12,
+      "thought": "System is nearly complete. Need: (1) payment method management API endpoints, (2) webhook signature verification middleware, (3) error handling + logging setup, (4) final integration test covering the full billing cycle. After this round, the platform should be production-ready.",
+      "assignments": [
+        {
+          "agent": "backend_engineer",
+          "file": "src/routes/payments.routes.js",
+          "spec": "POST /payments/methods (attach card via Stripe token); GET /payments/methods (list per tenant); DELETE /payments/methods/:paymentMethodId (remove card); set default method."
+        },
+        {
+          "agent": "integrations_engineer",
+          "file": "src/middleware/stripe-webhook-verify.js",
+          "spec": "Express middleware: verify Stripe webhook signature using raw body + webhook secret; reject if invalid; attach event to req.stripeEvent."
+        },
+        {
+          "agent": "frontend_engineer",
+          "file": "src/admin/components/SubscriptionCard.jsx",
+          "spec": "Reusable card component showing: tenant name, subscription plan, seats/usage, next billing date, status badge (active/past-due/cancelled), action buttons (upgrade/cancel)."
+        },
+        {
+          "agent": "qa_engineer",
+          "file": "tests/full-billing-cycle.test.js",
+          "spec": "End-to-end Jest + supertest test: create tenant \u2192 create subscription \u2192 attach payment method \u2192 trigger renewal job \u2192 verify charge created \u2192 verify webhook processed \u2192 verify invoice generated."
+        }
+      ],
+      "done": false
+    },
+    {
+      "t": 110.021,
+      "kind": "worker_start",
+      "turn": 12,
+      "agent": "backend_engineer",
+      "file": "src/routes/payments.routes.js",
+      "spec": "POST /payments/methods (attach card via Stripe token); GET /payments/methods (list per tenant); DELETE /payments/methods/:paymentMethodId (remove card); set default method."
+    },
+    {
+      "t": 110.022,
+      "kind": "worker_start",
+      "turn": 12,
+      "agent": "integrations_engineer",
+      "file": "src/middleware/stripe-webhook-verify.js",
+      "spec": "Express middleware: verify Stripe webhook signature using raw body + webhook secret; reject if invalid; attach event to req.stripeEvent."
+    },
+    {
+      "t": 110.025,
+      "kind": "worker_start",
+      "turn": 12,
+      "agent": "frontend_engineer",
+      "file": "src/admin/components/SubscriptionCard.jsx",
+      "spec": "Reusable card component showing: tenant name, subscription plan, seats/usage, next billing date, status badge (active/past-due/cancelled), action buttons (upgrade/cancel)."
+    },
+    {
+      "t": 110.027,
+      "kind": "worker_start",
+      "turn": 12,
+      "agent": "qa_engineer",
+      "file": "tests/full-billing-cycle.test.js",
+      "spec": "End-to-end Jest + supertest test: create tenant \u2192 create subscription \u2192 attach payment method \u2192 trigger renewal job \u2192 verify charge created \u2192 verify webhook processed \u2192 verify invoice generated."
+    }
+  ]
+}

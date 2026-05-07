@@ -1122,28 +1122,55 @@ def v02_autonomous_observer_run(api_keys: dict[str, str]) -> dict[str, Any]:
     """Autonomous observer test — real orchestrator + workers build mini-Stripe
     while Synapse watches. Returns capture artifacts inlined so the host can
     persist them.
+
+    Streams subprocess stdout line-by-line to the function's own stdout so
+    Modal logs surface live progress. The whole stream is also accumulated
+    and returned at the end.
     """
     import base64
     import subprocess
     started = time.time()
     setup = _common_setup_script()
-    script = setup + "\n\npython3 /opt/synapse-payloads/v02_autonomous_observer.py 2>&1\n"
+    script = setup + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v02_autonomous_observer.py 2>&1\n"
 
     env = dict(os.environ)
     env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
     try:
-        proc = subprocess.run(
+        proc = subprocess.Popen(
             ["bash", "-c", script],
-            capture_output=True, text=True, timeout=2400, env=env,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
         )
-    except subprocess.TimeoutExpired as e:
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None:
+                    break
+                continue
+            print(line.rstrip(), flush=True)  # surfaces in Modal logs
+            captured.append(line)
+            if time.time() - started > 2400:
+                proc.terminate()
+                return {
+                    "exit_code": -1,
+                    "stdout": "".join(captured)[-100000:],
+                    "stderr": "TIMEOUT",
+                    "elapsed_seconds": round(time.time() - started, 1),
+                    "captures": {},
+                }
+        proc.wait()
+    except Exception as e:
         return {
-            "exit_code": -1,
-            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-100000:],
-            "stderr": "TIMEOUT",
+            "exit_code": -2,
+            "stdout": "".join(captured)[-100000:],
+            "stderr": f"streaming exception: {e}",
             "elapsed_seconds": round(time.time() - started, 1),
             "captures": {},
         }
+    proc_returncode = proc.returncode
+    proc_stdout_full = "".join(captured)
 
     captures_dir = "/tmp/v02_auto_captures"
     captures: dict[str, str] = {}
@@ -1158,9 +1185,9 @@ def v02_autonomous_observer_run(api_keys: dict[str, str]) -> dict[str, Any]:
                     pass
 
     return {
-        "exit_code": proc.returncode,
-        "stdout": proc.stdout[-100000:],
-        "stderr": proc.stderr[-3000:],
+        "exit_code": proc_returncode,
+        "stdout": proc_stdout_full[-100000:],
+        "stderr": "",
         "elapsed_seconds": round(time.time() - started, 1),
         "captures": captures,
     }

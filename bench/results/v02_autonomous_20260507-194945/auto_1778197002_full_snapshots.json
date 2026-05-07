@@ -1,0 +1,674 @@
+[
+  {
+    "t": 9.643,
+    "path": "/tmp/auto_full_139e/src/models/User.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 9.644,
+    "path": "/tmp/auto_full_139e/src/models/Tenant.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 9.646,
+    "path": "/tmp/auto_full_139e/src/models/Subscription.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 9.647,
+    "path": "/tmp/auto_full_139e/src/models/Invoice.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 13.313,
+    "path": "/tmp/auto_full_139e/src/models/Tenant.js",
+    "phase": "after",
+    "size": 832,
+    "preview": "const mongoose = require('mongoose');\n\nconst tenantSchema = new mongoose.Schema(\n  {\n    name: {\n      type: String,\n      required: true,\n      trim: true,\n    },\n    slug: {\n      type: String,\n      required: true,\n      unique: true,\n      lowercase: true,\n      trim: true,\n    },\n    ownerId: {"
+  },
+  {
+    "t": 13.506,
+    "path": "/tmp/auto_full_139e/src/models/User.js",
+    "phase": "after",
+    "size": 972,
+    "preview": "const mongoose = require('mongoose');\nconst bcrypt = require('bcrypt');\n\nconst userSchema = new mongoose.Schema({\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    lowercase: true,\n    trim: true,\n    match: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/\n  },\n  password: {\n    type: String,\n    r"
+  },
+  {
+    "t": 20.588,
+    "path": "/tmp/auto_full_139e/src/models/Subscription.js",
+    "phase": "after",
+    "size": 1290,
+    "preview": "const mongoose = require('mongoose');\n\nconst subscriptionSchema = new mongoose.Schema(\n  {\n    tenantId: {\n      type: mongoose.Schema.Types.ObjectId,\n      ref: 'Tenant',\n      required: true,\n      index: true,\n    },\n    stripeSubscriptionId: {\n      type: String,\n      required: true,\n      uniq"
+  },
+  {
+    "t": 21.972,
+    "path": "/tmp/auto_full_139e/src/models/Invoice.js",
+    "phase": "after",
+    "size": 1298,
+    "preview": "const mongoose = require('mongoose');\n\nconst lineItemSchema = new mongoose.Schema({\n  description: String,\n  quantity: Number,\n  unitPrice: Number,\n  total: {\n    type: Number,\n    get: function() {\n      return this.quantity * this.unitPrice;\n    }\n  }\n}, { _id: false, toJSON: { getters: true } });"
+  },
+  {
+    "t": 25.585,
+    "path": "/tmp/auto_full_139e/src/server.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 25.586,
+    "path": "/tmp/auto_full_139e/src/routes/auth.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 25.588,
+    "path": "/tmp/auto_full_139e/src/middleware/auth.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 25.589,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 28.906,
+    "path": "/tmp/auto_full_139e/src/middleware/auth.js",
+    "phase": "after",
+    "size": 490,
+    "preview": "const jwt = require('jsonwebtoken');\n\nconst authMiddleware = (req, res, next) => {\n  const token = req.headers.authorization?.split(' ')[1];\n\n  if (!token) {\n    return res.status(401).json({ error: 'Missing token' });\n  }\n\n  try {\n    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'you"
+  },
+  {
+    "t": 29.607,
+    "path": "/tmp/auto_full_139e/src/server.js",
+    "phase": "after",
+    "size": 1181,
+    "preview": "const express = require('express');\nconst bodyParser = require('body-parser');\nconst cors = require('cors');\nconst { Pool } = require('pg');\n\nconst app = express();\n\n// Middleware\napp.use(bodyParser.json());\napp.use(bodyParser.urlencoded({ extended: true }));\napp.use(cors());\n\n// PostgreSQL Connecti"
+  },
+  {
+    "t": 38.697,
+    "path": "/tmp/auto_full_139e/src/routes/auth.js",
+    "phase": "after",
+    "size": 1832,
+    "preview": "const express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst router = express.Router();\n\nconst users = new Map();\n\nconst validateEmail = (email) => {\n  const re = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return re.test(email);\n};\n\nconst validatePassword = ("
+  },
+  {
+    "t": 38.906,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "after",
+    "size": 1813,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst Invoice = require('../models/Invoice');\nconst Subscription = require('../models/Subscription');\n\nconst router = express.Router();\n\nrouter.post('/stripe', express.raw({ type: 'application/json' "
+  },
+  {
+    "t": 42.599,
+    "path": "/tmp/auto_full_139e/src/routes/tenants.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 42.601,
+    "path": "/tmp/auto_full_139e/src/routes/subscriptions.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 42.602,
+    "path": "/tmp/auto_full_139e/src/services/StripeService.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 42.603,
+    "path": "/tmp/auto_full_139e/src/components/Dashboard.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 56.674,
+    "path": "/tmp/auto_full_139e/src/routes/subscriptions.js",
+    "phase": "after",
+    "size": 1767,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst router = express.Router();\n\nconst PRICE_PER_SEAT = 1000; // $10 in cents\n\nrouter.post('/subscriptions', async (req, res) => {\n  try {\n    const { customerId, seatCount } = req.body;\n\n    const "
+  },
+  {
+    "t": 56.824,
+    "path": "/tmp/auto_full_139e/src/routes/tenants.js",
+    "phase": "after",
+    "size": 1801,
+    "preview": "const express = require('express');\nconst { body, param, validationResult } = require('express-validator');\nconst auth = require('../middleware/auth');\nconst Tenant = require('../models/Tenant');\n\nconst router = express.Router();\n\nrouter.post(\n  '/',\n  auth,\n  [\n    body('name').trim().notEmpty().wi"
+  },
+  {
+    "t": 56.899,
+    "path": "/tmp/auto_full_139e/src/components/Dashboard.jsx",
+    "phase": "after",
+    "size": 1945,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Plus, AlertCircle, CheckCircle } from 'lucide-react';\n\nexport default function Dashboard() {\n  const [tenants, setTenants] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEf"
+  },
+  {
+    "t": 56.966,
+    "path": "/tmp/auto_full_139e/src/services/StripeService.js",
+    "phase": "after",
+    "size": 1961,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createCustomer(email) {\n    try {\n      const customer = await stripe.customers.create({\n        email: email,\n      });\n      return {\n        success: true,\n        customerId: customer.id,\n        emai"
+  },
+  {
+    "t": 65.209,
+    "path": "/tmp/auto_full_139e/src/models/schema.sql",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 65.211,
+    "path": "/tmp/auto_full_139e/src/routes/invoices.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 65.212,
+    "path": "/tmp/auto_full_139e/src/services/WebhookSyncService.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 65.214,
+    "path": "/tmp/auto_full_139e/src/pages/SubscriptionsPage.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 70.037,
+    "path": "/tmp/auto_full_139e/src/models/schema.sql",
+    "phase": "after",
+    "size": 1758,
+    "preview": "CREATE TABLE users (\n  id BIGSERIAL PRIMARY KEY,\n  email VARCHAR(255) NOT NULL UNIQUE,\n  password_hash VARCHAR(255) NOT NULL,\n  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE tenants (\n  id BIGSERIAL PRIMARY KEY,\n  user_id BIGINT NOT NULL,\n  name VARCHAR(255) NOT NULL,\n  st"
+  },
+  {
+    "t": 80.594,
+    "path": "/tmp/auto_full_139e/src/routes/invoices.js",
+    "phase": "after",
+    "size": 1949,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { authenticate } = require('../middleware/auth');\nconst { checkTenantOwnership } = require('../middleware/tenantOwnership');\nconst Invoice = require('../models/Invoice');\nconst LineItem = require('../models/LineItem');\n\n// GE"
+  },
+  {
+    "t": 80.981,
+    "path": "/tmp/auto_full_139e/src/pages/SubscriptionsPage.jsx",
+    "phase": "after",
+    "size": 1921,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { API_BASE_URL } from '../config';\n\nexport default function SubscriptionsPage() {\n  const [subscriptions, setSubscriptions] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [editingId, setEditingId] = useState(null);\n "
+  },
+  {
+    "t": 82.204,
+    "path": "/tmp/auto_full_139e/src/services/WebhookSyncService.js",
+    "phase": "after",
+    "size": 2054,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst db = require('../config/database');\n\nclass WebhookSyncService {\n  static async handleCustomerSubscriptionUpdated(event) {\n    const subscription = event.data.object;\n    const customerId = subscription.customer;\n    const seats ="
+  },
+  {
+    "t": 87.289,
+    "path": "/tmp/auto_full_139e/src/middleware/auth.js",
+    "phase": "before",
+    "size": 490,
+    "preview": "const jwt = require('jsonwebtoken');\n\nconst authMiddleware = (req, res, next) => {\n  const token = req.headers.authorization?.split(' ')[1];\n\n  if (!token) {\n    return res.status(401).json({ error: 'Missing token' });\n  }\n\n  try {\n    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'you"
+  },
+  {
+    "t": 87.29,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "before",
+    "size": 1813,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst Invoice = require('../models/Invoice');\nconst Subscription = require('../models/Subscription');\n\nconst router = express.Router();\n\nrouter.post('/stripe', express.raw({ type: 'application/json' "
+  },
+  {
+    "t": 87.291,
+    "path": "/tmp/auto_full_139e/src/pages/InvoicesPage.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 87.292,
+    "path": "/tmp/auto_full_139e/src/__tests__/auth.test.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 91.344,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "after",
+    "size": 880,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst WebhookSyncService = require('../services/WebhookSyncService');\n\nrouter.post('/stripe', express.raw({ type: 'application/json' }), async (req, res) => {\n  const"
+  },
+  {
+    "t": 100.155,
+    "path": "/tmp/auto_full_139e/src/middleware/auth.js",
+    "phase": "after",
+    "size": 1594,
+    "preview": "const jwt = require('jsonwebtoken');\nconst bcrypt = require('bcryptjs');\n\nconst verifyToken = (req, res, next) => {\n  const authHeader = req.headers.authorization;\n  \n  if (!authHeader) {\n    return res.status(401).json({ error: 'Authorization header missing' });\n  }\n\n  const token = authHeader.star"
+  },
+  {
+    "t": 100.17,
+    "path": "/tmp/auto_full_139e/src/pages/InvoicesPage.jsx",
+    "phase": "after",
+    "size": 1964,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useParams } from 'react-router-dom';\n\nexport default function InvoicesPage() {\n  const { tenantId } = useParams();\n  const [invoices, setInvoices] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = "
+  },
+  {
+    "t": 100.918,
+    "path": "/tmp/auto_full_139e/src/__tests__/auth.test.js",
+    "phase": "after",
+    "size": 2018,
+    "preview": "const request = require('supertest');\nconst jwt = require('jsonwebtoken');\nconst app = require('../app');\n\ndescribe('Auth Endpoints', () => {\n  describe('POST /auth/login', () => {\n    it('should return JWT token with valid credentials', async () => {\n      const res = await request(app)\n        .po"
+  },
+  {
+    "t": 107.066,
+    "path": "/tmp/auto_full_139e/src/routes/subscriptions.js",
+    "phase": "before",
+    "size": 1767,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst router = express.Router();\n\nconst PRICE_PER_SEAT = 1000; // $10 in cents\n\nrouter.post('/subscriptions', async (req, res) => {\n  try {\n    const { customerId, seatCount } = req.body;\n\n    const "
+  },
+  {
+    "t": 107.068,
+    "path": "/tmp/auto_full_139e/src/routes/tenants.js",
+    "phase": "before",
+    "size": 1801,
+    "preview": "const express = require('express');\nconst { body, param, validationResult } = require('express-validator');\nconst auth = require('../middleware/auth');\nconst Tenant = require('../models/Tenant');\n\nconst router = express.Router();\n\nrouter.post(\n  '/',\n  auth,\n  [\n    body('name').trim().notEmpty().wi"
+  },
+  {
+    "t": 107.07,
+    "path": "/tmp/auto_full_139e/src/services/StripeService.js",
+    "phase": "before",
+    "size": 1961,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createCustomer(email) {\n    try {\n      const customer = await stripe.customers.create({\n        email: email,\n      });\n      return {\n        success: true,\n        customerId: customer.id,\n        emai"
+  },
+  {
+    "t": 107.071,
+    "path": "/tmp/auto_full_139e/src/pages/DashboardHome.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 111.515,
+    "path": "/tmp/auto_full_139e/src/services/StripeService.js",
+    "phase": "after",
+    "size": 1117,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createCustomer(email) {\n    return stripe.customers.create({ email });\n  }\n\n  async createSubscription(customerId, priceId, seats) {\n    return stripe.subscriptions.create({\n      customer: customerId,\n  "
+  },
+  {
+    "t": 121.574,
+    "path": "/tmp/auto_full_139e/src/pages/DashboardHome.jsx",
+    "phase": "after",
+    "size": 1858,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Link } from 'react-router-dom';\n\nexport default function DashboardHome() {\n  const [tenants, setTenants] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    f"
+  },
+  {
+    "t": 122.406,
+    "path": "/tmp/auto_full_139e/src/routes/tenants.js",
+    "phase": "after",
+    "size": 1858,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { PrismaClient } = require('@prisma/client');\nconst { authMiddleware } = require('../middleware/auth');\n\nconst prisma = new PrismaClient();\n\nrouter.use(authMiddleware);\n\nrouter.post('/', async (req, res) => {\n  try {\n    cons"
+  },
+  {
+    "t": 720.027,
+    "path": "/tmp/auto_full_139e/src/routes/subscriptions.js",
+    "phase": "after",
+    "size": 1858,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst authMiddleware = require('../middleware/auth');\nconst tenantMiddleware = require('../middleware/tenant');\nconst db = require('../db');\n\n// POST /subscriptions - Create subscription\nrouter.post('/', authMiddleware, tenantMiddl"
+  },
+  {
+    "t": 724.089,
+    "path": "/tmp/auto_full_139e/src/routes/auth.js",
+    "phase": "before",
+    "size": 1832,
+    "preview": "const express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst router = express.Router();\n\nconst users = new Map();\n\nconst validateEmail = (email) => {\n  const re = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return re.test(email);\n};\n\nconst validatePassword = ("
+  },
+  {
+    "t": 724.091,
+    "path": "/tmp/auto_full_139e/src/models/User.js",
+    "phase": "before",
+    "size": 972,
+    "preview": "const mongoose = require('mongoose');\nconst bcrypt = require('bcrypt');\n\nconst userSchema = new mongoose.Schema({\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    lowercase: true,\n    trim: true,\n    match: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/\n  },\n  password: {\n    type: String,\n    r"
+  },
+  {
+    "t": 724.092,
+    "path": "/tmp/auto_full_139e/src/routes/invoices.js",
+    "phase": "before",
+    "size": 1949,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { authenticate } = require('../middleware/auth');\nconst { checkTenantOwnership } = require('../middleware/tenantOwnership');\nconst Invoice = require('../models/Invoice');\nconst LineItem = require('../models/LineItem');\n\n// GE"
+  },
+  {
+    "t": 724.093,
+    "path": "/tmp/auto_full_139e/src/services/InvoiceGenerator.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 727.681,
+    "path": "/tmp/auto_full_139e/src/models/User.js",
+    "phase": "after",
+    "size": 829,
+    "preview": "const pool = require('../db/connection');\nconst bcrypt = require('bcrypt');\n\nclass User {\n  static async create(email, password) {\n    const password_hash = await bcrypt.hash(password, 10);\n    const result = await pool.query(\n      'INSERT INTO users (email, password_hash, created_at) VALUES ($1, $"
+  },
+  {
+    "t": 729.059,
+    "path": "/tmp/auto_full_139e/src/services/InvoiceGenerator.js",
+    "phase": "after",
+    "size": 1379,
+    "preview": "const db = require('../db');\nconst StripeService = require('./StripeService');\n\nclass InvoiceGenerator {\n  async generateInvoiceFromSubscription(subscription) {\n    const client = await db.getConnection();\n    \n    try {\n      await client.query('BEGIN');\n      \n      const invoiceQuery = `\n        "
+  },
+  {
+    "t": 729.193,
+    "path": "/tmp/auto_full_139e/src/routes/auth.js",
+    "phase": "after",
+    "size": 1874,
+    "preview": "const express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst router = express.Router();\n\nconst users = {};\nlet userIdCounter = 1;\n\nconst generateToken = (userId) => {\n  return jwt.sign({ userId }, process.env.JWT_SECRET || 'secret_key', { expiresIn"
+  },
+  {
+    "t": 730.269,
+    "path": "/tmp/auto_full_139e/src/routes/invoices.js",
+    "phase": "after",
+    "size": 1838,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst db = require('../db');\nconst { v4: uuidv4 } = require('uuid');\n\nrouter.post('/invoices', async (req, res) => {\n  try {\n    const { tenant_id, subscription_id } = req.body;\n    \n    const subscriptionResult = await db.query(\n "
+  },
+  {
+    "t": 734.745,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "before",
+    "size": 880,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst WebhookSyncService = require('../services/WebhookSyncService');\n\nrouter.post('/stripe', express.raw({ type: 'application/json' }), async (req, res) => {\n  const"
+  },
+  {
+    "t": 734.746,
+    "path": "/tmp/auto_full_139e/src/models/Invoice.js",
+    "phase": "before",
+    "size": 1298,
+    "preview": "const mongoose = require('mongoose');\n\nconst lineItemSchema = new mongoose.Schema({\n  description: String,\n  quantity: Number,\n  unitPrice: Number,\n  total: {\n    type: Number,\n    get: function() {\n      return this.quantity * this.unitPrice;\n    }\n  }\n}, { _id: false, toJSON: { getters: true } });"
+  },
+  {
+    "t": 734.748,
+    "path": "/tmp/auto_full_139e/src/__tests__/auth.test.js",
+    "phase": "before",
+    "size": 2018,
+    "preview": "const request = require('supertest');\nconst jwt = require('jsonwebtoken');\nconst app = require('../app');\n\ndescribe('Auth Endpoints', () => {\n  describe('POST /auth/login', () => {\n    it('should return JWT token with valid credentials', async () => {\n      const res = await request(app)\n        .po"
+  },
+  {
+    "t": 734.749,
+    "path": "/tmp/auto_full_139e/src/pages/SubscriptionsPage.jsx",
+    "phase": "before",
+    "size": 1921,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { API_BASE_URL } from '../config';\n\nexport default function SubscriptionsPage() {\n  const [subscriptions, setSubscriptions] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [editingId, setEditingId] = useState(null);\n "
+  },
+  {
+    "t": 739.302,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "after",
+    "size": 1539,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst router = express.Router();\nconst db = require('../db');\n\nrouter.post('/stripe', express.raw({type: 'application/json'}), async (req, res) => {\n  const sig = req.headers['stripe-signature'];\n  c"
+  },
+  {
+    "t": 739.666,
+    "path": "/tmp/auto_full_139e/src/__tests__/auth.test.js",
+    "phase": "after",
+    "size": 1992,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\nconst User = require('../models/User');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\n\njest.mock('../models/User');\n\ndescribe('POST /auth/register', () => {\n  beforeEach(() => {\n    jest.clearAllMocks();\n  "
+  },
+  {
+    "t": 739.871,
+    "path": "/tmp/auto_full_139e/src/models/Invoice.js",
+    "phase": "after",
+    "size": 1854,
+    "preview": "const pool = require('../db');\n\nclass Invoice {\n  static async create(tenantId, subscriptionId, amount, status = 'draft', issuedAt, dueAt) {\n    const result = await pool.query(\n      'INSERT INTO invoices (tenant_id, subscription_id, amount, status, issued_at, due_at) VALUES ($1, $2, $3, $4, $5, $6"
+  },
+  {
+    "t": 740.096,
+    "path": "/tmp/auto_full_139e/src/pages/SubscriptionsPage.jsx",
+    "phase": "after",
+    "size": 1960,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useParams } from 'react-router-dom';\n\nconst SubscriptionsPage = () => {\n  const { tenantId } = useParams();\n  const [subscriptions, setSubscriptions] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError]"
+  },
+  {
+    "t": 743.94,
+    "path": "/tmp/auto_full_139e/src/models/Subscription.js",
+    "phase": "before",
+    "size": 1290,
+    "preview": "const mongoose = require('mongoose');\n\nconst subscriptionSchema = new mongoose.Schema(\n  {\n    tenantId: {\n      type: mongoose.Schema.Types.ObjectId,\n      ref: 'Tenant',\n      required: true,\n      index: true,\n    },\n    stripeSubscriptionId: {\n      type: String,\n      required: true,\n      uniq"
+  },
+  {
+    "t": 743.941,
+    "path": "/tmp/auto_full_139e/src/routes/subscriptions.js",
+    "phase": "before",
+    "size": 1858,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst authMiddleware = require('../middleware/auth');\nconst tenantMiddleware = require('../middleware/tenant');\nconst db = require('../db');\n\n// POST /subscriptions - Create subscription\nrouter.post('/', authMiddleware, tenantMiddl"
+  },
+  {
+    "t": 743.942,
+    "path": "/tmp/auto_full_139e/src/models/Tenant.js",
+    "phase": "before",
+    "size": 832,
+    "preview": "const mongoose = require('mongoose');\n\nconst tenantSchema = new mongoose.Schema(\n  {\n    name: {\n      type: String,\n      required: true,\n      trim: true,\n    },\n    slug: {\n      type: String,\n      required: true,\n      unique: true,\n      lowercase: true,\n      trim: true,\n    },\n    ownerId: {"
+  },
+  {
+    "t": 743.943,
+    "path": "/tmp/auto_full_139e/src/services/StripeService.js",
+    "phase": "before",
+    "size": 1117,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createCustomer(email) {\n    return stripe.customers.create({ email });\n  }\n\n  async createSubscription(customerId, priceId, seats) {\n    return stripe.subscriptions.create({\n      customer: customerId,\n  "
+  },
+  {
+    "t": 748.135,
+    "path": "/tmp/auto_full_139e/src/services/StripeService.js",
+    "phase": "after",
+    "size": 1217,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createCustomer(tenant) {\n    const customer = await stripe.customers.create({\n      metadata: {\n        tenant_id: tenant.id,\n      },\n      email: tenant.email,\n      name: tenant.name,\n    });\n    retur"
+  },
+  {
+    "t": 748.204,
+    "path": "/tmp/auto_full_139e/src/models/Tenant.js",
+    "phase": "after",
+    "size": 1361,
+    "preview": "const db = require('../db');\n\nclass Tenant {\n  static async create(name, stripeCustomerId, ownerId) {\n    const result = await db.query(\n      'INSERT INTO tenants (name, stripe_customer_id, owner_id, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',\n      [name, stripeCustomerId, ownerId]\n    );"
+  },
+  {
+    "t": 748.818,
+    "path": "/tmp/auto_full_139e/src/models/Subscription.js",
+    "phase": "after",
+    "size": 1599,
+    "preview": "const db = require('../db');\n\nclass Subscription {\n  static async create(data) {\n    const query = `\n      INSERT INTO subscriptions (tenant_id, user_id, plan, status, billing_cycle, stripe_subscription_id)\n      VALUES ($1, $2, $3, $4, $5, $6)\n      RETURNING *;\n    `;\n    const result = await db.q"
+  },
+  {
+    "t": 749.281,
+    "path": "/tmp/auto_full_139e/src/routes/subscriptions.js",
+    "phase": "after",
+    "size": 1822,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { authenticateToken } = require('../middleware/auth');\n\n// Mock database\nconst subscriptions = new Map();\nlet subscriptionId = 1;\n\n// POST /subscriptions\nrouter.post('/', authenticateToken, (req, res) => {\n  const { tenant_id"
+  },
+  {
+    "t": 753.351,
+    "path": "/tmp/auto_full_139e/src/routes/invoices.js",
+    "phase": "before",
+    "size": 1838,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst db = require('../db');\nconst { v4: uuidv4 } = require('uuid');\n\nrouter.post('/invoices', async (req, res) => {\n  try {\n    const { tenant_id, subscription_id } = req.body;\n    \n    const subscriptionResult = await db.query(\n "
+  },
+  {
+    "t": 753.352,
+    "path": "/tmp/auto_full_139e/src/services/WebhookProcessor.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 753.354,
+    "path": "/tmp/auto_full_139e/src/pages/TenantsPage.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 753.355,
+    "path": "/tmp/auto_full_139e/src/__tests__/subscriptions.test.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 759.841,
+    "path": "/tmp/auto_full_139e/src/__tests__/subscriptions.test.js",
+    "phase": "after",
+    "size": 2000,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\n\ndescribe('Subscriptions API', () => {\n  const validTenant = 'tenant-123';\n  const invalidTenant = '';\n\n  describe('POST /subscriptions', () => {\n    it('should create subscription successfully', async () => {\n      const res = awa"
+  },
+  {
+    "t": 760.753,
+    "path": "/tmp/auto_full_139e/src/services/WebhookProcessor.js",
+    "phase": "after",
+    "size": 1830,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst Invoice = require('../models/Invoice');\nconst StripeService = require('./StripeService');\n\nclass WebhookProcessor {\n  async processChargeSucceeded(event) {\n    const charge = event.data.object;\n    const invoice = await Invoice.c"
+  },
+  {
+    "t": 760.999,
+    "path": "/tmp/auto_full_139e/src/pages/TenantsPage.jsx",
+    "phase": "after",
+    "size": 1892,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Link } from 'react-router-dom';\nimport TenantsTable from '../components/TenantsTable';\nimport TenantForm from '../components/TenantForm';\nimport '../styles/TenantsPage.css';\n\nexport default function TenantsPage() {\n  const [tenants, setTen"
+  },
+  {
+    "t": 761.127,
+    "path": "/tmp/auto_full_139e/src/routes/invoices.js",
+    "phase": "after",
+    "size": 1878,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst db = require('../db');\n\nrouter.get('/:tenant_id', async (req, res) => {\n  try {\n    const { tenant_id } = req.params;\n    const invoices = await db.query(\n      'SELECT id, tenant_id, subscription_id, amount, status, created_"
+  },
+  {
+    "t": 764.845,
+    "path": "/tmp/auto_full_139e/src/middleware/auth.js",
+    "phase": "before",
+    "size": 1594,
+    "preview": "const jwt = require('jsonwebtoken');\nconst bcrypt = require('bcryptjs');\n\nconst verifyToken = (req, res, next) => {\n  const authHeader = req.headers.authorization;\n  \n  if (!authHeader) {\n    return res.status(401).json({ error: 'Authorization header missing' });\n  }\n\n  const token = authHeader.star"
+  },
+  {
+    "t": 764.846,
+    "path": "/tmp/auto_full_139e/src/models/Invoice.js",
+    "phase": "before",
+    "size": 1854,
+    "preview": "const pool = require('../db');\n\nclass Invoice {\n  static async create(tenantId, subscriptionId, amount, status = 'draft', issuedAt, dueAt) {\n    const result = await pool.query(\n      'INSERT INTO invoices (tenant_id, subscription_id, amount, status, issued_at, due_at) VALUES ($1, $2, $3, $4, $5, $6"
+  },
+  {
+    "t": 764.848,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "before",
+    "size": 1539,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst router = express.Router();\nconst db = require('../db');\n\nrouter.post('/stripe', express.raw({type: 'application/json'}), async (req, res) => {\n  const sig = req.headers['stripe-signature'];\n  c"
+  },
+  {
+    "t": 764.849,
+    "path": "/tmp/auto_full_139e/src/pages/SubscriptionsPage.jsx",
+    "phase": "before",
+    "size": 1960,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useParams } from 'react-router-dom';\n\nconst SubscriptionsPage = () => {\n  const { tenantId } = useParams();\n  const [subscriptions, setSubscriptions] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError]"
+  },
+  {
+    "t": 768.394,
+    "path": "/tmp/auto_full_139e/src/middleware/auth.js",
+    "phase": "after",
+    "size": 646,
+    "preview": "const jwt = require('jsonwebtoken');\n\nconst authMiddleware = (req, res, next) => {\n  const token = req.headers.authorization?.split(' ')[1];\n\n  if (!token) {\n    return res.status(401).json({ error: 'Missing token' });\n  }\n\n  try {\n    const decoded = jwt.verify(token, process.env.JWT_SECRET);\n\n    "
+  },
+  {
+    "t": 768.626,
+    "path": "/tmp/auto_full_139e/src/routes/webhooks.js",
+    "phase": "after",
+    "size": 936,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst WebhookProcessor = require('../processors/WebhookProcessor');\n\nconst router = express.Router();\n\nrouter.post('/stripe', express.raw({type: 'application/json'}), async (req, res) => {\n  const si"
+  },
+  {
+    "t": 769.297,
+    "path": "/tmp/auto_full_139e/src/models/Invoice.js",
+    "phase": "after",
+    "size": 1154,
+    "preview": "const db = require('../db');\n\nconst Invoice = {\n  async create(tenantId, subscriptionId, amount, lineItems) {\n    const result = await db.query(\n      `INSERT INTO invoices (tenant_id, subscription_id, amount, status, line_items, created_at)\n       VALUES ($1, $2, $3, $4, $5, NOW())\n       RETURNING"
+  },
+  {
+    "t": 771.356,
+    "path": "/tmp/auto_full_139e/src/pages/SubscriptionsPage.jsx",
+    "phase": "after",
+    "size": 1938,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useSearchParams } from 'react-router-dom';\n\nexport default function SubscriptionsPage() {\n  const [subscriptions, setSubscriptions] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);"
+  },
+  {
+    "t": 775.475,
+    "path": "/tmp/auto_full_139e/src/services/SubscriptionService.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 775.477,
+    "path": "/tmp/auto_full_139e/src/services/InvoiceGenerator.js",
+    "phase": "before",
+    "size": 1379,
+    "preview": "const db = require('../db');\nconst StripeService = require('./StripeService');\n\nclass InvoiceGenerator {\n  async generateInvoiceFromSubscription(subscription) {\n    const client = await db.getConnection();\n    \n    try {\n      await client.query('BEGIN');\n      \n      const invoiceQuery = `\n        "
+  },
+  {
+    "t": 775.478,
+    "path": "/tmp/auto_full_139e/src/pages/DashboardPage.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 775.479,
+    "path": "/tmp/auto_full_139e/src/__tests__/billing-cycle.integration.test.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 780.964,
+    "path": "/tmp/auto_full_139e/src/__tests__/billing-cycle.integration.test.js",
+    "phase": "after",
+    "size": 1969,
+    "preview": "import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';\nimport { createClient } from '@supabase/supabase-js';\nimport Stripe from 'stripe';\n\nconst supabaseUrl = process.env.SUPABASE_URL;\nconst supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;\nconst stripeKey = process.env.STRIPE_SE"
+  },
+  {
+    "t": 781.042,
+    "path": "/tmp/auto_full_139e/src/services/InvoiceGenerator.js",
+    "phase": "after",
+    "size": 2143,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst Invoice = require('../models/Invoice');\nconst SubscriptionService = require('./SubscriptionService');\n\nclass InvoiceGenerator {\n  async generateInvoiceFromSubscription(subscriptionId, periodStart, periodEnd) {\n    try {\n      con"
+  },
+  {
+    "t": 781.256,
+    "path": "/tmp/auto_full_139e/src/services/SubscriptionService.js",
+    "phase": "after",
+    "size": 1884,
+    "preview": "const db = require('../db');\nconst { v4: uuidv4 } = require('uuid');\n\nclass SubscriptionService {\n  async createSubscription(tenant_id, pricing_type, seatsOrLimit) {\n    const subscription_id = uuidv4();\n    const created_at = new Date();\n    const billing_cycle_start = created_at;\n    const billing"
+  },
+  {
+    "t": 782.234,
+    "path": "/tmp/auto_full_139e/src/pages/DashboardPage.jsx",
+    "phase": "after",
+    "size": 1946,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Link } from 'react-router-dom';\nimport SummaryCards from '../components/SummaryCards';\nimport TenantList from '../components/TenantList';\nimport SubscriptionList from '../components/SubscriptionList';\nimport '../styles/DashboardPage.css';\n"
+  }
+]
