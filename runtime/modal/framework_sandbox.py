@@ -1570,3 +1570,75 @@ def run_one(framework: str = "hermes") -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
     print(f"\nsaved -> {path}")
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=1800, scaledown_window=10,
+)
+def v02_sdlc_billing_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """v0.2 SDLC benchmark: 6-agent multi-stage workflow building a
+    multi-tenant SaaS billing platform.
+
+    Compares no_synapse vs with_synapse_redirect vs with_synapse_full.
+    Headline metric: ``coherence_score`` — fraction of expected per-agent
+    contributions that survive in the final contended files.
+
+    Cost target: ~$2 per run (3 modes ≈ $6 total).
+    Wall clock: 8-15 min depending on Anthropic latency.
+    """
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\npython3 /opt/synapse-payloads/v02_sdlc_billing.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=1800, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-90000:],
+            "stderr": proc.stderr[-3000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-90000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def v02_sdlc() -> None:
+    """Drive the v0.2 SDLC billing-platform benchmark (3 modes).
+
+    Saves the captured stdout + json blob into bench/results/.
+    """
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+    print(">>> v0.2 SDLC benchmark: 6-agent SaaS billing platform...")
+    print("    modes: no_synapse, with_synapse_redirect, with_synapse_full")
+    print("    estimated cost: ~$6 total across 3 modes")
+    r = v02_sdlc_billing_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"v02_sdlc_billing_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")

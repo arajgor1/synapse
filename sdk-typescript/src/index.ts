@@ -5,6 +5,29 @@ export * from "./agent.js";
 export * from "./adapters/base.js";
 export { MockAdapter } from "./adapters/mock.js";
 
+// BYO-LLM (v0.2): config + bridges for Anthropic / OpenAI / Vercel AI / LangChain.js
+export {
+  type LLMConfig,
+  setLlm,
+  getLlm,
+  getInternalLlm,
+  isConfigured,
+  clear,
+  type BridgeAdapter,
+  type ChatMessage,
+  type GenerateOptions,
+  type FromAnthropicOptions,
+  type FromOpenAIOptions,
+  type VercelLanguageModelLike,
+  type LangChainJSChatModelLike,
+  type AutoLlmOptions,
+  fromAnthropic,
+  fromOpenAI,
+  fromVercelAI,
+  fromLangChainJS,
+  autoLlm,
+} from "./llm/index.js";
+
 // Framework integrations
 export {
   wrapAdapterWithSynapse,
@@ -27,3 +50,54 @@ export type {
   OpenClawExtension,
   OpenClawSynapseOptions,
 } from "./integrations/openclaw.js";
+
+// Beliefs — semantic-conflict detection
+export {
+  emitBelief,
+  listDivergences,
+  divergencesForKey,
+} from "./beliefs/index.js";
+export type {
+  AgentBelief,
+  BeliefDivergence,
+  BeliefSource,
+  EmitBeliefArgs,
+  FactExtraction,
+  LiveDivergenceResult,
+} from "./beliefs/index.js";
+
+// Merge policies (v0.2)
+export {
+  MergePolicy,
+  MergeDecision,
+  SynapseConflict,
+  RedirectPolicy,
+  WaitPolicy,
+  AbortPolicy,
+  AutoMergePolicy,
+  NoOpPolicy,
+  resolvePolicy,
+  criticalScopeMatch,
+  normalizeCriticalScopes,
+} from "./policies/index.js";
+export type {
+  MergeAction,
+  IntentionHandleLike,
+  PolicyLike,
+} from "./policies/index.js";
+
+// v0.2 foundation: universal intend() + install() bootstrap
+export {
+  intend,
+  intendWith,
+  IntentionHandle,
+  shutdown,
+} from "./intend.js";
+export type { IntendOptions, Outcome, SynapseRuntime } from "./intend.js";
+
+export { install, registerFramework } from "./install.js";
+export type {
+  InstallOptions,
+  InstallResult,
+  FrameworkInstallFn,
+} from "./install.js";
