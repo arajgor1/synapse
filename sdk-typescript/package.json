@@ -1,0 +1,44 @@
+{
+  "name": "@synapse-protocol/sdk",
+  "version": "0.1.0-alpha.0",
+  "description": "TypeScript SDK for Synapse — real-time coordination protocol for multi-agent AI systems",
+  "license": "Apache-2.0",
+  "author": "Aadit Rajgor",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./adapters/mock": {
+      "types": "./dist/adapters/mock.d.ts",
+      "import": "./dist/adapters/mock.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.1",
+    "ulid": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arajgor1/synapse.git",
+    "directory": "sdk-typescript"
+  }
+}

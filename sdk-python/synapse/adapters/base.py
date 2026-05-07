@@ -3,9 +3,30 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, AsyncIterator, Protocol, runtime_checkable
+from typing import Any, AsyncIterator, Optional, Protocol, runtime_checkable
 
 from synapse.messages import BackendCapabilities
+
+
+@dataclass
+class TenantContext:
+    """Identifies who owns a request in a multi-tenant deployment.
+
+    All four fields are kept for adapter-side validation: an operation on
+    `request_id` must be initiated by the same (tenant_id, agent_id, session_id)
+    that started the stream. Cross-tenant access is rejected.
+    """
+
+    tenant_id: Optional[str] = None
+    agent_id: Optional[str] = None
+    session_id: Optional[str] = None
+
+    def matches(self, other: "TenantContext") -> bool:
+        return (
+            self.tenant_id == other.tenant_id
+            and self.agent_id == other.agent_id
+            and self.session_id == other.session_id
+        )
 
 
 @dataclass
@@ -16,6 +37,7 @@ class StreamHandle:
     original_messages: list[dict[str, Any]] = field(default_factory=list)
     params: dict[str, Any] = field(default_factory=dict)
     extra: dict[str, Any] = field(default_factory=dict)
+    tenant: TenantContext = field(default_factory=TenantContext)
 
 
 @dataclass
@@ -32,6 +54,15 @@ class BackendUnavailable(RuntimeError):
 class UnsupportedCapability(RuntimeError):
     """Raised when an operation is requested that the backend does not support
     (e.g., inject_and_continue on a reasoning model during thinking).
+    """
+
+
+class TenantViolation(RuntimeError):
+    """Raised when an operation tries to act on a request_id that belongs to a
+    different (tenant_id, agent_id, session_id) than the caller.
+
+    Native and Local-API adapters with `multi_tenant_isolation = "request_id"`
+    MUST raise this on cross-tenant access.
     """
 
 

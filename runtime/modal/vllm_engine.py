@@ -1,26 +1,22 @@
 """Modal serverless GPU engine for Synapse native-tier adapter.
 
-Phase 3 ships with a *transformers-based* engine rather than vLLM. Reason:
-the vLLM 0.6 wheel is ~200MB with full CUDA/torch/xformers/triton deps;
-the Modal build was unreliable in our cost+time budget.
+Uses real **vLLM** for production-grade throughput. Engine state per request:
+- A stateful container holding a loaded vLLM `AsyncLLMEngine`
+- vLLM handles per-request KV cache isolation natively (request_id keyed)
+- Streaming via `engine.generate(prompt, sampling_params, request_id)` async iterator
+- Mid-stream cancel via `engine.abort(request_id)` — true cache-preserving abort
 
-This engine still proves the native-tier mechanism end-to-end:
-- Stateful container holding a loaded model
-- Streaming token generation via `TextIteratorStreamer`
-- Mid-stream cancel via a per-request `Event` flag
-- Multi-request isolation via `request_id`-keyed state dict
-
-The `vllm_modal_adapter.py` SDK adapter talks to this engine over Modal RPC
-without caring whether the underlying engine is vLLM or transformers.
-For production deploy with vLLM, swap this file for the vllm-based version
-in `runtime/modal/vllm_engine_full.py` (deploy time: 5-10 min for the image).
+The image base is the upstream `vllm/vllm-openai` Docker image, which has
+torch + CUDA + vLLM + xformers + triton pre-installed and pre-compiled.
+This avoids the 5-10min pip-install cold build that bombs out on Modal's
+build timeout.
 
 Cost discipline:
 - T4 GPU on Modal serverless: ~$0.000204/sec (~$0.74/hour).
-- Container shuts down 30s after last call.
+- scaledown_window=30s -> container shuts down 30s after last call.
 - Model: Qwen2.5-0.5B-Instruct (~1GB, loads in <30s on T4).
 
-Deploy with:
+Deploy:
     modal deploy runtime/modal/vllm_engine.py
 
 Smoke test:
@@ -30,7 +26,6 @@ Smoke test:
 from __future__ import annotations
 
 import os
-import threading
 import time
 import uuid
 from typing import Any, AsyncIterator
@@ -44,17 +39,17 @@ HF_CACHE_DIR = "/cache/hf"
 DEFAULT_MODEL = os.environ.get("SYNAPSE_VLLM_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
 DEFAULT_GPU = os.environ.get("SYNAPSE_VLLM_GPU", "T4")
 
+# Use the upstream vLLM image — torch + CUDA + vllm + xformers all baked in
 image = (
-    modal.Image.debian_slim(python_version="3.11")
-    .pip_install(
-        "torch==2.4.1",
-        "transformers>=4.45,<5",
-        "accelerate>=1.0",
-        "sentencepiece",
-        "protobuf",
-        "huggingface_hub>=0.25",
+    modal.Image.from_registry(
+        "vllm/vllm-openai:v0.6.3",
+        add_python="3.11",
     )
-    .env({"HF_HOME": HF_CACHE_DIR, "TRANSFORMERS_OFFLINE": "0"})
+    .env({
+        "HF_HOME": HF_CACHE_DIR,
+        "TRANSFORMERS_OFFLINE": "0",
+        "VLLM_WORKER_MULTIPROC_METHOD": "spawn",
+    })
 )
 
 app = modal.App(APP_NAME, image=image)
@@ -67,31 +62,32 @@ app = modal.App(APP_NAME, image=image)
     timeout=600,
 )
 class VLLMEngine:
-    """Stateful container hosting a transformers-based engine.
+    """Stateful container hosting a real vLLM AsyncLLMEngine.
 
-    Named `VLLMEngine` for forward compatibility — once the user has bandwidth
-    to deploy the full vLLM image, the class can be swapped without changing
-    the SDK adapter.
+    Each container instance runs ONE vLLM async engine. Multiple Synapse
+    streams multiplex onto it via vLLM's request_id-keyed `add_request`
+    mechanism — vLLM handles per-request KV cache isolation natively.
     """
 
     @modal.enter()
     def load_engine(self) -> None:
-        from transformers import AutoModelForCausalLM, AutoTokenizer
-        import torch
+        from vllm import AsyncEngineArgs, AsyncLLMEngine
 
         self.model_name = DEFAULT_MODEL
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_name,
-            torch_dtype=torch.float16,
-            device_map="auto",
+        engine_args = AsyncEngineArgs(
+            model=self.model_name,
+            dtype="auto",
+            gpu_memory_utilization=0.85,
+            max_model_len=4096,
+            enforce_eager=True,           # faster cold-start on small models
+            disable_log_stats=True,
         )
-        self.model.eval()
-        # Per-request state for cancellation
-        self._cancel_events: dict[str, threading.Event] = {}
+        self.engine = AsyncLLMEngine.from_engine_args(engine_args)
+        # Track active request_ids so cancel() can be a no-op safely
+        self._active: set[str] = set()
 
     @modal.method()
-    def generate_stream(
+    async def generate_stream(
         self,
         request_id: str,
         prompt: str,
@@ -99,48 +95,45 @@ class VLLMEngine:
         temperature: float = 0.7,
         prepend_partial: str | None = None,
     ):
-        """Stream generation tokens for a single request.
+        """Stream tokens via vLLM's native async generator.
 
         Yields dicts: {"delta": str, "finished": bool, "usage"?: {...}}.
         """
-        from transformers import TextIteratorStreamer
-        import torch
+        from vllm import SamplingParams
 
         full_prompt = prompt
         if prepend_partial:
-            full_prompt = f"{prompt}\n[ASSISTANT_PARTIAL]\n{prepend_partial}\n[CONTINUE]\n"
+            # Anchor the partial output as already-emitted assistant text
+            full_prompt = (
+                f"{prompt}\n[ASSISTANT_PARTIAL]\n{prepend_partial}\n[CONTINUE]\n"
+            )
 
-        cancel_evt = threading.Event()
-        self._cancel_events[request_id] = cancel_evt
-
-        inputs = self.tokenizer(full_prompt, return_tensors="pt").to(self.model.device)
-        streamer = TextIteratorStreamer(
-            self.tokenizer, skip_prompt=True, skip_special_tokens=True
+        sampling = SamplingParams(
+            max_tokens=max_tokens,
+            temperature=temperature,
         )
-        gen_kwargs: dict[str, Any] = {
-            **inputs,
-            "max_new_tokens": max_tokens,
-            "do_sample": temperature > 0,
-            "temperature": max(temperature, 0.001),
-            "streamer": streamer,
-        }
-        prompt_tokens = int(inputs.input_ids.shape[1])
 
-        thread = threading.Thread(
-            target=self.model.generate, kwargs=gen_kwargs, daemon=True
-        )
-        thread.start()
-
+        self._active.add(request_id)
+        last_text = ""
+        prompt_tokens = 0
         completion_tokens = 0
         try:
-            for piece in streamer:
-                if cancel_evt.is_set():
+            async for output in self.engine.generate(full_prompt, sampling, request_id):
+                # vLLM yields RequestOutput with cumulative .outputs[0].text
+                if output.prompt_token_ids and not prompt_tokens:
+                    prompt_tokens = len(output.prompt_token_ids)
+                if not output.outputs:
+                    continue
+                cur_text = output.outputs[0].text
+                delta = cur_text[len(last_text):]
+                last_text = cur_text
+                if delta:
+                    completion_tokens = len(output.outputs[0].token_ids or [])
+                    yield {"delta": delta, "finished": False}
+                if output.finished:
                     break
-                if piece:
-                    completion_tokens += 1
-                    yield {"delta": piece, "finished": False}
         finally:
-            self._cancel_events.pop(request_id, None)
+            self._active.discard(request_id)
             yield {
                 "delta": "",
                 "finished": True,
@@ -151,17 +144,22 @@ class VLLMEngine:
             }
 
     @modal.method()
-    def cancel(self, request_id: str) -> None:
-        evt = self._cancel_events.get(request_id)
-        if evt is not None:
-            evt.set()
+    async def cancel(self, request_id: str) -> None:
+        if request_id in self._active:
+            try:
+                await self.engine.abort(request_id)
+            except Exception:
+                pass
+            self._active.discard(request_id)
 
     @modal.method()
     def health(self) -> dict[str, Any]:
         return {
             "ok": True,
+            "engine": "vllm",
             "model": getattr(self, "model_name", DEFAULT_MODEL),
             "gpu": DEFAULT_GPU,
+            "active_requests": len(getattr(self, "_active", set())),
         }
 
 

@@ -56,8 +56,8 @@
     "hash": "9b90daf1a7b996ef5d7ff01023b18924"
   },
   "C:\\C3\\synapse\\runtime\\modal\\vllm_engine.py": {
-    "mtime": 1778105216.0287504,
-    "hash": "5586ae82cb94ab696c675d2103876c44"
+    "mtime": 1778114642.709178,
+    "hash": "505921166b59fe231c383152346e9bb4"
   },
   "C:\\C3\\synapse\\runtime\\modal\\__init__.py": {
     "mtime": 1778104915.8835323,
@@ -96,12 +96,16 @@
     "hash": "51ea75896ad314252d75e835f8e0b67f"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\base.py": {
-    "mtime": 1778101697.2240894,
-    "hash": "69d13946baad8ccf58435cb1abdeb657"
+    "mtime": 1778115025.2070496,
+    "hash": "e8938c0a28b446ede761f0e142ad495a"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\mock.py": {
-    "mtime": 1778101715.0044203,
-    "hash": "900dde0b74d2ccba048a2c425d09f15e"
+    "mtime": 1778115088.2126184,
+    "hash": "2c7490a01c79d997943354388f7302d9"
+  },
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\_isolation.py": {
+    "mtime": 1778115039.9634645,
+    "hash": "cce0308800d3c095d1b214e729a437c0"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\__init__.py": {
     "mtime": 1778103826.958302,
@@ -199,6 +203,10 @@
     "mtime": 1778101957.3916583,
     "hash": "1e5277b54e87a64328240d637f45d8c9"
   },
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_multi_tenant.py": {
+    "mtime": 1778115112.0167525,
+    "hash": "34f130c9df195a20eef3d5edbde5332e"
+  },
   "C:\\C3\\synapse\\sdk-python\\tests\\test_scope_matcher.py": {
     "mtime": 1778101908.4819076,
     "hash": "b70b84508d15753a94cc7803d0be63d5"
@@ -206,6 +214,42 @@
   "C:\\C3\\synapse\\sdk-python\\tests\\__init__.py": {
     "mtime": 1778101887.2687757,
     "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\agent.ts": {
+    "mtime": 1778115403.7572856,
+    "hash": "ab8272a157ad4350355b4fa6052b6fe5"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\bus.ts": {
+    "mtime": 1778115346.693766,
+    "hash": "697a9a7c904ad9d7d9f795f8ef92532d"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\envelope.test.ts": {
+    "mtime": 1778115419.7916417,
+    "hash": "d473653269d18b35ced0566e0e87631f"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\envelope.ts": {
+    "mtime": 1778115329.5585892,
+    "hash": "8fb2bd496e8efeecad3e981ace533d09"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\index.ts": {
+    "mtime": 1778115407.6201797,
+    "hash": "56aeba2434e4750cae6d65869950f05c"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\types.ts": {
+    "mtime": 1778115320.8555512,
+    "hash": "4afceed2effbeb7269739f0d5a9bfbf4"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\base.ts": {
+    "mtime": 1778115355.8225713,
+    "hash": "fd2ad76b1ddb39601dffef90bcdf1848"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\mock.test.ts": {
+    "mtime": 1778115436.905222,
+    "hash": "d9e14988a2ed535867d65c7574a177bf"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\mock.ts": {
+    "mtime": 1778115496.9478424,
+    "hash": "81d53ed69da46531262ac64da437479a"
   },
   "C:\\C3\\synapse\\ui\\next-env.d.ts": {
     "mtime": 1778110191.33847,
@@ -232,8 +276,8 @@
     "hash": "0ed7a9ae7892c4e6d881fb791d25f9e1"
   },
   "C:\\C3\\synapse\\ui\\src\\app\\sessions\\[id]\\page.tsx": {
-    "mtime": 1778110005.136771,
-    "hash": "72a424074d1d67e0146d02c28c2d9efb"
+    "mtime": 1778115208.257104,
+    "hash": "8d8f4f03bfc72e7db937a9b192a2330e"
   },
   "C:\\C3\\synapse\\ui\\src\\components\\AgentGrid.tsx": {
     "mtime": 1778109928.4618266,
@@ -243,6 +287,10 @@
     "mtime": 1778109990.2976358,
     "hash": "861df1736d994db60880943241252a5c"
   },
+  "C:\\C3\\synapse\\ui\\src\\components\\CostChart.tsx": {
+    "mtime": 1778115158.9632952,
+    "hash": "e52c4a64f7fdee324ae46a8603653b55"
+  },
   "C:\\C3\\synapse\\ui\\src\\components\\EventStream.tsx": {
     "mtime": 1778109954.4651976,
     "hash": "7946647bc3a5b0de29885b5afc5aede1"
@@ -250,6 +298,10 @@
   "C:\\C3\\synapse\\ui\\src\\components\\IntentionsTable.tsx": {
     "mtime": 1778109967.1846344,
     "hash": "f70a22a254484d7c7bdc300dba641a24"
+  },
+  "C:\\C3\\synapse\\ui\\src\\components\\ReplayScrubber.tsx": {
+    "mtime": 1778115178.2442417,
+    "hash": "1708f5d48d7925865fe1edadd9572b64"
   },
   "C:\\C3\\synapse\\ui\\src\\lib\\types.ts": {
     "mtime": 1778109854.311658,
@@ -302,6 +354,10 @@
   "C:\\C3\\synapse\\sdk-python\\README.md": {
     "mtime": 1778102041.7751338,
     "hash": "1cd60b7c834ca0f3737ae728dcd3c58b"
+  },
+  "C:\\C3\\synapse\\sdk-typescript\\README.md": {
+    "mtime": 1778115457.0402384,
+    "hash": "79fa25be0da597ca3752978fd178770c"
   },
   "C:\\C3\\synapse\\spec\\adapter.md": {
     "mtime": 1778092350.2231994,
