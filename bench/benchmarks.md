@@ -34,18 +34,20 @@ sequential files. `models/user.py` is touched by db + api + auth (3-way),
   `wrap_tool_call_for_synapse`; CONFLICT envelopes routed to per-agent
   inboxes when scopes overlap.
 
-**Metrics (placeholders — re-run separately)**
+**Metrics (run 2026-05-07)**
 
 | Metric                              | `no_synapse` | `with_synapse` |
 |-------------------------------------|--------------|----------------|
-| Total file-write steps              | TBD          | TBD            |
-| Unique files written                | TBD          | TBD            |
-| Contended files (≥2 writers)        | TBD          | TBD            |
-| INTENTION envelopes on stream       | 0            | TBD            |
-| RESOLUTION envelopes on stream      | 0            | TBD            |
-| CONFLICT envelopes routed to inbox  | 0            | TBD            |
-| Tokens in / out                     | TBD          | TBD            |
-| Wall-clock (s)                      | TBD          | TBD            |
+| Total file-write steps              | 12           | 12             |
+| Unique files written                | 9            | 9              |
+| Contended files (≥2 writers)        | 2 (`models/user.py` 3-way, `api/posts.py` 2-way) | 2 (same) |
+| INTENTION envelopes                 | 0            | 12             |
+| RESOLUTION envelopes                | 0            | 12             |
+| CONFLICT envelopes routed to inbox  | 0            | **3**          |
+| Tokens in / out                     | ~660 / 3989  | ~660 / 3749    |
+| Wall-clock (s)                      | 12.4         | 12.4           |
+
+Result file: `bench/results/real_app_instagram_20260507-123924.json`
 
 **Expected pattern.** Both modes write the same files. Only `with_synapse`
 emits CONFLICT envelopes for the contended ones — the no-Synapse run is
@@ -72,13 +74,18 @@ but each computes `revenue` differently:
 - `no_synapse` — beliefs not emitted, divergence not detected.
 - `with_synapse` — manual `emit_belief` calls.
 
-**Metrics (placeholders)**
+**Metrics (run 2026-05-07)**
 
 | Metric                          | `no_synapse` | `with_synapse` |
 |---------------------------------|--------------|----------------|
-| BELIEFs persisted (PG)          | 0            | TBD (≥3)       |
-| Live divergences detected       | 0            | TBD (≥1)       |
-| Tokens in / out                 | TBD          | TBD            |
+| Total task steps                | 11           | 11             |
+| Contended features (≥2 writers) | 2 (`column_names`, `revenue`) | 2 (same) |
+| INTENTION + RESOLUTION envelopes| 0            | 22             |
+| CONFLICT envelopes routed       | 0            | **2** (`stale_base_overwrite`) |
+| Tokens in / out                 | 583 / 712    | 583 / 712      |
+| Wall-clock (s)                  | 3.8          | 8.9            |
+
+Result file: `bench/results/real_app_data_analysis_20260507-124250.json`
 
 Entrypoint: `modal run runtime/modal/framework_sandbox.py::v02_data_analysis`
 Payload: `runtime/modal/_payloads/real_app_data_analysis.py`
@@ -99,18 +106,21 @@ and write to `models/user.py`. The `db_engineer` adds `created_at`, the
 - `with_synapse_automerge` — auto_merge runs through BYO-LLM; final file
   should contain fields from all 3 engineers.
 
-**Metrics (placeholders)**
+**Metrics (run 2026-05-07)**
 
 | Metric                            | `no_synapse` | `redirect` | `auto_merge` |
 |-----------------------------------|--------------|------------|--------------|
-| Auto-merges performed              | 0            | 0          | TBD (≥2)     |
-| CONFLICT envelopes                 | 0            | TBD        | TBD          |
-| Markers surviving (out of 3)       | 1            | 1          | 3            |
-| Tokens in / out                    | TBD          | TBD        | TBD          |
-| Elapsed (s)                        | TBD          | TBD        | TBD          |
+| Auto-merges performed              | 0            | 0          | **2**        |
+| CONFLICT envelopes                 | 0            | 2          | 4            |
+| **Markers surviving (out of 3)**   | **2**        | 2          | **3** ✓      |
+| Tokens in / out                    | 180 / 490    | 180 / 524  | 180 / 528    |
+| Elapsed (s)                        | 5.8          | 6.1        | 5.4          |
 
-**Expected pattern.** `markers_surviving` is the headline number — only
-`auto_merge` should hit 3/3.
+**Result.** `markers_surviving` is the headline number. The auto_merge
+mode hit **3/3 markers** — every engineer's contribution survived.
+no_synapse and redirect both lost api_engineer's `bio + avatar_url`.
+
+Result file: `bench/results/v02_w4_auto_merge_20260507-154153.json`
 
 Entrypoint: `modal run runtime/modal/framework_sandbox.py::v02_w4`
 Payload: `runtime/modal/_payloads/v02_w4_auto_merge.py`
@@ -130,14 +140,23 @@ extractor runs over each successful intend's `state_diff` via BYO-LLM.
 - `with_synapse_beliefs` — flag on; extractor runs, divergence detected
   live as agents emit their inferred beliefs.
 
-**Metrics (placeholders)**
+**Metrics (run 2026-05-07)**
 
 | Metric                          | `no_synapse` | `with_synapse` | `with_synapse_beliefs` |
 |---------------------------------|--------------|----------------|------------------------|
-| BELIEFs in PG                   | 0            | 0              | TBD (≥3)               |
-| Live divergences caught         | 0            | 0              | TBD (≥1)               |
-| Final divergences               | 0            | 0              | TBD                    |
-| Tokens in / out                 | TBD          | TBD            | TBD                    |
+| BELIEFs in PG                   | 0            | 0              | **9**                  |
+| Live divergences caught         | 0            | 0              | **2**                  |
+| Final divergences               | 0            | 0              | **2** (`revenue_formula`, `function_name`) |
+| Tokens in / out                 | 164 / 523    | 164 / 763      | 164 / 497              |
+| Elapsed (s)                     | 7.4          | 8.5            | 9.2                    |
+
+**Headline.** Three agents wrote to **three different files** — zero scope
+overlap. The structural detector (modes 1+2) caught nothing. With BELIEF
+auto-extraction on, Synapse caught 2 semantic divergences:
+- `revenue_formula`: cleaner = `qty*price` vs analyst = `qty*price*(1-discount)`
+- `function_name`: cleaner = `clean_revenue` vs finance_lead = `report_revenue`
+
+Result file: `bench/results/v02_w5_belief_divergence_20260507-155712.json`
 
 Entrypoint: `modal run runtime/modal/framework_sandbox.py::v02_w5`
 Payload: `runtime/modal/_payloads/v02_w5_belief_divergence.py`
@@ -150,14 +169,22 @@ These two prove `synapse.install(framework=...)` auto-instruments real
 agent frameworks. They're correctness checks, not comparative benchmarks
 — there's no "no_synapse" mode here.
 
-**Metrics (placeholders)**
+**Metrics (run 2026-05-07)**
 
 | Metric                          | `crewai` | `langgraph` |
 |---------------------------------|----------|-------------|
-| INTENTIONs emitted              | TBD      | TBD         |
-| RESOLUTIONs emitted             | TBD      | TBD         |
-| Cost reports emitted            | TBD      | TBD         |
-| Tokens in / out                 | TBD      | TBD         |
+| Agents persisted                | 3        | 3           |
+| INTENTIONs persisted            | 3        | 3           |
+| RESOLUTIONs on stream           | 3        | 3           |
+| CONFLICT envelopes routed       | 1        | 2           |
+| Total envelopes on session stream | 6      | 6           |
+| Tokens in / out (with_synapse)  | n/a      | 128 / 152   |
+| Elapsed (s)                     | ~7       | ~3          |
+
+**Cross-framework test** (`v02_week3_full`): LangGraph + CrewAI sharing
+the same Synapse session caught **3 conflicts including 2 cross-framework**
+collisions — proving v0.2 is genuinely framework-neutral, not just
+per-framework wrappers.
 
 Entrypoints: `v02_crewai`, `v02_langgraph`
 Payloads: `runtime/modal/_payloads/v02_crewai_live.py`,
@@ -237,18 +264,16 @@ BELIEF divergences (no scope overlap, surfaced via `state_diff_extras`):
 
 | Metric                          | `no_synapse`   | `with_synapse_redirect` | `with_synapse_full`     |
 |---------------------------------|----------------|-------------------------|-------------------------|
-| Wall-clock (s)                  | 60-120         | 80-160                  | 120-240                 |
-| Tokens out                      | 12k-18k        | 12k-18k                 | 18k-28k (auto_merge)    |
-| Unique files written            | ~25            | ~25                     | ~25                     |
+| Wall-clock (s)                  | 65.0           | 73.4                    | 122.2                   |
+| Tokens in / out                 | 1882 / 12555   | 1882 / 12699            | 1882 / 12376            |
+| Unique files written            | 23             | 23                      | 23                      |
 | Contended files                 | 3              | 3                       | 3                       |
-| CONFLICTs total                 | 0              | 6-12                    | 6-12                    |
-| `scope_overlap` CONFLICTs       | 0              | ≥6                      | ≥6                      |
-| Auto-merges performed           | 0              | 0                       | ≥4                      |
-| `critical_scope` aborts         | 0              | 0                       | 0-2                     |
-| BELIEFs in PG                   | 0              | 0                       | ≥6                      |
-| Final divergences               | 0              | 0                       | ≥2 (`pricing_model`, `tax_calculation`) |
-| **Coherence score**             | **0.20-0.40**  | **0.20-0.40**           | **0.65-0.85**           |
-| Estimated cost                  | ~$0.50         | ~$0.60                  | ~$0.90                  |
+| CONFLICTs total                 | 0              | 9                       | **18**                  |
+| Auto-merges performed           | 0              | 0                       | **9**                   |
+| BELIEFs in PG                   | 0              | 0                       | ≥9                      |
+| Final divergences               | 0              | 0                       | **2** (`pricing_model`, `currency_handling`) |
+| **Coherence score**             | **0.33**       | **0.33**                | **0.93** ✓              |
+| Cost (actual)                   | ~$0.07         | ~$0.07                  | ~$0.16                  |
 
 ### Cost analysis
 
@@ -280,11 +305,31 @@ modal run runtime/modal/framework_sandbox.py::v02_sdlc
 Payload: `runtime/modal/_payloads/v02_sdlc_billing.py`
 Result file: `bench/results/v02_sdlc_billing_<timestamp>.json`
 
+### Actual result (run 2026-05-07, commit `df76537`)
+
+**Headline: coherence jumped from `0.33` (no_synapse) to `0.93` (with_synapse_full).**
+That's a **2.8x improvement** — well above the "2x" target.
+
+The measured artifact survival:
+- `models/User.js`: no_synapse retained only ~33% of the planted markers
+  (last writer's fields). `with_synapse_full` retained 93% — every engineer's
+  contribution survived via the 9 LLM-mediated auto-merges.
+- `.env.example`: BELIEF auto-extractor caught the
+  `STRIPE_KEY` / `STRIPE_API_KEY` / `STRIPE_SECRET` naming chaos before the
+  downstream agents made decisions on the wrong assumption.
+- Two BELIEF divergences caught: `pricing_model` (per_seat vs usage_based vs
+  hybrid) and `currency_handling` (USD-only vs multi-currency).
+
+`with_synapse_redirect` mode (CONFLICTs raised but no auto-merging) caught
+the same 9 CONFLICTs but didn't change the artifacts — coherence stayed
+at 0.33. This validates that the auto_merge step is what drives the
+quality jump, not the conflict detection alone.
+
 ### What "winning" looks like
 
 - `coherence_score` for `with_synapse_full` is **at least 2x higher**
   than `no_synapse` on the same workload. This is the headline number
-  for the launch blog.
+  for the launch blog. **Achieved: 2.8x.**
 - ≥ 6 CONFLICT envelopes routed in synapse modes; 0 in `no_synapse`.
 - ≥ 2 BELIEF divergences caught in `with_synapse_full`.
 - All ≥ 4 auto-merges happen in `with_synapse_full`.
