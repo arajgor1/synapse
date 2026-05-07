@@ -1,7 +1,28 @@
-"""Synapse — real-time coordination protocol for parallel AI agents.
+"""Synapse — coordination + observability + safety layer for multi-agent AI stacks.
 
-Pre-alpha. Phase 1 deliverable: end-to-end conflict detection demo with
-mocked inference. See the project README for status and roadmap.
+v0.1: protocol substrate (envelopes, bus, state graph, router, integrations).
+v0.2: audit + universal SDK + BYO-LLM + framework adapters + merge policies.
+
+The 30-second hello-world (works against any framework that emits OTel,
+LangSmith, or JSONL traces):
+
+    pip install synapse-protocol
+    synapse audit ./your-traces.json   # see the silent conflicts you missed
+
+Live integration into your own stack:
+
+    import synapse
+    from anthropic import AsyncAnthropic
+    synapse.set_llm(synapse.from_anthropic(AsyncAnthropic()))
+    synapse.install(framework="langgraph")  # auto-detects and hooks in
+
+    # Or use the universal context-manager API directly:
+    async with synapse.intend(
+        scope=["repo.fs.auth.py:w"], agent="me",
+    ) as i:
+        if i.has_conflicts:
+            await i.pivot()
+        await my_tool_call()
 """
 
 from synapse.agent import Agent
@@ -18,8 +39,23 @@ from synapse.messages import (
     Thought,
 )
 
-__version__ = "0.1.0a0"
+# v0.2 universal SDK + BYO-LLM
+from synapse.intend import intend, IntentionHandle
+from synapse.install import install, register_framework
+from synapse.llm import (
+    set_llm,
+    get_llm,
+    is_configured as llm_is_configured,
+    from_anthropic,
+    from_openai,
+    from_langchain,
+    from_litellm,
+    auto_llm,
+)
+
+__version__ = "0.2.0a0"
 __all__ = [
+    # v0.1 surface
     "Agent",
     "Envelope",
     "MessageType",
@@ -31,5 +67,18 @@ __all__ = [
     "Thought",
     "Resolution",
     "CostReport",
+    # v0.2 surface
+    "intend",
+    "IntentionHandle",
+    "install",
+    "register_framework",
+    "set_llm",
+    "get_llm",
+    "llm_is_configured",
+    "from_anthropic",
+    "from_openai",
+    "from_langchain",
+    "from_litellm",
+    "auto_llm",
     "__version__",
 ]
