@@ -1,0 +1,39 @@
+{
+  "backend": {
+    "id": "anthropic",
+    "tier": "hosted",
+    "model_id": "claude-haiku-4-5-20251001",
+    "supports_midstream_inject": true,
+    "avg_overhead_per_signal": 1.15,
+    "is_reasoning_model": false
+  },
+  "workload": "pair-coding",
+  "session_id": "bench_anthropic_pair-coding_d43912",
+  "signals_total": 4,
+  "conflicts_detected": 3,
+  "emit_latency_ms": {
+    "p50": 20.68781852722168,
+    "p95": 50.77242851257324,
+    "p99": 50.77242851257324,
+    "mean": 20.649850368499756
+  },
+  "conflict_signal_latency_ms": {
+    "p50": 12.428522109985352,
+    "p95": 57.05738067626953,
+    "p99": 57.05738067626953,
+    "mean": 27.22907066345215
+  },
+  "throughput_signals_per_sec": 3.6796901353464593,
+  "wall_seconds": 1.087048053741455,
+  "raw_emit_latencies_ms": [
+    20.68781852722168,
+    50.77242851257324,
+    5.284309387207031,
+    5.85484504699707
+  ],
+  "raw_conflict_latencies_ms": [
+    57.05738067626953,
+    12.201309204101562,
+    12.428522109985352
+  ]
+}

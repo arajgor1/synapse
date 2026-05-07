@@ -1,0 +1,36 @@
+# Tell GitHub Linguist (the language-detection tool that powers
+# the language pie chart on the repo page) to exclude generated
+# and vendored content from stats.
+
+# Graphify outputs are auto-generated visualizations of the codebase,
+# not source code. Without this, the 729KB graph.html dominates the
+# byte count and makes the repo look like an HTML project.
+graphify-out/** linguist-generated=true
+graphify-out/graph.html  linguist-generated=true
+graphify-out/graph.json  linguist-generated=true
+graphify-out/manifest.json linguist-generated=true
+graphify-out/GRAPH_REPORT.md linguist-generated=true
+
+# JSON Schemas are spec, not implementation — flag as docs/data so
+# they don't drown out the actual SDK code.
+spec/protocol-v1.0/*.schema.json linguist-detectable=true
+spec/protocol-v1.0/*.schema.json linguist-language=JSON
+
+# Lockfiles are generated — package managers create them, humans don't write them.
+**/package-lock.json linguist-generated=true
+**/yarn.lock linguist-generated=true
+**/pnpm-lock.yaml linguist-generated=true
+
+# The architecture Word doc is documentation, not code.
+docs/*.docx linguist-documentation=true
+
+# Force normalize line endings — Windows + bash pipeline keeps complaining.
+* text=auto
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf

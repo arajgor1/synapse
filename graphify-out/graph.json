@@ -1701,7 +1701,7 @@
       "source_file": "",
       "source_location": "",
       "id": "str",
-      "community": 18,
+      "community": 20,
       "norm_label": "str"
     },
     {
@@ -2124,7 +2124,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_base_py",
-      "community": 18,
+      "community": 20,
       "norm_label": "base.py"
     },
     {
@@ -2151,7 +2151,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L33",
       "id": "adapters_base_streamhandle",
-      "community": 20,
+      "community": 19,
       "norm_label": "streamhandle"
     },
     {
@@ -2160,7 +2160,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L44",
       "id": "adapters_base_token",
-      "community": 18,
+      "community": 20,
       "norm_label": "token"
     },
     {
@@ -2178,7 +2178,7 @@
       "source_file": "",
       "source_location": "",
       "id": "runtimeerror",
-      "community": 18,
+      "community": 20,
       "norm_label": "runtimeerror"
     },
     {
@@ -2187,7 +2187,7 @@
       "source_file": "sdk-typescript/src/adapters/base.ts",
       "source_location": "L20",
       "id": "adapters_base_unsupportedcapability",
-      "community": 18,
+      "community": 20,
       "norm_label": "unsupportedcapability"
     },
     {
@@ -2259,7 +2259,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L1",
       "id": "adapters_base_rationale_1",
-      "community": 18,
+      "community": 20,
       "norm_label": "inferenceadapter protocol \u2014 see spec/adapter.md for the canonical contract."
     },
     {
@@ -2268,7 +2268,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L13",
       "id": "adapters_base_rationale_13",
-      "community": 20,
+      "community": 19,
       "norm_label": "identifies who owns a request in a multi-tenant deployment.      all four fields"
     },
     {
@@ -2277,7 +2277,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L34",
       "id": "adapters_base_rationale_34",
-      "community": 20,
+      "community": 19,
       "norm_label": "opaque handle to an in-flight generation. adapter-specific contents."
     },
     {
@@ -2295,7 +2295,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L55",
       "id": "adapters_base_rationale_55",
-      "community": 18,
+      "community": 20,
       "norm_label": "raised when an operation is requested that the backend does not support     (e.g"
     },
     {
@@ -2367,7 +2367,7 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L82",
       "id": "adapters_mock_mockadapter_read_tokens",
-      "community": 18,
+      "community": 20,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2529,7 +2529,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/anthropic_adapter.py",
       "source_location": "L127",
       "id": "hosted_anthropic_adapter_anthropicadapter_read_tokens",
-      "community": 18,
+      "community": 20,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2646,7 +2646,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/gemini_adapter.py",
       "source_location": "L160",
       "id": "hosted_gemini_adapter_geminiadapter_read_tokens",
-      "community": 18,
+      "community": 20,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2763,7 +2763,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/openai_adapter.py",
       "source_location": "L115",
       "id": "hosted_openai_adapter_openaiadapter_read_tokens",
-      "community": 18,
+      "community": 20,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2835,7 +2835,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_local_ollama_adapter_py",
-      "community": 20,
+      "community": 19,
       "norm_label": "ollama_adapter.py"
     },
     {
@@ -2844,7 +2844,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L40",
       "id": "local_ollama_adapter_ollamaadapter",
-      "community": 20,
+      "community": 19,
       "norm_label": "ollamaadapter"
     },
     {
@@ -2862,7 +2862,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L81",
       "id": "local_ollama_adapter_ollamaadapter_health_check",
-      "community": 20,
+      "community": 19,
       "norm_label": ".health_check()"
     },
     {
@@ -2871,7 +2871,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L105",
       "id": "local_ollama_adapter_ollamaadapter_start_stream",
-      "community": 20,
+      "community": 19,
       "norm_label": ".start_stream()"
     },
     {
@@ -2880,7 +2880,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L151",
       "id": "local_ollama_adapter_ollamaadapter_read_tokens",
-      "community": 18,
+      "community": 20,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2889,7 +2889,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L181",
       "id": "local_ollama_adapter_ollamaadapter_inject_and_continue",
-      "community": 20,
+      "community": 19,
       "norm_label": ".inject_and_continue()"
     },
     {
@@ -2898,7 +2898,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L211",
       "id": "local_ollama_adapter_ollamaadapter_cancel",
-      "community": 20,
+      "community": 19,
       "norm_label": ".cancel()"
     },
     {
@@ -2907,7 +2907,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L228",
       "id": "local_ollama_adapter_messages_to_prompt",
-      "community": 20,
+      "community": 19,
       "norm_label": "_messages_to_prompt()"
     },
     {
@@ -2916,7 +2916,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L1",
       "id": "local_ollama_adapter_rationale_1",
-      "community": 20,
+      "community": 19,
       "norm_label": "ollama local-api adapter.  talks to a locally-running ollama server (default htt"
     },
     {
@@ -2925,7 +2925,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L41",
       "id": "local_ollama_adapter_rationale_41",
-      "community": 20,
+      "community": 19,
       "norm_label": "local-api tier adapter for ollama.      args:         model: ollama model tag (e"
     },
     {
@@ -2934,7 +2934,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L82",
       "id": "local_ollama_adapter_rationale_82",
-      "community": 20,
+      "community": 19,
       "norm_label": "verify ollama is reachable and the model is available."
     },
     {
@@ -2943,7 +2943,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L187",
       "id": "local_ollama_adapter_rationale_187",
-      "community": 20,
+      "community": 19,
       "norm_label": "local-api resume: cancel stream, restart with last context tokens.          if t"
     },
     {
@@ -3033,7 +3033,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L134",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_read_tokens",
-      "community": 18,
+      "community": 20,
       "norm_label": ".read_tokens()"
     },
     {
@@ -4653,7 +4653,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L1",
       "id": "sdk_python_tests_test_local_native_adapters_py",
-      "community": 19,
+      "community": 18,
       "norm_label": "test_local_native_adapters.py"
     },
     {
@@ -4662,7 +4662,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L15",
       "id": "tests_test_local_native_adapters_testollamaadapter",
-      "community": 19,
+      "community": 18,
       "norm_label": "testollamaadapter"
     },
     {
@@ -4671,7 +4671,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L16",
       "id": "tests_test_local_native_adapters_testollamaadapter_test_capabilities_correct",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_capabilities_correct()"
     },
     {
@@ -4680,7 +4680,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L27",
       "id": "tests_test_local_native_adapters_testollamaadapter_test_messages_to_prompt_format",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_messages_to_prompt_format()"
     },
     {
@@ -4689,7 +4689,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L43",
       "id": "tests_test_local_native_adapters_testollamaadapter_test_messages_with_block_content",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_messages_with_block_content()"
     },
     {
@@ -4698,7 +4698,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L51",
       "id": "tests_test_local_native_adapters_testvllmmodaladapter",
-      "community": 19,
+      "community": 18,
       "norm_label": "testvllmmodaladapter"
     },
     {
@@ -4707,7 +4707,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L52",
       "id": "tests_test_local_native_adapters_testvllmmodaladapter_test_capabilities_correct",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_capabilities_correct()"
     },
     {
@@ -4716,7 +4716,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L63",
       "id": "tests_test_local_native_adapters_testvllmmodaladapter_test_messages_to_prompt_format",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_messages_to_prompt_format()"
     },
     {
@@ -4725,7 +4725,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L74",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable",
-      "community": 19,
+      "community": 18,
       "norm_label": "testphasethreeadaptersimportable"
     },
     {
@@ -4734,7 +4734,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L75",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable_test_local_module_importable",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_local_module_importable()"
     },
     {
@@ -4743,7 +4743,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L79",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable_test_native_module_importable",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_native_module_importable()"
     },
     {
@@ -4752,7 +4752,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L83",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable_test_all_tiers_capability_distinct",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_all_tiers_capability_distinct()"
     },
     {
@@ -4761,7 +4761,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L1",
       "id": "tests_test_local_native_adapters_rationale_1",
-      "community": 19,
+      "community": 18,
       "norm_label": "tests for phase 3 adapters \u2014 ollama (local-api) and vllm-via-modal (native).  al"
     },
     {
@@ -4770,7 +4770,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L84",
       "id": "tests_test_local_native_adapters_rationale_84",
-      "community": 19,
+      "community": 18,
       "norm_label": "each tier should have characteristic overhead and isolation defaults."
     },
     {
@@ -7541,7 +7541,7 @@
       "file_type": "rationale",
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L33",
-      "community": 18,
+      "community": 20,
       "norm_label": "raised when an operation is requested that the backend does not support     (e.g",
       "id": "adapters_base_rationale_33"
     },
@@ -10058,9 +10058,9 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L65",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "modal_vllm_engine_rationale_65",
-      "target": "modal_vllm_engine_vllmengine",
-      "confidence_score": 1.0
+      "target": "modal_vllm_engine_vllmengine"
     },
     {
       "relation": "rationale_for",
@@ -12807,9 +12807,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L8",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_base_tenantcontext",
-      "target": "synapse_messages_backendcapabilities",
-      "confidence_score": 0.5
+      "target": "synapse_messages_backendcapabilities"
     },
     {
       "relation": "uses",
@@ -12857,9 +12857,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L8",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_base_tenantviolation",
-      "target": "synapse_messages_backendcapabilities",
-      "confidence_score": 0.5
+      "target": "synapse_messages_backendcapabilities"
     },
     {
       "relation": "uses",
@@ -13750,9 +13750,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_adapters_base_py",
-      "target": "adapters_base_tenantcontext",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantcontext"
     },
     {
       "relation": "contains",
@@ -13800,9 +13800,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_adapters_base_py",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "contains",
@@ -13830,9 +13830,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_base_tenantcontext",
-      "target": "adapters_base_tenantcontext_matches",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantcontext_matches"
     },
     {
       "relation": "rationale_for",
@@ -13840,9 +13840,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_base_rationale_13",
-      "target": "adapters_base_tenantcontext",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantcontext"
     },
     {
       "relation": "uses",
@@ -13850,9 +13850,9 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L17",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_mock_mockstreamstate",
-      "target": "adapters_base_tenantcontext",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantcontext"
     },
     {
       "relation": "uses",
@@ -13860,9 +13860,9 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L17",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_base_tenantcontext",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantcontext"
     },
     {
       "relation": "uses",
@@ -13870,9 +13870,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L21",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_isolation_requestidisolatedmixin",
-      "target": "adapters_base_tenantcontext",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantcontext"
     },
     {
       "relation": "uses",
@@ -13880,9 +13880,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L12",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_multi_tenant_testtenantcontextequality",
-      "target": "adapters_base_tenantcontext",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantcontext"
     },
     {
       "relation": "uses",
@@ -13890,9 +13890,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L12",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "adapters_base_tenantcontext",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantcontext"
     },
     {
       "relation": "calls",
@@ -14054,9 +14054,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_base_rationale_34",
-      "target": "adapters_base_streamhandle",
-      "confidence_score": 1.0
+      "target": "adapters_base_streamhandle"
     },
     {
       "relation": "imports",
@@ -14065,9 +14065,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "adapters_base_streamhandle",
-      "confidence_score": 1.0
+      "target": "adapters_base_streamhandle"
     },
     {
       "relation": "uses",
@@ -14095,9 +14095,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L21",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_isolation_requestidisolatedmixin",
-      "target": "adapters_base_streamhandle",
-      "confidence_score": 0.5
+      "target": "adapters_base_streamhandle"
     },
     {
       "relation": "uses",
@@ -14232,9 +14232,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "adapters_base_token",
-      "confidence_score": 1.0
+      "target": "adapters_base_token"
     },
     {
       "relation": "uses",
@@ -14388,9 +14388,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_base_rationale_51",
-      "target": "adapters_base_backendunavailable",
-      "confidence_score": 1.0
+      "target": "adapters_base_backendunavailable"
     },
     {
       "relation": "contains",
@@ -14398,9 +14398,9 @@
       "source_file": "sdk-typescript/src/adapters/base.ts",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_base_ts",
-      "target": "adapters_base_backendunavailable",
-      "confidence_score": 1.0
+      "target": "adapters_base_backendunavailable"
     },
     {
       "relation": "uses",
@@ -14667,9 +14667,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_base_tenantviolation",
-      "target": "runtimeerror",
-      "confidence_score": 1.0
+      "target": "runtimeerror"
     },
     {
       "relation": "calls",
@@ -14776,9 +14776,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_base_rationale_55",
-      "target": "adapters_base_unsupportedcapability",
-      "confidence_score": 1.0
+      "target": "adapters_base_unsupportedcapability"
     },
     {
       "relation": "contains",
@@ -14786,9 +14786,9 @@
       "source_file": "sdk-typescript/src/adapters/base.ts",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_base_ts",
-      "target": "adapters_base_unsupportedcapability",
-      "confidence_score": 1.0
+      "target": "adapters_base_unsupportedcapability"
     },
     {
       "relation": "uses",
@@ -14816,9 +14816,9 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_base_rationale_61",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "contains",
@@ -14826,9 +14826,9 @@
       "source_file": "sdk-typescript/src/adapters/base.ts",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_base_ts",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "imports",
@@ -14837,9 +14837,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_test_ts",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "imports",
@@ -14848,9 +14848,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 1.0
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "uses",
@@ -14858,9 +14858,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L21",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_isolation_requestidisolatedmixin",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "uses",
@@ -14868,9 +14868,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L12",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_multi_tenant_testtenantcontextequality",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "uses",
@@ -14878,9 +14878,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L12",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "adapters_base_tenantviolation",
-      "confidence_score": 0.5
+      "target": "adapters_base_tenantviolation"
     },
     {
       "relation": "inherits",
@@ -14939,9 +14939,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "adapters_base_inferenceadapter",
-      "confidence_score": 1.0
+      "target": "adapters_base_inferenceadapter"
     },
     {
       "relation": "imports",
@@ -14950,9 +14950,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "adapters_base_inferenceadapter",
-      "confidence_score": 1.0
+      "target": "adapters_base_inferenceadapter"
     },
     {
       "relation": "uses",
@@ -15081,9 +15081,9 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L16",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_mock_mockstreamstate",
-      "target": "adapters_isolation_requestidisolatedmixin",
-      "confidence_score": 0.5
+      "target": "adapters_isolation_requestidisolatedmixin"
     },
     {
       "relation": "inherits",
@@ -15091,9 +15091,9 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L36",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter",
-      "target": "requestidisolatedmixin",
-      "confidence_score": 1.0
+      "target": "requestidisolatedmixin"
     },
     {
       "relation": "method",
@@ -15151,9 +15151,9 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_rationale_37",
-      "target": "adapters_mock_mockadapter",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter"
     },
     {
       "relation": "imports",
@@ -15162,9 +15162,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_test_ts",
-      "target": "adapters_mock_mockadapter",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter"
     },
     {
       "relation": "contains",
@@ -15172,9 +15172,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "adapters_mock_mockadapter",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter"
     },
     {
       "relation": "method",
@@ -15182,9 +15182,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_mock_mockadapter_constructor",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_constructor"
     },
     {
       "relation": "method",
@@ -15192,9 +15192,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L50",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_mock_mockadapter_startstream",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_startstream"
     },
     {
       "relation": "method",
@@ -15202,9 +15202,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_mock_mockadapter_readtokens",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_readtokens"
     },
     {
       "relation": "method",
@@ -15212,9 +15212,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L77",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_mock_mockadapter_readtokensimpl",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_readtokensimpl"
     },
     {
       "relation": "method",
@@ -15222,9 +15222,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L93",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_mock_mockadapter_injectandcontinue",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_injectandcontinue"
     },
     {
       "relation": "method",
@@ -15232,9 +15232,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_mock_mockadapter_checktenant",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_checktenant"
     },
     {
       "relation": "uses",
@@ -15242,9 +15242,9 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L16",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "adapters_mock_mockadapter",
-      "target": "adapters_isolation_requestidisolatedmixin",
-      "confidence_score": 0.5
+      "target": "adapters_isolation_requestidisolatedmixin"
     },
     {
       "relation": "rationale_for",
@@ -15373,9 +15373,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L99",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter_injectandcontinue",
-      "target": "adapters_mock_mockadapter_cancel",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_cancel"
     },
     {
       "relation": "calls",
@@ -15384,9 +15384,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L112",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter_cancel",
-      "target": "adapters_mock_mockadapter_checktenant",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_checktenant"
     },
     {
       "relation": "contains",
@@ -15394,9 +15394,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_adapters_isolation_py",
-      "target": "adapters_isolation_requestidisolatedmixin",
-      "confidence_score": 1.0
+      "target": "adapters_isolation_requestidisolatedmixin"
     },
     {
       "relation": "rationale_for",
@@ -15404,9 +15404,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_isolation_rationale_1",
-      "target": "sdk_python_synapse_adapters_isolation_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_adapters_isolation_py"
     },
     {
       "relation": "method",
@@ -15414,9 +15414,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_isolation_requestidisolatedmixin",
-      "target": "adapters_isolation_requestidisolatedmixin_stamp_tenant",
-      "confidence_score": 1.0
+      "target": "adapters_isolation_requestidisolatedmixin_stamp_tenant"
     },
     {
       "relation": "method",
@@ -15424,9 +15424,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_isolation_requestidisolatedmixin",
-      "target": "adapters_isolation_requestidisolatedmixin_check_tenant",
-      "confidence_score": 1.0
+      "target": "adapters_isolation_requestidisolatedmixin_check_tenant"
     },
     {
       "relation": "method",
@@ -15434,9 +15434,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_isolation_requestidisolatedmixin",
-      "target": "adapters_isolation_requestidisolatedmixin_release_tenant",
-      "confidence_score": 1.0
+      "target": "adapters_isolation_requestidisolatedmixin_release_tenant"
     },
     {
       "relation": "rationale_for",
@@ -15444,9 +15444,9 @@
       "source_file": "sdk-python/synapse/adapters/_isolation.py",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_isolation_rationale_29",
-      "target": "adapters_isolation_requestidisolatedmixin",
-      "confidence_score": 1.0
+      "target": "adapters_isolation_requestidisolatedmixin"
     },
     {
       "relation": "rationale_for",
@@ -18980,9 +18980,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_multi_tenant_py",
-      "target": "tests_test_multi_tenant_testtenantcontextequality",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testtenantcontextequality"
     },
     {
       "relation": "contains",
@@ -18990,9 +18990,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_multi_tenant_py",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation"
     },
     {
       "relation": "rationale_for",
@@ -19000,9 +19000,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_rationale_1",
-      "target": "sdk_python_tests_test_multi_tenant_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_tests_test_multi_tenant_py"
     },
     {
       "relation": "method",
@@ -19010,9 +19010,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testtenantcontextequality",
-      "target": "tests_test_multi_tenant_testtenantcontextequality_test_default_anonymous_matches_default",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testtenantcontextequality_test_default_anonymous_matches_default"
     },
     {
       "relation": "method",
@@ -19020,9 +19020,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testtenantcontextequality",
-      "target": "tests_test_multi_tenant_testtenantcontextequality_test_named_matches_same_named",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testtenantcontextequality_test_named_matches_same_named"
     },
     {
       "relation": "method",
@@ -19030,9 +19030,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testtenantcontextequality",
-      "target": "tests_test_multi_tenant_testtenantcontextequality_test_different_tenant_does_not_match",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testtenantcontextequality_test_different_tenant_does_not_match"
     },
     {
       "relation": "method",
@@ -19040,9 +19040,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testtenantcontextequality",
-      "target": "tests_test_multi_tenant_testtenantcontextequality_test_different_agent_does_not_match",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testtenantcontextequality_test_different_agent_does_not_match"
     },
     {
       "relation": "method",
@@ -19050,9 +19050,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testtenantcontextequality",
-      "target": "tests_test_multi_tenant_testtenantcontextequality_test_different_session_does_not_match",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testtenantcontextequality_test_different_session_does_not_match"
     },
     {
       "relation": "method",
@@ -19060,9 +19060,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_advertises_request_id_isolation_by_default",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_advertises_request_id_isolation_by_default"
     },
     {
       "relation": "method",
@@ -19070,9 +19070,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L53",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_can_opt_out_to_process_mode",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_can_opt_out_to_process_mode"
     },
     {
       "relation": "method",
@@ -19080,9 +19080,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_handle_carries_tenant_from_params",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_handle_carries_tenant_from_params"
     },
     {
       "relation": "method",
@@ -19090,9 +19090,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L63",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_same_tenant_can_read_and_cancel",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_same_tenant_can_read_and_cancel"
     },
     {
       "relation": "method",
@@ -19100,9 +19100,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_cross_tenant_read_rejected",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_cross_tenant_read_rejected"
     },
     {
       "relation": "method",
@@ -19110,9 +19110,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L92",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_cross_tenant_inject_rejected",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_cross_tenant_inject_rejected"
     },
     {
       "relation": "method",
@@ -19120,9 +19120,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_cross_tenant_cancel_rejected",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_cross_tenant_cancel_rejected"
     },
     {
       "relation": "method",
@@ -19130,9 +19130,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L124",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_anonymous_caller_can_act_on_anonymous_request",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_anonymous_caller_can_act_on_anonymous_request"
     },
     {
       "relation": "method",
@@ -19140,9 +19140,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L135",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_testmockadaptertenantisolation",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_inject_and_continue_carries_tenant_through",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_inject_and_continue_carries_tenant_through"
     },
     {
       "relation": "rationale_for",
@@ -19150,9 +19150,9 @@
       "source_file": "sdk-python/tests/test_multi_tenant.py",
       "source_location": "L125",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_multi_tenant_rationale_125",
-      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_anonymous_caller_can_act_on_anonymous_request",
-      "confidence_score": 1.0
+      "target": "tests_test_multi_tenant_testmockadaptertenantisolation_test_anonymous_caller_can_act_on_anonymous_request"
     },
     {
       "relation": "contains",
@@ -19481,9 +19481,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "sdk_typescript_src_bus_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_bus_ts"
     },
     {
       "relation": "imports",
@@ -19492,9 +19492,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "src_bus_bus",
-      "confidence_score": 1.0
+      "target": "src_bus_bus"
     },
     {
       "relation": "imports_from",
@@ -19503,9 +19503,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "sdk_typescript_src_adapters_base_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_adapters_base_ts"
     },
     {
       "relation": "imports_from",
@@ -19514,9 +19514,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "sdk_typescript_src_envelope_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_envelope_ts"
     },
     {
       "relation": "imports",
@@ -19525,9 +19525,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "src_envelope_makeenvelope",
-      "confidence_score": 1.0
+      "target": "src_envelope_makeenvelope"
     },
     {
       "relation": "imports_from",
@@ -19536,9 +19536,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "sdk_typescript_src_types_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_types_ts"
     },
     {
       "relation": "contains",
@@ -19546,9 +19546,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_agent_ts",
-      "target": "src_agent_agent",
-      "confidence_score": 1.0
+      "target": "src_agent_agent"
     },
     {
       "relation": "method",
@@ -19556,9 +19556,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_agent_agent",
-      "target": "src_agent_agent_constructor",
-      "confidence_score": 1.0
+      "target": "src_agent_agent_constructor"
     },
     {
       "relation": "method",
@@ -19566,9 +19566,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_agent_agent",
-      "target": "src_agent_agent_emitintention",
-      "confidence_score": 1.0
+      "target": "src_agent_agent_emitintention"
     },
     {
       "relation": "method",
@@ -19576,9 +19576,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_agent_agent",
-      "target": "src_agent_agent_emitresolution",
-      "confidence_score": 1.0
+      "target": "src_agent_agent_emitresolution"
     },
     {
       "relation": "method",
@@ -19586,9 +19586,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L134",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_agent_agent",
-      "target": "src_agent_agent_emitbelief",
-      "confidence_score": 1.0
+      "target": "src_agent_agent_emitbelief"
     },
     {
       "relation": "method",
@@ -19596,9 +19596,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L160",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_agent_agent",
-      "target": "src_agent_agent_emitblock",
-      "confidence_score": 1.0
+      "target": "src_agent_agent_emitblock"
     },
     {
       "relation": "method",
@@ -19606,9 +19606,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L186",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_agent_agent",
-      "target": "src_agent_agent_drainsignals",
-      "confidence_score": 1.0
+      "target": "src_agent_agent_drainsignals"
     },
     {
       "relation": "method",
@@ -19616,9 +19616,9 @@
       "source_file": "sdk-typescript/src/agent.ts",
       "source_location": "L196",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_agent_agent",
-      "target": "src_agent_agent_waitforsignal",
-      "confidence_score": 1.0
+      "target": "src_agent_agent_waitforsignal"
     },
     {
       "relation": "calls",
@@ -19671,9 +19671,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_bus_ts",
-      "target": "sdk_typescript_src_types_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_types_ts"
     },
     {
       "relation": "contains",
@@ -19681,9 +19681,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_bus_ts",
-      "target": "src_bus_sessionstream",
-      "confidence_score": 1.0
+      "target": "src_bus_sessionstream"
     },
     {
       "relation": "contains",
@@ -19691,9 +19691,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_bus_ts",
-      "target": "src_bus_agentinbox",
-      "confidence_score": 1.0
+      "target": "src_bus_agentinbox"
     },
     {
       "relation": "contains",
@@ -19701,9 +19701,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_bus_ts",
-      "target": "src_bus_bus",
-      "confidence_score": 1.0
+      "target": "src_bus_bus"
     },
     {
       "relation": "calls",
@@ -19712,9 +19712,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L58",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus_publishsession",
-      "target": "src_bus_sessionstream",
-      "confidence_score": 1.0
+      "target": "src_bus_sessionstream"
     },
     {
       "relation": "calls",
@@ -19723,9 +19723,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L63",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus_publishinbox",
-      "target": "src_bus_agentinbox",
-      "confidence_score": 1.0
+      "target": "src_bus_agentinbox"
     },
     {
       "relation": "calls",
@@ -19734,9 +19734,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L100",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus_draininbox",
-      "target": "src_bus_agentinbox",
-      "confidence_score": 1.0
+      "target": "src_bus_agentinbox"
     },
     {
       "relation": "method",
@@ -19744,9 +19744,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_constructor",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_constructor"
     },
     {
       "relation": "method",
@@ -19754,9 +19754,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_connect",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_connect"
     },
     {
       "relation": "method",
@@ -19764,9 +19764,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_close",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_close"
     },
     {
       "relation": "method",
@@ -19774,9 +19774,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_r",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_r"
     },
     {
       "relation": "method",
@@ -19784,9 +19784,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_publishsession",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_publishsession"
     },
     {
       "relation": "method",
@@ -19794,9 +19794,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_publishinbox",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_publishinbox"
     },
     {
       "relation": "method",
@@ -19804,9 +19804,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L66",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_xadd",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_xadd"
     },
     {
       "relation": "method",
@@ -19814,9 +19814,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L82",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_ensuregroup",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_ensuregroup"
     },
     {
       "relation": "method",
@@ -19824,9 +19824,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L95",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus",
-      "target": "src_bus_bus_draininbox",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_draininbox"
     },
     {
       "relation": "calls",
@@ -19835,9 +19835,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L58",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus_publishsession",
-      "target": "src_bus_bus_xadd",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_xadd"
     },
     {
       "relation": "calls",
@@ -19846,9 +19846,9 @@
       "source_file": "sdk-typescript/src/bus.ts",
       "source_location": "L63",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_bus_bus_publishinbox",
-      "target": "src_bus_bus_xadd",
-      "confidence_score": 1.0
+      "target": "src_bus_bus_xadd"
     },
     {
       "relation": "imports_from",
@@ -19857,9 +19857,9 @@
       "source_file": "sdk-typescript/src/envelope.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_envelope_test_ts",
-      "target": "sdk_typescript_src_envelope_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_envelope_ts"
     },
     {
       "relation": "imports",
@@ -19868,9 +19868,9 @@
       "source_file": "sdk-typescript/src/envelope.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_envelope_test_ts",
-      "target": "src_envelope_isulid",
-      "confidence_score": 1.0
+      "target": "src_envelope_isulid"
     },
     {
       "relation": "imports",
@@ -19879,9 +19879,9 @@
       "source_file": "sdk-typescript/src/envelope.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_envelope_test_ts",
-      "target": "src_envelope_makeenvelope",
-      "confidence_score": 1.0
+      "target": "src_envelope_makeenvelope"
     },
     {
       "relation": "imports_from",
@@ -19890,9 +19890,9 @@
       "source_file": "sdk-typescript/src/envelope.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_envelope_test_ts",
-      "target": "sdk_typescript_src_types_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_types_ts"
     },
     {
       "relation": "imports_from",
@@ -19901,9 +19901,9 @@
       "source_file": "sdk-typescript/src/envelope.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_envelope_ts",
-      "target": "sdk_typescript_src_types_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_types_ts"
     },
     {
       "relation": "contains",
@@ -19911,9 +19911,9 @@
       "source_file": "sdk-typescript/src/envelope.ts",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_envelope_ts",
-      "target": "src_envelope_makeenvelope",
-      "confidence_score": 1.0
+      "target": "src_envelope_makeenvelope"
     },
     {
       "relation": "contains",
@@ -19921,9 +19921,9 @@
       "source_file": "sdk-typescript/src/envelope.ts",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_envelope_ts",
-      "target": "src_envelope_isulid",
-      "confidence_score": 1.0
+      "target": "src_envelope_isulid"
     },
     {
       "relation": "contains",
@@ -19931,9 +19931,9 @@
       "source_file": "sdk-typescript/src/types.ts",
       "source_location": "L141",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_types_ts",
-      "target": "src_types_tenantsmatch",
-      "confidence_score": 1.0
+      "target": "src_types_tenantsmatch"
     },
     {
       "relation": "imports_from",
@@ -19942,9 +19942,9 @@
       "source_file": "sdk-typescript/src/adapters/base.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_base_ts",
-      "target": "sdk_typescript_src_types_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_types_ts"
     },
     {
       "relation": "imports_from",
@@ -19953,9 +19953,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.test.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_test_ts",
-      "target": "sdk_typescript_src_types_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_types_ts"
     },
     {
       "relation": "imports_from",
@@ -19964,9 +19964,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "sdk_typescript_src_types_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_types_ts"
     },
     {
       "relation": "imports",
@@ -19975,9 +19975,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "src_types_tenantsmatch",
-      "confidence_score": 1.0
+      "target": "src_types_tenantsmatch"
     },
     {
       "relation": "calls",
@@ -19997,9 +19997,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_test_ts",
-      "target": "sdk_typescript_src_adapters_base_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_adapters_base_ts"
     },
     {
       "relation": "imports_from",
@@ -20008,9 +20008,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_ts",
-      "target": "sdk_typescript_src_adapters_base_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_adapters_base_ts"
     },
     {
       "relation": "imports_from",
@@ -20019,9 +20019,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.test.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_test_ts",
-      "target": "sdk_typescript_src_adapters_mock_ts",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_src_adapters_mock_ts"
     },
     {
       "relation": "contains",
@@ -20029,9 +20029,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.test.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_src_adapters_mock_test_ts",
-      "target": "adapters_mock_test_readall",
-      "confidence_score": 1.0
+      "target": "adapters_mock_test_readall"
     },
     {
       "relation": "calls",
@@ -20040,9 +20040,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter_injectandcontinue",
-      "target": "adapters_mock_mockadapter_startstream",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_startstream"
     },
     {
       "relation": "calls",
@@ -20051,9 +20051,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter_readtokens",
-      "target": "adapters_mock_mockadapter_readtokensimpl",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_readtokensimpl"
     },
     {
       "relation": "calls",
@@ -20062,9 +20062,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter_readtokensimpl",
-      "target": "adapters_mock_mockadapter_checktenant",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_checktenant"
     },
     {
       "relation": "calls",
@@ -20073,9 +20073,9 @@
       "source_file": "sdk-typescript/src/adapters/mock.ts",
       "source_location": "L98",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adapters_mock_mockadapter_injectandcontinue",
-      "target": "adapters_mock_mockadapter_checktenant",
-      "confidence_score": 1.0
+      "target": "adapters_mock_mockadapter_checktenant"
     },
     {
       "relation": "contains",
@@ -20170,9 +20170,9 @@
       "source_file": "ui/src/app/sessions/[id]/page.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_app_sessions_id_page_tsx",
-      "target": "ui_src_components_costchart_tsx",
-      "confidence_score": 1.0
+      "target": "ui_src_components_costchart_tsx"
     },
     {
       "relation": "imports_from",
@@ -20181,9 +20181,9 @@
       "source_file": "ui/src/app/sessions/[id]/page.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_app_sessions_id_page_tsx",
-      "target": "ui_src_components_replayscrubber_tsx",
-      "confidence_score": 1.0
+      "target": "ui_src_components_replayscrubber_tsx"
     },
     {
       "relation": "contains",
@@ -20244,9 +20244,9 @@
       "source_file": "ui/src/components/CostChart.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_components_costchart_tsx",
-      "target": "ui_src_lib_types_ts",
-      "confidence_score": 1.0
+      "target": "ui_src_lib_types_ts"
     },
     {
       "relation": "imports_from",
@@ -20287,9 +20287,9 @@
       "source_file": "ui/src/components/ReplayScrubber.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_components_replayscrubber_tsx",
-      "target": "ui_src_lib_types_ts",
-      "confidence_score": 1.0
+      "target": "ui_src_lib_types_ts"
     },
     {
       "relation": "contains",
@@ -20297,9 +20297,9 @@
       "source_file": "ui/src/components/ReplayScrubber.tsx",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_components_replayscrubber_tsx",
-      "target": "components_replayscrubber_handleseek",
-      "confidence_score": 1.0
+      "target": "components_replayscrubber_handleseek"
     },
     {
       "relation": "contains",
@@ -20307,9 +20307,9 @@
       "source_file": "ui/src/components/ReplayScrubber.tsx",
       "source_location": "L59",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_components_replayscrubber_tsx",
-      "target": "components_replayscrubber_golive",
-      "confidence_score": 1.0
+      "target": "components_replayscrubber_golive"
     },
     {
       "relation": "contains",
@@ -20317,9 +20317,9 @@
       "source_file": "ui/src/components/ReplayScrubber.tsx",
       "source_location": "L64",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_components_replayscrubber_tsx",
-      "target": "components_replayscrubber_goback",
-      "confidence_score": 1.0
+      "target": "components_replayscrubber_goback"
     },
     {
       "relation": "contains",
@@ -20327,9 +20327,9 @@
       "source_file": "ui/src/components/ReplayScrubber.tsx",
       "source_location": "L70",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "ui_src_components_replayscrubber_tsx",
-      "target": "components_replayscrubber_goforward",
-      "confidence_score": 1.0
+      "target": "components_replayscrubber_goforward"
     },
     {
       "relation": "imports_from",
@@ -21239,9 +21239,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_md",
-      "target": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk"
     },
     {
       "relation": "contains",
@@ -21249,9 +21249,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "target": "sdk_typescript_readme_install",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_install"
     },
     {
       "relation": "contains",
@@ -21259,9 +21259,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "target": "sdk_typescript_readme_quickstart",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_quickstart"
     },
     {
       "relation": "contains",
@@ -21269,9 +21269,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "target": "sdk_typescript_readme_what_s_in_this_version",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_what_s_in_this_version"
     },
     {
       "relation": "contains",
@@ -21279,9 +21279,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "target": "sdk_typescript_readme_multi_tenant_isolation",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_multi_tenant_isolation"
     },
     {
       "relation": "contains",
@@ -21289,9 +21289,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L75",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "target": "sdk_typescript_readme_test",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_test"
     },
     {
       "relation": "contains",
@@ -21299,9 +21299,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "target": "sdk_typescript_readme_roadmap",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_roadmap"
     },
     {
       "relation": "contains",
@@ -21309,9 +21309,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_install",
-      "target": "sdk_typescript_readme_codeblock_1",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_codeblock_1"
     },
     {
       "relation": "contains",
@@ -21319,9 +21319,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_quickstart",
-      "target": "sdk_typescript_readme_codeblock_2",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_codeblock_2"
     },
     {
       "relation": "contains",
@@ -21329,9 +21329,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L64",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_multi_tenant_isolation",
-      "target": "sdk_typescript_readme_codeblock_3",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_codeblock_3"
     },
     {
       "relation": "contains",
@@ -21339,9 +21339,9 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L77",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_typescript_readme_test",
-      "target": "sdk_typescript_readme_codeblock_4",
-      "confidence_score": 1.0
+      "target": "sdk_typescript_readme_codeblock_4"
     },
     {
       "relation": "contains",
@@ -22155,5 +22155,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "bca356ffd44e6080c38b7cd0c10d70959797bd8e"
+  "built_at_commit": "51ee2e0aa121f39883ccc5e6ff2689b6f453a33e"
 }

@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bca356ff`
+- Built from commit: `51ee2e0a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -172,16 +172,16 @@ Cohesion: 0.13
 Nodes (14): Capability Flags, code:python (from typing import Protocol, AsyncIterator), Cost Reporting, Failure Modes, Implementing a New Adapter, InferenceAdapter Contract, Interface, `multi_tenant_isolation` (+6 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.24
-Nodes (7): InferenceAdapter Protocol — see spec/adapter.md for the canonical contract., Raised when an operation is requested that the backend does not support     (e.g, Raised when an operation is requested that the backend does not support     (e.g, Token, UnsupportedCapability, RuntimeError, str
-
-### Community 19 - "Community 19"
 Cohesion: 0.14
 Nodes (5): Tests for Phase 3 adapters — Ollama (local-API) and vLLM-via-Modal (native).  Al, Each tier should have characteristic overhead and isolation defaults., TestOllamaAdapter, TestPhaseThreeAdaptersImportable, TestVLLMModalAdapter
 
-### Community 20 - "Community 20"
+### Community 19 - "Community 19"
 Cohesion: 0.19
 Nodes (9): Identifies who owns a request in a multi-tenant deployment.      All four fields, Opaque handle to an in-flight generation. Adapter-specific contents., StreamHandle, _messages_to_prompt(), OllamaAdapter, Ollama local-API adapter.  Talks to a locally-running Ollama server (default htt, Local-API resume: cancel stream, restart with last context tokens.          If t, Local-API tier adapter for Ollama.      Args:         model: Ollama model tag (e (+1 more)
+
+### Community 20 - "Community 20"
+Cohesion: 0.24
+Nodes (7): InferenceAdapter Protocol — see spec/adapter.md for the canonical contract., Raised when an operation is requested that the backend does not support     (e.g, Raised when an operation is requested that the backend does not support     (e.g, Token, UnsupportedCapability, RuntimeError, str
 
 ### Community 21 - "Community 21"
 Cohesion: 0.15
@@ -247,7 +247,7 @@ Nodes (3): CrewAI integration — wrap a CrewAI Task or any callable so that its
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `InferenceAdapter` connect `Community 8` to `Community 0`, `Community 1`, `Community 2`, `Community 5`, `Community 10`, `Community 11`, `Community 18`, `Community 20`, `Community 23`, `Community 24`?**
+- **Why does `InferenceAdapter` connect `Community 8` to `Community 0`, `Community 1`, `Community 2`, `Community 5`, `Community 10`, `Community 11`, `Community 19`, `Community 20`, `Community 23`, `Community 24`?**
   _High betweenness centrality (0.100) - this node is a cross-community bridge._
 - **Why does `StateGraph` connect `Community 6` to `Community 0`, `Community 1`, `Community 32`, `Community 3`, `Community 4`, `Community 5`, `Community 12`?**
   _High betweenness centrality (0.097) - this node is a cross-community bridge._

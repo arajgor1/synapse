@@ -6,6 +6,10 @@
 *.log
 .env*.local
 
+# TypeScript incremental build cache (local only)
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
 # Editors
 .vscode/
 .idea/
