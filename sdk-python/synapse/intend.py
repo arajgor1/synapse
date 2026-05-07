@@ -24,6 +24,7 @@ Example:
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 import time
@@ -53,6 +54,15 @@ class IntentionHandle:
     side_effects: list[str] = field(default_factory=list)
     outcome: str = "success"
     error_message: Optional[str] = None
+
+    # v0.2 week 4: filled in by AutoMergePolicy when it succeeds. The
+    # caller should use ``merged_action`` instead of their original
+    # tool args / content.
+    merged_action: Optional[dict[str, Any]] = None
+    # The MergePolicy's rationale string (logged + surfaced in resolution)
+    policy_rationale: Optional[str] = None
+    # Set when a policy decides ABORT (the caller's framework handles it)
+    aborted: bool = False
 
     @property
     def has_conflicts(self) -> bool:
@@ -172,21 +182,45 @@ async def intend(
     gate_ms: int = 50,
     estimated_duration_ms: Optional[int] = None,
     uncertainty: Optional[str] = None,
+    merge_policy: Any = None,                # v0.2-w4: MergePolicy | str | None
+    critical_scopes: Optional[list[str]] = None,
+    proposed_action: Optional[dict[str, Any]] = None,
 ):
     """Wrap a tool dispatch with Synapse coordination.
 
     On enter:
       - Emit INTENTION with the given scope
       - Optionally drain inbox for CONFLICT signals (gate window)
-      - Yield an IntentionHandle so the caller can inspect conflicts +
-        record state_diff / side_effects
+      - If conflicts found, run the configured ``merge_policy``:
+          * critical_scopes match  → force ABORT (raises SynapseConflict)
+          * MergePolicy.abort      → raise SynapseConflict
+          * MergePolicy.wait       → block briefly + retry
+          * MergePolicy.auto_merge → call user's LLM, fill handle.merged_action
+          * MergePolicy.redirect   → log rationale, set handle.policy_rationale
+      - Yield IntentionHandle so the caller can inspect + record state_diff
 
     On exit:
       - Emit RESOLUTION with the outcome (success / failure)
 
-    If no bus is configured (offline mode), the body still runs — Synapse
-    just doesn't emit envelopes. Useful for tests + CI where Redis isn't up.
+    Args:
+        merge_policy: a ``synapse.MergePolicy.*`` constant, a custom
+            MergePolicy instance, a string name ("redirect"/"wait"/...),
+            or None to fall back to ``install()``-time default + a final
+            fallback of redirect.
+        critical_scopes: glob patterns. If any matches a scope on a
+            CONFLICT-bearing intention, force ABORT regardless of policy.
+        proposed_action: required for ``auto_merge`` — the tool args /
+            content the agent is about to use. Optional otherwise.
+
+    Offline mode (no bus): body still runs, no envelopes emitted, no
+    policy applied (no conflicts can fire).
     """
+    from synapse.policies import resolve_policy
+    from synapse.policies.base import MergeDecision, SynapseConflict
+    from synapse.policies.critical import (
+        critical_scope_match, normalize_critical_scopes,
+    )
+
     session_id = (
         session
         or os.environ.get("SYNAPSE_SESSION_ID")
@@ -198,6 +232,16 @@ async def intend(
         scope=list(scope),
         agent_id=agent,
         session_id=session_id,
+    )
+
+    # Resolve effective policy + critical_scopes from caller > install-time > defaults
+    install_defaults = _runtime.get("policy_defaults") or {}
+    policy = resolve_policy(merge_policy)
+    if policy is None:
+        policy = resolve_policy(install_defaults.get("merge_policy"))
+    crit_scopes = normalize_critical_scopes(
+        critical_scopes if critical_scopes is not None
+        else install_defaults.get("critical_scopes")
     )
 
     syn_agent = None
@@ -223,6 +267,59 @@ async def intend(
         except Exception as e:
             logger.warning("synapse.intend: emit_intention failed (%s); proceeding anyway", e)
 
+    # Apply MergePolicy if conflicts surfaced
+    if handle.has_conflicts:
+        # 1. critical_scopes hard-block first
+        match = critical_scope_match(handle.scope, crit_scopes)
+        if match:
+            rationale = (
+                f"Critical scope match: {match!r} forced ABORT on {handle.scope}. "
+                f"{len(handle.conflicts)} conflicting intention(s)."
+            )
+            handle.aborted = True
+            handle.policy_rationale = rationale
+            handle.mark_failed(rationale)
+            if syn_agent is not None and handle.intention_id:
+                try:
+                    await syn_agent.emit_resolution(
+                        intention_id=handle.intention_id,
+                        outcome="failure",
+                        state_diff={"error": rationale, "policy": "critical_scope"},
+                    )
+                except Exception:
+                    pass
+            raise SynapseConflict(handle.conflicts, handle.scope, rationale)
+
+        # 2. configured policy
+        if policy is not None:
+            try:
+                action = await policy.resolve(handle, handle.conflicts, proposed_action)
+            except Exception as e:
+                logger.warning("synapse.intend: merge_policy.resolve raised (%s); proceeding", e)
+                action = None
+            if action is not None:
+                handle.policy_rationale = action.rationale
+                if action.decision == MergeDecision.ABORT:
+                    handle.aborted = True
+                    handle.mark_failed(action.rationale)
+                    if syn_agent is not None and handle.intention_id:
+                        try:
+                            await syn_agent.emit_resolution(
+                                intention_id=handle.intention_id,
+                                outcome="failure",
+                                state_diff={"error": action.rationale, "policy": policy.name},
+                            )
+                        except Exception:
+                            pass
+                    raise SynapseConflict(handle.conflicts, handle.scope, action.rationale)
+                elif action.decision == MergeDecision.MERGED:
+                    handle.merged_action = action.merged_action
+                elif action.decision == MergeDecision.WAIT:
+                    # Best-effort: sleep the timeout, then proceed.
+                    # A full implementation would re-poll the state graph.
+                    await asyncio.sleep(action.wait_timeout_ms / 1000)
+                # MergeDecision.PROCEED needs no action
+
     started = time.time()
     try:
         yield handle
@@ -230,14 +327,17 @@ async def intend(
         handle.mark_failed(str(e))
         raise
     finally:
-        if syn_agent is not None and handle.intention_id:
+        if syn_agent is not None and handle.intention_id and not handle.aborted:
             try:
+                sd = handle.state_diff or (
+                    {"error": handle.error_message} if handle.error_message else {}
+                )
+                if handle.policy_rationale:
+                    sd = {**sd, "policy_rationale": handle.policy_rationale}
                 await syn_agent.emit_resolution(
                     intention_id=handle.intention_id,
                     outcome=handle.outcome,
-                    state_diff=handle.state_diff or (
-                        {"error": handle.error_message} if handle.error_message else {}
-                    ),
+                    state_diff=sd,
                     side_effects=handle.side_effects or None,
                 )
             except Exception as e:

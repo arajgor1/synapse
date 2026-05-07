@@ -87,6 +87,8 @@ def install(
     session_id: Optional[str] = None,
     agent_id: Optional[str] = None,
     auto: bool = True,
+    merge_policy: Any = None,                    # v0.2-w4
+    critical_scopes: Optional[list[str]] = None,
     **framework_opts: Any,
 ) -> dict[str, Any]:
     """Configure Synapse and (optionally) hook into a known framework.
@@ -118,6 +120,14 @@ def install(
 
     rt = _get_or_init_runtime(bus_url=bus_url, state_dsn=state_dsn)
 
+    # Stash policy defaults so synapse.intend() picks them up
+    from synapse.policies import resolve_policy, normalize_critical_scopes
+    policy_defaults = rt.setdefault("policy_defaults", {})
+    if merge_policy is not None:
+        policy_defaults["merge_policy"] = resolve_policy(merge_policy)
+    if critical_scopes is not None:
+        policy_defaults["critical_scopes"] = normalize_critical_scopes(critical_scopes)
+
     if framework is None and auto:
         framework = _autodetect_framework()
 
@@ -142,6 +152,8 @@ def install(
         "bus_url": rt.get("bus_url"),
         "state_dsn": rt.get("state_dsn"),
         "hooks_installed": hooks,
+        "merge_policy": getattr(policy_defaults.get("merge_policy"), "name", None),
+        "critical_scopes": policy_defaults.get("critical_scopes") or [],
     }
 
 

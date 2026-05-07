@@ -52,6 +52,12 @@ from synapse.llm import (
     from_litellm,
     auto_llm,
 )
+from synapse.policies import (
+    MergePolicy,
+    MergeAction,
+    MergeDecision,
+    SynapseConflict,
+)
 
 __version__ = "0.2.0a0"
 __all__ = [
@@ -80,5 +86,10 @@ __all__ = [
     "from_langchain",
     "from_litellm",
     "auto_llm",
+    # v0.2 week 4: policies
+    "MergePolicy",
+    "MergeAction",
+    "MergeDecision",
+    "SynapseConflict",
     "__version__",
 ]
