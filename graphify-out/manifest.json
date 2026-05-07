@@ -1,454 +1,124 @@
 {
-  "C:\\C3\\synapse\\examples\\anthropic_smoke.py": {
-    "mtime": 1778113901.2295964,
-    "hash": "4094367056d8123cb150c3011db007fe"
-  },
-  "C:\\C3\\synapse\\examples\\coordinator_demo.py": {
-    "mtime": 1778106909.6788182,
-    "hash": "ab5d31384567562ef5c7bc1889e5fe9b"
-  },
-  "C:\\C3\\synapse\\examples\\crewai_style_product_dev.py": {
-    "mtime": 1778122264.2271192,
-    "hash": "a477e908af033a18da75645d9064436a"
-  },
-  "C:\\C3\\synapse\\examples\\e2e_protocol_inject_test.py": {
-    "mtime": 1778120479.2830722,
-    "hash": "6beb8bc32ac7cc2c8b8002a351a6e95f"
-  },
-  "C:\\C3\\synapse\\examples\\inject_realism_test.py": {
-    "mtime": 1778119771.337131,
-    "hash": "10537de1b7587bf02c6fe111faf99725"
-  },
-  "C:\\C3\\synapse\\examples\\l3_router_demo.py": {
-    "mtime": 1778107178.9015596,
-    "hash": "472b8ee82feec7fb7cea484b2776f8f0"
-  },
-  "C:\\C3\\synapse\\examples\\langgraph_style_product_dev.py": {
-    "mtime": 1778122221.847464,
-    "hash": "de779f80d6340671797b2b667c956ac8"
-  },
-  "C:\\C3\\synapse\\examples\\multi_agent_product_dev.py": {
-    "mtime": 1778121006.1854744,
-    "hash": "39d77560ad410a8bc8e581c947670748"
-  },
-  "C:\\C3\\synapse\\examples\\multi_backend_demo.py": {
-    "mtime": 1778105688.4098427,
-    "hash": "436bba683fa960ff8e4b300f9d240919"
-  },
-  "C:\\C3\\synapse\\examples\\openai_smoke.py": {
-    "mtime": 1778113913.0447707,
-    "hash": "76e3217482a9a360d80b0dc05576ba28"
-  },
-  "C:\\C3\\synapse\\examples\\two_agents_conflict_demo.py": {
-    "mtime": 1778102873.4528935,
-    "hash": "f12e724ea4bbe4e5ce31ad42ded017f6"
-  },
-  "C:\\C3\\synapse\\examples\\two_agents_with_real_llm.py": {
-    "mtime": 1778104411.314062,
-    "hash": "73c6bfba29396526455aa5c480111c04"
-  },
-  "C:\\C3\\synapse\\runtime\\__init__.py": {
-    "mtime": 1778101757.7913697,
-    "hash": "d41d8cd98f00b204e9800998ecf8427e"
-  },
-  "C:\\C3\\synapse\\runtime\\coordinator\\agent.py": {
-    "mtime": 1778106855.607879,
-    "hash": "10e7b3e46934586fedcc58b59236f5ff"
-  },
-  "C:\\C3\\synapse\\runtime\\coordinator\\belief_divergence.py": {
-    "mtime": 1778106803.9918234,
-    "hash": "af468369fbfa6ce698cea5f47bae419b"
-  },
-  "C:\\C3\\synapse\\runtime\\coordinator\\__init__.py": {
-    "mtime": 1778106789.24452,
-    "hash": "0aed7d1628be9a878dcd24593e95a08c"
-  },
-  "C:\\C3\\synapse\\runtime\\gateway\\server.py": {
-    "mtime": 1778109798.7324004,
-    "hash": "1c37db1440441f24be12f0b3d65d2018"
-  },
-  "C:\\C3\\synapse\\runtime\\gateway\\__init__.py": {
-    "mtime": 1778109758.5181038,
-    "hash": "d41d8cd98f00b204e9800998ecf8427e"
-  },
-  "C:\\C3\\synapse\\runtime\\migrations\\0001_initial_schema.sql": {
-    "mtime": 1778092393.499512,
-    "hash": "9b90daf1a7b996ef5d7ff01023b18924"
-  },
-  "C:\\C3\\synapse\\runtime\\modal\\framework_sandbox.py": {
-    "mtime": 1778169483.4946966,
-    "hash": "8d9273ecbd96a634ac9aeb622654433b"
-  },
-  "C:\\C3\\synapse\\runtime\\modal\\vllm_engine.py": {
-    "mtime": 1778114642.709178,
-    "hash": "505921166b59fe231c383152346e9bb4"
-  },
-  "C:\\C3\\synapse\\runtime\\modal\\__init__.py": {
-    "mtime": 1778104915.8835323,
-    "hash": "d41d8cd98f00b204e9800998ecf8427e"
-  },
-  "C:\\C3\\synapse\\runtime\\router\\l3_semantic.py": {
-    "mtime": 1778113613.0460234,
-    "hash": "0cff9e48cfc1abc169a4a2a73661862c"
-  },
-  "C:\\C3\\synapse\\runtime\\router\\worker.py": {
-    "mtime": 1778101792.792553,
-    "hash": "9316576e41293d2316becb26836c7b24"
-  },
-  "C:\\C3\\synapse\\runtime\\router\\__init__.py": {
-    "mtime": 1778101765.965973,
-    "hash": "2ca3020e1f1f7bb8ba2d5d364af504bd"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\agent.py": {
-    "mtime": 1778106874.2324145,
-    "hash": "2a0b9bb6922927f737af8af5b0231cd6"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\bus.py": {
-    "mtime": 1778122150.9316196,
-    "hash": "a56d135955d8a6aa57bf6ee6a7285126"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\messages.py": {
-    "mtime": 1778101627.6644952,
-    "hash": "9cf913d63df89e107ba934568d2e5a18"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\state.py": {
-    "mtime": 1778101681.3096201,
-    "hash": "47f5c74b0968ff63517a8fccfa80906d"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\__init__.py": {
-    "mtime": 1778101596.2664495,
-    "hash": "51ea75896ad314252d75e835f8e0b67f"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\base.py": {
-    "mtime": 1778115025.2070496,
-    "hash": "e8938c0a28b446ede761f0e142ad495a"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\mock.py": {
-    "mtime": 1778115088.2126184,
-    "hash": "2c7490a01c79d997943354388f7302d9"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\_isolation.py": {
-    "mtime": 1778115039.9634645,
-    "hash": "cce0308800d3c095d1b214e729a437c0"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\__init__.py": {
-    "mtime": 1778103826.958302,
-    "hash": "ed378b6953823d4212cd6483a33dd516"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\anthropic_adapter.py": {
-    "mtime": 1778120338.3084083,
-    "hash": "bb8b0d9699b7c911dc7ab057c07adb9f"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\gemini_adapter.py": {
-    "mtime": 1778113605.2521682,
-    "hash": "1005054dc186198338eca6a8e5aa070c"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\openai_adapter.py": {
-    "mtime": 1778107073.7904263,
-    "hash": "22ca811e9bb7387b92457420611615e3"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\__init__.py": {
-    "mtime": 1778107078.3684387,
-    "hash": "35afb16c764adff295fb46033f2f79fe"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\local\\ollama_adapter.py": {
-    "mtime": 1778104912.642789,
-    "hash": "9e1682d2c43395df98f8fdedc7409f73"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\local\\__init__.py": {
-    "mtime": 1778104862.5999303,
-    "hash": "dfac5e9f1291e76d4d23b1033719bcdb"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\native\\vllm_modal_adapter.py": {
-    "mtime": 1778105090.8690426,
-    "hash": "9e491428cfe6519bd417d1c3e5586a52"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\native\\__init__.py": {
-    "mtime": 1778104871.4210355,
-    "hash": "b0c5f71a40ff3aa3256e2234cf598880"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\bench.py": {
-    "mtime": 1778113726.365527,
-    "hash": "01c6cb7a5730ceec005052cebeb33857"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\main.py": {
-    "mtime": 1778113656.9999108,
-    "hash": "be46bc76b27b69914a30cf9ae5befb95"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\spec_validate.py": {
-    "mtime": 1778113676.4911134,
-    "hash": "1aeac55303591f80fd4735863c5acb57"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\__init__.py": {
-    "mtime": 1778113642.0035512,
-    "hash": "181aa6fb9620997fd452c202d9b35b74"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\crewai_integration.py": {
-    "mtime": 1778113846.8018491,
-    "hash": "c1c3cb19e215d7cf4a70386f9d155048"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\hermes_integration.py": {
-    "mtime": 1778169219.96493,
-    "hash": "67b42a8e35f341ed7bb15f93d5ce1857"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\langgraph_integration.py": {
-    "mtime": 1778121974.5182605,
-    "hash": "5355af56e68c1d6abd2946eaf67f3256"
-  },
-  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\__init__.py": {
-    "mtime": 1778113790.3151224,
-    "hash": "0fc7068c7185575499a995e860f87b72"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_coordinator.py": {
-    "mtime": 1778106929.922534,
-    "hash": "0c420fea443f652aa366f00a9e4d01ca"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_envelope_and_messages.py": {
-    "mtime": 1778101944.7253542,
-    "hash": "709dc57d83bec21e9c9743460963c12b"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_hermes_integration.py": {
-    "mtime": 1778169339.8011897,
-    "hash": "235e45f281f817b54d53adca52a58eb1"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_adapters.py": {
-    "mtime": 1778103891.39735,
-    "hash": "a911679dee4a861e4bf96f71e610cfc2"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_contracts.py": {
-    "mtime": 1778109377.174978,
-    "hash": "3ac00e6b0cea96ec0e8372247017b828"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_integrations.py": {
-    "mtime": 1778113872.3205073,
-    "hash": "6b019e128532af983a0f1a911eddc38a"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_l3_router.py": {
-    "mtime": 1778107098.3684907,
-    "hash": "0cc9f24320e3a98c125c17057c6ce8d0"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_local_native_adapters.py": {
-    "mtime": 1778104999.8898315,
-    "hash": "7960544cf621bd31b34105a2750a2e87"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_mock_adapter.py": {
-    "mtime": 1778101957.3916583,
-    "hash": "1e5277b54e87a64328240d637f45d8c9"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_multi_tenant.py": {
-    "mtime": 1778115112.0167525,
-    "hash": "34f130c9df195a20eef3d5edbde5332e"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\test_scope_matcher.py": {
-    "mtime": 1778101908.4819076,
-    "hash": "b70b84508d15753a94cc7803d0be63d5"
-  },
-  "C:\\C3\\synapse\\sdk-python\\tests\\__init__.py": {
-    "mtime": 1778101887.2687757,
-    "hash": "d41d8cd98f00b204e9800998ecf8427e"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\agent.ts": {
-    "mtime": 1778115403.7572856,
-    "hash": "ab8272a157ad4350355b4fa6052b6fe5"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\bus.ts": {
-    "mtime": 1778115346.693766,
-    "hash": "697a9a7c904ad9d7d9f795f8ef92532d"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\envelope.test.ts": {
-    "mtime": 1778115419.7916417,
-    "hash": "d473653269d18b35ced0566e0e87631f"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\envelope.ts": {
-    "mtime": 1778115329.5585892,
-    "hash": "8fb2bd496e8efeecad3e981ace533d09"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\index.ts": {
-    "mtime": 1778169286.6048408,
-    "hash": "83033d63f584a7fb07739ee00a718a29"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\types.ts": {
-    "mtime": 1778115320.8555512,
-    "hash": "4afceed2effbeb7269739f0d5a9bfbf4"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\base.ts": {
-    "mtime": 1778115355.8225713,
-    "hash": "fd2ad76b1ddb39601dffef90bcdf1848"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\mock.test.ts": {
-    "mtime": 1778115436.905222,
-    "hash": "d9e14988a2ed535867d65c7574a177bf"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\mock.ts": {
-    "mtime": 1778115496.9478424,
-    "hash": "81d53ed69da46531262ac64da437479a"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\integrations\\openclaw.ts": {
-    "mtime": 1778169260.8547585,
-    "hash": "55c2a2ddcd7e708756500cc9e24687f7"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\integrations\\paperclip.test.ts": {
-    "mtime": 1778169169.415151,
-    "hash": "887664c97a5dc142e830a69fbebe1d03"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\src\\integrations\\paperclip.ts": {
-    "mtime": 1778169136.196522,
-    "hash": "f924f6a3b35ce6ad29bbeaa05f693fb0"
-  },
-  "C:\\C3\\synapse\\ui\\next-env.d.ts": {
-    "mtime": 1778110191.33847,
-    "hash": "a64595e6014adce3002d3bf762d2dbeb"
-  },
-  "C:\\C3\\synapse\\ui\\next.config.js": {
-    "mtime": 1778109824.3239102,
-    "hash": "26d9b2dca512d65f58a52b674edf9c9f"
-  },
-  "C:\\C3\\synapse\\ui\\postcss.config.js": {
-    "mtime": 1778109834.361799,
-    "hash": "8640f9b2e6475cc3f5b1ff4548925765"
-  },
-  "C:\\C3\\synapse\\ui\\tailwind.config.ts": {
-    "mtime": 1778109831.481614,
-    "hash": "352274ac975931d37f51e9c1eea86bff"
-  },
-  "C:\\C3\\synapse\\ui\\src\\app\\layout.tsx": {
-    "mtime": 1778109898.707022,
-    "hash": "4f031b2957f3808c19f5638fa49be725"
-  },
-  "C:\\C3\\synapse\\ui\\src\\app\\page.tsx": {
-    "mtime": 1778109914.2444608,
-    "hash": "0ed7a9ae7892c4e6d881fb791d25f9e1"
-  },
-  "C:\\C3\\synapse\\ui\\src\\app\\sessions\\[id]\\page.tsx": {
-    "mtime": 1778115208.257104,
-    "hash": "8d8f4f03bfc72e7db937a9b192a2330e"
-  },
-  "C:\\C3\\synapse\\ui\\src\\components\\AgentGrid.tsx": {
-    "mtime": 1778109928.4618266,
-    "hash": "f5888f6bfb7596e82c9ef7d2f68d21a8"
-  },
-  "C:\\C3\\synapse\\ui\\src\\components\\BeliefPanel.tsx": {
-    "mtime": 1778109990.2976358,
-    "hash": "861df1736d994db60880943241252a5c"
-  },
-  "C:\\C3\\synapse\\ui\\src\\components\\CostChart.tsx": {
-    "mtime": 1778115158.9632952,
-    "hash": "e52c4a64f7fdee324ae46a8603653b55"
-  },
-  "C:\\C3\\synapse\\ui\\src\\components\\EventStream.tsx": {
-    "mtime": 1778109954.4651976,
-    "hash": "7946647bc3a5b0de29885b5afc5aede1"
-  },
-  "C:\\C3\\synapse\\ui\\src\\components\\IntentionsTable.tsx": {
-    "mtime": 1778109967.1846344,
-    "hash": "f70a22a254484d7c7bdc300dba641a24"
-  },
-  "C:\\C3\\synapse\\ui\\src\\components\\ReplayScrubber.tsx": {
-    "mtime": 1778115178.2442417,
-    "hash": "1708f5d48d7925865fe1edadd9572b64"
-  },
-  "C:\\C3\\synapse\\ui\\src\\lib\\types.ts": {
-    "mtime": 1778109854.311658,
-    "hash": "9b708f46f45aaffa1135ab9fe28fd896"
-  },
-  "C:\\C3\\synapse\\ui\\src\\lib\\useSession.ts": {
-    "mtime": 1778110163.091316,
-    "hash": "f07c990d1abbaf44191ca170ac66efc0"
-  },
-  "C:\\C3\\synapse\\CONTRIBUTING.md": {
-    "mtime": 1778092428.4869244,
-    "hash": "ca54402633077613decbd8a64c678568"
-  },
-  "C:\\C3\\synapse\\docker-compose.yml": {
-    "mtime": 1778092373.8159778,
-    "hash": "9287e8cc489876e1867dc9d2c17c66d1"
-  },
-  "C:\\C3\\synapse\\README.md": {
-    "mtime": 1778102021.1525834,
-    "hash": "0908658ada538179391e62e45f839892"
-  },
-  "C:\\C3\\synapse\\adapters\\hosted\\README.md": {
-    "mtime": 1778092445.5247893,
-    "hash": "fa8a1003b2ba403d342a833e839281f9"
-  },
-  "C:\\C3\\synapse\\adapters\\local\\README.md": {
-    "mtime": 1778092445.4943159,
-    "hash": "8b30c9e1bd8a7e7d2789bef474c8cb5b"
-  },
-  "C:\\C3\\synapse\\adapters\\native\\README.md": {
-    "mtime": 1778092445.4624898,
-    "hash": "f23c02d713cf93d81797a2336c649e6e"
-  },
-  "C:\\C3\\synapse\\bench\\README.md": {
-    "mtime": 1778114481.4724038,
-    "hash": "a761a8b0207e8169ef2401c31e482740"
-  },
-  "C:\\C3\\synapse\\bench\\results\\framework_integration_docs_20260507-115043.md": {
-    "mtime": 1778169043.4070861,
-    "hash": "aefe3eb69e69c298847eeaa0b0ce6dba"
-  },
-  "C:\\C3\\synapse\\examples\\README.md": {
-    "mtime": 1778102012.6441555,
-    "hash": "874d577e579c55b181c3813c377b2261"
-  },
-  "C:\\C3\\synapse\\runtime\\README.md": {
-    "mtime": 1778092445.4313462,
-    "hash": "cbfb215cc7b3a1536b7802cc2fe26d0b"
-  },
-  "C:\\C3\\synapse\\runtime\\gateway\\README.md": {
-    "mtime": 1778110053.6360412,
-    "hash": "e9f8bf0fdbe76f53a8ae07358137acbf"
-  },
-  "C:\\C3\\synapse\\sdk-python\\README.md": {
-    "mtime": 1778102041.7751338,
-    "hash": "1cd60b7c834ca0f3737ae728dcd3c58b"
-  },
-  "C:\\C3\\synapse\\sdk-typescript\\README.md": {
-    "mtime": 1778115457.0402384,
-    "hash": "79fa25be0da597ca3752978fd178770c"
-  },
-  "C:\\C3\\synapse\\spec\\adapter.md": {
-    "mtime": 1778092350.2231994,
-    "hash": "3210ea2e959c978dc1facaf6adb7300a"
-  },
-  "C:\\C3\\synapse\\spec\\conflict-semantics.md": {
-    "mtime": 1778101496.8519852,
-    "hash": "f1a8badce129367087b295f336dd899c"
-  },
-  "C:\\C3\\synapse\\spec\\positioning.md": {
-    "mtime": 1778101534.3048632,
-    "hash": "fa6ac73e41065b65e08f49d6b983ee96"
-  },
-  "C:\\C3\\synapse\\spec\\README.md": {
-    "mtime": 1778101383.2318387,
-    "hash": "6446fde0b6fcd71b074e6c31972a752f"
-  },
-  "C:\\C3\\synapse\\spec\\adr\\ADR-0001-architecture-baseline.md": {
-    "mtime": 1778101404.3126304,
-    "hash": "33e6ccfba5d3b9cfae0165365a284991"
-  },
-  "C:\\C3\\synapse\\spec\\adr\\ADR-0002-protocol-v1.0-freeze.md": {
-    "mtime": 1778113637.7893877,
-    "hash": "6523899fec55d10fc6d3738a8b58c4d1"
-  },
-  "C:\\C3\\synapse\\spec\\integrations\\hermes.md": {
-    "mtime": 1778169639.1870494,
-    "hash": "9fde2414b7888341373899d8387b37ca"
-  },
-  "C:\\C3\\synapse\\spec\\integrations\\openclaw.md": {
-    "mtime": 1778169667.7653835,
-    "hash": "94567369d8fa1112671556fb45feec22"
-  },
-  "C:\\C3\\synapse\\spec\\integrations\\paperclip.md": {
-    "mtime": 1778169606.1321735,
-    "hash": "190aa478dc830725b6d89d8ec1bebb40"
-  },
-  "C:\\C3\\synapse\\spec\\integrations\\README.md": {
-    "mtime": 1778169577.4601212,
-    "hash": "446a4e640aa8d82f230c9a22d2baa470"
-  },
-  "C:\\C3\\synapse\\ui\\README.md": {
-    "mtime": 1778110041.0091045,
-    "hash": "5d2934a1d613ec5130ddab3f3c7fd0b9"
-  }
+  "C:\\C3\\synapse\\examples\\anthropic_smoke.py": 1778113901.2295964,
+  "C:\\C3\\synapse\\examples\\coordinator_demo.py": 1778106909.6788182,
+  "C:\\C3\\synapse\\examples\\crewai_style_product_dev.py": 1778122264.2271192,
+  "C:\\C3\\synapse\\examples\\e2e_protocol_inject_test.py": 1778120479.2830722,
+  "C:\\C3\\synapse\\examples\\inject_realism_test.py": 1778119771.337131,
+  "C:\\C3\\synapse\\examples\\l3_router_demo.py": 1778107178.9015596,
+  "C:\\C3\\synapse\\examples\\langgraph_style_product_dev.py": 1778122221.847464,
+  "C:\\C3\\synapse\\examples\\multi_agent_product_dev.py": 1778121006.1854744,
+  "C:\\C3\\synapse\\examples\\multi_backend_demo.py": 1778105688.4098427,
+  "C:\\C3\\synapse\\examples\\openai_smoke.py": 1778113913.0447707,
+  "C:\\C3\\synapse\\examples\\two_agents_conflict_demo.py": 1778102873.4528935,
+  "C:\\C3\\synapse\\examples\\two_agents_with_real_llm.py": 1778104411.314062,
+  "C:\\C3\\synapse\\runtime\\__init__.py": 1778101757.7913697,
+  "C:\\C3\\synapse\\runtime\\coordinator\\agent.py": 1778106855.607879,
+  "C:\\C3\\synapse\\runtime\\coordinator\\belief_divergence.py": 1778106803.9918234,
+  "C:\\C3\\synapse\\runtime\\coordinator\\__init__.py": 1778106789.24452,
+  "C:\\C3\\synapse\\runtime\\gateway\\server.py": 1778109798.7324004,
+  "C:\\C3\\synapse\\runtime\\gateway\\__init__.py": 1778109758.5181038,
+  "C:\\C3\\synapse\\runtime\\migrations\\0001_initial_schema.sql": 1778092393.499512,
+  "C:\\C3\\synapse\\runtime\\modal\\framework_sandbox.py": 1778172088.0392485,
+  "C:\\C3\\synapse\\runtime\\modal\\vllm_engine.py": 1778114642.709178,
+  "C:\\C3\\synapse\\runtime\\modal\\__init__.py": 1778104915.8835323,
+  "C:\\C3\\synapse\\runtime\\modal\\_payloads\\real_app_data_analysis.py": 1778172066.7669032,
+  "C:\\C3\\synapse\\runtime\\modal\\_payloads\\real_app_instagram.py": 1778171673.3576844,
+  "C:\\C3\\synapse\\runtime\\modal\\_payloads\\real_product_dev_hermes.py": 1778170465.8980434,
+  "C:\\C3\\synapse\\runtime\\modal\\_payloads\\real_product_dev_openclaw.mjs": 1778171302.7569294,
+  "C:\\C3\\synapse\\runtime\\modal\\_payloads\\real_product_dev_paperclip.mjs": 1778170899.141292,
+  "C:\\C3\\synapse\\runtime\\modal\\_payloads\\state_mirror.py": 1778170841.1990085,
+  "C:\\C3\\synapse\\runtime\\router\\l3_semantic.py": 1778113613.0460234,
+  "C:\\C3\\synapse\\runtime\\router\\worker.py": 1778171842.4224894,
+  "C:\\C3\\synapse\\runtime\\router\\__init__.py": 1778101765.965973,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\agent.py": 1778106874.2324145,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\bus.py": 1778122150.9316196,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\messages.py": 1778171851.6749177,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\state.py": 1778171822.4210193,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\__init__.py": 1778101596.2664495,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\base.py": 1778115025.2070496,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\mock.py": 1778115088.2126184,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\_isolation.py": 1778115039.9634645,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\__init__.py": 1778103826.958302,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\anthropic_adapter.py": 1778120338.3084083,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\gemini_adapter.py": 1778113605.2521682,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\openai_adapter.py": 1778107073.7904263,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\__init__.py": 1778107078.3684387,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\local\\ollama_adapter.py": 1778104912.642789,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\local\\__init__.py": 1778104862.5999303,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\native\\vllm_modal_adapter.py": 1778105090.8690426,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\native\\__init__.py": 1778104871.4210355,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\bench.py": 1778113726.365527,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\main.py": 1778113656.9999108,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\spec_validate.py": 1778113676.4911134,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\cli\\__init__.py": 1778113642.0035512,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\crewai_integration.py": 1778113846.8018491,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\hermes_integration.py": 1778170430.8951507,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\langgraph_integration.py": 1778121974.5182605,
+  "C:\\C3\\synapse\\sdk-python\\synapse\\integrations\\__init__.py": 1778113790.3151224,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_coordinator.py": 1778106929.922534,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_envelope_and_messages.py": 1778101944.7253542,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_hermes_integration.py": 1778169339.8011897,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_adapters.py": 1778103891.39735,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_hosted_contracts.py": 1778109377.174978,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_integrations.py": 1778113872.3205073,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_l3_router.py": 1778107098.3684907,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_local_native_adapters.py": 1778104999.8898315,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_mock_adapter.py": 1778101957.3916583,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_multi_tenant.py": 1778115112.0167525,
+  "C:\\C3\\synapse\\sdk-python\\tests\\test_scope_matcher.py": 1778101908.4819076,
+  "C:\\C3\\synapse\\sdk-python\\tests\\__init__.py": 1778101887.2687757,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\agent.ts": 1778115403.7572856,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\bus.ts": 1778115346.693766,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\envelope.test.ts": 1778115419.7916417,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\envelope.ts": 1778115329.5585892,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\index.ts": 1778169286.6048408,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\types.ts": 1778115320.8555512,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\base.ts": 1778115355.8225713,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\mock.test.ts": 1778115436.905222,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\adapters\\mock.ts": 1778115496.9478424,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\integrations\\openclaw.ts": 1778169260.8547585,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\integrations\\paperclip.test.ts": 1778169169.415151,
+  "C:\\C3\\synapse\\sdk-typescript\\src\\integrations\\paperclip.ts": 1778169136.196522,
+  "C:\\C3\\synapse\\ui\\next-env.d.ts": 1778110191.33847,
+  "C:\\C3\\synapse\\ui\\next.config.js": 1778109824.3239102,
+  "C:\\C3\\synapse\\ui\\postcss.config.js": 1778109834.361799,
+  "C:\\C3\\synapse\\ui\\tailwind.config.ts": 1778109831.481614,
+  "C:\\C3\\synapse\\ui\\src\\app\\layout.tsx": 1778109898.707022,
+  "C:\\C3\\synapse\\ui\\src\\app\\page.tsx": 1778109914.2444608,
+  "C:\\C3\\synapse\\ui\\src\\app\\sessions\\[id]\\page.tsx": 1778115208.257104,
+  "C:\\C3\\synapse\\ui\\src\\components\\AgentGrid.tsx": 1778109928.4618266,
+  "C:\\C3\\synapse\\ui\\src\\components\\BeliefPanel.tsx": 1778109990.2976358,
+  "C:\\C3\\synapse\\ui\\src\\components\\CostChart.tsx": 1778115158.9632952,
+  "C:\\C3\\synapse\\ui\\src\\components\\EventStream.tsx": 1778109954.4651976,
+  "C:\\C3\\synapse\\ui\\src\\components\\IntentionsTable.tsx": 1778109967.1846344,
+  "C:\\C3\\synapse\\ui\\src\\components\\ReplayScrubber.tsx": 1778115178.2442417,
+  "C:\\C3\\synapse\\ui\\src\\lib\\types.ts": 1778109854.311658,
+  "C:\\C3\\synapse\\ui\\src\\lib\\useSession.ts": 1778110163.091316,
+  "C:\\C3\\synapse\\CONTRIBUTING.md": 1778092428.4869244,
+  "C:\\C3\\synapse\\docker-compose.yml": 1778092373.8159778,
+  "C:\\C3\\synapse\\README.md": 1778174212.3049421,
+  "C:\\C3\\synapse\\adapters\\hosted\\README.md": 1778092445.5247893,
+  "C:\\C3\\synapse\\adapters\\local\\README.md": 1778092445.4943159,
+  "C:\\C3\\synapse\\adapters\\native\\README.md": 1778092445.4624898,
+  "C:\\C3\\synapse\\bench\\README.md": 1778114481.4724038,
+  "C:\\C3\\synapse\\bench\\results\\framework_integration_docs_20260507-115043.md": 1778169043.4070861,
+  "C:\\C3\\synapse\\graphify-out\\converted\\Synapse_Architecture_and_Execution_Plan_ff3a631f.md": 1778174367.8639584,
+  "C:\\C3\\synapse\\docs\\roadmap\\v0.2-observability-and-safety.md": 1778174118.2224896,
+  "C:\\C3\\synapse\\examples\\README.md": 1778102012.6441555,
+  "C:\\C3\\synapse\\runtime\\README.md": 1778092445.4313462,
+  "C:\\C3\\synapse\\runtime\\gateway\\README.md": 1778110053.6360412,
+  "C:\\C3\\synapse\\sdk-python\\README.md": 1778102041.7751338,
+  "C:\\C3\\synapse\\sdk-typescript\\README.md": 1778115457.0402384,
+  "C:\\C3\\synapse\\spec\\adapter.md": 1778092350.2231994,
+  "C:\\C3\\synapse\\spec\\conflict-semantics.md": 1778101496.8519852,
+  "C:\\C3\\synapse\\spec\\positioning.md": 1778101534.3048632,
+  "C:\\C3\\synapse\\spec\\README.md": 1778101383.2318387,
+  "C:\\C3\\synapse\\spec\\adr\\ADR-0001-architecture-baseline.md": 1778101404.3126304,
+  "C:\\C3\\synapse\\spec\\adr\\ADR-0002-protocol-v1.0-freeze.md": 1778113637.7893877,
+  "C:\\C3\\synapse\\spec\\adr\\ADR-0003-byo-llm-and-audit-first.md": 1778174179.6957273,
+  "C:\\C3\\synapse\\spec\\integrations\\hermes.md": 1778169639.1870494,
+  "C:\\C3\\synapse\\spec\\integrations\\openclaw.md": 1778169667.7653835,
+  "C:\\C3\\synapse\\spec\\integrations\\paperclip.md": 1778169606.1321735,
+  "C:\\C3\\synapse\\spec\\integrations\\README.md": 1778169577.4601212,
+  "C:\\C3\\synapse\\ui\\README.md": 1778110041.0091045
 }
