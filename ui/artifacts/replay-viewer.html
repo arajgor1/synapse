@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8" />
+<title>Synapse · Autonomous Run Replay</title>
+<style>
+  :root {
+    --bg:#0e1116; --fg:#e6edf3; --muted:#7a838e; --border:#272d36;
+    --accent:#ff8c42; --warn:#f6c453; --bad:#e0533d; --ok:#52d273;
+    --info:#5ab1e0; --merge:#b78aff; --belief:#52d273;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font:14px/1.45 -apple-system,Segoe UI,system-ui,sans-serif; }
+  header { padding:18px 24px; border-bottom:1px solid var(--border);
+           display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  h1 { margin:0; font:600 18px Iowan Old Style,Charter,Georgia,serif;
+       letter-spacing:-0.01em; }
+  h1 small { display:block; font:400 11px ui-monospace,Menlo;
+             color:var(--muted); margin-top:2px; }
+  .mode-tabs { display:flex; gap:4px; }
+  .mode-tabs button { font:500 12px ui-monospace,Menlo; padding:6px 12px;
+                       border:1px solid var(--border); background:transparent;
+                       color:var(--muted); cursor:pointer; border-radius:3px; }
+  .mode-tabs button.active { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+  .controls { margin-left:auto; display:flex; gap:8px; align-items:center; }
+  .controls button { font:500 12px system-ui; padding:6px 12px;
+                     border:1px solid var(--border); background:transparent;
+                     color:var(--fg); cursor:pointer; border-radius:3px; }
+  .controls button:hover { background:var(--border); }
+  .speed { display:inline-flex; gap:2px; }
+  .speed button { padding:6px 8px; font-size:11px; }
+  .speed button.active { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+  main { display:grid; grid-template-columns: 1fr 1fr; gap:0;
+         height: calc(100vh - 130px); }
+  .pane { padding:16px 20px; overflow-y:auto; border-right:1px solid var(--border); }
+  .pane:last-child { border-right:none; }
+  .pane h2 { margin:0 0 12px; font:600 12px ui-monospace,Menlo;
+             color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  .terminal { background:#0a0c10; border:1px solid var(--border); border-radius:4px;
+              padding:12px; font:13px/1.5 ui-monospace,Menlo,Consolas;
+              white-space:pre-wrap; min-height:60vh; }
+  .term-line { margin:0; padding:2px 0; opacity:0; transition:opacity .15s; }
+  .term-line.shown { opacity:1; }
+  .term-line .ts { color:var(--muted); margin-right:8px; }
+  .term-line .agent { color:var(--info); }
+  .term-line .tool { color:var(--ok); }
+  .term-line .conflict { color:var(--bad); font-weight:600; }
+  .term-line .merge { color:var(--merge); font-weight:600; }
+  .term-line .belief { color:var(--belief); }
+  .term-line .system { color:var(--accent); }
+  .timeline { font:13px/1.4 ui-monospace,Menlo,Consolas; }
+  .event { padding:8px 10px; margin-bottom:6px; border-radius:3px;
+           border:1px solid var(--border); background:#161b22;
+           opacity:0; transform:translateY(4px); transition:opacity .2s, transform .2s; }
+  .event.shown { opacity:1; transform:translateY(0); }
+  .event .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .event .ts { color:var(--muted); font-size:11px; min-width:60px; }
+  .event .kind { font-weight:600; font-size:11px; padding:2px 6px;
+                 border-radius:2px; background:var(--border); color:var(--fg); }
+  .event .kind.conflict_detected { background:var(--bad); color:var(--bg); }
+  .event .kind.auto_merge { background:var(--merge); color:var(--bg); }
+  .event .kind.belief_divergence { background:var(--belief); color:var(--bg); }
+  .event .kind.orchestrator_plan { background:var(--info); color:var(--bg); }
+  .event .kind.worker_start { background:var(--ok); color:var(--bg); }
+  .event .kind.install { background:var(--accent); color:var(--bg); }
+  .event .meta { color:var(--muted); font-size:12px; }
+  .event .body { margin-top:6px; padding:6px; background:#0a0c10;
+                 border-radius:2px; font-size:12px; }
+  .scrubber { padding:14px 24px; border-top:1px solid var(--border);
+              display:flex; align-items:center; gap:14px; background:#161b22; }
+  .scrubber input[type=range] { flex:1; accent-color:var(--accent); }
+  .scrubber .clock { font:600 13px ui-monospace,Menlo; min-width:90px;
+                     text-align:right; }
+  .empty-state { padding:80px 24px; text-align:center; color:var(--muted); }
+  .empty-state h2 { margin:0 0 12px; color:var(--fg); }
+  .empty-state pre { display:inline-block; text-align:left; background:#0a0c10;
+                     padding:14px 18px; border:1px solid var(--border);
+                     border-radius:4px; }
+</style>
+</head><body>
+
+<header>
+  <h1>Synapse · autonomous run replay
+    <small id="run-meta">load a timeline JSON to begin</small>
+  </h1>
+  <div class="mode-tabs" id="mode-tabs"></div>
+  <div class="controls">
+    <input type="file" id="file-picker" accept=".json,.cast" style="display:none" multiple>
+    <button id="load-btn">Load capture files...</button>
+    <button id="play-btn">▶ Play</button>
+    <span class="speed">
+      <button data-speed="1" class="active">1×</button>
+      <button data-speed="2">2×</button>
+      <button data-speed="5">5×</button>
+      <button data-speed="20">20×</button>
+    </span>
+    <button id="reset-btn">↺ Reset</button>
+  </div>
+</header>
+
+<main>
+  <div class="pane">
+    <h2>Terminal transcript (asciinema-style)</h2>
+    <div class="terminal" id="terminal">
+      <div class="empty-state">
+        <h2>No capture loaded yet</h2>
+        <p>Load the asciinema <code>.cast</code> + timeline <code>.json</code> files from
+           <br /><code>bench/results/v02_autonomous_&lt;ts&gt;/</code></p>
+        <pre>auto_*.cast              # terminal-style transcript
+auto_*_timeline.json     # structured event log
+auto_*_snapshots.json    # filesystem snapshots</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane">
+    <h2>Synapse event timeline</h2>
+    <div class="timeline" id="timeline">
+      <div class="empty-state" style="padding:40px;">
+        Drag-and-drop or click "Load capture files..."
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="scrubber">
+  <span class="clock" id="clock">00:00.000</span>
+  <input type="range" id="seek" min="0" max="1000" value="0" step="1" />
+  <span class="clock" id="duration">— end —</span>
+</div>
+
+<script>
+// --- state ---
+const state = {
+  modes: {},          // mode -> { cast: [...], timeline: [...], duration: 0 }
+  activeMode: null,
+  position: 0,        // seconds into the run
+  playing: false,
+  speed: 1,
+  rafHandle: null,
+  lastTick: null,
+};
+
+// --- file loading ---
+const filePicker = document.getElementById('file-picker');
+document.getElementById('load-btn').addEventListener('click', () => filePicker.click());
+filePicker.addEventListener('change', async (e) => {
+  for (const file of e.target.files) {
+    const text = await file.text();
+    ingestFile(file.name, text);
+  }
+  rebuildModeTabs();
+  if (!state.activeMode && Object.keys(state.modes).length) {
+    setActiveMode(Object.keys(state.modes)[0]);
+  }
+});
+
+// Drag-and-drop
+document.body.addEventListener('dragover', (e) => e.preventDefault());
+document.body.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  for (const file of e.dataTransfer.files) {
+    const text = await file.text();
+    ingestFile(file.name, text);
+  }
+  rebuildModeTabs();
+  if (!state.activeMode && Object.keys(state.modes).length) {
+    setActiveMode(Object.keys(state.modes)[0]);
+  }
+});
+
+function ingestFile(name, text) {
+  // Detect mode from filename
+  const m = name.match(/auto_\d+_(\w+?)(_timeline|_snapshots|\.cast)/);
+  const mode = m ? m[1] : (name.includes('observer') ? 'observer' : name.includes('full') ? 'full' : 'no_synapse');
+  if (!state.modes[mode]) state.modes[mode] = { cast: [], timeline: [], snapshots: [], duration: 0 };
+  if (name.endsWith('.cast')) {
+    const lines = text.split('\n').filter(l => l.trim());
+    if (lines.length) {
+      JSON.parse(lines[0]); // header
+      const cast = lines.slice(1).map(l => JSON.parse(l));
+      state.modes[mode].cast = cast.map(([t, _kind, line]) => ({ t, line }));
+      const last = state.modes[mode].cast[state.modes[mode].cast.length - 1];
+      if (last) state.modes[mode].duration = Math.max(state.modes[mode].duration, last.t);
+    }
+  } else if (name.includes('_timeline.json')) {
+    const data = JSON.parse(text);
+    state.modes[mode].timeline = data.events || [];
+    if (data.duration_s) state.modes[mode].duration = Math.max(state.modes[mode].duration, data.duration_s);
+  } else if (name.includes('_snapshots.json')) {
+    state.modes[mode].snapshots = JSON.parse(text);
+  }
+}
+
+function rebuildModeTabs() {
+  const tabs = document.getElementById('mode-tabs');
+  tabs.innerHTML = '';
+  for (const m of Object.keys(state.modes)) {
+    const btn = document.createElement('button');
+    btn.textContent = m;
+    btn.classList.toggle('active', state.activeMode === m);
+    btn.onclick = () => setActiveMode(m);
+    tabs.appendChild(btn);
+  }
+}
+
+function setActiveMode(m) {
+  state.activeMode = m;
+  state.position = 0;
+  rebuildModeTabs();
+  renderAll();
+  document.getElementById('run-meta').textContent =
+    `mode: ${m} · ${state.modes[m].timeline.length} events · ${state.modes[m].duration.toFixed(1)}s`;
+  document.getElementById('duration').textContent =
+    formatTime(state.modes[m].duration);
+  document.getElementById('seek').max = Math.ceil(state.modes[m].duration * 100);
+}
+
+// --- rendering ---
+function renderAll() {
+  if (!state.activeMode) return;
+  const data = state.modes[state.activeMode];
+
+  // Terminal
+  const term = document.getElementById('terminal');
+  term.innerHTML = '';
+  for (const entry of data.cast) {
+    const div = document.createElement('div');
+    div.className = 'term-line';
+    div.dataset.t = entry.t;
+    const kind = guessKind(entry.line);
+    div.innerHTML = `<span class="ts">${formatTime(entry.t)}</span><span class="${kind}">${escapeHtml(entry.line)}</span>`;
+    term.appendChild(div);
+  }
+
+  // Timeline
+  const timeline = document.getElementById('timeline');
+  timeline.innerHTML = '';
+  for (const ev of data.timeline) {
+    const div = document.createElement('div');
+    div.className = 'event';
+    div.dataset.t = ev.t;
+    div.innerHTML = `
+      <div class="row">
+        <span class="ts">${formatTime(ev.t)}</span>
+        <span class="kind ${ev.kind}">${ev.kind}</span>
+        <span class="meta">${eventMetaSummary(ev)}</span>
+      </div>
+      ${eventBody(ev) ? `<div class="body">${eventBody(ev)}</div>` : ''}
+    `;
+    timeline.appendChild(div);
+  }
+  updateVisibility();
+}
+
+function guessKind(line) {
+  if (line.includes('CONFLICT') || line.includes('⚠')) return 'conflict';
+  if (line.includes('auto_merge') || line.includes('🔀')) return 'merge';
+  if (line.includes('BELIEF') || line.includes('💭')) return 'belief';
+  if (line.includes('synapse') || line.includes('🔗')) return 'system';
+  if (line.includes('🤖') || line.includes('orchestrator')) return 'agent';
+  if (line.includes('🔧')) return 'tool';
+  return '';
+}
+
+function eventMetaSummary(ev) {
+  if (ev.kind === 'orchestrator_plan') return `turn ${ev.turn}: ${ev.thought || ''}`;
+  if (ev.kind === 'worker_start') return `${ev.agent} → ${ev.file}`;
+  if (ev.kind === 'conflict_detected') return `${ev.agent} on ${ev.file} (${ev.n_conflicts} priors)`;
+  if (ev.kind === 'auto_merge') return `${ev.agent} merged ${ev.file}`;
+  if (ev.kind === 'belief_divergence') return `${ev.key}: ${(ev.values || []).join(' vs ')}`;
+  if (ev.kind === 'install') return `mode=${ev.mode || ''}`;
+  return '';
+}
+function eventBody(ev) {
+  if (ev.kind === 'orchestrator_plan' && ev.assignments) {
+    return ev.assignments.map(a => `→ ${a.agent}: ${a.file}<br><span style="opacity:.6">${escapeHtml(a.spec || '')}</span>`).join('<br>');
+  }
+  if (ev.kind === 'auto_merge' && ev.rationale) return escapeHtml(ev.rationale);
+  return '';
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = (seconds - m * 60).toFixed(3);
+  return `${String(m).padStart(2, '0')}:${s.padStart(6, '0')}`;
+}
+
+function updateVisibility() {
+  if (!state.activeMode) return;
+  const t = state.position;
+  document.querySelectorAll('.term-line').forEach(el => {
+    el.classList.toggle('shown', parseFloat(el.dataset.t) <= t);
+  });
+  document.querySelectorAll('.event').forEach(el => {
+    el.classList.toggle('shown', parseFloat(el.dataset.t) <= t);
+  });
+  document.getElementById('clock').textContent = formatTime(t);
+  document.getElementById('seek').value = Math.floor(t * 100);
+
+  // Auto-scroll terminal to last visible line
+  const term = document.getElementById('terminal');
+  const visibles = term.querySelectorAll('.term-line.shown');
+  if (visibles.length) {
+    visibles[visibles.length - 1].scrollIntoView({ block: 'end', inline: 'nearest', behavior: 'auto' });
+  }
+}
+
+// --- playback ---
+function tick() {
+  if (!state.playing) return;
+  const now = performance.now();
+  const delta = (now - state.lastTick) / 1000;
+  state.lastTick = now;
+  state.position += delta * state.speed;
+  if (state.activeMode && state.position >= state.modes[state.activeMode].duration) {
+    state.position = state.modes[state.activeMode].duration;
+    state.playing = false;
+    document.getElementById('play-btn').textContent = '▶ Play';
+  }
+  updateVisibility();
+  if (state.playing) state.rafHandle = requestAnimationFrame(tick);
+}
+
+document.getElementById('play-btn').addEventListener('click', () => {
+  if (!state.activeMode) return;
+  state.playing = !state.playing;
+  document.getElementById('play-btn').textContent = state.playing ? '⏸ Pause' : '▶ Play';
+  if (state.playing) {
+    state.lastTick = performance.now();
+    state.rafHandle = requestAnimationFrame(tick);
+  }
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  state.position = 0;
+  state.playing = false;
+  document.getElementById('play-btn').textContent = '▶ Play';
+  updateVisibility();
+});
+
+document.getElementById('seek').addEventListener('input', (e) => {
+  state.position = e.target.value / 100;
+  updateVisibility();
+});
+
+document.querySelectorAll('.speed button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    state.speed = parseFloat(btn.dataset.speed);
+    document.querySelectorAll('.speed button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+</script>
+</body></html>

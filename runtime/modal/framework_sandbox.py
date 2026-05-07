@@ -1115,6 +1115,95 @@ def v02_w5_belief_divergence(api_keys: dict[str, str]) -> dict[str, Any]:
         }
 
 
+@app.function(
+    cpu=4.0, memory=4096, timeout=2400, scaledown_window=10,
+)
+def v02_autonomous_observer_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Autonomous observer test — real orchestrator + workers build mini-Stripe
+    while Synapse watches. Returns capture artifacts inlined so the host can
+    persist them.
+    """
+    import base64
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\npython3 /opt/synapse-payloads/v02_autonomous_observer.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=2400, env=env,
+        )
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-100000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+            "captures": {},
+        }
+
+    captures_dir = "/tmp/v02_auto_captures"
+    captures: dict[str, str] = {}
+    if os.path.isdir(captures_dir):
+        for name in os.listdir(captures_dir):
+            full = os.path.join(captures_dir, name)
+            if os.path.isfile(full):
+                try:
+                    with open(full, "rb") as f:
+                        captures[name] = base64.b64encode(f.read()).decode("ascii")
+                except Exception:
+                    pass
+
+    return {
+        "exit_code": proc.returncode,
+        "stdout": proc.stdout[-100000:],
+        "stderr": proc.stderr[-3000:],
+        "elapsed_seconds": round(time.time() - started, 1),
+        "captures": captures,
+    }
+
+
+@app.local_entrypoint()
+def v02_autonomous() -> None:
+    """Drive the autonomous observer test (3 modes: no_synapse / observer / full)."""
+    import base64
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+    print(">>> v0.2 autonomous observer test (mini-Stripe, 3 modes)...")
+    r = v02_autonomous_observer_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"][-30000:])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+
+    out_dir = f"bench/results/v02_autonomous_{time.strftime('%Y%m%d-%H%M%S')}"
+    os.makedirs(out_dir, exist_ok=True)
+    captures = r.pop("captures", {}) or {}
+    with open(f"{out_dir}/result.json", "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    decoded = []
+    for name, b64 in captures.items():
+        try:
+            data = base64.b64decode(b64)
+            with open(f"{out_dir}/{name}", "wb") as f:
+                f.write(data)
+            decoded.append(name)
+        except Exception as e:
+            print(f"  warn: could not decode {name}: {e}")
+    print(f"\nsaved -> {out_dir}/")
+    print(f"  result.json + {len(decoded)} captures: {decoded}")
+
+
 @app.local_entrypoint()
 def v02_w5() -> None:
     """Drive the Week 5 BELIEF divergence demo."""
