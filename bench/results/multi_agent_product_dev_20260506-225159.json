@@ -1,0 +1,161 @@
+[
+  {
+    "product": "auth_profile_service",
+    "mode": "no_synapse",
+    "agent_runs": [
+      {
+        "agent_id": "auth_engineer",
+        "role_prompt": "You are the auth engineer. Output a JSON object describing the auth token field on a User. Use the field name 'auth_token'. Output ONLY: {\"field_name\": \"auth_token\", \"type\": \"string\", \"length\": 64, \"r",
+        "output_text": "```json\n{\"field_name\": \"auth_token\", \"type\": \"string\", \"length\": 64, \"rotates\": true}\n```",
+        "parsed_value_for_shared_field": "auth_token",
+        "elapsed_seconds": 5.95,
+        "estimated_tokens": 75
+      },
+      {
+        "agent_id": "profile_engineer",
+        "role_prompt": "You are the profile engineer. Output a JSON description of the User's session/auth identifier field. Use field name 'session_id'. Output ONLY: {\"field_name\": \"session_id\", \"type\": \"string\", \"length\": ",
+        "output_text": "{\"field_name\": \"session_id\", \"type\": \"string\", \"length\": 32, \"rotates\": false}",
+        "parsed_value_for_shared_field": "session_id",
+        "elapsed_seconds": 4.87,
+        "estimated_tokens": 74
+      },
+      {
+        "agent_id": "security_engineer",
+        "role_prompt": "You are the security engineer. Output a JSON description of the field used for authenticating User requests. The chosen field name is 'auth_token'. Output ONLY: {\"field_name\": \"auth_token\", \"type\": \"s",
+        "output_text": "```json\n{\"field_name\": \"auth_token\", \"type\": \"string\", \"length\": 64, \"rotates\": true}\n```",
+        "parsed_value_for_shared_field": "auth_token",
+        "elapsed_seconds": 1.1,
+        "estimated_tokens": 81
+      }
+    ],
+    "distinct_shared_values": [
+      "auth_token",
+      "session_id"
+    ],
+    "schema_divergence_count": 1,
+    "conflicts_detected": 0,
+    "divergences_signaled": 0,
+    "artifact_alignment_score": 0.5,
+    "wall_seconds": 7.47,
+    "estimated_total_tokens": 230
+  },
+  {
+    "product": "auth_profile_service",
+    "mode": "with_synapse",
+    "agent_runs": [
+      {
+        "agent_id": "auth_engineer",
+        "role_prompt": "You are the auth engineer. Output a JSON object describing the auth token field on a User. Use the field name 'auth_token'. Output ONLY: {\"field_name\": \"auth_token\", \"type\": \"string\", \"length\": 64, \"r",
+        "output_text": "```json\n{\"field_name\": \"auth_token\", \"type\": \"string\", \"length\": 64, \"rotates\": true}\n```",
+        "parsed_value_for_shared_field": "auth_token",
+        "elapsed_seconds": 1.83,
+        "estimated_tokens": 75
+      },
+      {
+        "agent_id": "profile_engineer",
+        "role_prompt": "You are the profile engineer. Output a JSON description of the User's session/auth identifier field. Use field name 'session_id'. Output ONLY: {\"field_name\": \"session_id\", \"type\": \"string\", \"length\": ",
+        "output_text": "{\"field_name\": \"session_id\", \"type\": \"string\", \"length\": 32, \"rotates\": false}",
+        "parsed_value_for_shared_field": "session_id",
+        "elapsed_seconds": 2.49,
+        "estimated_tokens": 74
+      },
+      {
+        "agent_id": "security_engineer",
+        "role_prompt": "You are the security engineer. Output a JSON description of the field used for authenticating User requests. The chosen field name is 'auth_token'. Output ONLY: {\"field_name\": \"auth_token\", \"type\": \"s",
+        "output_text": "```json\n{\"field_name\": \"auth_token\", \"type\": \"string\", \"length\": 64, \"rotates\": true}\n```",
+        "parsed_value_for_shared_field": "auth_token",
+        "elapsed_seconds": 1.1,
+        "estimated_tokens": 81
+      }
+    ],
+    "distinct_shared_values": [
+      "auth_token",
+      "session_id"
+    ],
+    "schema_divergence_count": 1,
+    "conflicts_detected": 0,
+    "divergences_signaled": 0,
+    "artifact_alignment_score": 0.5,
+    "wall_seconds": 9.67,
+    "estimated_total_tokens": 230
+  },
+  {
+    "product": "url_shortener",
+    "mode": "no_synapse",
+    "agent_runs": [
+      {
+        "agent_id": "architect",
+        "role_prompt": "You are the architect. Design the URL data model for a URL shortener. Output a JSON object with one key 'fields' that lists ONLY the fields of the URL model. Each field has {\"name\": \"...\", \"type\": \"..",
+        "output_text": "```json\n{\n  \"fields\": [\n    {\n      \"name\": \"short_code\",\n      \"type\": \"string\",\n      \"primary\": true\n    },\n    {\n      \"name\": \"original_url\",\n      \"type\": \"string\",\n      \"primary\": false\n    },\n    {\n      \"name\": \"created_at\",\n      \"type\": \"timestamp\",\n      \"primary\": false\n    }\n  ]\n}\n```",
+        "parsed_value_for_shared_field": "original_url",
+        "elapsed_seconds": 2.11,
+        "estimated_tokens": 165
+      },
+      {
+        "agent_id": "backend_dev",
+        "role_prompt": "You are the backend engineer. Output a JSON object with key 'endpoint' describing the /shorten POST endpoint. The body must include the URL data field name. The model has fields short_code, original_u",
+        "output_text": "```json\n{\n  \"endpoint\": \"/shorten\",\n  \"method\": \"POST\",\n  \"body_fields\": [\n    {\n      \"name\": \"url\",\n      \"type\": \"string\",\n      \"required\": true\n    }\n  ]\n}\n```",
+        "parsed_value_for_shared_field": "url",
+        "elapsed_seconds": 2.83,
+        "estimated_tokens": 133
+      },
+      {
+        "agent_id": "qa_engineer",
+        "role_prompt": "You are QA. Output a JSON object with key 'tests' listing 2 test cases for the /shorten endpoint. Each test names the URL field it sends. The URL model field is named 'original_url'. Output ONLY JSON:",
+        "output_text": "```json\n{\n  \"tests\": [\n    {\n      \"name\": \"Valid URL shortening\",\n      \"sends_field\": \"original_url\",\n      \"expected_status\": 200\n    },\n    {\n      \"name\": \"Missing original_url field\",\n      \"sends_field\": null,\n      \"expected_status\": 400\n    }\n  ]\n}\n```",
+        "parsed_value_for_shared_field": "original_url",
+        "elapsed_seconds": 1.35,
+        "estimated_tokens": 134
+      }
+    ],
+    "distinct_shared_values": [
+      "original_url",
+      "url"
+    ],
+    "schema_divergence_count": 1,
+    "conflicts_detected": 0,
+    "divergences_signaled": 0,
+    "artifact_alignment_score": 0.5,
+    "wall_seconds": 3.21,
+    "estimated_total_tokens": 432
+  },
+  {
+    "product": "url_shortener",
+    "mode": "with_synapse",
+    "agent_runs": [
+      {
+        "agent_id": "architect",
+        "role_prompt": "You are the architect. Design the URL data model for a URL shortener. Output a JSON object with one key 'fields' that lists ONLY the fields of the URL model. Each field has {\"name\": \"...\", \"type\": \"..",
+        "output_text": "```json\n{\n  \"fields\": [\n    {\n      \"name\": \"short_code\",\n      \"type\": \"string\",\n      \"primary\": true\n    },\n    {\n      \"name\": \"original_url\",\n      \"type\": \"string\",\n      \"primary\": false\n    },\n    {\n      \"name\": \"created_at\",\n      \"type\": \"timestamp\",\n      \"primary\": false\n    }\n  ]\n}\n```",
+        "parsed_value_for_shared_field": "original_url",
+        "elapsed_seconds": 2.12,
+        "estimated_tokens": 165
+      },
+      {
+        "agent_id": "backend_dev",
+        "role_prompt": "You are the backend engineer. Output a JSON object with key 'endpoint' describing the /shorten POST endpoint. The body must include the URL data field name. The model has fields short_code, original_u",
+        "output_text": "```json\n{\n  \"endpoint\": \"/shorten\",\n  \"method\": \"POST\",\n  \"body_fields\": [\n    {\n      \"name\": \"original_url\",\n      \"type\": \"string\",\n      \"required\": true\n    }\n  ]\n}\n```",
+        "parsed_value_for_shared_field": "original_url",
+        "elapsed_seconds": 2.12,
+        "estimated_tokens": 135
+      },
+      {
+        "agent_id": "qa_engineer",
+        "role_prompt": "You are QA. Output a JSON object with key 'tests' listing 2 test cases for the /shorten endpoint. Each test names the URL field it sends. The URL model field is named 'original_url'. Output ONLY JSON:",
+        "output_text": "```json\n{\n  \"tests\": [\n    {\n      \"name\": \"Valid URL shortening\",\n      \"sends_field\": \"original_url\",\n      \"expected_status\": 200\n    },\n    {\n      \"name\": \"Missing original_url field\",\n      \"sends_field\": null,\n      \"expected_status\": 400\n    }\n  ]\n}\n```",
+        "parsed_value_for_shared_field": "original_url",
+        "elapsed_seconds": 1.47,
+        "estimated_tokens": 134
+      }
+    ],
+    "distinct_shared_values": [
+      "original_url"
+    ],
+    "schema_divergence_count": 0,
+    "conflicts_detected": 0,
+    "divergences_signaled": 5,
+    "artifact_alignment_score": 1.0,
+    "wall_seconds": 6.86,
+    "estimated_total_tokens": 434
+  }
+]

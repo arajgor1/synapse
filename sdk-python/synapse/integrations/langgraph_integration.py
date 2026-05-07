@@ -177,17 +177,28 @@ def synapse_node(
                 )
                 raise
 
+        # Make the wrapper an async function so callers can `await wrapper(...)`
+        # cleanly. functools.wraps copies metadata; we still want the wrapper
+        # itself to be async.
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # Detect whether we're in an async context already
+        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            return await _async_invoke(*args, **kwargs)
+
+        # If the caller passes a sync function, return a sync wrapper that
+        # spins up a fresh event loop. Otherwise the async wrapper is enough.
+        if is_coro:
+            return async_wrapper
+
+        @functools.wraps(func)
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
-                loop = asyncio.get_running_loop()
-                # Schedule and return the awaitable so the caller can await it
+                asyncio.get_running_loop()
+                # Inside an async context but the user's function is sync —
+                # return a coroutine so they can await it.
                 return _async_invoke(*args, **kwargs)
             except RuntimeError:
-                # No running loop — run synchronously
                 return asyncio.run(_async_invoke(*args, **kwargs))
 
-        return wrapper
+        return sync_wrapper
 
     return deco

@@ -153,9 +153,14 @@ class Bus:
                         logger.error("Failed to parse inbox envelope %s: %s", entry_id, e)
 
     async def drain_inbox(self, agent_id: str, last_id: str = "0") -> list[tuple[str, Envelope]]:
-        """Non-blocking: read all available inbox messages since last_id and return them."""
+        """Non-blocking: read all available inbox messages since last_id and return them.
+
+        IMPORTANT: redis-py's xread() treats block=None as non-blocking and
+        block=0 as 'block forever'. We pass block=None so an empty inbox
+        returns immediately rather than hanging until a new message arrives.
+        """
         stream = agent_inbox(agent_id)
-        resp = await self.redis.xread(streams={stream: last_id}, count=1000, block=0)
+        resp = await self.redis.xread(streams={stream: last_id}, count=1000, block=None)
         out: list[tuple[str, Envelope]] = []
         if not resp:
             return out
