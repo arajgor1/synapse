@@ -1,0 +1,40 @@
+{
+  "backend": {
+    "id": "openai",
+    "tier": "hosted",
+    "model_id": "gpt-4o-mini",
+    "supports_midstream_inject": true,
+    "avg_overhead_per_signal": 1.2,
+    "is_reasoning_model": false
+  },
+  "workload": "pair-coding",
+  "session_id": "bench_openai_pair-coding_7c0325",
+  "signals_total": 4,
+  "conflicts_detected": 4,
+  "emit_latency_ms": {
+    "p50": 22.142648696899414,
+    "p95": 30.340909957885742,
+    "p99": 30.340909957885742,
+    "mean": 16.502857208251953
+  },
+  "conflict_signal_latency_ms": {
+    "p50": 56.2434196472168,
+    "p95": 71.65169715881348,
+    "p99": 71.65169715881348,
+    "mean": 52.49524116516113
+  },
+  "throughput_signals_per_sec": 3.7751228524863354,
+  "wall_seconds": 1.059568166732788,
+  "raw_emit_latencies_ms": [
+    22.142648696899414,
+    6.36601448059082,
+    30.340909957885742,
+    7.161855697631836
+  ],
+  "raw_conflict_latencies_ms": [
+    71.65169715881348,
+    56.2434196472168,
+    53.344011306762695,
+    28.741836547851562
+  ]
+}

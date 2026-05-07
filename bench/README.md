@@ -29,7 +29,7 @@ Each result JSON includes:
 - `throughput_signals_per_sec` — wall-clock end-to-end throughput
 - Raw timing arrays for downstream analysis
 
-## Recorded results (this session)
+## Recorded results
 
 | Backend | Workload | Signals | Conflicts | Emit p50 | CONFLICT p50 | Throughput |
 |---|---|---|---|---|---|---|
@@ -37,11 +37,14 @@ Each result JSON includes:
 | mock | pair-coding | 4 | 4 | 10.9 ms | 40.6 ms | 3.8 sig/s |
 | mock | parallel-research | 6 | 0 | 7.1 ms | — | 5.3 sig/s |
 | gemini (Vertex AI) | conflict-heavy | 6 | 4 | 5.8 ms | 10.3 ms | 5.4 sig/s |
+| **openai (gpt-4o-mini)** | pair-coding | 4 | 4 | 22.1 ms | 56.2 ms | 3.8 sig/s |
 
-> The `mock` backend bench numbers are intrinsic to the bus + router + state graph (the LLM call is in-process and instant). They show that the protocol layer itself sustains sub-50ms p99 emit latency and sub-100ms p95 conflict-signal arrival under heavy conflict load.
+> The `mock` backend numbers are intrinsic to the bus + router + state graph (LLM call is in-process and instant). They show the protocol layer sustains sub-50ms p99 emit and sub-100ms p95 conflict-signal arrival under heavy conflict load.
+
+> Hosted backends (gemini, openai) add network round-trip latency on top — but emit/CONFLICT latencies remain sub-100ms, well within the spec target.
 
 ## Pending backends
 
-- **anthropic / openai**: code verified, account-state issues (Anthropic key needs full unredacted value; OpenAI quota exhausted on test account). Re-run with valid keys + credit.
+- **anthropic**: code is doc-correct + contract-tested (`f1c6e84`), but the user's stored key has literal `...` ellipsis chars embedded — produces 401. Re-run after re-setting the full unredacted key.
 - **ollama**: needs local `ollama serve` running with a pulled model (e.g. `llama3.2:3b`).
 - **vllm-modal**: deployed Modal app exists; first call cold-start ~25-30s.

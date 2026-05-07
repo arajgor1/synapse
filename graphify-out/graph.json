@@ -378,7 +378,7 @@
       "source_file": "runtime/__init__.py",
       "source_location": "L1",
       "id": "runtime_init_py",
-      "community": 49,
+      "community": 48,
       "norm_label": "__init__.py"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "runtime/coordinator/belief_divergence.py",
       "source_location": "L26",
       "id": "coordinator_belief_divergence_rationale_26",
-      "community": 50,
+      "community": 49,
       "norm_label": "combined confidence + source-rank score, 0..1.          observed > inferred > as"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "runtime/coordinator/__init__.py",
       "source_location": "L1",
       "id": "runtime_coordinator_init_py",
-      "community": 34,
+      "community": 33,
       "norm_label": "__init__.py"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "runtime/coordinator/__init__.py",
       "source_location": "L1",
       "id": "coordinator_init_rationale_1",
-      "community": 34,
+      "community": 33,
       "norm_label": "synapse coordinator \u2014 model-agnostic role responsible for:  - reading the sessio"
     },
     {
@@ -864,7 +864,7 @@
       "source_file": "runtime/gateway/__init__.py",
       "source_location": "L1",
       "id": "runtime_gateway_init_py",
-      "community": 51,
+      "community": 50,
       "norm_label": "__init__.py"
     },
     {
@@ -873,7 +873,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L1",
       "id": "runtime_modal_vllm_engine_py",
-      "community": 26,
+      "community": 28,
       "norm_label": "vllm_engine.py"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L69",
       "id": "modal_vllm_engine_vllmengine",
-      "community": 26,
+      "community": 28,
       "norm_label": "vllmengine"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L78",
       "id": "modal_vllm_engine_load_engine",
-      "community": 26,
+      "community": 28,
       "norm_label": "load_engine()"
     },
     {
@@ -900,7 +900,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L94",
       "id": "modal_vllm_engine_generate_stream",
-      "community": 26,
+      "community": 28,
       "norm_label": "generate_stream()"
     },
     {
@@ -909,7 +909,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L154",
       "id": "modal_vllm_engine_cancel",
-      "community": 26,
+      "community": 28,
       "norm_label": "cancel()"
     },
     {
@@ -918,7 +918,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L160",
       "id": "modal_vllm_engine_health",
-      "community": 26,
+      "community": 28,
       "norm_label": "health()"
     },
     {
@@ -927,7 +927,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L170",
       "id": "modal_vllm_engine_smoke_test",
-      "community": 26,
+      "community": 28,
       "norm_label": "smoke_test()"
     },
     {
@@ -936,7 +936,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L1",
       "id": "modal_vllm_engine_rationale_1",
-      "community": 26,
+      "community": 28,
       "norm_label": "modal serverless gpu engine for synapse native-tier adapter.  phase 3 ships with"
     },
     {
@@ -945,7 +945,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L70",
       "id": "modal_vllm_engine_rationale_70",
-      "community": 26,
+      "community": 28,
       "norm_label": "stateful container hosting a transformers-based engine.      named `vllmengine`"
     },
     {
@@ -954,7 +954,7 @@
       "source_file": "runtime/modal/vllm_engine.py",
       "source_location": "L102",
       "id": "modal_vllm_engine_rationale_102",
-      "community": 52,
+      "community": 51,
       "norm_label": "stream generation tokens for a single request.          yields dicts: {\"delta\":"
     },
     {
@@ -963,7 +963,7 @@
       "source_file": "runtime/modal/__init__.py",
       "source_location": "L1",
       "id": "runtime_modal_init_py",
-      "community": 53,
+      "community": 52,
       "norm_label": "__init__.py"
     },
     {
@@ -1242,7 +1242,7 @@
       "source_file": "runtime/router/__init__.py",
       "source_location": "L1",
       "id": "runtime_router_init_py",
-      "community": 35,
+      "community": 34,
       "norm_label": "__init__.py"
     },
     {
@@ -1251,7 +1251,7 @@
       "source_file": "runtime/router/__init__.py",
       "source_location": "L1",
       "id": "router_init_rationale_1",
-      "community": 35,
+      "community": 34,
       "norm_label": "synapse router \u2014 l1 (rules) + l2 (sql conflict) for phase 1.  l3 (semantic relev"
     },
     {
@@ -1395,7 +1395,7 @@
       "source_file": "sdk-python/synapse/agent.py",
       "source_location": "L69",
       "id": "synapse_agent_rationale_69",
-      "community": 54,
+      "community": 53,
       "norm_label": "async context manager: connect bus + state, register, drain on exit."
     },
     {
@@ -1845,7 +1845,7 @@
       "source_file": "sdk-python/synapse/messages.py",
       "source_location": "L184",
       "id": "synapse_messages_backendcapabilities",
-      "community": 28,
+      "community": 29,
       "norm_label": "backendcapabilities"
     },
     {
@@ -1890,7 +1890,7 @@
       "source_file": "sdk-python/synapse/messages.py",
       "source_location": "L163",
       "id": "synapse_messages_rationale_163",
-      "community": 55,
+      "community": 54,
       "norm_label": "construct a fresh envelope with a new ulid and current timestamp."
     },
     {
@@ -2106,7 +2106,7 @@
       "source_file": "sdk-python/synapse/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_init_py",
-      "community": 36,
+      "community": 35,
       "norm_label": "__init__.py"
     },
     {
@@ -2115,7 +2115,7 @@
       "source_file": "sdk-python/synapse/__init__.py",
       "source_location": "L1",
       "id": "synapse_init_rationale_1",
-      "community": 36,
+      "community": 35,
       "norm_label": "synapse \u2014 real-time coordination protocol for parallel ai agents.  pre-alpha. ph"
     },
     {
@@ -2124,7 +2124,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_base_py",
-      "community": 23,
+      "community": 24,
       "norm_label": "base.py"
     },
     {
@@ -2133,7 +2133,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L12",
       "id": "adapters_base_streamhandle",
-      "community": 19,
+      "community": 20,
       "norm_label": "streamhandle"
     },
     {
@@ -2151,7 +2151,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L28",
       "id": "adapters_base_backendunavailable",
-      "community": 28,
+      "community": 29,
       "norm_label": "backendunavailable"
     },
     {
@@ -2169,7 +2169,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L32",
       "id": "adapters_base_unsupportedcapability",
-      "community": 23,
+      "community": 24,
       "norm_label": "unsupportedcapability"
     },
     {
@@ -2178,7 +2178,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L39",
       "id": "adapters_base_inferenceadapter",
-      "community": 23,
+      "community": 24,
       "norm_label": "inferenceadapter"
     },
     {
@@ -2187,7 +2187,7 @@
       "source_file": "",
       "source_location": "",
       "id": "protocol",
-      "community": 23,
+      "community": 24,
       "norm_label": "protocol"
     },
     {
@@ -2196,7 +2196,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L42",
       "id": "adapters_base_inferenceadapter_start_stream",
-      "community": 23,
+      "community": 24,
       "norm_label": ".start_stream()"
     },
     {
@@ -2205,7 +2205,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L46",
       "id": "adapters_base_inferenceadapter_read_tokens",
-      "community": 23,
+      "community": 24,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2214,7 +2214,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L48",
       "id": "adapters_base_inferenceadapter_inject_and_continue",
-      "community": 23,
+      "community": 24,
       "norm_label": ".inject_and_continue()"
     },
     {
@@ -2223,7 +2223,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L55",
       "id": "adapters_base_inferenceadapter_cancel",
-      "community": 23,
+      "community": 24,
       "norm_label": ".cancel()"
     },
     {
@@ -2232,7 +2232,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L1",
       "id": "adapters_base_rationale_1",
-      "community": 23,
+      "community": 24,
       "norm_label": "inferenceadapter protocol \u2014 see spec/adapter.md for the canonical contract."
     },
     {
@@ -2241,7 +2241,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L13",
       "id": "adapters_base_rationale_13",
-      "community": 19,
+      "community": 20,
       "norm_label": "opaque handle to an in-flight generation. adapter-specific contents."
     },
     {
@@ -2250,7 +2250,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L29",
       "id": "adapters_base_rationale_29",
-      "community": 28,
+      "community": 29,
       "norm_label": "raised when the backend cannot be reached. sdk falls back to no-coordination mod"
     },
     {
@@ -2259,7 +2259,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L33",
       "id": "adapters_base_rationale_33",
-      "community": 23,
+      "community": 24,
       "norm_label": "raised when an operation is requested that the backend does not support     (e.g"
     },
     {
@@ -2358,7 +2358,7 @@
       "source_file": "sdk-python/synapse/adapters/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_init_py",
-      "community": 37,
+      "community": 36,
       "norm_label": "__init__.py"
     },
     {
@@ -2367,7 +2367,7 @@
       "source_file": "sdk-python/synapse/adapters/__init__.py",
       "source_location": "L1",
       "id": "adapters_init_rationale_1",
-      "community": 37,
+      "community": 36,
       "norm_label": "inference adapters.  phase 1: mock (in-process scripted streaming). phase 2: hos"
     },
     {
@@ -2394,7 +2394,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/anthropic_adapter.py",
       "source_location": "L50",
       "id": "hosted_anthropic_adapter_anthropicadapter_init",
-      "community": 28,
+      "community": 29,
       "norm_label": ".__init__()"
     },
     {
@@ -2511,7 +2511,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/gemini_adapter.py",
       "source_location": "L45",
       "id": "hosted_gemini_adapter_geminiadapter_init",
-      "community": 28,
+      "community": 29,
       "norm_label": ".__init__()"
     },
     {
@@ -2592,7 +2592,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/gemini_adapter.py",
       "source_location": "L54",
       "id": "hosted_gemini_adapter_rationale_54",
-      "community": 28,
+      "community": 29,
       "norm_label": "two auth modes:         - **api key**: pass api_key=... or set google_api_key/ge"
     },
     {
@@ -2628,7 +2628,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/openai_adapter.py",
       "source_location": "L52",
       "id": "hosted_openai_adapter_openaiadapter_init",
-      "community": 28,
+      "community": 29,
       "norm_label": ".__init__()"
     },
     {
@@ -2700,7 +2700,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_hosted_init_py",
-      "community": 38,
+      "community": 37,
       "norm_label": "__init__.py"
     },
     {
@@ -2709,7 +2709,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/__init__.py",
       "source_location": "L1",
       "id": "hosted_init_rationale_1",
-      "community": 38,
+      "community": 37,
       "norm_label": "hosted-tier inference adapters.  these wrap proprietary apis (anthropic, openai,"
     },
     {
@@ -2718,7 +2718,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_local_ollama_adapter_py",
-      "community": 21,
+      "community": 20,
       "norm_label": "ollama_adapter.py"
     },
     {
@@ -2727,7 +2727,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L40",
       "id": "local_ollama_adapter_ollamaadapter",
-      "community": 21,
+      "community": 20,
       "norm_label": "ollamaadapter"
     },
     {
@@ -2736,7 +2736,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L49",
       "id": "local_ollama_adapter_ollamaadapter_init",
-      "community": 28,
+      "community": 29,
       "norm_label": ".__init__()"
     },
     {
@@ -2745,7 +2745,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L81",
       "id": "local_ollama_adapter_ollamaadapter_health_check",
-      "community": 21,
+      "community": 20,
       "norm_label": ".health_check()"
     },
     {
@@ -2754,7 +2754,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L105",
       "id": "local_ollama_adapter_ollamaadapter_start_stream",
-      "community": 21,
+      "community": 20,
       "norm_label": ".start_stream()"
     },
     {
@@ -2772,7 +2772,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L181",
       "id": "local_ollama_adapter_ollamaadapter_inject_and_continue",
-      "community": 21,
+      "community": 20,
       "norm_label": ".inject_and_continue()"
     },
     {
@@ -2781,7 +2781,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L211",
       "id": "local_ollama_adapter_ollamaadapter_cancel",
-      "community": 21,
+      "community": 20,
       "norm_label": ".cancel()"
     },
     {
@@ -2790,7 +2790,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L228",
       "id": "local_ollama_adapter_messages_to_prompt",
-      "community": 21,
+      "community": 20,
       "norm_label": "_messages_to_prompt()"
     },
     {
@@ -2799,7 +2799,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L1",
       "id": "local_ollama_adapter_rationale_1",
-      "community": 21,
+      "community": 20,
       "norm_label": "ollama local-api adapter.  talks to a locally-running ollama server (default htt"
     },
     {
@@ -2808,7 +2808,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L41",
       "id": "local_ollama_adapter_rationale_41",
-      "community": 21,
+      "community": 20,
       "norm_label": "local-api tier adapter for ollama.      args:         model: ollama model tag (e"
     },
     {
@@ -2817,7 +2817,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L82",
       "id": "local_ollama_adapter_rationale_82",
-      "community": 21,
+      "community": 20,
       "norm_label": "verify ollama is reachable and the model is available."
     },
     {
@@ -2826,7 +2826,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L187",
       "id": "local_ollama_adapter_rationale_187",
-      "community": 21,
+      "community": 20,
       "norm_label": "local-api resume: cancel stream, restart with last context tokens.          if t"
     },
     {
@@ -2835,7 +2835,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L229",
       "id": "local_ollama_adapter_rationale_229",
-      "community": 56,
+      "community": 55,
       "norm_label": "flatten role/content messages into a single prompt string.          ollama's /ap"
     },
     {
@@ -2844,7 +2844,7 @@
       "source_file": "sdk-python/synapse/adapters/local/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_local_init_py",
-      "community": 39,
+      "community": 38,
       "norm_label": "__init__.py"
     },
     {
@@ -2853,7 +2853,7 @@
       "source_file": "sdk-python/synapse/adapters/local/__init__.py",
       "source_location": "L1",
       "id": "local_init_rationale_1",
-      "community": 39,
+      "community": 38,
       "norm_label": "local-api tier adapters \u2014 talk to a locally-running inference server that expose"
     },
     {
@@ -2862,7 +2862,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_native_vllm_modal_adapter_py",
-      "community": 19,
+      "community": 22,
       "norm_label": "vllm_modal_adapter.py"
     },
     {
@@ -2871,7 +2871,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L37",
       "id": "native_vllm_modal_adapter_vllmmodaladapter",
-      "community": 19,
+      "community": 22,
       "norm_label": "vllmmodaladapter"
     },
     {
@@ -2880,7 +2880,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L46",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_init",
-      "community": 28,
+      "community": 29,
       "norm_label": ".__init__()"
     },
     {
@@ -2889,7 +2889,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L79",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_get_engine_cls",
-      "community": 19,
+      "community": 22,
       "norm_label": "._get_engine_cls()"
     },
     {
@@ -2898,7 +2898,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L91",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_health_check",
-      "community": 19,
+      "community": 22,
       "norm_label": ".health_check()"
     },
     {
@@ -2907,7 +2907,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L102",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_start_stream",
-      "community": 19,
+      "community": 22,
       "norm_label": ".start_stream()"
     },
     {
@@ -2925,7 +2925,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L156",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_inject_and_continue",
-      "community": 19,
+      "community": 22,
       "norm_label": ".inject_and_continue()"
     },
     {
@@ -2934,7 +2934,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L173",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_cancel",
-      "community": 19,
+      "community": 22,
       "norm_label": ".cancel()"
     },
     {
@@ -2943,7 +2943,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L187",
       "id": "native_vllm_modal_adapter_messages_to_prompt",
-      "community": 19,
+      "community": 22,
       "norm_label": "_messages_to_prompt()"
     },
     {
@@ -2952,7 +2952,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L1",
       "id": "native_vllm_modal_adapter_rationale_1",
-      "community": 19,
+      "community": 22,
       "norm_label": "vllm-via-modal native adapter.  talks to a modal-deployed vllm engine over modal"
     },
     {
@@ -2961,7 +2961,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L38",
       "id": "native_vllm_modal_adapter_rationale_38",
-      "community": 19,
+      "community": 22,
       "norm_label": "connects to a deployed modal vllm engine via rpc.      args:         modal_app:"
     },
     {
@@ -2970,7 +2970,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L80",
       "id": "native_vllm_modal_adapter_rationale_80",
-      "community": 19,
+      "community": 22,
       "norm_label": "lazy-resolve the deployed modal class. caches across calls."
     },
     {
@@ -2979,7 +2979,7 @@
       "source_file": "sdk-python/synapse/adapters/native/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_native_init_py",
-      "community": 40,
+      "community": 39,
       "norm_label": "__init__.py"
     },
     {
@@ -2988,7 +2988,7 @@
       "source_file": "sdk-python/synapse/adapters/native/__init__.py",
       "source_location": "L1",
       "id": "native_init_rationale_1",
-      "community": 40,
+      "community": 39,
       "norm_label": "native tier adapters \u2014 direct control over the inference engine, including the k"
     },
     {
@@ -3177,7 +3177,7 @@
       "source_file": "sdk-python/synapse/cli/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_cli_init_py",
-      "community": 41,
+      "community": 40,
       "norm_label": "__init__.py"
     },
     {
@@ -3186,7 +3186,7 @@
       "source_file": "sdk-python/synapse/cli/__init__.py",
       "source_location": "L1",
       "id": "cli_init_rationale_1",
-      "community": 41,
+      "community": 40,
       "norm_label": "synapse cli \u2014 `synapse spec validate`, `synapse bench`, and friends."
     },
     {
@@ -3357,7 +3357,7 @@
       "source_file": "sdk-python/synapse/integrations/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_integrations_init_py",
-      "community": 42,
+      "community": 41,
       "norm_label": "__init__.py"
     },
     {
@@ -3366,7 +3366,7 @@
       "source_file": "sdk-python/synapse/integrations/__init__.py",
       "source_location": "L1",
       "id": "integrations_init_rationale_1",
-      "community": 42,
+      "community": 41,
       "norm_label": "synapse framework integrations.  these are not inference adapters (those wrap ll"
     },
     {
@@ -4194,7 +4194,7 @@
       "source_file": "sdk-python/tests/test_hosted_contracts.py",
       "source_location": "L147",
       "id": "tests_test_hosted_contracts_rationale_147",
-      "community": 57,
+      "community": 56,
       "norm_label": "documented happy path: a sequence of content_block_delta events with         tex"
     },
     {
@@ -4203,7 +4203,7 @@
       "source_file": "sdk-python/tests/test_hosted_contracts.py",
       "source_location": "L167",
       "id": "tests_test_hosted_contracts_rationale_167",
-      "community": 58,
+      "community": 57,
       "norm_label": "tool-use streaming sends input_json_delta. adapter should skip         these (th"
     },
     {
@@ -4212,7 +4212,7 @@
       "source_file": "sdk-python/tests/test_hosted_contracts.py",
       "source_location": "L186",
       "id": "tests_test_hosted_contracts_rationale_186",
-      "community": 59,
+      "community": 58,
       "norm_label": "extended-thinking models emit thinking_delta. v1 adapter ignores."
     },
     {
@@ -4221,7 +4221,7 @@
       "source_file": "sdk-python/tests/test_hosted_contracts.py",
       "source_location": "L218",
       "id": "tests_test_hosted_contracts_rationale_218",
-      "community": 60,
+      "community": 59,
       "norm_label": "verify the cached-restart message structure matches the documented         promp"
     },
     {
@@ -4230,7 +4230,7 @@
       "source_file": "sdk-python/tests/test_hosted_contracts.py",
       "source_location": "L267",
       "id": "tests_test_hosted_contracts_rationale_267",
-      "community": 61,
+      "community": 60,
       "norm_label": "standard openai-python chunk shape:         chunk.choices[0].delta.content -> st"
     },
     {
@@ -4239,7 +4239,7 @@
       "source_file": "sdk-python/tests/test_hosted_contracts.py",
       "source_location": "L294",
       "id": "tests_test_hosted_contracts_rationale_294",
-      "community": 62,
+      "community": 61,
       "norm_label": "some chunks can have an empty choices list (rare but documented)."
     },
     {
@@ -4536,7 +4536,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L1",
       "id": "sdk_python_tests_test_local_native_adapters_py",
-      "community": 27,
+      "community": 18,
       "norm_label": "test_local_native_adapters.py"
     },
     {
@@ -4545,7 +4545,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L15",
       "id": "tests_test_local_native_adapters_testollamaadapter",
-      "community": 27,
+      "community": 18,
       "norm_label": "testollamaadapter"
     },
     {
@@ -4554,7 +4554,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L16",
       "id": "tests_test_local_native_adapters_testollamaadapter_test_capabilities_correct",
-      "community": 27,
+      "community": 18,
       "norm_label": ".test_capabilities_correct()"
     },
     {
@@ -4563,7 +4563,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L27",
       "id": "tests_test_local_native_adapters_testollamaadapter_test_messages_to_prompt_format",
-      "community": 27,
+      "community": 18,
       "norm_label": ".test_messages_to_prompt_format()"
     },
     {
@@ -4572,7 +4572,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L43",
       "id": "tests_test_local_native_adapters_testollamaadapter_test_messages_with_block_content",
-      "community": 27,
+      "community": 18,
       "norm_label": ".test_messages_with_block_content()"
     },
     {
@@ -4581,7 +4581,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L51",
       "id": "tests_test_local_native_adapters_testvllmmodaladapter",
-      "community": 27,
+      "community": 18,
       "norm_label": "testvllmmodaladapter"
     },
     {
@@ -4590,7 +4590,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L52",
       "id": "tests_test_local_native_adapters_testvllmmodaladapter_test_capabilities_correct",
-      "community": 27,
+      "community": 18,
       "norm_label": ".test_capabilities_correct()"
     },
     {
@@ -4599,7 +4599,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L63",
       "id": "tests_test_local_native_adapters_testvllmmodaladapter_test_messages_to_prompt_format",
-      "community": 27,
+      "community": 18,
       "norm_label": ".test_messages_to_prompt_format()"
     },
     {
@@ -4608,7 +4608,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L74",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable",
-      "community": 33,
+      "community": 18,
       "norm_label": "testphasethreeadaptersimportable"
     },
     {
@@ -4617,7 +4617,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L75",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable_test_local_module_importable",
-      "community": 33,
+      "community": 18,
       "norm_label": ".test_local_module_importable()"
     },
     {
@@ -4626,7 +4626,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L79",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable_test_native_module_importable",
-      "community": 33,
+      "community": 18,
       "norm_label": ".test_native_module_importable()"
     },
     {
@@ -4635,7 +4635,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L83",
       "id": "tests_test_local_native_adapters_testphasethreeadaptersimportable_test_all_tiers_capability_distinct",
-      "community": 33,
+      "community": 18,
       "norm_label": ".test_all_tiers_capability_distinct()"
     },
     {
@@ -4644,7 +4644,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L1",
       "id": "tests_test_local_native_adapters_rationale_1",
-      "community": 27,
+      "community": 18,
       "norm_label": "tests for phase 3 adapters \u2014 ollama (local-api) and vllm-via-modal (native).  al"
     },
     {
@@ -4653,7 +4653,7 @@
       "source_file": "sdk-python/tests/test_local_native_adapters.py",
       "source_location": "L84",
       "id": "tests_test_local_native_adapters_rationale_84",
-      "community": 33,
+      "community": 18,
       "norm_label": "each tier should have characteristic overhead and isolation defaults."
     },
     {
@@ -5022,7 +5022,7 @@
       "source_file": "sdk-python/tests/__init__.py",
       "source_location": "L1",
       "id": "sdk_python_tests_init_py",
-      "community": 63,
+      "community": 62,
       "norm_label": "__init__.py"
     },
     {
@@ -5031,7 +5031,7 @@
       "source_file": "ui/next-env.d.ts",
       "source_location": "L1",
       "id": "ui_next_env_d_ts",
-      "community": 64,
+      "community": 63,
       "norm_label": "next-env.d.ts"
     },
     {
@@ -5040,7 +5040,7 @@
       "source_file": "ui/next.config.js",
       "source_location": "L1",
       "id": "ui_next_config_js",
-      "community": 65,
+      "community": 64,
       "norm_label": "next.config.js"
     },
     {
@@ -5049,7 +5049,7 @@
       "source_file": "ui/postcss.config.js",
       "source_location": "L1",
       "id": "ui_postcss_config_js",
-      "community": 66,
+      "community": 65,
       "norm_label": "postcss.config.js"
     },
     {
@@ -5058,7 +5058,7 @@
       "source_file": "ui/tailwind.config.ts",
       "source_location": "L1",
       "id": "ui_tailwind_config_ts",
-      "community": 67,
+      "community": 66,
       "norm_label": "tailwind.config.ts"
     },
     {
@@ -5067,7 +5067,7 @@
       "source_file": "ui/src/app/layout.tsx",
       "source_location": "L1",
       "id": "ui_src_app_layout_tsx",
-      "community": 43,
+      "community": 42,
       "norm_label": "layout.tsx"
     },
     {
@@ -5076,7 +5076,7 @@
       "source_file": "ui/src/app/layout.tsx",
       "source_location": "L9",
       "id": "app_layout_rootlayout",
-      "community": 43,
+      "community": 42,
       "norm_label": "rootlayout()"
     },
     {
@@ -5085,7 +5085,7 @@
       "source_file": "ui/src/app/page.tsx",
       "source_location": "L1",
       "id": "ui_src_app_page_tsx",
-      "community": 44,
+      "community": 43,
       "norm_label": "page.tsx"
     },
     {
@@ -5094,7 +5094,7 @@
       "source_file": "ui/src/app/page.tsx",
       "source_location": "L12",
       "id": "app_page_home",
-      "community": 44,
+      "community": 43,
       "norm_label": "home()"
     },
     {
@@ -5103,7 +5103,7 @@
       "source_file": "ui/src/app/sessions/[id]/page.tsx",
       "source_location": "L1",
       "id": "ui_src_app_sessions_id_page_tsx",
-      "community": 18,
+      "community": 19,
       "norm_label": "page.tsx"
     },
     {
@@ -5112,7 +5112,7 @@
       "source_file": "ui/src/app/sessions/[id]/page.tsx",
       "source_location": "L11",
       "id": "id_page_sessionpage",
-      "community": 18,
+      "community": 19,
       "norm_label": "sessionpage()"
     },
     {
@@ -5121,7 +5121,7 @@
       "source_file": "ui/src/app/sessions/[id]/page.tsx",
       "source_location": "L76",
       "id": "id_page_connectiondot",
-      "community": 18,
+      "community": 19,
       "norm_label": "connectiondot()"
     },
     {
@@ -5130,7 +5130,7 @@
       "source_file": "ui/src/app/sessions/[id]/page.tsx",
       "source_location": "L89",
       "id": "id_page_stat",
-      "community": 18,
+      "community": 19,
       "norm_label": "stat()"
     },
     {
@@ -5139,7 +5139,7 @@
       "source_file": "ui/src/components/AgentGrid.tsx",
       "source_location": "L1",
       "id": "ui_src_components_agentgrid_tsx",
-      "community": 18,
+      "community": 19,
       "norm_label": "agentgrid.tsx"
     },
     {
@@ -5148,7 +5148,7 @@
       "source_file": "ui/src/components/BeliefPanel.tsx",
       "source_location": "L1",
       "id": "ui_src_components_beliefpanel_tsx",
-      "community": 18,
+      "community": 19,
       "norm_label": "beliefpanel.tsx"
     },
     {
@@ -5157,7 +5157,7 @@
       "source_file": "ui/src/components/EventStream.tsx",
       "source_location": "L1",
       "id": "ui_src_components_eventstream_tsx",
-      "community": 18,
+      "community": 19,
       "norm_label": "eventstream.tsx"
     },
     {
@@ -5166,7 +5166,7 @@
       "source_file": "ui/src/components/EventStream.tsx",
       "source_location": "L48",
       "id": "components_eventstream_toggle",
-      "community": 18,
+      "community": 19,
       "norm_label": "toggle()"
     },
     {
@@ -5175,7 +5175,7 @@
       "source_file": "ui/src/components/IntentionsTable.tsx",
       "source_location": "L1",
       "id": "ui_src_components_intentionstable_tsx",
-      "community": 18,
+      "community": 19,
       "norm_label": "intentionstable.tsx"
     },
     {
@@ -5184,7 +5184,7 @@
       "source_file": "ui/src/lib/types.ts",
       "source_location": "L1",
       "id": "ui_src_lib_types_ts",
-      "community": 18,
+      "community": 19,
       "norm_label": "types.ts"
     },
     {
@@ -5193,7 +5193,7 @@
       "source_file": "ui/src/lib/useSession.ts",
       "source_location": "L1",
       "id": "ui_src_lib_usesession_ts",
-      "community": 18,
+      "community": 19,
       "norm_label": "usesession.ts"
     },
     {
@@ -5202,7 +5202,7 @@
       "source_file": "ui/src/lib/useSession.ts",
       "source_location": "L35",
       "id": "lib_usesession_initial",
-      "community": 18,
+      "community": 19,
       "norm_label": "initial()"
     },
     {
@@ -5211,7 +5211,7 @@
       "source_file": "ui/src/lib/useSession.ts",
       "source_location": "L48",
       "id": "lib_usesession_reduce",
-      "community": 18,
+      "community": 19,
       "norm_label": "reduce()"
     },
     {
@@ -5220,7 +5220,7 @@
       "source_file": "ui/src/lib/useSession.ts",
       "source_location": "L181",
       "id": "lib_usesession_usesession",
-      "community": 18,
+      "community": 19,
       "norm_label": "usesession()"
     },
     {
@@ -5490,7 +5490,7 @@
       "source_file": "adapters/hosted/README.md",
       "source_location": "L1",
       "id": "adapters_hosted_readme_md",
-      "community": 45,
+      "community": 44,
       "norm_label": "readme.md"
     },
     {
@@ -5499,7 +5499,7 @@
       "source_file": "adapters/hosted/README.md",
       "source_location": "L1",
       "id": "hosted_readme_adapters_hosted",
-      "community": 45,
+      "community": 44,
       "norm_label": "adapters/hosted"
     },
     {
@@ -5508,7 +5508,7 @@
       "source_file": "adapters/local/README.md",
       "source_location": "L1",
       "id": "adapters_local_readme_md",
-      "community": 46,
+      "community": 45,
       "norm_label": "readme.md"
     },
     {
@@ -5517,7 +5517,7 @@
       "source_file": "adapters/local/README.md",
       "source_location": "L1",
       "id": "local_readme_adapters_local",
-      "community": 46,
+      "community": 45,
       "norm_label": "adapters/local"
     },
     {
@@ -5526,7 +5526,7 @@
       "source_file": "adapters/native/README.md",
       "source_location": "L1",
       "id": "adapters_native_readme_md",
-      "community": 47,
+      "community": 46,
       "norm_label": "readme.md"
     },
     {
@@ -5535,7 +5535,7 @@
       "source_file": "adapters/native/README.md",
       "source_location": "L1",
       "id": "native_readme_adapters_native",
-      "community": 47,
+      "community": 46,
       "norm_label": "adapters/native"
     },
     {
@@ -5544,7 +5544,7 @@
       "source_file": "bench/README.md",
       "source_location": "L1",
       "id": "bench_readme_md",
-      "community": 29,
+      "community": 25,
       "norm_label": "readme.md"
     },
     {
@@ -5553,7 +5553,7 @@
       "source_file": "bench/README.md",
       "source_location": "L1",
       "id": "bench_readme_synapse_benchmark_results",
-      "community": 29,
+      "community": 25,
       "norm_label": "synapse benchmark results"
     },
     {
@@ -5562,7 +5562,7 @@
       "source_file": "bench/README.md",
       "source_location": "L5",
       "id": "bench_readme_workloads",
-      "community": 29,
+      "community": 25,
       "norm_label": "workloads"
     },
     {
@@ -5571,7 +5571,7 @@
       "source_file": "bench/README.md",
       "source_location": "L13",
       "id": "bench_readme_run",
-      "community": 29,
+      "community": 25,
       "norm_label": "run"
     },
     {
@@ -5580,7 +5580,7 @@
       "source_file": "bench/README.md",
       "source_location": "L15",
       "id": "bench_readme_codeblock_1",
-      "community": 29,
+      "community": 25,
       "norm_label": "code:bash (synapse bench --backend mock --workload conflict-heavy)"
     },
     {
@@ -5589,25 +5589,25 @@
       "source_file": "bench/README.md",
       "source_location": "L22",
       "id": "bench_readme_what_the_report_contains",
-      "community": 29,
+      "community": 25,
       "norm_label": "what the report contains"
     },
     {
-      "label": "Recorded results (this session)",
+      "label": "Recorded results",
       "file_type": "document",
       "source_file": "bench/README.md",
       "source_location": "L32",
-      "id": "bench_readme_recorded_results_this_session",
-      "community": 29,
-      "norm_label": "recorded results (this session)"
+      "id": "bench_readme_recorded_results",
+      "community": 25,
+      "norm_label": "recorded results"
     },
     {
       "label": "Pending backends",
       "file_type": "document",
       "source_file": "bench/README.md",
-      "source_location": "L43",
+      "source_location": "L46",
       "id": "bench_readme_pending_backends",
-      "community": 29,
+      "community": 25,
       "norm_label": "pending backends"
     },
     {
@@ -5760,7 +5760,7 @@
       "source_file": "runtime/README.md",
       "source_location": "L1",
       "id": "runtime_readme_md",
-      "community": 48,
+      "community": 47,
       "norm_label": "readme.md"
     },
     {
@@ -5769,7 +5769,7 @@
       "source_file": "runtime/README.md",
       "source_location": "L1",
       "id": "runtime_readme_runtime",
-      "community": 48,
+      "community": 47,
       "norm_label": "runtime"
     },
     {
@@ -6282,7 +6282,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L1",
       "id": "spec_positioning_md",
-      "community": 20,
+      "community": 21,
       "norm_label": "positioning.md"
     },
     {
@@ -6291,7 +6291,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L1",
       "id": "spec_positioning_positioning_synapse_vs_mcp_a2a_langgraph_autogen",
-      "community": 20,
+      "community": 21,
       "norm_label": "positioning \u2014 synapse vs mcp, a2a, langgraph, autogen"
     },
     {
@@ -6300,7 +6300,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L5",
       "id": "spec_positioning_the_layered_picture",
-      "community": 20,
+      "community": 21,
       "norm_label": "the layered picture"
     },
     {
@@ -6309,7 +6309,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L7",
       "id": "spec_positioning_codeblock_1",
-      "community": 20,
+      "community": 21,
       "norm_label": "code:block1 (\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500)"
     },
     {
@@ -6318,7 +6318,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L43",
       "id": "spec_positioning_direct_comparison",
-      "community": 20,
+      "community": 21,
       "norm_label": "direct comparison"
     },
     {
@@ -6327,7 +6327,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L53",
       "id": "spec_positioning_what_makes_synapse_distinct",
-      "community": 20,
+      "community": 21,
       "norm_label": "what makes synapse distinct"
     },
     {
@@ -6336,7 +6336,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L61",
       "id": "spec_positioning_why_this_matters_for_adoption",
-      "community": 20,
+      "community": 21,
       "norm_label": "why this matters for adoption"
     },
     {
@@ -6345,7 +6345,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L72",
       "id": "spec_positioning_but_isn_t_this_just_x",
-      "community": 20,
+      "community": 21,
       "norm_label": "\"but isn't this just x?\""
     },
     {
@@ -6354,7 +6354,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L86",
       "id": "spec_positioning_co_existence_recipes",
-      "community": 20,
+      "community": 21,
       "norm_label": "co-existence recipes"
     },
     {
@@ -6363,7 +6363,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L88",
       "id": "spec_positioning_synapse_mcp",
-      "community": 20,
+      "community": 21,
       "norm_label": "synapse + mcp"
     },
     {
@@ -6372,7 +6372,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L92",
       "id": "spec_positioning_synapse_langgraph",
-      "community": 20,
+      "community": 21,
       "norm_label": "synapse + langgraph"
     },
     {
@@ -6381,7 +6381,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L96",
       "id": "spec_positioning_synapse_a2a",
-      "community": 20,
+      "community": 21,
       "norm_label": "synapse + a2a"
     },
     {
@@ -6390,7 +6390,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L100",
       "id": "spec_positioning_why_not_just_use_a_database",
-      "community": 20,
+      "community": 21,
       "norm_label": "why not just use a database?"
     },
     {
@@ -6471,7 +6471,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L1",
       "id": "spec_adr_adr_0001_architecture_baseline_md",
-      "community": 24,
+      "community": 26,
       "norm_label": "adr-0001-architecture-baseline.md"
     },
     {
@@ -6480,7 +6480,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L1",
       "id": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
-      "community": 24,
+      "community": 26,
       "norm_label": "adr-0001: v1.0 architecture baseline"
     },
     {
@@ -6489,7 +6489,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L7",
       "id": "adr_adr_0001_architecture_baseline_context",
-      "community": 24,
+      "community": 26,
       "norm_label": "context"
     },
     {
@@ -6498,7 +6498,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L11",
       "id": "adr_adr_0001_architecture_baseline_decision",
-      "community": 24,
+      "community": 26,
       "norm_label": "decision"
     },
     {
@@ -6507,7 +6507,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L15",
       "id": "adr_adr_0001_architecture_baseline_components",
-      "community": 24,
+      "community": 26,
       "norm_label": "components"
     },
     {
@@ -6516,7 +6516,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L27",
       "id": "adr_adr_0001_architecture_baseline_key_mechanisms",
-      "community": 24,
+      "community": 26,
       "norm_label": "key mechanisms"
     },
     {
@@ -6525,7 +6525,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L34",
       "id": "adr_adr_0001_architecture_baseline_resolved_open_questions",
-      "community": 24,
+      "community": 26,
       "norm_label": "resolved open questions"
     },
     {
@@ -6534,7 +6534,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L43",
       "id": "adr_adr_0001_architecture_baseline_consequences",
-      "community": 24,
+      "community": 26,
       "norm_label": "consequences"
     },
     {
@@ -6543,7 +6543,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L59",
       "id": "adr_adr_0001_architecture_baseline_action_items",
-      "community": 24,
+      "community": 26,
       "norm_label": "action items"
     },
     {
@@ -6552,7 +6552,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L67",
       "id": "adr_adr_0001_architecture_baseline_revision_notes",
-      "community": 24,
+      "community": 26,
       "norm_label": "revision notes"
     },
     {
@@ -6561,7 +6561,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L1",
       "id": "spec_adr_adr_0002_protocol_v1_0_freeze_md",
-      "community": 22,
+      "community": 23,
       "norm_label": "adr-0002-protocol-v1.0-freeze.md"
     },
     {
@@ -6570,7 +6570,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L1",
       "id": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "community": 22,
+      "community": 23,
       "norm_label": "adr-0002: protocol v1.0 freeze"
     },
     {
@@ -6579,7 +6579,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L7",
       "id": "adr_adr_0002_protocol_v1_0_freeze_context",
-      "community": 22,
+      "community": 23,
       "norm_label": "context"
     },
     {
@@ -6588,7 +6588,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L13",
       "id": "adr_adr_0002_protocol_v1_0_freeze_decision",
-      "community": 22,
+      "community": 23,
       "norm_label": "decision"
     },
     {
@@ -6597,7 +6597,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L32",
       "id": "adr_adr_0002_protocol_v1_0_freeze_evolution_rules",
-      "community": 22,
+      "community": 23,
       "norm_label": "evolution rules"
     },
     {
@@ -6606,7 +6606,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L34",
       "id": "adr_adr_0002_protocol_v1_0_freeze_backward_compatible_allowed_in_1_x",
-      "community": 22,
+      "community": 23,
       "norm_label": "backward-compatible (allowed in 1.x)"
     },
     {
@@ -6615,7 +6615,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L41",
       "id": "adr_adr_0002_protocol_v1_0_freeze_backward_incompatible_requires_2_0",
-      "community": 22,
+      "community": 23,
       "norm_label": "backward-incompatible (requires 2.0)"
     },
     {
@@ -6624,7 +6624,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L50",
       "id": "adr_adr_0002_protocol_v1_0_freeze_migration_window",
-      "community": 22,
+      "community": 23,
       "norm_label": "migration window"
     },
     {
@@ -6633,7 +6633,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L54",
       "id": "adr_adr_0002_protocol_v1_0_freeze_validation",
-      "community": 22,
+      "community": 23,
       "norm_label": "validation"
     },
     {
@@ -6642,7 +6642,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L60",
       "id": "adr_adr_0002_protocol_v1_0_freeze_consequences",
-      "community": 22,
+      "community": 23,
       "norm_label": "consequences"
     },
     {
@@ -6651,7 +6651,7 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L74",
       "id": "adr_adr_0002_protocol_v1_0_freeze_action_items",
-      "community": 22,
+      "community": 23,
       "norm_label": "action items"
     },
     {
@@ -6660,7 +6660,7 @@
       "source_file": "ui/README.md",
       "source_location": "L1",
       "id": "ui_readme_md",
-      "community": 25,
+      "community": 27,
       "norm_label": "readme.md"
     },
     {
@@ -6669,7 +6669,7 @@
       "source_file": "ui/README.md",
       "source_location": "L1",
       "id": "ui_readme_synapse_observability_ui",
-      "community": 25,
+      "community": 27,
       "norm_label": "synapse observability ui"
     },
     {
@@ -6678,7 +6678,7 @@
       "source_file": "ui/README.md",
       "source_location": "L8",
       "id": "ui_readme_run_it",
-      "community": 25,
+      "community": 27,
       "norm_label": "run it"
     },
     {
@@ -6687,7 +6687,7 @@
       "source_file": "ui/README.md",
       "source_location": "L12",
       "id": "ui_readme_codeblock_1",
-      "community": 25,
+      "community": 27,
       "norm_label": "code:bash (# 1. bring up infrastructure (from repo root))"
     },
     {
@@ -6696,7 +6696,7 @@
       "source_file": "ui/README.md",
       "source_location": "L29",
       "id": "ui_readme_codeblock_2",
-      "community": 25,
+      "community": 27,
       "norm_label": "code:bash (python examples/two_agents_conflict_demo.py)"
     },
     {
@@ -6705,7 +6705,7 @@
       "source_file": "ui/README.md",
       "source_location": "L39",
       "id": "ui_readme_layout",
-      "community": 25,
+      "community": 27,
       "norm_label": "layout"
     },
     {
@@ -6714,7 +6714,7 @@
       "source_file": "ui/README.md",
       "source_location": "L44",
       "id": "ui_readme_architecture",
-      "community": 25,
+      "community": 27,
       "norm_label": "architecture"
     },
     {
@@ -6723,7 +6723,7 @@
       "source_file": "ui/README.md",
       "source_location": "L46",
       "id": "ui_readme_codeblock_3",
-      "community": 25,
+      "community": 27,
       "norm_label": "code:block3 (browser (next.js, :3000))"
     },
     {
@@ -6732,8 +6732,17 @@
       "source_file": "ui/README.md",
       "source_location": "L69",
       "id": "ui_readme_production_deploy_notes_later",
-      "community": 25,
+      "community": 27,
       "norm_label": "production deploy notes (later)"
+    },
+    {
+      "label": "Recorded results (this session)",
+      "file_type": "document",
+      "source_file": "bench/README.md",
+      "source_location": "L32",
+      "community": 25,
+      "norm_label": "recorded results (this session)",
+      "id": "bench_readme_recorded_results_this_session"
     },
     {
       "label": "Adaptive threshold based on cost feedback.          If recent L3-driven actions",
@@ -6758,7 +6767,7 @@
       "file_type": "document",
       "source_file": "bench/README.md",
       "source_location": "L1",
-      "community": 29,
+      "community": 25,
       "norm_label": "bench",
       "id": "bench_readme_bench"
     },
@@ -6767,7 +6776,7 @@
       "file_type": "document",
       "source_file": "ui/README.md",
       "source_location": "L1",
-      "community": 25,
+      "community": 27,
       "norm_label": "ui",
       "id": "ui_readme_ui"
     },
@@ -6794,7 +6803,7 @@
       "file_type": "rationale",
       "source_file": "sdk-python/synapse/agent.py",
       "source_location": "L67",
-      "community": 68,
+      "community": 67,
       "norm_label": "async context manager: connect bus + state, register, drain on exit.",
       "id": "synapse_agent_rationale_67"
     },
@@ -6914,9 +6923,9 @@
       "source_file": "examples/anthropic_smoke.py",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_anthropic_smoke_py",
-      "target": "examples_anthropic_smoke_main",
-      "confidence_score": 1.0
+      "target": "examples_anthropic_smoke_main"
     },
     {
       "relation": "rationale_for",
@@ -6924,9 +6933,9 @@
       "source_file": "examples/anthropic_smoke.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_anthropic_smoke_rationale_1",
-      "target": "examples_anthropic_smoke_py",
-      "confidence_score": 1.0
+      "target": "examples_anthropic_smoke_py"
     },
     {
       "relation": "calls",
@@ -7478,9 +7487,9 @@
       "source_file": "examples/openai_smoke.py",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_openai_smoke_py",
-      "target": "examples_openai_smoke_main",
-      "confidence_score": 1.0
+      "target": "examples_openai_smoke_main"
     },
     {
       "relation": "rationale_for",
@@ -7488,9 +7497,9 @@
       "source_file": "examples/openai_smoke.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_openai_smoke_rationale_1",
-      "target": "examples_openai_smoke_py",
-      "confidence_score": 1.0
+      "target": "examples_openai_smoke_py"
     },
     {
       "relation": "calls",
@@ -9655,9 +9664,9 @@
       "source_file": "runtime/router/l3_semantic.py",
       "source_location": "L272",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "router_l3_semantic_rationale_272",
-      "target": "router_l3_semantic_l3semanticrouter_adjust_threshold",
-      "confidence_score": 1.0
+      "target": "router_l3_semantic_l3semanticrouter_adjust_threshold"
     },
     {
       "relation": "rationale_for",
@@ -10278,9 +10287,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L38",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "integrations_langgraph_integration_synapseconflict",
-      "target": "synapse_agent_agent",
-      "confidence_score": 0.5
+      "target": "synapse_agent_agent"
     },
     {
       "relation": "calls",
@@ -10777,9 +10786,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L39",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "integrations_langgraph_integration_synapseconflict",
-      "target": "synapse_bus_bus",
-      "confidence_score": 0.5
+      "target": "synapse_bus_bus"
     },
     {
       "relation": "calls",
@@ -11687,9 +11696,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L95",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_fakeagent",
-      "target": "synapse_messages_conflictingintention",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflictingintention"
     },
     {
       "relation": "uses",
@@ -11697,9 +11706,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L95",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_testlanggraphintegration",
-      "target": "synapse_messages_conflictingintention",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflictingintention"
     },
     {
       "relation": "uses",
@@ -11707,9 +11716,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L95",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_testcrewaiintegration",
-      "target": "synapse_messages_conflictingintention",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflictingintention"
     },
     {
       "relation": "calls",
@@ -11728,9 +11737,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L40",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "integrations_langgraph_integration_synapseconflict",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "uses",
@@ -11778,9 +11787,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L95",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_fakeagent",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "uses",
@@ -11788,9 +11797,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L95",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_testlanggraphintegration",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "uses",
@@ -11798,9 +11807,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L95",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_testcrewaiintegration",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "calls",
@@ -12791,9 +12800,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L41",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "integrations_langgraph_integration_synapseconflict",
-      "target": "synapse_state_stategraph",
-      "confidence_score": 0.5
+      "target": "synapse_state_stategraph"
     },
     {
       "relation": "calls",
@@ -13704,9 +13713,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L37",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "integrations_langgraph_integration_synapseconflict",
-      "target": "adapters_base_inferenceadapter",
-      "confidence_score": 0.5
+      "target": "adapters_base_inferenceadapter"
     },
     {
       "relation": "contains",
@@ -14410,9 +14419,9 @@
       "source_file": "sdk-python/synapse/adapters/hosted/gemini_adapter.py",
       "source_location": "L220",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "hosted_gemini_adapter_rationale_220",
-      "target": "hosted_gemini_adapter_geminiadapter_prepare_messages",
-      "confidence_score": 1.0
+      "target": "hosted_gemini_adapter_geminiadapter_prepare_messages"
     },
     {
       "relation": "rationale_for",
@@ -15051,9 +15060,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_bench_py",
-      "target": "cli_bench_build_backend",
-      "confidence_score": 1.0
+      "target": "cli_bench_build_backend"
     },
     {
       "relation": "contains",
@@ -15061,9 +15070,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_bench_py",
-      "target": "cli_bench_wait_ready",
-      "confidence_score": 1.0
+      "target": "cli_bench_wait_ready"
     },
     {
       "relation": "contains",
@@ -15071,9 +15080,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L118",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_bench_py",
-      "target": "cli_bench_percentile",
-      "confidence_score": 1.0
+      "target": "cli_bench_percentile"
     },
     {
       "relation": "contains",
@@ -15081,9 +15090,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L127",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_bench_py",
-      "target": "cli_bench_run_bench",
-      "confidence_score": 1.0
+      "target": "cli_bench_run_bench"
     },
     {
       "relation": "rationale_for",
@@ -15091,9 +15100,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_bench_rationale_1",
-      "target": "sdk_python_synapse_cli_bench_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_cli_bench_py"
     },
     {
       "relation": "calls",
@@ -15102,9 +15111,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L142",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_bench_run_bench",
-      "target": "cli_bench_build_backend",
-      "confidence_score": 1.0
+      "target": "cli_bench_build_backend"
     },
     {
       "relation": "calls",
@@ -15113,9 +15122,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L152",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_bench_run_bench",
-      "target": "cli_bench_wait_ready",
-      "confidence_score": 1.0
+      "target": "cli_bench_wait_ready"
     },
     {
       "relation": "calls",
@@ -15124,9 +15133,9 @@
       "source_file": "sdk-python/synapse/cli/bench.py",
       "source_location": "L252",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_bench_run_bench",
-      "target": "cli_bench_percentile",
-      "confidence_score": 1.0
+      "target": "cli_bench_percentile"
     },
     {
       "relation": "calls",
@@ -15145,9 +15154,9 @@
       "source_file": "sdk-python/synapse/cli/main.py",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_main_py",
-      "target": "cli_main_cmd_spec_validate",
-      "confidence_score": 1.0
+      "target": "cli_main_cmd_spec_validate"
     },
     {
       "relation": "contains",
@@ -15155,9 +15164,9 @@
       "source_file": "sdk-python/synapse/cli/main.py",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_main_py",
-      "target": "cli_main_cmd_bench",
-      "confidence_score": 1.0
+      "target": "cli_main_cmd_bench"
     },
     {
       "relation": "contains",
@@ -15165,9 +15174,9 @@
       "source_file": "sdk-python/synapse/cli/main.py",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_main_py",
-      "target": "cli_main_main",
-      "confidence_score": 1.0
+      "target": "cli_main_main"
     },
     {
       "relation": "rationale_for",
@@ -15175,9 +15184,9 @@
       "source_file": "sdk-python/synapse/cli/main.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_main_rationale_1",
-      "target": "sdk_python_synapse_cli_main_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_cli_main_py"
     },
     {
       "relation": "calls",
@@ -15196,9 +15205,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_spec_validate_py",
-      "target": "cli_spec_validate_spec_dir",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_spec_dir"
     },
     {
       "relation": "contains",
@@ -15206,9 +15215,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_spec_validate_py",
-      "target": "cli_spec_validate_load_schemas",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_load_schemas"
     },
     {
       "relation": "contains",
@@ -15216,9 +15225,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L58",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_spec_validate_py",
-      "target": "cli_spec_validate_iter_inputs",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_iter_inputs"
     },
     {
       "relation": "contains",
@@ -15226,9 +15235,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_cli_spec_validate_py",
-      "target": "cli_spec_validate_run_validate",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_run_validate"
     },
     {
       "relation": "rationale_for",
@@ -15236,9 +15245,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_spec_validate_rationale_1",
-      "target": "sdk_python_synapse_cli_spec_validate_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_cli_spec_validate_py"
     },
     {
       "relation": "calls",
@@ -15247,9 +15256,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_spec_validate_load_schemas",
-      "target": "cli_spec_validate_spec_dir",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_spec_dir"
     },
     {
       "relation": "rationale_for",
@@ -15257,9 +15266,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_spec_validate_rationale_19",
-      "target": "cli_spec_validate_spec_dir",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_spec_dir"
     },
     {
       "relation": "calls",
@@ -15268,9 +15277,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L94",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_spec_validate_run_validate",
-      "target": "cli_spec_validate_load_schemas",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_load_schemas"
     },
     {
       "relation": "rationale_for",
@@ -15278,9 +15287,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_spec_validate_rationale_39",
-      "target": "cli_spec_validate_load_schemas",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_load_schemas"
     },
     {
       "relation": "calls",
@@ -15289,9 +15298,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L102",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_spec_validate_run_validate",
-      "target": "cli_spec_validate_iter_inputs",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_iter_inputs"
     },
     {
       "relation": "rationale_for",
@@ -15299,9 +15308,9 @@
       "source_file": "sdk-python/synapse/cli/spec_validate.py",
       "source_location": "L59",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_spec_validate_rationale_59",
-      "target": "cli_spec_validate_iter_inputs",
-      "confidence_score": 1.0
+      "target": "cli_spec_validate_iter_inputs"
     },
     {
       "relation": "rationale_for",
@@ -15309,9 +15318,9 @@
       "source_file": "sdk-python/synapse/cli/__init__.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cli_init_rationale_1",
-      "target": "sdk_python_synapse_cli_init_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_cli_init_py"
     },
     {
       "relation": "contains",
@@ -15319,9 +15328,9 @@
       "source_file": "sdk-python/synapse/integrations/crewai_integration.py",
       "source_location": "L50",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_integrations_crewai_integration_py",
-      "target": "integrations_crewai_integration_synapse_task",
-      "confidence_score": 1.0
+      "target": "integrations_crewai_integration_synapse_task"
     },
     {
       "relation": "contains",
@@ -15329,9 +15338,9 @@
       "source_file": "sdk-python/synapse/integrations/crewai_integration.py",
       "source_location": "L94",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_integrations_crewai_integration_py",
-      "target": "integrations_crewai_integration_wrap_task_object",
-      "confidence_score": 1.0
+      "target": "integrations_crewai_integration_wrap_task_object"
     },
     {
       "relation": "contains",
@@ -15339,9 +15348,9 @@
       "source_file": "sdk-python/synapse/integrations/crewai_integration.py",
       "source_location": "L153",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_integrations_crewai_integration_py",
-      "target": "integrations_crewai_integration_wrap_callable",
-      "confidence_score": 1.0
+      "target": "integrations_crewai_integration_wrap_callable"
     },
     {
       "relation": "rationale_for",
@@ -15349,9 +15358,9 @@
       "source_file": "sdk-python/synapse/integrations/crewai_integration.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_crewai_integration_rationale_1",
-      "target": "sdk_python_synapse_integrations_crewai_integration_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_integrations_crewai_integration_py"
     },
     {
       "relation": "rationale_for",
@@ -15359,9 +15368,9 @@
       "source_file": "sdk-python/synapse/integrations/crewai_integration.py",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_crewai_integration_rationale_62",
-      "target": "integrations_crewai_integration_synapse_task",
-      "confidence_score": 1.0
+      "target": "integrations_crewai_integration_synapse_task"
     },
     {
       "relation": "calls",
@@ -15402,9 +15411,9 @@
       "source_file": "sdk-python/synapse/integrations/crewai_integration.py",
       "source_location": "L106",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_crewai_integration_rationale_106",
-      "target": "integrations_crewai_integration_wrap_task_object",
-      "confidence_score": 1.0
+      "target": "integrations_crewai_integration_wrap_task_object"
     },
     {
       "relation": "contains",
@@ -15412,9 +15421,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_integrations_langgraph_integration_py",
-      "target": "integrations_langgraph_integration_synapseconflict",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_synapseconflict"
     },
     {
       "relation": "contains",
@@ -15422,9 +15431,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L67",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_integrations_langgraph_integration_py",
-      "target": "integrations_langgraph_integration_ensure_connections",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_ensure_connections"
     },
     {
       "relation": "contains",
@@ -15432,9 +15441,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L83",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_integrations_langgraph_integration_py",
-      "target": "integrations_langgraph_integration_ensure_agent",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_ensure_agent"
     },
     {
       "relation": "contains",
@@ -15442,9 +15451,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L111",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_synapse_integrations_langgraph_integration_py",
-      "target": "integrations_langgraph_integration_synapse_node",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_synapse_node"
     },
     {
       "relation": "rationale_for",
@@ -15452,9 +15461,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_langgraph_integration_rationale_1",
-      "target": "sdk_python_synapse_integrations_langgraph_integration_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_integrations_langgraph_integration_py"
     },
     {
       "relation": "inherits",
@@ -15462,9 +15471,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L46",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_langgraph_integration_synapseconflict",
-      "target": "exception",
-      "confidence_score": 1.0
+      "target": "exception"
     },
     {
       "relation": "method",
@@ -15472,9 +15481,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L53",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_langgraph_integration_synapseconflict",
-      "target": "integrations_langgraph_integration_synapseconflict_init",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_synapseconflict_init"
     },
     {
       "relation": "rationale_for",
@@ -15482,9 +15491,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_langgraph_integration_rationale_47",
-      "target": "integrations_langgraph_integration_synapseconflict",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_synapseconflict"
     },
     {
       "relation": "uses",
@@ -15492,9 +15501,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L94",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_fakeagent",
-      "target": "integrations_langgraph_integration_synapseconflict",
-      "confidence_score": 0.5
+      "target": "integrations_langgraph_integration_synapseconflict"
     },
     {
       "relation": "uses",
@@ -15502,9 +15511,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L94",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_testlanggraphintegration",
-      "target": "integrations_langgraph_integration_synapseconflict",
-      "confidence_score": 0.5
+      "target": "integrations_langgraph_integration_synapseconflict"
     },
     {
       "relation": "uses",
@@ -15512,9 +15521,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L94",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "tests_test_integrations_testcrewaiintegration",
-      "target": "integrations_langgraph_integration_synapseconflict",
-      "confidence_score": 0.5
+      "target": "integrations_langgraph_integration_synapseconflict"
     },
     {
       "relation": "calls",
@@ -15523,9 +15532,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L94",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_langgraph_integration_ensure_agent",
-      "target": "integrations_langgraph_integration_ensure_connections",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_ensure_connections"
     },
     {
       "relation": "rationale_for",
@@ -15533,9 +15542,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L68",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_langgraph_integration_rationale_68",
-      "target": "integrations_langgraph_integration_ensure_connections",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_ensure_connections"
     },
     {
       "relation": "rationale_for",
@@ -15543,9 +15552,9 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L123",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_langgraph_integration_rationale_123",
-      "target": "integrations_langgraph_integration_synapse_node",
-      "confidence_score": 1.0
+      "target": "integrations_langgraph_integration_synapse_node"
     },
     {
       "relation": "calls",
@@ -15597,9 +15606,9 @@
       "source_file": "sdk-python/synapse/integrations/__init__.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "integrations_init_rationale_1",
-      "target": "sdk_python_synapse_integrations_init_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_synapse_integrations_init_py"
     },
     {
       "relation": "contains",
@@ -16928,9 +16937,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_fakeagent",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_fakeagent"
     },
     {
       "relation": "contains",
@@ -16938,9 +16947,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_fake_agent",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_fake_agent"
     },
     {
       "relation": "contains",
@@ -16948,9 +16957,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L52",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_testlanggraphintegration",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_testlanggraphintegration"
     },
     {
       "relation": "contains",
@@ -16958,9 +16967,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L54",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_test_node_emits_intention_and_resolution_on_success",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_test_node_emits_intention_and_resolution_on_success"
     },
     {
       "relation": "contains",
@@ -16968,9 +16977,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_test_node_emits_failure_resolution_on_exception",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_test_node_emits_failure_resolution_on_exception"
     },
     {
       "relation": "contains",
@@ -16978,9 +16987,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L90",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_test_node_raises_synapse_conflict_when_gate_returns_conflicts",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_test_node_raises_synapse_conflict_when_gate_returns_conflicts"
     },
     {
       "relation": "contains",
@@ -16988,9 +16997,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L124",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_test_sync_function_wraps_correctly",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_test_sync_function_wraps_correctly"
     },
     {
       "relation": "contains",
@@ -16998,9 +17007,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L139",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_testcrewaiintegration",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_testcrewaiintegration"
     },
     {
       "relation": "contains",
@@ -17008,9 +17017,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L141",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_test_wraps_callable_with_intention_resolution",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_test_wraps_callable_with_intention_resolution"
     },
     {
       "relation": "contains",
@@ -17018,9 +17027,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L159",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_test_wraps_task_object_via_execute_async",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_test_wraps_task_object_via_execute_async"
     },
     {
       "relation": "contains",
@@ -17028,9 +17037,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L186",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sdk_python_tests_test_integrations_py",
-      "target": "tests_test_integrations_test_callable_failure_emits_failure_resolution",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_test_callable_failure_emits_failure_resolution"
     },
     {
       "relation": "rationale_for",
@@ -17038,9 +17047,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_integrations_rationale_1",
-      "target": "sdk_python_tests_test_integrations_py",
-      "confidence_score": 1.0
+      "target": "sdk_python_tests_test_integrations_py"
     },
     {
       "relation": "method",
@@ -17048,9 +17057,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_integrations_fakeagent",
-      "target": "tests_test_integrations_fakeagent_init",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_fakeagent_init"
     },
     {
       "relation": "method",
@@ -17058,9 +17067,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_integrations_fakeagent",
-      "target": "tests_test_integrations_fakeagent_emit_intention",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_fakeagent_emit_intention"
     },
     {
       "relation": "method",
@@ -17068,9 +17077,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_integrations_fakeagent",
-      "target": "tests_test_integrations_fakeagent_emit_resolution",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_fakeagent_emit_resolution"
     },
     {
       "relation": "calls",
@@ -17079,9 +17088,9 @@
       "source_file": "sdk-python/tests/test_integrations.py",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_integrations_fake_agent",
-      "target": "tests_test_integrations_fakeagent",
-      "confidence_score": 1.0
+      "target": "tests_test_integrations_fakeagent"
     },
     {
       "relation": "contains",
@@ -18343,9 +18352,9 @@
       "source_file": "bench/README.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bench_readme_md",
-      "target": "bench_readme_synapse_benchmark_results",
-      "confidence_score": 1.0
+      "target": "bench_readme_synapse_benchmark_results"
     },
     {
       "relation": "contains",
@@ -18363,9 +18372,9 @@
       "source_file": "bench/README.md",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bench_readme_synapse_benchmark_results",
-      "target": "bench_readme_workloads",
-      "confidence_score": 1.0
+      "target": "bench_readme_workloads"
     },
     {
       "relation": "contains",
@@ -18373,9 +18382,9 @@
       "source_file": "bench/README.md",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bench_readme_synapse_benchmark_results",
-      "target": "bench_readme_run",
-      "confidence_score": 1.0
+      "target": "bench_readme_run"
     },
     {
       "relation": "contains",
@@ -18383,9 +18392,9 @@
       "source_file": "bench/README.md",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bench_readme_synapse_benchmark_results",
-      "target": "bench_readme_what_the_report_contains",
-      "confidence_score": 1.0
+      "target": "bench_readme_what_the_report_contains"
     },
     {
       "relation": "contains",
@@ -18394,7 +18403,7 @@
       "source_location": "L32",
       "weight": 1.0,
       "source": "bench_readme_synapse_benchmark_results",
-      "target": "bench_readme_recorded_results_this_session",
+      "target": "bench_readme_recorded_results",
       "confidence_score": 1.0
     },
     {
@@ -18403,9 +18412,19 @@
       "source_file": "bench/README.md",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bench_readme_synapse_benchmark_results",
-      "target": "bench_readme_pending_backends",
-      "confidence_score": 1.0
+      "target": "bench_readme_pending_backends"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "bench/README.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "bench_readme_synapse_benchmark_results",
+      "target": "bench_readme_recorded_results_this_session"
     },
     {
       "relation": "contains",
@@ -18413,9 +18432,9 @@
       "source_file": "bench/README.md",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "bench_readme_run",
-      "target": "bench_readme_codeblock_1",
-      "confidence_score": 1.0
+      "target": "bench_readme_codeblock_1"
     },
     {
       "relation": "contains",
@@ -19453,9 +19472,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "spec_adr_adr_0002_protocol_v1_0_freeze_md",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze"
     },
     {
       "relation": "contains",
@@ -19463,9 +19482,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_context",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_context"
     },
     {
       "relation": "contains",
@@ -19473,9 +19492,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_decision",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_decision"
     },
     {
       "relation": "contains",
@@ -19483,9 +19502,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_evolution_rules",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_evolution_rules"
     },
     {
       "relation": "contains",
@@ -19493,9 +19512,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L54",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_validation",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_validation"
     },
     {
       "relation": "contains",
@@ -19503,9 +19522,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_consequences",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_consequences"
     },
     {
       "relation": "contains",
@@ -19513,9 +19532,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_adr_0002_protocol_v1_0_freeze",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_action_items",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_action_items"
     },
     {
       "relation": "contains",
@@ -19523,9 +19542,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_evolution_rules",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_backward_compatible_allowed_in_1_x",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_backward_compatible_allowed_in_1_x"
     },
     {
       "relation": "contains",
@@ -19533,9 +19552,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_evolution_rules",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_backward_incompatible_requires_2_0",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_backward_incompatible_requires_2_0"
     },
     {
       "relation": "contains",
@@ -19543,9 +19562,9 @@
       "source_file": "spec/adr/ADR-0002-protocol-v1.0-freeze.md",
       "source_location": "L50",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "adr_adr_0002_protocol_v1_0_freeze_evolution_rules",
-      "target": "adr_adr_0002_protocol_v1_0_freeze_migration_window",
-      "confidence_score": 1.0
+      "target": "adr_adr_0002_protocol_v1_0_freeze_migration_window"
     },
     {
       "relation": "contains",
@@ -19639,5 +19658,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7656e135891712d936642044e115386bac5d6bfe"
+  "built_at_commit": "cbba314d346beb154d6830516eadc4846a492c8b"
 }

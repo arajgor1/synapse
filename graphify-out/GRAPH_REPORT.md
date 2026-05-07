@@ -1,16 +1,16 @@
 # Graph Report - synapse  (2026-05-06)
 
 ## Corpus Check
-- 82 files · ~33,569 words
+- 82 files · ~33,606 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 767 nodes · 1236 edges · 69 communities (42 shown, 27 thin omitted)
+- 768 nodes · 1237 edges · 68 communities (42 shown, 26 thin omitted)
 - Extraction: 69% EXTRACTED · 31% INFERRED · 0% AMBIGUOUS · INFERRED: 384 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7656e135`
+- Built from commit: `cbba314d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -57,13 +57,13 @@
 - [[_COMMUNITY_Community 39|Community 39]]
 - [[_COMMUNITY_Community 40|Community 40]]
 - [[_COMMUNITY_Community 41|Community 41]]
-- [[_COMMUNITY_Community 42|Community 42]]
+- [[_COMMUNITY_Community 44|Community 44]]
 - [[_COMMUNITY_Community 45|Community 45]]
 - [[_COMMUNITY_Community 46|Community 46]]
 - [[_COMMUNITY_Community 47|Community 47]]
-- [[_COMMUNITY_Community 48|Community 48]]
-- [[_COMMUNITY_Community 50|Community 50]]
-- [[_COMMUNITY_Community 52|Community 52]]
+- [[_COMMUNITY_Community 49|Community 49]]
+- [[_COMMUNITY_Community 51|Community 51]]
+- [[_COMMUNITY_Community 53|Community 53]]
 - [[_COMMUNITY_Community 54|Community 54]]
 - [[_COMMUNITY_Community 55|Community 55]]
 - [[_COMMUNITY_Community 56|Community 56]]
@@ -72,8 +72,7 @@
 - [[_COMMUNITY_Community 59|Community 59]]
 - [[_COMMUNITY_Community 60|Community 60]]
 - [[_COMMUNITY_Community 61|Community 61]]
-- [[_COMMUNITY_Community 62|Community 62]]
-- [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 67|Community 67]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Agent` - 32 edges
@@ -99,7 +98,7 @@
 - `main()` --calls--> `Coordinator`  [INFERRED]
   examples/coordinator_demo.py → runtime/coordinator/agent.py
 
-## Communities (69 total, 27 thin omitted)
+## Communities (68 total, 26 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
@@ -173,49 +172,49 @@ Nodes (14): code:bash (pip install -e .             # from this directory), code
 Cohesion: 0.13
 Nodes (14): Capability Flags, code:python (from typing import Protocol, AsyncIterator), Cost Reporting, Failure Modes, Implementing a New Adapter, InferenceAdapter Contract, Interface, `multi_tenant_isolation` (+6 more)
 
-### Community 19 - "Community 19"
-Cohesion: 0.23
-Nodes (7): Opaque handle to an in-flight generation. Adapter-specific contents., StreamHandle, _messages_to_prompt(), vLLM-via-Modal native adapter.  Talks to a Modal-deployed vLLM engine over Modal, Connects to a deployed Modal vLLM engine via RPC.      Args:         modal_app:, Lazy-resolve the deployed Modal class. Caches across calls., VLLMModalAdapter
+### Community 18 - "Community 18"
+Cohesion: 0.14
+Nodes (5): Tests for Phase 3 adapters — Ollama (local-API) and vLLM-via-Modal (native).  Al, Each tier should have characteristic overhead and isolation defaults., TestOllamaAdapter, TestPhaseThreeAdaptersImportable, TestVLLMModalAdapter
 
 ### Community 20 - "Community 20"
+Cohesion: 0.21
+Nodes (8): Opaque handle to an in-flight generation. Adapter-specific contents., StreamHandle, _messages_to_prompt(), OllamaAdapter, Ollama local-API adapter.  Talks to a locally-running Ollama server (default htt, Local-API resume: cancel stream, restart with last context tokens.          If t, Local-API tier adapter for Ollama.      Args:         model: Ollama model tag (e, Verify Ollama is reachable and the model is available.
+
+### Community 21 - "Community 21"
 Cohesion: 0.15
 Nodes (12): "But isn't this just X?", Co-existence Recipes, code:block1 (┌───────────────────────────────────────────────────────────), Direct Comparison, Positioning — Synapse vs MCP, A2A, LangGraph, AutoGen, Synapse + A2A, Synapse + LangGraph, Synapse + MCP (+4 more)
 
-### Community 21 - "Community 21"
-Cohesion: 0.24
-Nodes (6): _messages_to_prompt(), OllamaAdapter, Ollama local-API adapter.  Talks to a locally-running Ollama server (default htt, Local-API resume: cancel stream, restart with last context tokens.          If t, Local-API tier adapter for Ollama.      Args:         model: Ollama model tag (e, Verify Ollama is reachable and the model is available.
-
 ### Community 22 - "Community 22"
+Cohesion: 0.27
+Nodes (5): _messages_to_prompt(), vLLM-via-Modal native adapter.  Talks to a Modal-deployed vLLM engine over Modal, Connects to a deployed Modal vLLM engine via RPC.      Args:         modal_app:, Lazy-resolve the deployed Modal class. Caches across calls., VLLMModalAdapter
+
+### Community 23 - "Community 23"
 Cohesion: 0.18
 Nodes (10): Action Items, ADR-0002: Protocol v1.0 Freeze, Backward-compatible (allowed in 1.x), Backward-incompatible (requires 2.0), Consequences, Context, Decision, Evolution Rules (+2 more)
 
-### Community 23 - "Community 23"
+### Community 24 - "Community 24"
 Cohesion: 0.2
 Nodes (5): InferenceAdapter, InferenceAdapter Protocol — see spec/adapter.md for the canonical contract., Raised when an operation is requested that the backend does not support     (e.g, UnsupportedCapability, Protocol
 
-### Community 24 - "Community 24"
+### Community 25 - "Community 25"
+Cohesion: 0.2
+Nodes (9): bench, code:bash (synapse bench --backend mock --workload conflict-heavy), Pending backends, Recorded results, Recorded results (this session), Run, Synapse Benchmark Results, What the report contains (+1 more)
+
+### Community 26 - "Community 26"
 Cohesion: 0.2
 Nodes (9): Action Items, ADR-0001: v1.0 Architecture Baseline, Components, Consequences, Context, Decision, Key Mechanisms, Resolved Open Questions (+1 more)
 
-### Community 25 - "Community 25"
+### Community 27 - "Community 27"
 Cohesion: 0.2
 Nodes (9): Architecture, code:bash (# 1. Bring up infrastructure (from repo root)), code:bash (python examples/two_agents_conflict_demo.py), code:block3 (Browser (Next.js, :3000)), Layout, Production deploy notes (later), Run it, Synapse Observability UI (+1 more)
 
-### Community 26 - "Community 26"
+### Community 28 - "Community 28"
 Cohesion: 0.25
 Nodes (4): Modal serverless GPU engine for Synapse native-tier adapter.  Phase 3 ships with, Stateful container hosting a transformers-based engine.      Named `VLLMEngine`, smoke_test(), VLLMEngine
 
-### Community 27 - "Community 27"
-Cohesion: 0.22
-Nodes (3): Tests for Phase 3 adapters — Ollama (local-API) and vLLM-via-Modal (native).  Al, TestOllamaAdapter, TestVLLMModalAdapter
-
-### Community 28 - "Community 28"
+### Community 29 - "Community 29"
 Cohesion: 0.36
 Nodes (4): BackendUnavailable, Raised when the backend cannot be reached. SDK falls back to no-coordination mod, Two auth modes:         - **API key**: pass api_key=... or set GOOGLE_API_KEY/GE, BackendCapabilities
-
-### Community 29 - "Community 29"
-Cohesion: 0.22
-Nodes (8): bench, code:bash (synapse bench --backend mock --workload conflict-heavy), Pending backends, Recorded results (this session), Run, Synapse Benchmark Results, What the report contains, Workloads
 
 ### Community 30 - "Community 30"
 Cohesion: 0.22
@@ -230,18 +229,18 @@ Cohesion: 0.25
 Nodes (7): Before opening a PR, code:bash (# Bring up Redis + Postgres), Contributing to Synapse, How to propose a new message type, License, Local development, Repository conventions
 
 ## Knowledge Gaps
-- **248 isolated node(s):** `Anthropic adapter live smoke test.  Verifies, against the real Anthropic API: 1.`, `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief`, `Coordinator uses Gemini Flash (free via Vertex AI).`, `Phase 5 deliverable — L3 semantic router in action.  L3 picks up messages that L`, `Phase 3 deliverable — three agents, three backend tiers, one protocol.  Demonstr` (+243 more)
+- **249 isolated node(s):** `Anthropic adapter live smoke test.  Verifies, against the real Anthropic API: 1.`, `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief`, `Coordinator uses Gemini Flash (free via Vertex AI).`, `Phase 5 deliverable — L3 semantic router in action.  L3 picks up messages that L`, `Phase 3 deliverable — three agents, three backend tiers, one protocol.  Demonstr` (+244 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **27 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **26 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `StateGraph` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 5`, `Community 7`, `Community 8`, `Community 11`, `Community 15`?**
   _High betweenness centrality (0.108) - this node is a cross-community bridge._
-- **Why does `AnthropicAdapter` connect `Community 10` to `Community 1`, `Community 3`, `Community 5`, `Community 8`, `Community 11`, `Community 15`, `Community 19`, `Community 23`, `Community 28`?**
-  _High betweenness centrality (0.081) - this node is a cross-community bridge._
-- **Why does `Coordinator` connect `Community 15` to `Community 0`, `Community 1`, `Community 6`, `Community 23`?**
+- **Why does `AnthropicAdapter` connect `Community 10` to `Community 1`, `Community 3`, `Community 5`, `Community 8`, `Community 11`, `Community 15`, `Community 20`, `Community 24`, `Community 29`?**
+  _High betweenness centrality (0.080) - this node is a cross-community bridge._
+- **Why does `Coordinator` connect `Community 15` to `Community 24`, `Community 1`, `Community 0`, `Community 6`?**
   _High betweenness centrality (0.073) - this node is a cross-community bridge._
 - **Are the 20 inferred relationships involving `Agent` (e.g. with `InferenceAdapter` and `Bus`) actually correct?**
   _`Agent` has 20 INFERRED edges - model-reasoned connections that need verification._
