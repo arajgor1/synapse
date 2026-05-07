@@ -1,0 +1,67 @@
+[
+  {
+    "id": "11111111-aaaa-bbbb-cccc-000000000001",
+    "trace_id": "trace_ls_001",
+    "parent_run_id": null,
+    "run_type": "chain",
+    "name": "designer_agent",
+    "inputs": {"input": "design landing page"},
+    "outputs": {"output": "drafted v1"},
+    "start_time": "2026-05-07T10:00:00Z",
+    "end_time": "2026-05-07T10:00:05Z",
+    "status": "success",
+    "extra": {"metadata": {"agent_name": "designer", "session_id": "site_v1"}}
+  },
+  {
+    "id": "11111111-aaaa-bbbb-cccc-000000000002",
+    "trace_id": "trace_ls_001",
+    "parent_run_id": "11111111-aaaa-bbbb-cccc-000000000001",
+    "run_type": "tool",
+    "name": "write_file",
+    "inputs": {"path": "design_tokens.json"},
+    "outputs": {"result": "written"},
+    "start_time": "2026-05-07T10:00:02Z",
+    "end_time": "2026-05-07T10:00:04Z",
+    "status": "success",
+    "extra": {"metadata": {"agent_name": "designer", "session_id": "site_v1"}}
+  },
+  {
+    "id": "22222222-aaaa-bbbb-cccc-000000000001",
+    "trace_id": "trace_ls_001",
+    "parent_run_id": null,
+    "run_type": "chain",
+    "name": "frontend_agent",
+    "inputs": {"input": "implement components"},
+    "outputs": {"output": "components.tsx written"},
+    "start_time": "2026-05-07T10:00:10Z",
+    "end_time": "2026-05-07T10:00:18Z",
+    "status": "success",
+    "extra": {"metadata": {"agent_name": "frontend_dev", "session_id": "site_v1"}}
+  },
+  {
+    "id": "22222222-aaaa-bbbb-cccc-000000000002",
+    "trace_id": "trace_ls_001",
+    "parent_run_id": "22222222-aaaa-bbbb-cccc-000000000001",
+    "run_type": "tool",
+    "name": "write_file",
+    "inputs": {"path": "design_tokens.json"},
+    "outputs": {"result": "written"},
+    "start_time": "2026-05-07T10:00:13Z",
+    "end_time": "2026-05-07T10:00:15Z",
+    "status": "success",
+    "extra": {"metadata": {"agent_name": "frontend_dev", "session_id": "site_v1"}}
+  },
+  {
+    "id": "22222222-aaaa-bbbb-cccc-000000000003",
+    "trace_id": "trace_ls_001",
+    "parent_run_id": "22222222-aaaa-bbbb-cccc-000000000001",
+    "run_type": "tool",
+    "name": "read_file",
+    "inputs": {"path": "components.tsx"},
+    "outputs": {"result": "content here"},
+    "start_time": "2026-05-07T10:00:16Z",
+    "end_time": "2026-05-07T10:00:17Z",
+    "status": "success",
+    "extra": {"metadata": {"agent_name": "frontend_dev", "session_id": "site_v1"}}
+  }
+]

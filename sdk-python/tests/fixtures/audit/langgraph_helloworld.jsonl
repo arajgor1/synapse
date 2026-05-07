@@ -1,0 +1,5 @@
+{"agent_id":"researcher","session_id":"lg_demo_1","tool_name":"web_search","ts_start_ms":1736000000000,"ts_end_ms":1736000001000,"tool_args":{"query":"transformers paper"}}
+{"agent_id":"researcher","session_id":"lg_demo_1","tool_name":"write_file","ts_start_ms":1736000002000,"ts_end_ms":1736000003000,"tool_args":{"path":"notes/research.md"}}
+{"agent_id":"writer","session_id":"lg_demo_1","tool_name":"write_file","ts_start_ms":1736000010000,"ts_end_ms":1736000011000,"tool_args":{"path":"notes/research.md"}}
+{"agent_id":"writer","session_id":"lg_demo_1","tool_name":"write_file","ts_start_ms":1736000012000,"ts_end_ms":1736000013000,"tool_args":{"path":"notes/summary.md"}}
+{"agent_id":"reviewer","session_id":"lg_demo_1","tool_name":"write_file","ts_start_ms":1736000020000,"ts_end_ms":1736000021000,"tool_args":{"path":"notes/research.md"}}

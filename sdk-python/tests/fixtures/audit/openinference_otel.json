@@ -1,0 +1,54 @@
+{
+  "spans": [
+    {
+      "name": "tool.write_file",
+      "traceId": "oi_trace_001",
+      "spanId": "span_a1",
+      "startTimeUnixNano": 1736002000000000000,
+      "endTimeUnixNano":   1736002001500000000,
+      "kind": "TOOL",
+      "attributes": [
+        {"key":"openinference.span.kind","value":{"stringValue":"TOOL"}},
+        {"key":"tool.name","value":{"stringValue":"write_file"}},
+        {"key":"input.value","value":{"stringValue":"{\"path\":\"src/cart_service.py\"}"}},
+        {"key":"agent.id","value":{"stringValue":"cart_engineer"}},
+        {"key":"session.id","value":{"stringValue":"ecom_v1"}},
+        {"key":"llm.token_count.completion","value":{"intValue":300}}
+      ],
+      "status":{"code":1}
+    },
+    {
+      "name": "tool.write_file",
+      "traceId": "oi_trace_001",
+      "spanId": "span_a2",
+      "startTimeUnixNano": 1736002001000000000,
+      "endTimeUnixNano":   1736002003000000000,
+      "kind": "TOOL",
+      "attributes": [
+        {"key":"openinference.span.kind","value":{"stringValue":"TOOL"}},
+        {"key":"tool.name","value":{"stringValue":"write_file"}},
+        {"key":"input.value","value":{"stringValue":"{\"path\":\"src/cart_service.py\"}"}},
+        {"key":"agent.id","value":{"stringValue":"payment_engineer"}},
+        {"key":"session.id","value":{"stringValue":"ecom_v1"}},
+        {"key":"llm.token_count.completion","value":{"intValue":250}}
+      ],
+      "status":{"code":1}
+    },
+    {
+      "name": "tool.web_search",
+      "traceId": "oi_trace_001",
+      "spanId": "span_a3",
+      "startTimeUnixNano": 1736002010000000000,
+      "endTimeUnixNano":   1736002011000000000,
+      "kind": "TOOL",
+      "attributes": [
+        {"key":"openinference.span.kind","value":{"stringValue":"TOOL"}},
+        {"key":"tool.name","value":{"stringValue":"web_search"}},
+        {"key":"input.value","value":{"stringValue":"{\"query\":\"PCI compliance\"}"}},
+        {"key":"agent.id","value":{"stringValue":"fraud_engineer"}},
+        {"key":"session.id","value":{"stringValue":"ecom_v1"}}
+      ],
+      "status":{"code":1}
+    }
+  ]
+}
