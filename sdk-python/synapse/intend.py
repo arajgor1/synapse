@@ -64,6 +64,13 @@ class IntentionHandle:
     # Set when a policy decides ABORT (the caller's framework handles it)
     aborted: bool = False
 
+    # v0.2 week 5: filled by the BELIEF auto-extractor (if enabled) and
+    # the live divergence detector. divergences is a list of
+    # LiveDivergenceResult dicts when emitted beliefs disagreed with
+    # other agents' prior beliefs.
+    beliefs_emitted: list[dict[str, Any]] = field(default_factory=list)
+    divergences: list[dict[str, Any]] = field(default_factory=list)
+
     @property
     def has_conflicts(self) -> bool:
         return len(self.conflicts) > 0
@@ -342,6 +349,74 @@ async def intend(
                 )
             except Exception as e:
                 logger.warning("synapse.intend: emit_resolution failed (%s)", e)
+
+        # v0.2 week 5: auto-extract BELIEFs from the tool's state_diff
+        # and run live divergence detection. Opt-in via
+        # synapse.install(emit_beliefs_from_tool_results=True).
+        if (
+            install_defaults.get("emit_beliefs_from_tool_results")
+            and not handle.aborted
+            and handle.outcome == "success"
+            and handle.state_diff
+        ):
+            await _auto_emit_and_detect(
+                handle=handle,
+                tool_args=proposed_action or {},
+            )
+
+
+# ---------------------------------------------------------------------------
+# Belief auto-extraction + live divergence detection (v0.2 week 5)
+# ---------------------------------------------------------------------------
+async def _auto_emit_and_detect(
+    *, handle: "IntentionHandle", tool_args: dict,
+) -> None:
+    """Extract beliefs from the tool's state_diff using BYO-LLM, emit
+    them, and run live divergence detection. Best-effort — any failure
+    is logged + swallowed (the body already ran successfully)."""
+    try:
+        from synapse.beliefs.extractor import extract_beliefs_with_llm
+        from synapse.beliefs.api import emit_belief
+
+        # Pull the most-informative content from state_diff
+        sd = handle.state_diff or {}
+        output = sd.get("content") or sd.get("output") or sd.get("output_preview")
+        if not output:
+            # Fall back: serialize the whole state_diff
+            output = str(sd)[:1500]
+
+        facts = await extract_beliefs_with_llm(
+            tool_name=tool_args.get("tool", "tool_call"),
+            tool_args=tool_args,
+            output=output,
+        )
+        for fact in facts:
+            handle.beliefs_emitted.append({
+                "key": fact.key,
+                "value": fact.value,
+                "confidence": fact.confidence,
+                "evidence": fact.evidence,
+            })
+            div = await emit_belief(
+                agent=handle.agent_id,
+                session=handle.session_id,
+                key=fact.key,
+                value=fact.value,
+                confidence=fact.confidence,
+                source="observed",
+                evidence=fact.evidence,
+                detect_divergence=True,
+            )
+            if div is not None:
+                handle.divergences.append(div.to_dict())
+                logger.warning(
+                    "synapse: BELIEF DIVERGENCE detected on key=%s "
+                    "(%d distinct value(s) across %d agent(s)): %s",
+                    div.key, len(div.distinct_values),
+                    len(div.agents_involved), div.distinct_values,
+                )
+    except Exception as e:
+        logger.warning("synapse: auto-extract beliefs failed (%s)", e)
 
 
 # ---------------------------------------------------------------------------

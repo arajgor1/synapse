@@ -1083,6 +1083,64 @@ def v02_w4_auto_merge(api_keys: dict[str, str]) -> dict[str, Any]:
         }
 
 
+@app.function(
+    cpu=4.0, memory=4096, timeout=900, scaledown_window=10,
+)
+def v02_w5_belief_divergence(api_keys: dict[str, str]) -> dict[str, Any]:
+    """v0.2 Week 5: BELIEF divergence on semantic conflicts (no scope overlap)."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\npython3 /opt/synapse-payloads/v02_w5_belief_divergence.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=900, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-60000:],
+            "stderr": proc.stderr[-3000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-60000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def v02_w5() -> None:
+    """Drive the Week 5 BELIEF divergence demo."""
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+    print(">>> v0.2 Week 5: BELIEF divergence on data analysis pipeline...")
+    r = v02_w5_belief_divergence.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"v02_w5_belief_divergence_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")
+
+
 @app.local_entrypoint()
 def v02_w4() -> None:
     """Drive the Week 4 auto_merge demo."""

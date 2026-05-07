@@ -89,6 +89,7 @@ def install(
     auto: bool = True,
     merge_policy: Any = None,                    # v0.2-w4
     critical_scopes: Optional[list[str]] = None,
+    emit_beliefs_from_tool_results: bool = False,  # v0.2-w5
     **framework_opts: Any,
 ) -> dict[str, Any]:
     """Configure Synapse and (optionally) hook into a known framework.
@@ -127,6 +128,8 @@ def install(
         policy_defaults["merge_policy"] = resolve_policy(merge_policy)
     if critical_scopes is not None:
         policy_defaults["critical_scopes"] = normalize_critical_scopes(critical_scopes)
+    if emit_beliefs_from_tool_results:
+        policy_defaults["emit_beliefs_from_tool_results"] = True
 
     if framework is None and auto:
         framework = _autodetect_framework()
@@ -154,6 +157,7 @@ def install(
         "hooks_installed": hooks,
         "merge_policy": getattr(policy_defaults.get("merge_policy"), "name", None),
         "critical_scopes": policy_defaults.get("critical_scopes") or [],
+        "emit_beliefs_from_tool_results": bool(policy_defaults.get("emit_beliefs_from_tool_results")),
     }
 
 

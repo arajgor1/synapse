@@ -58,6 +58,12 @@ from synapse.policies import (
     MergeDecision,
     SynapseConflict,
 )
+# v0.2 week 5: BELIEFs as a public surface
+from synapse.beliefs import (
+    emit_belief,
+    list_divergences,
+    divergences_for_key,
+)
 
 __version__ = "0.2.0a0"
 __all__ = [
@@ -91,5 +97,9 @@ __all__ = [
     "MergeAction",
     "MergeDecision",
     "SynapseConflict",
+    # v0.2 week 5: beliefs
+    "emit_belief",
+    "list_divergences",
+    "divergences_for_key",
     "__version__",
 ]
