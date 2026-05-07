@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 914 nodes · 1540 edges · 81 communities (53 shown, 28 thin omitted)
+- 914 nodes · 1540 edges · 81 communities (54 shown, 27 thin omitted)
 - Extraction: 69% EXTRACTED · 31% INFERRED · 0% AMBIGUOUS · INFERRED: 483 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6d64517d`
+- Built from commit: `82bb53f3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -110,7 +110,7 @@
 - `main()` --calls--> `Coordinator`  [INFERRED]
   examples/coordinator_demo.py → runtime/coordinator/agent.py
 
-## Communities (81 total, 28 thin omitted)
+## Communities (81 total, 27 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
@@ -189,8 +189,8 @@ Cohesion: 0.23
 Nodes (5): cli(), Coordinator, main(), Synapse Coordinator — event-driven LLM-mediated session-wide reasoner.  Subscrib, Long-running coordinator process. Single instance per session.
 
 ### Community 20 - "Community 20"
-Cohesion: 0.22
-Nodes (8): InferenceAdapter Protocol — see spec/adapter.md for the canonical contract., Raised when an operation is requested that the backend does not support     (e.g, Raised when an operation is requested that the backend does not support     (e.g, Token, UnsupportedCapability, RuntimeError, str, make()
+Cohesion: 0.15
+Nodes (10): InferenceAdapter, InferenceAdapter Protocol — see spec/adapter.md for the canonical contract., Raised when an operation is requested that the backend does not support     (e.g, Opaque handle to an in-flight generation. Adapter-specific contents., Raised when an operation is requested that the backend does not support     (e.g, StreamHandle, UnsupportedCapability, MockStreamState (+2 more)
 
 ### Community 21 - "Community 21"
 Cohesion: 0.15
@@ -205,32 +205,32 @@ Cohesion: 0.14
 Nodes (5): Tests for Phase 3 adapters — Ollama (local-API) and vLLM-via-Modal (native).  Al, Each tier should have characteristic overhead and isolation defaults., TestOllamaAdapter, TestPhaseThreeAdaptersImportable, TestVLLMModalAdapter
 
 ### Community 24 - "Community 24"
-Cohesion: 0.19
-Nodes (9): Opaque handle to an in-flight generation. Adapter-specific contents., StreamHandle, MockStreamState, _messages_to_prompt(), OllamaAdapter, Ollama local-API adapter.  Talks to a locally-running Ollama server (default htt, Local-API resume: cancel stream, restart with last context tokens.          If t, Local-API tier adapter for Ollama.      Args:         model: Ollama model tag (e (+1 more)
-
-### Community 25 - "Community 25"
 Cohesion: 0.29
 Nodes (12): _extract_url_field_name(), main(), _make_backend(), _print_table(), Multi-agent product development simulation — runs the SAME product-build scenari, Run one agent without any coordination — pure LLM call., Heuristically pull which field name was used. Recognizes URL-shortener     field, _run_agent_independent() (+4 more)
 
-### Community 26 - "Community 26"
-Cohesion: 0.27
-Nodes (12): _llm_judge(), main(), make_backend(), _print_summary(), Realistic mid-stream injection test — proves the model BEHAVIOR changes, not jus, Use the same backend as a judge. Strict JSON request., _read_to_completion(), _read_until_chars() (+4 more)
-
-### Community 27 - "Community 27"
+### Community 25 - "Community 25"
 Cohesion: 0.15
 Nodes (12): "But isn't this just X?", Co-existence Recipes, code:block1 (┌───────────────────────────────────────────────────────────), Direct Comparison, Positioning — Synapse vs MCP, A2A, LangGraph, AutoGen, Synapse + A2A, Synapse + LangGraph, Synapse + MCP (+4 more)
 
-### Community 28 - "Community 28"
+### Community 26 - "Community 26"
+Cohesion: 0.3
+Nodes (11): _llm_judge(), main(), make_backend(), _print_summary(), Realistic mid-stream injection test — proves the model BEHAVIOR changes, not jus, Use the same backend as a judge. Strict JSON request., _read_to_completion(), _read_until_chars() (+3 more)
+
+### Community 27 - "Community 27"
 Cohesion: 0.17
 Nodes (11): code:bash (npm install @synapse-protocol/sdk), code:ts (import { Agent, Bus, MockAdapter } from "@synapse-protocol/s), code:ts (const owner = { tenant_id: "acme", agent_id: "a1", session_i), code:bash (npm install), Install, Multi-tenant isolation, Quickstart, Roadmap (+3 more)
 
-### Community 29 - "Community 29"
+### Community 28 - "Community 28"
 Cohesion: 0.18
 Nodes (3): main(), LangGraph-style product-dev demo using @synapse_node decorator.  Demonstrates ho, StateGraph
 
-### Community 30 - "Community 30"
+### Community 29 - "Community 29"
 Cohesion: 0.27
 Nodes (5): _messages_to_prompt(), vLLM-via-Modal native adapter.  Talks to a Modal-deployed vLLM engine over Modal, Connects to a deployed Modal vLLM engine via RPC.      Args:         modal_app:, Lazy-resolve the deployed Modal class. Caches across calls., VLLMModalAdapter
+
+### Community 30 - "Community 30"
+Cohesion: 0.24
+Nodes (6): _messages_to_prompt(), OllamaAdapter, Ollama local-API adapter.  Talks to a locally-running Ollama server (default htt, Local-API resume: cancel stream, restart with last context tokens.          If t, Local-API tier adapter for Ollama.      Args:         model: Ollama model tag (e, Verify Ollama is reachable and the model is available.
 
 ### Community 31 - "Community 31"
 Cohesion: 0.18
@@ -245,54 +245,58 @@ Cohesion: 0.31
 Nodes (5): BackendUnavailable, Raised when the backend cannot be reached. SDK falls back to no-coordination mod, Raised when the backend cannot be reached. SDK falls back to no-coordination mod, Two auth modes:         - **API key**: pass api_key=... or set GOOGLE_API_KEY/GE, BackendCapabilities
 
 ### Community 34 - "Community 34"
-Cohesion: 0.2
-Nodes (9): bench, code:bash (synapse bench --backend mock --workload conflict-heavy), Pending backends, Recorded results, Recorded results (this session), Run, Synapse Benchmark Results, What the report contains (+1 more)
+Cohesion: 0.38
+Nodes (4): Token, RuntimeError, str, make()
 
 ### Community 35 - "Community 35"
 Cohesion: 0.2
-Nodes (9): Action Items, ADR-0001: v1.0 Architecture Baseline, Components, Consequences, Context, Decision, Key Mechanisms, Resolved Open Questions (+1 more)
+Nodes (9): bench, code:bash (synapse bench --backend mock --workload conflict-heavy), Pending backends, Recorded results, Recorded results (this session), Run, Synapse Benchmark Results, What the report contains (+1 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.2
-Nodes (9): Architecture, code:bash (# 1. Bring up infrastructure (from repo root)), code:bash (python examples/two_agents_conflict_demo.py), code:block3 (Browser (Next.js, :3000)), Layout, Production deploy notes (later), Run it, Synapse Observability UI (+1 more)
+Nodes (9): Action Items, ADR-0001: v1.0 Architecture Baseline, Components, Consequences, Context, Decision, Key Mechanisms, Resolved Open Questions (+1 more)
 
 ### Community 37 - "Community 37"
+Cohesion: 0.2
+Nodes (9): Architecture, code:bash (# 1. Bring up infrastructure (from repo root)), code:bash (python examples/two_agents_conflict_demo.py), code:block3 (Browser (Next.js, :3000)), Layout, Production deploy notes (later), Run it, Synapse Observability UI (+1 more)
+
+### Community 38 - "Community 38"
 Cohesion: 0.25
 Nodes (7): Exception, _ensure_agent(), _ensure_connections(), LangGraph integration — wrap any node so it participates in Synapse coordination, Raised by a synapse_node when a CONFLICT arrives during the gate window.      Th, Idempotently connect Bus + StateGraph. Returns the shared instances., SynapseConflict
 
-### Community 38 - "Community 38"
+### Community 39 - "Community 39"
 Cohesion: 0.22
 Nodes (8): code:bash (pip install -e sdk-python), Endpoints, Environment, Implementation notes, REST, Run, Synapse Observability Gateway, WebSocket
 
-### Community 39 - "Community 39"
+### Community 40 - "Community 40"
 Cohesion: 0.22
 Nodes (8): code:block1 (spec/), Layout, Reading Order, Synapse Protocol Specification, The Eight Message Types, The Seven Message Types, Validation, Versioning
 
-### Community 40 - "Community 40"
+### Community 41 - "Community 41"
 Cohesion: 0.25
 Nodes (7): Before opening a PR, code:bash (# Bring up Redis + Postgres), Contributing to Synapse, How to propose a new message type, License, Local development, Repository conventions
 
-### Community 41 - "Community 41"
+### Community 42 - "Community 42"
 Cohesion: 0.43
 Nodes (6): main(), make_coordinator_backend(), Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief, Coordinator uses Gemini Flash (free via Vertex AI)., _section(), _wait_for_ready()
 
-### Community 42 - "Community 42"
+### Community 43 - "Community 43"
 Cohesion: 0.43
 Nodes (3): FakeCrewTask, main(), CrewAI-style product-dev demo using synapse_task integration.  This example show
 
 ## Knowledge Gaps
 - **275 isolated node(s):** `Anthropic adapter live smoke test.  Verifies, against the real Anthropic API: 1.`, `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief`, `Coordinator uses Gemini Flash (free via Vertex AI).`, `CrewAI-style product-dev demo using synapse_task integration.  This example show`, `End-to-end test: full protocol flow with mid-stream inject driven by a real CONF` (+270 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **28 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **27 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `InferenceAdapter` connect `Community 43` to `Community 0`, `Community 33`, `Community 1`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 37`, `Community 16`, `Community 17`, `Community 19`, `Community 20`, `Community 24`, `Community 26`, `Community 30`?**
+- **Why does `InferenceAdapter` connect `Community 20` to `Community 0`, `Community 33`, `Community 1`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 38`, `Community 16`, `Community 17`, `Community 19`, `Community 26`, `Community 29`, `Community 30`?**
   _High betweenness centrality (0.110) - this node is a cross-community bridge._
-- **Why does `StateGraph` connect `Community 29` to `Community 0`, `Community 1`, `Community 2`, `Community 4`, `Community 37`, `Community 6`, `Community 7`, `Community 41`, `Community 42`, `Community 12`, `Community 13`, `Community 16`, `Community 19`, `Community 25`?**
+- **Why does `StateGraph` connect `Community 28` to `Community 0`, `Community 1`, `Community 2`, `Community 4`, `Community 38`, `Community 7`, `Community 6`, `Community 42`, `Community 43`, `Community 12`, `Community 13`, `Community 16`, `Community 19`, `Community 24`?**
   _High betweenness centrality (0.107) - this node is a cross-community bridge._
-- **Why does `AnthropicAdapter` connect `Community 1` to `Community 0`, `Community 33`, `Community 43`, `Community 13`, `Community 17`, `Community 19`, `Community 20`, `Community 24`, `Community 25`, `Community 26`?**
+- **Why does `AnthropicAdapter` connect `Community 1` to `Community 0`, `Community 33`, `Community 34`, `Community 13`, `Community 17`, `Community 19`, `Community 20`, `Community 24`, `Community 26`?**
   _High betweenness centrality (0.076) - this node is a cross-community bridge._
 - **Are the 29 inferred relationships involving `StateGraph` (e.g. with `FakeCrewTask` and `TestResult`) actually correct?**
   _`StateGraph` has 29 INFERRED edges - model-reasoned connections that need verification._

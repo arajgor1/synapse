@@ -36,7 +36,7 @@
       "source_file": "examples/coordinator_demo.py",
       "source_location": "L1",
       "id": "examples_coordinator_demo_py",
-      "community": 41,
+      "community": 42,
       "norm_label": "coordinator_demo.py"
     },
     {
@@ -45,7 +45,7 @@
       "source_file": "examples/coordinator_demo.py",
       "source_location": "L54",
       "id": "examples_coordinator_demo_section",
-      "community": 41,
+      "community": 42,
       "norm_label": "_section()"
     },
     {
@@ -54,7 +54,7 @@
       "source_file": "examples/coordinator_demo.py",
       "source_location": "L58",
       "id": "examples_coordinator_demo_make_coordinator_backend",
-      "community": 41,
+      "community": 42,
       "norm_label": "make_coordinator_backend()"
     },
     {
@@ -63,7 +63,7 @@
       "source_file": "examples/coordinator_demo.py",
       "source_location": "L72",
       "id": "examples_coordinator_demo_wait_for_ready",
-      "community": 41,
+      "community": 42,
       "norm_label": "_wait_for_ready()"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "examples/coordinator_demo.py",
       "source_location": "L82",
       "id": "examples_coordinator_demo_main",
-      "community": 41,
+      "community": 42,
       "norm_label": "main()"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "examples/coordinator_demo.py",
       "source_location": "L1",
       "id": "examples_coordinator_demo_rationale_1",
-      "community": 41,
+      "community": 42,
       "norm_label": "phase 4 deliverable \u2014 coordinator agent in action.  three scenarios: 1. **belief"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "examples/coordinator_demo.py",
       "source_location": "L59",
       "id": "examples_coordinator_demo_rationale_59",
-      "community": 41,
+      "community": 42,
       "norm_label": "coordinator uses gemini flash (free via vertex ai)."
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L1",
       "id": "examples_crewai_style_product_dev_py",
-      "community": 42,
+      "community": 43,
       "norm_label": "crewai_style_product_dev.py"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L43",
       "id": "examples_crewai_style_product_dev_fakecrewtask",
-      "community": 42,
+      "community": 43,
       "norm_label": "fakecrewtask"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L44",
       "id": "examples_crewai_style_product_dev_fakecrewtask_init",
-      "community": 42,
+      "community": 43,
       "norm_label": ".__init__()"
     },
     {
@@ -126,7 +126,7 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L49",
       "id": "examples_crewai_style_product_dev_fakecrewtask_execute_async",
-      "community": 42,
+      "community": 43,
       "norm_label": ".execute_async()"
     },
     {
@@ -135,7 +135,7 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L54",
       "id": "examples_crewai_style_product_dev_fakecrewtask_execute_sync",
-      "community": 42,
+      "community": 43,
       "norm_label": ".execute_sync()"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L59",
       "id": "examples_crewai_style_product_dev_main",
-      "community": 42,
+      "community": 43,
       "norm_label": "main()"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L1",
       "id": "examples_crewai_style_product_dev_rationale_1",
-      "community": 42,
+      "community": 43,
       "norm_label": "crewai-style product-dev demo using synapse_task integration.  this example show"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "examples/inject_realism_test.py",
       "source_location": "L71",
       "id": "examples_inject_realism_test_scenario",
-      "community": 26,
+      "community": 20,
       "norm_label": "scenario"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "examples/langgraph_style_product_dev.py",
       "source_location": "L1",
       "id": "examples_langgraph_style_product_dev_py",
-      "community": 29,
+      "community": 28,
       "norm_label": "langgraph_style_product_dev.py"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "examples/langgraph_style_product_dev.py",
       "source_location": "L41",
       "id": "examples_langgraph_style_product_dev_main",
-      "community": 29,
+      "community": 28,
       "norm_label": "main()"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "examples/langgraph_style_product_dev.py",
       "source_location": "L1",
       "id": "examples_langgraph_style_product_dev_rationale_1",
-      "community": 29,
+      "community": 28,
       "norm_label": "langgraph-style product-dev demo using @synapse_node decorator.  demonstrates ho"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L1",
       "id": "examples_multi_agent_product_dev_py",
-      "community": 25,
+      "community": 24,
       "norm_label": "multi_agent_product_dev.py"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L207",
       "id": "examples_multi_agent_product_dev_make_backend",
-      "community": 25,
+      "community": 24,
       "norm_label": "_make_backend()"
     },
     {
@@ -504,7 +504,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L253",
       "id": "examples_multi_agent_product_dev_run_agent_independent",
-      "community": 25,
+      "community": 24,
       "norm_label": "_run_agent_independent()"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L274",
       "id": "examples_multi_agent_product_dev_extract_url_field_name",
-      "community": 25,
+      "community": 24,
       "norm_label": "_extract_url_field_name()"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L298",
       "id": "examples_multi_agent_product_dev_run_product_no_synapse",
-      "community": 25,
+      "community": 24,
       "norm_label": "run_product_no_synapse()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L307",
       "id": "examples_multi_agent_product_dev_run_product_with_synapse",
-      "community": 25,
+      "community": 24,
       "norm_label": "run_product_with_synapse()"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L421",
       "id": "examples_multi_agent_product_dev_summarize",
-      "community": 25,
+      "community": 24,
       "norm_label": "_summarize()"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L449",
       "id": "examples_multi_agent_product_dev_print_table",
-      "community": 25,
+      "community": 24,
       "norm_label": "_print_table()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L466",
       "id": "examples_multi_agent_product_dev_save",
-      "community": 25,
+      "community": 24,
       "norm_label": "_save()"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L476",
       "id": "examples_multi_agent_product_dev_main",
-      "community": 25,
+      "community": 24,
       "norm_label": "main()"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L1",
       "id": "examples_multi_agent_product_dev_rationale_1",
-      "community": 25,
+      "community": 24,
       "norm_label": "multi-agent product development simulation \u2014 runs the same product-build scenari"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L254",
       "id": "examples_multi_agent_product_dev_rationale_254",
-      "community": 25,
+      "community": 24,
       "norm_label": "run one agent without any coordination \u2014 pure llm call."
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L275",
       "id": "examples_multi_agent_product_dev_rationale_275",
-      "community": 25,
+      "community": 24,
       "norm_label": "heuristically pull which field name was used. recognizes url-shortener     field"
     },
     {
@@ -2160,7 +2160,7 @@
       "source_file": "",
       "source_location": "",
       "id": "str",
-      "community": 20,
+      "community": 34,
       "norm_label": "str"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_file": "sdk-python/synapse/messages.py",
       "source_location": "L152",
       "id": "synapse_messages_make",
-      "community": 20,
+      "community": 34,
       "norm_label": "make()"
     },
     {
@@ -2421,7 +2421,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L96",
       "id": "synapse_state_stategraph",
-      "community": 29,
+      "community": 28,
       "norm_label": "stategraph"
     },
     {
@@ -2430,7 +2430,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L97",
       "id": "synapse_state_stategraph_init",
-      "community": 29,
+      "community": 28,
       "norm_label": ".__init__()"
     },
     {
@@ -2439,7 +2439,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L101",
       "id": "synapse_state_stategraph_connect",
-      "community": 29,
+      "community": 28,
       "norm_label": ".connect()"
     },
     {
@@ -2448,7 +2448,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L105",
       "id": "synapse_state_stategraph_close",
-      "community": 29,
+      "community": 28,
       "norm_label": ".close()"
     },
     {
@@ -2466,7 +2466,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L116",
       "id": "synapse_state_stategraph_register_agent",
-      "community": 29,
+      "community": 28,
       "norm_label": ".register_agent()"
     },
     {
@@ -2475,7 +2475,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L141",
       "id": "synapse_state_stategraph_heartbeat",
-      "community": 29,
+      "community": 28,
       "norm_label": ".heartbeat()"
     },
     {
@@ -2484,7 +2484,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L147",
       "id": "synapse_state_stategraph_insert_intention",
-      "community": 29,
+      "community": 28,
       "norm_label": ".insert_intention()"
     },
     {
@@ -2493,7 +2493,7 @@
       "source_file": "sdk-python/synapse/state.py",
       "source_location": "L175",
       "id": "synapse_state_stategraph_resolve_intention",
-      "community": 29,
+      "community": 28,
       "norm_label": ".resolve_intention()"
     },
     {
@@ -2610,7 +2610,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L33",
       "id": "adapters_base_streamhandle",
-      "community": 24,
+      "community": 20,
       "norm_label": "streamhandle"
     },
     {
@@ -2619,7 +2619,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L44",
       "id": "adapters_base_token",
-      "community": 20,
+      "community": 34,
       "norm_label": "token"
     },
     {
@@ -2637,7 +2637,7 @@
       "source_file": "",
       "source_location": "",
       "id": "runtimeerror",
-      "community": 20,
+      "community": 34,
       "norm_label": "runtimeerror"
     },
     {
@@ -2664,7 +2664,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L70",
       "id": "adapters_base_inferenceadapter",
-      "community": 43,
+      "community": 20,
       "norm_label": "inferenceadapter"
     },
     {
@@ -2673,7 +2673,7 @@
       "source_file": "",
       "source_location": "",
       "id": "protocol",
-      "community": 43,
+      "community": 20,
       "norm_label": "protocol"
     },
     {
@@ -2682,7 +2682,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L73",
       "id": "adapters_base_inferenceadapter_start_stream",
-      "community": 43,
+      "community": 20,
       "norm_label": ".start_stream()"
     },
     {
@@ -2691,7 +2691,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L77",
       "id": "adapters_base_inferenceadapter_read_tokens",
-      "community": 43,
+      "community": 20,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2700,7 +2700,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L79",
       "id": "adapters_base_inferenceadapter_inject_and_continue",
-      "community": 43,
+      "community": 20,
       "norm_label": ".inject_and_continue()"
     },
     {
@@ -2709,7 +2709,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L86",
       "id": "adapters_base_inferenceadapter_cancel",
-      "community": 43,
+      "community": 20,
       "norm_label": ".cancel()"
     },
     {
@@ -2736,7 +2736,7 @@
       "source_file": "sdk-python/synapse/adapters/base.py",
       "source_location": "L34",
       "id": "adapters_base_rationale_34",
-      "community": 24,
+      "community": 20,
       "norm_label": "opaque handle to an in-flight generation. adapter-specific contents."
     },
     {
@@ -2781,7 +2781,7 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L29",
       "id": "adapters_mock_mockstreamstate",
-      "community": 24,
+      "community": 20,
       "norm_label": "mockstreamstate"
     },
     {
@@ -2826,7 +2826,7 @@
       "source_file": "sdk-python/synapse/adapters/mock.py",
       "source_location": "L82",
       "id": "adapters_mock_mockadapter_read_tokens",
-      "community": 20,
+      "community": 34,
       "norm_label": ".read_tokens()"
     },
     {
@@ -2988,7 +2988,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/anthropic_adapter.py",
       "source_location": "L127",
       "id": "hosted_anthropic_adapter_anthropicadapter_read_tokens",
-      "community": 20,
+      "community": 34,
       "norm_label": ".read_tokens()"
     },
     {
@@ -3105,7 +3105,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/gemini_adapter.py",
       "source_location": "L160",
       "id": "hosted_gemini_adapter_geminiadapter_read_tokens",
-      "community": 20,
+      "community": 34,
       "norm_label": ".read_tokens()"
     },
     {
@@ -3222,7 +3222,7 @@
       "source_file": "sdk-python/synapse/adapters/hosted/openai_adapter.py",
       "source_location": "L115",
       "id": "hosted_openai_adapter_openaiadapter_read_tokens",
-      "community": 20,
+      "community": 34,
       "norm_label": ".read_tokens()"
     },
     {
@@ -3294,7 +3294,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_local_ollama_adapter_py",
-      "community": 24,
+      "community": 30,
       "norm_label": "ollama_adapter.py"
     },
     {
@@ -3303,7 +3303,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L40",
       "id": "local_ollama_adapter_ollamaadapter",
-      "community": 24,
+      "community": 30,
       "norm_label": "ollamaadapter"
     },
     {
@@ -3321,7 +3321,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L81",
       "id": "local_ollama_adapter_ollamaadapter_health_check",
-      "community": 24,
+      "community": 30,
       "norm_label": ".health_check()"
     },
     {
@@ -3330,7 +3330,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L105",
       "id": "local_ollama_adapter_ollamaadapter_start_stream",
-      "community": 24,
+      "community": 30,
       "norm_label": ".start_stream()"
     },
     {
@@ -3339,7 +3339,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L151",
       "id": "local_ollama_adapter_ollamaadapter_read_tokens",
-      "community": 20,
+      "community": 34,
       "norm_label": ".read_tokens()"
     },
     {
@@ -3348,7 +3348,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L181",
       "id": "local_ollama_adapter_ollamaadapter_inject_and_continue",
-      "community": 24,
+      "community": 30,
       "norm_label": ".inject_and_continue()"
     },
     {
@@ -3357,7 +3357,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L211",
       "id": "local_ollama_adapter_ollamaadapter_cancel",
-      "community": 24,
+      "community": 30,
       "norm_label": ".cancel()"
     },
     {
@@ -3366,7 +3366,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L228",
       "id": "local_ollama_adapter_messages_to_prompt",
-      "community": 24,
+      "community": 30,
       "norm_label": "_messages_to_prompt()"
     },
     {
@@ -3375,7 +3375,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L1",
       "id": "local_ollama_adapter_rationale_1",
-      "community": 24,
+      "community": 30,
       "norm_label": "ollama local-api adapter.  talks to a locally-running ollama server (default htt"
     },
     {
@@ -3384,7 +3384,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L41",
       "id": "local_ollama_adapter_rationale_41",
-      "community": 24,
+      "community": 30,
       "norm_label": "local-api tier adapter for ollama.      args:         model: ollama model tag (e"
     },
     {
@@ -3393,7 +3393,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L82",
       "id": "local_ollama_adapter_rationale_82",
-      "community": 24,
+      "community": 30,
       "norm_label": "verify ollama is reachable and the model is available."
     },
     {
@@ -3402,7 +3402,7 @@
       "source_file": "sdk-python/synapse/adapters/local/ollama_adapter.py",
       "source_location": "L187",
       "id": "local_ollama_adapter_rationale_187",
-      "community": 24,
+      "community": 30,
       "norm_label": "local-api resume: cancel stream, restart with last context tokens.          if t"
     },
     {
@@ -3438,7 +3438,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_adapters_native_vllm_modal_adapter_py",
-      "community": 30,
+      "community": 29,
       "norm_label": "vllm_modal_adapter.py"
     },
     {
@@ -3447,7 +3447,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L37",
       "id": "native_vllm_modal_adapter_vllmmodaladapter",
-      "community": 30,
+      "community": 29,
       "norm_label": "vllmmodaladapter"
     },
     {
@@ -3465,7 +3465,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L79",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_get_engine_cls",
-      "community": 30,
+      "community": 29,
       "norm_label": "._get_engine_cls()"
     },
     {
@@ -3474,7 +3474,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L91",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_health_check",
-      "community": 30,
+      "community": 29,
       "norm_label": ".health_check()"
     },
     {
@@ -3483,7 +3483,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L102",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_start_stream",
-      "community": 30,
+      "community": 29,
       "norm_label": ".start_stream()"
     },
     {
@@ -3492,7 +3492,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L134",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_read_tokens",
-      "community": 20,
+      "community": 34,
       "norm_label": ".read_tokens()"
     },
     {
@@ -3501,7 +3501,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L156",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_inject_and_continue",
-      "community": 30,
+      "community": 29,
       "norm_label": ".inject_and_continue()"
     },
     {
@@ -3510,7 +3510,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L173",
       "id": "native_vllm_modal_adapter_vllmmodaladapter_cancel",
-      "community": 30,
+      "community": 29,
       "norm_label": ".cancel()"
     },
     {
@@ -3519,7 +3519,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L187",
       "id": "native_vllm_modal_adapter_messages_to_prompt",
-      "community": 30,
+      "community": 29,
       "norm_label": "_messages_to_prompt()"
     },
     {
@@ -3528,7 +3528,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L1",
       "id": "native_vllm_modal_adapter_rationale_1",
-      "community": 30,
+      "community": 29,
       "norm_label": "vllm-via-modal native adapter.  talks to a modal-deployed vllm engine over modal"
     },
     {
@@ -3537,7 +3537,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L38",
       "id": "native_vllm_modal_adapter_rationale_38",
-      "community": 30,
+      "community": 29,
       "norm_label": "connects to a deployed modal vllm engine via rpc.      args:         modal_app:"
     },
     {
@@ -3546,7 +3546,7 @@
       "source_file": "sdk-python/synapse/adapters/native/vllm_modal_adapter.py",
       "source_location": "L80",
       "id": "native_vllm_modal_adapter_rationale_80",
-      "community": 30,
+      "community": 29,
       "norm_label": "lazy-resolve the deployed modal class. caches across calls."
     },
     {
@@ -3834,7 +3834,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L1",
       "id": "sdk_python_synapse_integrations_langgraph_integration_py",
-      "community": 37,
+      "community": 38,
       "norm_label": "langgraph_integration.py"
     },
     {
@@ -3843,7 +3843,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L46",
       "id": "integrations_langgraph_integration_synapseconflict",
-      "community": 37,
+      "community": 38,
       "norm_label": "synapseconflict"
     },
     {
@@ -3852,7 +3852,7 @@
       "source_file": "",
       "source_location": "",
       "id": "exception",
-      "community": 37,
+      "community": 38,
       "norm_label": "exception"
     },
     {
@@ -3861,7 +3861,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L53",
       "id": "integrations_langgraph_integration_synapseconflict_init",
-      "community": 37,
+      "community": 38,
       "norm_label": ".__init__()"
     },
     {
@@ -3870,7 +3870,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L67",
       "id": "integrations_langgraph_integration_ensure_connections",
-      "community": 37,
+      "community": 38,
       "norm_label": "_ensure_connections()"
     },
     {
@@ -3879,7 +3879,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L83",
       "id": "integrations_langgraph_integration_ensure_agent",
-      "community": 37,
+      "community": 38,
       "norm_label": "_ensure_agent()"
     },
     {
@@ -3897,7 +3897,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L1",
       "id": "integrations_langgraph_integration_rationale_1",
-      "community": 37,
+      "community": 38,
       "norm_label": "langgraph integration \u2014 wrap any node so it participates in synapse coordination"
     },
     {
@@ -3906,7 +3906,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L47",
       "id": "integrations_langgraph_integration_rationale_47",
-      "community": 37,
+      "community": 38,
       "norm_label": "raised by a synapse_node when a conflict arrives during the gate window.      th"
     },
     {
@@ -3915,7 +3915,7 @@
       "source_file": "sdk-python/synapse/integrations/langgraph_integration.py",
       "source_location": "L68",
       "id": "integrations_langgraph_integration_rationale_68",
-      "community": 37,
+      "community": 38,
       "norm_label": "idempotently connect bus + stategraph. returns the shared instances."
     },
     {
@@ -6354,7 +6354,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L1",
       "id": "contributing_md",
-      "community": 40,
+      "community": 41,
       "norm_label": "contributing.md"
     },
     {
@@ -6363,7 +6363,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L1",
       "id": "synapse_contributing_contributing_to_synapse",
-      "community": 40,
+      "community": 41,
       "norm_label": "contributing to synapse"
     },
     {
@@ -6372,7 +6372,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L5",
       "id": "synapse_contributing_before_opening_a_pr",
-      "community": 40,
+      "community": 41,
       "norm_label": "before opening a pr"
     },
     {
@@ -6381,7 +6381,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L12",
       "id": "synapse_contributing_local_development",
-      "community": 40,
+      "community": 41,
       "norm_label": "local development"
     },
     {
@@ -6390,7 +6390,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L14",
       "id": "synapse_contributing_codeblock_1",
-      "community": 40,
+      "community": 41,
       "norm_label": "code:bash (# bring up redis + postgres)"
     },
     {
@@ -6399,7 +6399,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L25",
       "id": "synapse_contributing_repository_conventions",
-      "community": 40,
+      "community": 41,
       "norm_label": "repository conventions"
     },
     {
@@ -6408,7 +6408,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L32",
       "id": "synapse_contributing_how_to_propose_a_new_message_type",
-      "community": 40,
+      "community": 41,
       "norm_label": "how to propose a new message type"
     },
     {
@@ -6417,7 +6417,7 @@
       "source_file": "CONTRIBUTING.md",
       "source_location": "L42",
       "id": "synapse_contributing_license",
-      "community": 40,
+      "community": 41,
       "norm_label": "license"
     },
     {
@@ -6669,7 +6669,7 @@
       "source_file": "bench/README.md",
       "source_location": "L1",
       "id": "bench_readme_md",
-      "community": 34,
+      "community": 35,
       "norm_label": "readme.md"
     },
     {
@@ -6678,7 +6678,7 @@
       "source_file": "bench/README.md",
       "source_location": "L1",
       "id": "bench_readme_synapse_benchmark_results",
-      "community": 34,
+      "community": 35,
       "norm_label": "synapse benchmark results"
     },
     {
@@ -6687,7 +6687,7 @@
       "source_file": "bench/README.md",
       "source_location": "L5",
       "id": "bench_readme_workloads",
-      "community": 34,
+      "community": 35,
       "norm_label": "workloads"
     },
     {
@@ -6696,7 +6696,7 @@
       "source_file": "bench/README.md",
       "source_location": "L13",
       "id": "bench_readme_run",
-      "community": 34,
+      "community": 35,
       "norm_label": "run"
     },
     {
@@ -6705,7 +6705,7 @@
       "source_file": "bench/README.md",
       "source_location": "L15",
       "id": "bench_readme_codeblock_1",
-      "community": 34,
+      "community": 35,
       "norm_label": "code:bash (synapse bench --backend mock --workload conflict-heavy)"
     },
     {
@@ -6714,7 +6714,7 @@
       "source_file": "bench/README.md",
       "source_location": "L22",
       "id": "bench_readme_what_the_report_contains",
-      "community": 34,
+      "community": 35,
       "norm_label": "what the report contains"
     },
     {
@@ -6723,7 +6723,7 @@
       "source_file": "bench/README.md",
       "source_location": "L32",
       "id": "bench_readme_recorded_results",
-      "community": 34,
+      "community": 35,
       "norm_label": "recorded results"
     },
     {
@@ -6732,7 +6732,7 @@
       "source_file": "bench/README.md",
       "source_location": "L46",
       "id": "bench_readme_pending_backends",
-      "community": 34,
+      "community": 35,
       "norm_label": "pending backends"
     },
     {
@@ -6903,7 +6903,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L1",
       "id": "runtime_gateway_readme_md",
-      "community": 38,
+      "community": 39,
       "norm_label": "readme.md"
     },
     {
@@ -6912,7 +6912,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L1",
       "id": "gateway_readme_synapse_observability_gateway",
-      "community": 38,
+      "community": 39,
       "norm_label": "synapse observability gateway"
     },
     {
@@ -6921,7 +6921,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L5",
       "id": "gateway_readme_run",
-      "community": 38,
+      "community": 39,
       "norm_label": "run"
     },
     {
@@ -6930,7 +6930,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L7",
       "id": "gateway_readme_codeblock_1",
-      "community": 38,
+      "community": 39,
       "norm_label": "code:bash (pip install -e sdk-python)"
     },
     {
@@ -6939,7 +6939,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L13",
       "id": "gateway_readme_endpoints",
-      "community": 38,
+      "community": 39,
       "norm_label": "endpoints"
     },
     {
@@ -6948,7 +6948,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L15",
       "id": "gateway_readme_rest",
-      "community": 38,
+      "community": 39,
       "norm_label": "rest"
     },
     {
@@ -6957,7 +6957,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L26",
       "id": "gateway_readme_websocket",
-      "community": 38,
+      "community": 39,
       "norm_label": "websocket"
     },
     {
@@ -6966,7 +6966,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L35",
       "id": "gateway_readme_environment",
-      "community": 38,
+      "community": 39,
       "norm_label": "environment"
     },
     {
@@ -6975,7 +6975,7 @@
       "source_file": "runtime/gateway/README.md",
       "source_location": "L42",
       "id": "gateway_readme_implementation_notes",
-      "community": 38,
+      "community": 39,
       "norm_label": "implementation notes"
     },
     {
@@ -7092,7 +7092,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L1",
       "id": "sdk_typescript_readme_md",
-      "community": 28,
+      "community": 27,
       "norm_label": "readme.md"
     },
     {
@@ -7101,7 +7101,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L1",
       "id": "sdk_typescript_readme_synapse_protocol_sdk_typescript_sdk",
-      "community": 28,
+      "community": 27,
       "norm_label": "`@synapse-protocol/sdk` \u2014 typescript sdk"
     },
     {
@@ -7110,7 +7110,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L7",
       "id": "sdk_typescript_readme_install",
-      "community": 28,
+      "community": 27,
       "norm_label": "install"
     },
     {
@@ -7119,7 +7119,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L9",
       "id": "sdk_typescript_readme_codeblock_1",
-      "community": 28,
+      "community": 27,
       "norm_label": "code:bash (npm install @synapse-protocol/sdk)"
     },
     {
@@ -7128,7 +7128,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L15",
       "id": "sdk_typescript_readme_quickstart",
-      "community": 28,
+      "community": 27,
       "norm_label": "quickstart"
     },
     {
@@ -7137,7 +7137,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L17",
       "id": "sdk_typescript_readme_codeblock_2",
-      "community": 28,
+      "community": 27,
       "norm_label": "code:ts (import { agent, bus, mockadapter } from \"@synapse-protocol/s)"
     },
     {
@@ -7146,7 +7146,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L49",
       "id": "sdk_typescript_readme_what_s_in_this_version",
-      "community": 28,
+      "community": 27,
       "norm_label": "what's in this version"
     },
     {
@@ -7155,7 +7155,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L60",
       "id": "sdk_typescript_readme_multi_tenant_isolation",
-      "community": 28,
+      "community": 27,
       "norm_label": "multi-tenant isolation"
     },
     {
@@ -7164,7 +7164,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L64",
       "id": "sdk_typescript_readme_codeblock_3",
-      "community": 28,
+      "community": 27,
       "norm_label": "code:ts (const owner = { tenant_id: \"acme\", agent_id: \"a1\", session_i)"
     },
     {
@@ -7173,7 +7173,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L75",
       "id": "sdk_typescript_readme_test",
-      "community": 28,
+      "community": 27,
       "norm_label": "test"
     },
     {
@@ -7182,7 +7182,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L77",
       "id": "sdk_typescript_readme_codeblock_4",
-      "community": 28,
+      "community": 27,
       "norm_label": "code:bash (npm install)"
     },
     {
@@ -7191,7 +7191,7 @@
       "source_file": "sdk-typescript/README.md",
       "source_location": "L85",
       "id": "sdk_typescript_readme_roadmap",
-      "community": 28,
+      "community": 27,
       "norm_label": "roadmap"
     },
     {
@@ -7515,7 +7515,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L1",
       "id": "spec_positioning_md",
-      "community": 27,
+      "community": 25,
       "norm_label": "positioning.md"
     },
     {
@@ -7524,7 +7524,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L1",
       "id": "spec_positioning_positioning_synapse_vs_mcp_a2a_langgraph_autogen",
-      "community": 27,
+      "community": 25,
       "norm_label": "positioning \u2014 synapse vs mcp, a2a, langgraph, autogen"
     },
     {
@@ -7533,7 +7533,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L5",
       "id": "spec_positioning_the_layered_picture",
-      "community": 27,
+      "community": 25,
       "norm_label": "the layered picture"
     },
     {
@@ -7542,7 +7542,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L7",
       "id": "spec_positioning_codeblock_1",
-      "community": 27,
+      "community": 25,
       "norm_label": "code:block1 (\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500)"
     },
     {
@@ -7551,7 +7551,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L43",
       "id": "spec_positioning_direct_comparison",
-      "community": 27,
+      "community": 25,
       "norm_label": "direct comparison"
     },
     {
@@ -7560,7 +7560,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L53",
       "id": "spec_positioning_what_makes_synapse_distinct",
-      "community": 27,
+      "community": 25,
       "norm_label": "what makes synapse distinct"
     },
     {
@@ -7569,7 +7569,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L61",
       "id": "spec_positioning_why_this_matters_for_adoption",
-      "community": 27,
+      "community": 25,
       "norm_label": "why this matters for adoption"
     },
     {
@@ -7578,7 +7578,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L72",
       "id": "spec_positioning_but_isn_t_this_just_x",
-      "community": 27,
+      "community": 25,
       "norm_label": "\"but isn't this just x?\""
     },
     {
@@ -7587,7 +7587,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L86",
       "id": "spec_positioning_co_existence_recipes",
-      "community": 27,
+      "community": 25,
       "norm_label": "co-existence recipes"
     },
     {
@@ -7596,7 +7596,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L88",
       "id": "spec_positioning_synapse_mcp",
-      "community": 27,
+      "community": 25,
       "norm_label": "synapse + mcp"
     },
     {
@@ -7605,7 +7605,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L92",
       "id": "spec_positioning_synapse_langgraph",
-      "community": 27,
+      "community": 25,
       "norm_label": "synapse + langgraph"
     },
     {
@@ -7614,7 +7614,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L96",
       "id": "spec_positioning_synapse_a2a",
-      "community": 27,
+      "community": 25,
       "norm_label": "synapse + a2a"
     },
     {
@@ -7623,7 +7623,7 @@
       "source_file": "spec/positioning.md",
       "source_location": "L100",
       "id": "spec_positioning_why_not_just_use_a_database",
-      "community": 27,
+      "community": 25,
       "norm_label": "why not just use a database?"
     },
     {
@@ -7632,7 +7632,7 @@
       "source_file": "spec/README.md",
       "source_location": "L1",
       "id": "spec_readme_md",
-      "community": 39,
+      "community": 40,
       "norm_label": "readme.md"
     },
     {
@@ -7641,7 +7641,7 @@
       "source_file": "spec/README.md",
       "source_location": "L1",
       "id": "spec_readme_synapse_protocol_specification",
-      "community": 39,
+      "community": 40,
       "norm_label": "synapse protocol specification"
     },
     {
@@ -7650,7 +7650,7 @@
       "source_file": "spec/README.md",
       "source_location": "L5",
       "id": "spec_readme_layout",
-      "community": 39,
+      "community": 40,
       "norm_label": "layout"
     },
     {
@@ -7659,7 +7659,7 @@
       "source_file": "spec/README.md",
       "source_location": "L7",
       "id": "spec_readme_codeblock_1",
-      "community": 39,
+      "community": 40,
       "norm_label": "code:block1 (spec/)"
     },
     {
@@ -7668,7 +7668,7 @@
       "source_file": "spec/README.md",
       "source_location": "L26",
       "id": "spec_readme_the_eight_message_types",
-      "community": 39,
+      "community": 40,
       "norm_label": "the eight message types"
     },
     {
@@ -7677,7 +7677,7 @@
       "source_file": "spec/README.md",
       "source_location": "L41",
       "id": "spec_readme_versioning",
-      "community": 39,
+      "community": 40,
       "norm_label": "versioning"
     },
     {
@@ -7686,7 +7686,7 @@
       "source_file": "spec/README.md",
       "source_location": "L47",
       "id": "spec_readme_validation",
-      "community": 39,
+      "community": 40,
       "norm_label": "validation"
     },
     {
@@ -7695,7 +7695,7 @@
       "source_file": "spec/README.md",
       "source_location": "L51",
       "id": "spec_readme_reading_order",
-      "community": 39,
+      "community": 40,
       "norm_label": "reading order"
     },
     {
@@ -7704,7 +7704,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L1",
       "id": "spec_adr_adr_0001_architecture_baseline_md",
-      "community": 35,
+      "community": 36,
       "norm_label": "adr-0001-architecture-baseline.md"
     },
     {
@@ -7713,7 +7713,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L1",
       "id": "adr_adr_0001_architecture_baseline_adr_0001_v1_0_architecture_baseline",
-      "community": 35,
+      "community": 36,
       "norm_label": "adr-0001: v1.0 architecture baseline"
     },
     {
@@ -7722,7 +7722,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L7",
       "id": "adr_adr_0001_architecture_baseline_context",
-      "community": 35,
+      "community": 36,
       "norm_label": "context"
     },
     {
@@ -7731,7 +7731,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L11",
       "id": "adr_adr_0001_architecture_baseline_decision",
-      "community": 35,
+      "community": 36,
       "norm_label": "decision"
     },
     {
@@ -7740,7 +7740,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L15",
       "id": "adr_adr_0001_architecture_baseline_components",
-      "community": 35,
+      "community": 36,
       "norm_label": "components"
     },
     {
@@ -7749,7 +7749,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L27",
       "id": "adr_adr_0001_architecture_baseline_key_mechanisms",
-      "community": 35,
+      "community": 36,
       "norm_label": "key mechanisms"
     },
     {
@@ -7758,7 +7758,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L34",
       "id": "adr_adr_0001_architecture_baseline_resolved_open_questions",
-      "community": 35,
+      "community": 36,
       "norm_label": "resolved open questions"
     },
     {
@@ -7767,7 +7767,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L43",
       "id": "adr_adr_0001_architecture_baseline_consequences",
-      "community": 35,
+      "community": 36,
       "norm_label": "consequences"
     },
     {
@@ -7776,7 +7776,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L59",
       "id": "adr_adr_0001_architecture_baseline_action_items",
-      "community": 35,
+      "community": 36,
       "norm_label": "action items"
     },
     {
@@ -7785,7 +7785,7 @@
       "source_file": "spec/adr/ADR-0001-architecture-baseline.md",
       "source_location": "L67",
       "id": "adr_adr_0001_architecture_baseline_revision_notes",
-      "community": 35,
+      "community": 36,
       "norm_label": "revision notes"
     },
     {
@@ -7893,7 +7893,7 @@
       "source_file": "ui/README.md",
       "source_location": "L1",
       "id": "ui_readme_md",
-      "community": 36,
+      "community": 37,
       "norm_label": "readme.md"
     },
     {
@@ -7902,7 +7902,7 @@
       "source_file": "ui/README.md",
       "source_location": "L1",
       "id": "ui_readme_synapse_observability_ui",
-      "community": 36,
+      "community": 37,
       "norm_label": "synapse observability ui"
     },
     {
@@ -7911,7 +7911,7 @@
       "source_file": "ui/README.md",
       "source_location": "L8",
       "id": "ui_readme_run_it",
-      "community": 36,
+      "community": 37,
       "norm_label": "run it"
     },
     {
@@ -7920,7 +7920,7 @@
       "source_file": "ui/README.md",
       "source_location": "L12",
       "id": "ui_readme_codeblock_1",
-      "community": 36,
+      "community": 37,
       "norm_label": "code:bash (# 1. bring up infrastructure (from repo root))"
     },
     {
@@ -7929,7 +7929,7 @@
       "source_file": "ui/README.md",
       "source_location": "L29",
       "id": "ui_readme_codeblock_2",
-      "community": 36,
+      "community": 37,
       "norm_label": "code:bash (python examples/two_agents_conflict_demo.py)"
     },
     {
@@ -7938,7 +7938,7 @@
       "source_file": "ui/README.md",
       "source_location": "L39",
       "id": "ui_readme_layout",
-      "community": 36,
+      "community": 37,
       "norm_label": "layout"
     },
     {
@@ -7947,7 +7947,7 @@
       "source_file": "ui/README.md",
       "source_location": "L44",
       "id": "ui_readme_architecture",
-      "community": 36,
+      "community": 37,
       "norm_label": "architecture"
     },
     {
@@ -7956,7 +7956,7 @@
       "source_file": "ui/README.md",
       "source_location": "L46",
       "id": "ui_readme_codeblock_3",
-      "community": 36,
+      "community": 37,
       "norm_label": "code:block3 (browser (next.js, :3000))"
     },
     {
@@ -7965,7 +7965,7 @@
       "source_file": "ui/README.md",
       "source_location": "L69",
       "id": "ui_readme_production_deploy_notes_later",
-      "community": 36,
+      "community": 37,
       "norm_label": "production deploy notes (later)"
     },
     {
@@ -8054,7 +8054,7 @@
       "file_type": "document",
       "source_file": "bench/README.md",
       "source_location": "L32",
-      "community": 34,
+      "community": 35,
       "norm_label": "recorded results (this session)",
       "id": "bench_readme_recorded_results_this_session"
     },
@@ -8081,7 +8081,7 @@
       "file_type": "document",
       "source_file": "bench/README.md",
       "source_location": "L1",
-      "community": 34,
+      "community": 35,
       "norm_label": "bench",
       "id": "bench_readme_bench"
     },
@@ -8090,7 +8090,7 @@
       "file_type": "document",
       "source_file": "ui/README.md",
       "source_location": "L1",
-      "community": 36,
+      "community": 37,
       "norm_label": "ui",
       "id": "ui_readme_ui"
     },
@@ -8225,7 +8225,7 @@
       "file_type": "document",
       "source_file": "spec/README.md",
       "source_location": "L22",
-      "community": 39,
+      "community": 40,
       "norm_label": "the seven message types",
       "id": "spec_readme_the_seven_message_types"
     }
@@ -8449,9 +8449,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_py",
-      "target": "examples_crewai_style_product_dev_fakecrewtask",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_fakecrewtask"
     },
     {
       "relation": "contains",
@@ -8459,9 +8459,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L59",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_py",
-      "target": "examples_crewai_style_product_dev_main",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_main"
     },
     {
       "relation": "rationale_for",
@@ -8469,9 +8469,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_rationale_1",
-      "target": "examples_crewai_style_product_dev_py",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_py"
     },
     {
       "relation": "method",
@@ -8479,9 +8479,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_fakecrewtask",
-      "target": "examples_crewai_style_product_dev_fakecrewtask_init",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_fakecrewtask_init"
     },
     {
       "relation": "method",
@@ -8489,9 +8489,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_fakecrewtask",
-      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_async",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_async"
     },
     {
       "relation": "method",
@@ -8499,9 +8499,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L54",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_fakecrewtask",
-      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_sync",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_sync"
     },
     {
       "relation": "calls",
@@ -8510,9 +8510,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L102",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_main",
-      "target": "examples_crewai_style_product_dev_fakecrewtask",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_fakecrewtask"
     },
     {
       "relation": "uses",
@@ -8520,9 +8520,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L37",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_crewai_style_product_dev_fakecrewtask",
-      "target": "integrations_langgraph_integration_synapseconflict",
-      "confidence_score": 0.5
+      "target": "integrations_langgraph_integration_synapseconflict"
     },
     {
       "relation": "uses",
@@ -8530,9 +8530,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L65",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_crewai_style_product_dev_fakecrewtask",
-      "target": "synapse_bus_bus",
-      "confidence_score": 0.5
+      "target": "synapse_bus_bus"
     },
     {
       "relation": "uses",
@@ -8540,9 +8540,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L66",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_crewai_style_product_dev_fakecrewtask",
-      "target": "synapse_state_stategraph",
-      "confidence_score": 0.5
+      "target": "synapse_state_stategraph"
     },
     {
       "relation": "uses",
@@ -8550,9 +8550,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L67",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_crewai_style_product_dev_fakecrewtask",
-      "target": "router_worker_router",
-      "confidence_score": 0.5
+      "target": "router_worker_router"
     },
     {
       "relation": "calls",
@@ -8561,9 +8561,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_fakecrewtask_execute_sync",
-      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_async",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_async"
     },
     {
       "relation": "calls",
@@ -8572,9 +8572,9 @@
       "source_file": "examples/crewai_style_product_dev.py",
       "source_location": "L131",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_crewai_style_product_dev_main",
-      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_async",
-      "confidence_score": 1.0
+      "target": "examples_crewai_style_product_dev_fakecrewtask_execute_async"
     },
     {
       "relation": "calls",
@@ -9357,9 +9357,9 @@
       "source_file": "examples/langgraph_style_product_dev.py",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_langgraph_style_product_dev_py",
-      "target": "examples_langgraph_style_product_dev_main",
-      "confidence_score": 1.0
+      "target": "examples_langgraph_style_product_dev_main"
     },
     {
       "relation": "rationale_for",
@@ -9367,9 +9367,9 @@
       "source_file": "examples/langgraph_style_product_dev.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_langgraph_style_product_dev_rationale_1",
-      "target": "examples_langgraph_style_product_dev_py",
-      "confidence_score": 1.0
+      "target": "examples_langgraph_style_product_dev_py"
     },
     {
       "relation": "calls",
@@ -9421,9 +9421,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L80",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_agentrole",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_agentrole"
     },
     {
       "relation": "contains",
@@ -9431,9 +9431,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L89",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_product",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_product"
     },
     {
       "relation": "contains",
@@ -9441,9 +9441,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L207",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_make_backend",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_make_backend"
     },
     {
       "relation": "contains",
@@ -9451,9 +9451,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L230",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_agentrun",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_agentrun"
     },
     {
       "relation": "contains",
@@ -9461,9 +9461,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L240",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_productrun",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_productrun"
     },
     {
       "relation": "contains",
@@ -9471,9 +9471,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L253",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_run_agent_independent",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_agent_independent"
     },
     {
       "relation": "contains",
@@ -9481,9 +9481,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L274",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_extract_url_field_name",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_extract_url_field_name"
     },
     {
       "relation": "contains",
@@ -9491,9 +9491,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L298",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_run_product_no_synapse",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_product_no_synapse"
     },
     {
       "relation": "contains",
@@ -9501,9 +9501,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L307",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_run_product_with_synapse",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_product_with_synapse"
     },
     {
       "relation": "contains",
@@ -9511,9 +9511,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L421",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_summarize",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_summarize"
     },
     {
       "relation": "contains",
@@ -9521,9 +9521,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L449",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_print_table",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_print_table"
     },
     {
       "relation": "contains",
@@ -9531,9 +9531,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L466",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_save",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_save"
     },
     {
       "relation": "contains",
@@ -9541,9 +9541,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L476",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_py",
-      "target": "examples_multi_agent_product_dev_main",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_main"
     },
     {
       "relation": "rationale_for",
@@ -9551,9 +9551,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_rationale_1",
-      "target": "examples_multi_agent_product_dev_py",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_py"
     },
     {
       "relation": "uses",
@@ -9561,9 +9561,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L61",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrole",
-      "target": "adapters_base_inferenceadapter",
-      "confidence_score": 0.5
+      "target": "adapters_base_inferenceadapter"
     },
     {
       "relation": "uses",
@@ -9571,9 +9571,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L62",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrole",
-      "target": "synapse_bus_bus",
-      "confidence_score": 0.5
+      "target": "synapse_bus_bus"
     },
     {
       "relation": "uses",
@@ -9581,9 +9581,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrole",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "uses",
@@ -9591,9 +9591,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrole",
-      "target": "synapse_messages_messagetype",
-      "confidence_score": 0.5
+      "target": "synapse_messages_messagetype"
     },
     {
       "relation": "uses",
@@ -9601,9 +9601,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L64",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrole",
-      "target": "synapse_state_stategraph",
-      "confidence_score": 0.5
+      "target": "synapse_state_stategraph"
     },
     {
       "relation": "uses",
@@ -9611,9 +9611,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L65",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrole",
-      "target": "coordinator_agent_coordinator",
-      "confidence_score": 0.5
+      "target": "coordinator_agent_coordinator"
     },
     {
       "relation": "uses",
@@ -9621,9 +9621,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L66",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrole",
-      "target": "router_worker_router",
-      "confidence_score": 0.5
+      "target": "router_worker_router"
     },
     {
       "relation": "uses",
@@ -9631,9 +9631,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L61",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_product",
-      "target": "adapters_base_inferenceadapter",
-      "confidence_score": 0.5
+      "target": "adapters_base_inferenceadapter"
     },
     {
       "relation": "uses",
@@ -9641,9 +9641,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L62",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_product",
-      "target": "synapse_bus_bus",
-      "confidence_score": 0.5
+      "target": "synapse_bus_bus"
     },
     {
       "relation": "uses",
@@ -9651,9 +9651,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_product",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "uses",
@@ -9661,9 +9661,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_product",
-      "target": "synapse_messages_messagetype",
-      "confidence_score": 0.5
+      "target": "synapse_messages_messagetype"
     },
     {
       "relation": "uses",
@@ -9671,9 +9671,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L64",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_product",
-      "target": "synapse_state_stategraph",
-      "confidence_score": 0.5
+      "target": "synapse_state_stategraph"
     },
     {
       "relation": "uses",
@@ -9681,9 +9681,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L65",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_product",
-      "target": "coordinator_agent_coordinator",
-      "confidence_score": 0.5
+      "target": "coordinator_agent_coordinator"
     },
     {
       "relation": "uses",
@@ -9691,9 +9691,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L66",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_product",
-      "target": "router_worker_router",
-      "confidence_score": 0.5
+      "target": "router_worker_router"
     },
     {
       "relation": "calls",
@@ -9702,9 +9702,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L256",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_agent_independent",
-      "target": "examples_multi_agent_product_dev_make_backend",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_make_backend"
     },
     {
       "relation": "calls",
@@ -9713,9 +9713,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L317",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_product_with_synapse",
-      "target": "examples_multi_agent_product_dev_make_backend",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_make_backend"
     },
     {
       "relation": "calls",
@@ -9757,9 +9757,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L264",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_agent_independent",
-      "target": "examples_multi_agent_product_dev_agentrun",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_agentrun"
     },
     {
       "relation": "uses",
@@ -9767,9 +9767,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L61",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrun",
-      "target": "adapters_base_inferenceadapter",
-      "confidence_score": 0.5
+      "target": "adapters_base_inferenceadapter"
     },
     {
       "relation": "uses",
@@ -9777,9 +9777,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L62",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrun",
-      "target": "synapse_bus_bus",
-      "confidence_score": 0.5
+      "target": "synapse_bus_bus"
     },
     {
       "relation": "uses",
@@ -9787,9 +9787,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrun",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "uses",
@@ -9797,9 +9797,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrun",
-      "target": "synapse_messages_messagetype",
-      "confidence_score": 0.5
+      "target": "synapse_messages_messagetype"
     },
     {
       "relation": "uses",
@@ -9807,9 +9807,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L64",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrun",
-      "target": "synapse_state_stategraph",
-      "confidence_score": 0.5
+      "target": "synapse_state_stategraph"
     },
     {
       "relation": "uses",
@@ -9817,9 +9817,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L65",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrun",
-      "target": "coordinator_agent_coordinator",
-      "confidence_score": 0.5
+      "target": "coordinator_agent_coordinator"
     },
     {
       "relation": "uses",
@@ -9827,9 +9827,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L66",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_agentrun",
-      "target": "router_worker_router",
-      "confidence_score": 0.5
+      "target": "router_worker_router"
     },
     {
       "relation": "calls",
@@ -9838,9 +9838,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L435",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_summarize",
-      "target": "examples_multi_agent_product_dev_productrun",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_productrun"
     },
     {
       "relation": "uses",
@@ -9848,9 +9848,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L61",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_productrun",
-      "target": "adapters_base_inferenceadapter",
-      "confidence_score": 0.5
+      "target": "adapters_base_inferenceadapter"
     },
     {
       "relation": "uses",
@@ -9858,9 +9858,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L62",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_productrun",
-      "target": "synapse_bus_bus",
-      "confidence_score": 0.5
+      "target": "synapse_bus_bus"
     },
     {
       "relation": "uses",
@@ -9868,9 +9868,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_productrun",
-      "target": "synapse_messages_conflict",
-      "confidence_score": 0.5
+      "target": "synapse_messages_conflict"
     },
     {
       "relation": "uses",
@@ -9878,9 +9878,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L63",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_productrun",
-      "target": "synapse_messages_messagetype",
-      "confidence_score": 0.5
+      "target": "synapse_messages_messagetype"
     },
     {
       "relation": "uses",
@@ -9888,9 +9888,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L64",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_productrun",
-      "target": "synapse_state_stategraph",
-      "confidence_score": 0.5
+      "target": "synapse_state_stategraph"
     },
     {
       "relation": "uses",
@@ -9898,9 +9898,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L65",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_productrun",
-      "target": "coordinator_agent_coordinator",
-      "confidence_score": 0.5
+      "target": "coordinator_agent_coordinator"
     },
     {
       "relation": "uses",
@@ -9908,9 +9908,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L66",
       "weight": 0.8,
+      "confidence_score": 0.5,
       "source": "examples_multi_agent_product_dev_productrun",
-      "target": "router_worker_router",
-      "confidence_score": 0.5
+      "target": "router_worker_router"
     },
     {
       "relation": "calls",
@@ -9919,9 +9919,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L268",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_agent_independent",
-      "target": "examples_multi_agent_product_dev_extract_url_field_name",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_extract_url_field_name"
     },
     {
       "relation": "calls",
@@ -9930,9 +9930,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L300",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_product_no_synapse",
-      "target": "examples_multi_agent_product_dev_run_agent_independent",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_agent_independent"
     },
     {
       "relation": "calls",
@@ -9941,9 +9941,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L349",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_product_with_synapse",
-      "target": "examples_multi_agent_product_dev_run_agent_independent",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_agent_independent"
     },
     {
       "relation": "rationale_for",
@@ -9951,9 +9951,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L254",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_rationale_254",
-      "target": "examples_multi_agent_product_dev_run_agent_independent",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_agent_independent"
     },
     {
       "relation": "rationale_for",
@@ -9961,9 +9961,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L275",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_rationale_275",
-      "target": "examples_multi_agent_product_dev_extract_url_field_name",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_extract_url_field_name"
     },
     {
       "relation": "calls",
@@ -9972,9 +9972,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L301",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_product_no_synapse",
-      "target": "examples_multi_agent_product_dev_summarize",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_summarize"
     },
     {
       "relation": "calls",
@@ -9983,9 +9983,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L489",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_main",
-      "target": "examples_multi_agent_product_dev_run_product_no_synapse",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_product_no_synapse"
     },
     {
       "relation": "calls",
@@ -9994,9 +9994,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L404",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_run_product_with_synapse",
-      "target": "examples_multi_agent_product_dev_summarize",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_summarize"
     },
     {
       "relation": "calls",
@@ -10005,9 +10005,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L491",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_main",
-      "target": "examples_multi_agent_product_dev_run_product_with_synapse",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_run_product_with_synapse"
     },
     {
       "relation": "calls",
@@ -10049,9 +10049,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L499",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_main",
-      "target": "examples_multi_agent_product_dev_print_table",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_print_table"
     },
     {
       "relation": "calls",
@@ -10060,9 +10060,9 @@
       "source_file": "examples/multi_agent_product_dev.py",
       "source_location": "L500",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "examples_multi_agent_product_dev_main",
-      "target": "examples_multi_agent_product_dev_save",
-      "confidence_score": 1.0
+      "target": "examples_multi_agent_product_dev_save"
     },
     {
       "relation": "contains",
@@ -24115,5 +24115,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6d64517da28fbdc5a4bbda219c4e0e73336173dc"
+  "built_at_commit": "82bb53f30088498a39497151ba9ca66ad32035aa"
 }
