@@ -163,14 +163,54 @@ async def install_hermes_synapse_hooks(
     except ImportError as e:
         status["hooks_skipped"].append(f"hermes-not-installed: {e}")
 
-    # Stash the agent on the module so wrap_tool_call_for_synapse can use it
-    _hermes_runtime["agent"] = agent
+    # Stash the runtime config + per-agent_id agent registry on the module.
+    # Multi-agent flows register additional agents via register_synapse_agent().
     _hermes_runtime["bus"] = bus
+    _hermes_runtime["state"] = state
     _hermes_runtime["session_id"] = session_id
     _hermes_runtime["gate_ms"] = gate_ms
     _hermes_runtime["fail_on_conflict"] = fail_on_conflict
+    agents = _hermes_runtime.setdefault("agents", {})
+    agents[agent_id] = agent
+    # Backward-compat: keep "agent" and a default agent_id so older callers work
+    _hermes_runtime["agent"] = agent
+    _hermes_runtime["default_agent_id"] = agent_id
 
     return status
+
+
+async def register_synapse_agent(
+    agent_id: str, scopes_owned: list[str] | None = None,
+) -> None:
+    """Register an additional Synapse agent in the same session.
+
+    Used for multi-agent product-dev workloads where multiple Hermes-style
+    agents collaborate on a shared codebase. The L2 router treats each
+    agent_id as a distinct caller, so two agents claiming overlapping
+    scopes will trigger CONFLICT routing.
+    """
+    bus = _hermes_runtime.get("bus")
+    state = _hermes_runtime.get("state")
+    session_id = _hermes_runtime.get("session_id")
+    if not (bus and state and session_id):
+        raise RuntimeError(
+            "register_synapse_agent: install_hermes_synapse_hooks must be called first"
+        )
+    agents = _hermes_runtime.setdefault("agents", {})
+    if agent_id in agents:
+        return
+    from synapse.adapters import MockAdapter
+    from synapse.agent import Agent
+
+    agent = Agent(
+        id=agent_id, session=session_id, backend=MockAdapter(),
+        subscribes=["hermes.*", "repo.*"],
+        scopes_owned=scopes_owned or [],
+        bus=bus, state=state,
+    )
+    await agent._connect()
+    await agent._register()
+    agents[agent_id] = agent
 
 
 # Module-level holder for the active hooks
@@ -192,19 +232,29 @@ async def wrap_tool_call_for_synapse(
     tool_name: str,
     args: dict[str, Any],
     inner_call: Callable[[], Awaitable[Any]],
+    *,
+    agent_id: Optional[str] = None,
 ) -> Any:
     """Wrap a Hermes tool dispatch with Synapse coordination.
 
-    The user's Hermes integration code calls this around the actual tool
-    dispatch. It emits INTENTION (only for write/execute tools), waits the
-    gate window, and either raises HermesSynapseConflict on conflict or
-    proceeds to inner_call(). After completion, emits RESOLUTION.
+    Args:
+        tool_name: The Hermes tool being dispatched (write_file, terminal, ...).
+        args: The tool's args dict.
+        inner_call: Async callable that performs the actual tool execution.
+        agent_id: Which Synapse agent to attribute the call to. Defaults to
+            the agent registered by install_hermes_synapse_hooks. For multi-
+            agent workloads, register additional agents with
+            register_synapse_agent() and pass their id here.
 
     For READ-ONLY tools (read_file, search_files, web_search, etc.), this
-    is essentially a no-op — we still register the call for observability
-    but skip the gate to keep latency at zero.
+    is essentially a no-op — pass-through with no INTENTION.
     """
-    agent = _hermes_runtime.get("agent")
+    agents = _hermes_runtime.get("agents") or {}
+    if agents:
+        target_id = agent_id or _hermes_runtime.get("default_agent_id")
+        agent = agents.get(target_id)
+    else:
+        agent = _hermes_runtime.get("agent")
     if agent is None:
         # Hooks not installed — pass-through
         return await inner_call()

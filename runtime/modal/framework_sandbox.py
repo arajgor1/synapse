@@ -70,6 +70,18 @@ image = (
         remote_path="/opt/synapse-sdk",
         copy=True,
     )
+    .add_local_dir(
+        # Mount runtime/ such that `import runtime` works from sys.path=/opt
+        local_path=os.path.abspath(os.path.join(os.path.dirname(__file__), "..")),
+        remote_path="/opt/runtime",
+        copy=True,
+    )
+    .add_local_dir(
+        # Pre-baked test payloads for product-dev scenarios
+        local_path=os.path.abspath(os.path.join(os.path.dirname(__file__), "_payloads")),
+        remote_path="/opt/synapse-payloads",
+        copy=True,
+    )
 )
 
 app = modal.App(APP_NAME, image=image)
@@ -524,6 +536,69 @@ def fetch_integration_docs() -> dict[str, Any]:
             "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-50000:],
             "stderr": "TIMEOUT",
         }
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=900, scaledown_window=10,
+)
+def real_product_dev_hermes(api_keys: dict[str, str]) -> dict[str, Any]:
+    """REAL product-dev test: 3 agents (architect, backend, qa) building a
+    shared Todo data model via REAL Anthropic Haiku calls + REAL Synapse
+    integration. Compares no_synapse vs with_synapse modes; measures
+    alignment / conflicts caught / envelopes / token spend.
+    """
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    # The actual scenario lives in /opt/synapse-payloads/real_product_dev_hermes.py
+    script = setup + "\n\npython3 /opt/synapse-payloads/real_product_dev_hermes.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=900, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-30000:],
+            "stderr": proc.stderr[-3000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-30000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def product_dev() -> None:
+    """Run real_product_dev_hermes against a Modal sandbox."""
+    import json
+    import os
+    import time
+
+    api_keys = {
+        "ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", ""),
+    }
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+
+    print(">>> running real product-dev test in Modal sandbox...")
+    r = real_product_dev_hermes.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"product_dev_real_hermes_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")
 
 
 @app.function(
