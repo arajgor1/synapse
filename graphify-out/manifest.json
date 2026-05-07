@@ -7,6 +7,14 @@
     "mtime": 1778106909.6788182,
     "hash": "ab5d31384567562ef5c7bc1889e5fe9b"
   },
+  "C:\\C3\\synapse\\examples\\e2e_protocol_inject_test.py": {
+    "mtime": 1778120479.2830722,
+    "hash": "6beb8bc32ac7cc2c8b8002a351a6e95f"
+  },
+  "C:\\C3\\synapse\\examples\\inject_realism_test.py": {
+    "mtime": 1778119771.337131,
+    "hash": "10537de1b7587bf02c6fe111faf99725"
+  },
   "C:\\C3\\synapse\\examples\\l3_router_demo.py": {
     "mtime": 1778107178.9015596,
     "hash": "472b8ee82feec7fb7cea484b2776f8f0"
@@ -112,8 +120,8 @@
     "hash": "ed378b6953823d4212cd6483a33dd516"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\anthropic_adapter.py": {
-    "mtime": 1778109322.8734682,
-    "hash": "a0690e9e4ff3a3c4d1d07769d5a97d7d"
+    "mtime": 1778120338.3084083,
+    "hash": "bb8b0d9699b7c911dc7ab057c07adb9f"
   },
   "C:\\C3\\synapse\\sdk-python\\synapse\\adapters\\hosted\\gemini_adapter.py": {
     "mtime": 1778113605.2521682,

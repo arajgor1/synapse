@@ -208,11 +208,19 @@ class AnthropicAdapter:
         return await self.start_stream(new_messages, handle.params)
 
     async def cancel(self, handle: StreamHandle) -> str:
+        import asyncio as _asyncio
         state = self._streams.pop(handle.request_id, None)
         if state is None:
             return ""
+        # __aexit__ on the streaming context can hang waiting for the SSE
+        # stream to drain when we stopped reading mid-flight. Bound it with
+        # a timeout so cancel() always returns promptly.
         try:
-            await state["ctx"].__aexit__(None, None, None)
+            await _asyncio.wait_for(
+                state["ctx"].__aexit__(None, None, None), timeout=1.5,
+            )
+        except _asyncio.TimeoutError:
+            logger.debug("Cancel timed out closing stream %s; proceeding", handle.request_id)
         except Exception as e:
             logger.debug("Cancel cleanup error (non-fatal): %s", e)
         return state["partial"]

@@ -1,0 +1,113 @@
+[
+  {
+    "scenario_id": "A_algorithmic_pivot",
+    "backend": "anthropic",
+    "model_id": "claude-haiku-4-5-20251001",
+    "pre_inject_text": "```python\ndef sort_integers(numbers):\n    \"\"\"\n    Sorts a list of integers in ascending order using the Timsort algorithm.\n    \n    Timsort is a hybrid stable sorting algorithm derived from merge sort and \n    insertion sort. It's efficient for real-world data and",
+    "continuation": "```python\ndef sort_integers(numbers):\n    \"\"\"\n    Sorts a list of integers in ascending order using counting sort.\n    \n    Counting sort is a non-comparison sorting algorithm that works in O(n + k)\n    time, where n is the number of elements and k is the range of input values.\n    Since input is guaranteed to be in [0, 1000], this achieves O(n) performance.\n    \n    Space complexity: O(k) where k is the range (1001 for values 0-1000).\n    \"\"\"\n    if not numbers:\n        return []\n    \n    # Range is 0 to 1000, so we need 1001 buckets\n    max_value = 1000\n    count = [0] * (max_value + 1)\n    \n    # Count occurrences of each number\n    for num in numbers:\n        count[num] += 1\n    \n    # Reconstruct sorted array by iterating through count array\n    sorted_result = []\n    for value in range(max_value + 1):\n        sorted_result.extend([value] * count[value])\n    \n    return sorted_result\n\n\n# Test cases\nif __name__ == \"__main__\":\n    # Test 1: Basic case\n    test1 = [64, 34, 25, 12, 22, 11, 90]\n    print(f\"Input: {test1}\")\n    print(f\"Output: {sort_integers(test1)}\")\n    print()\n    \n    # Test 2: Already sorted\n    test2 = [1, 2, 3, 4, 5]\n    print(f\"Input: {test2",
+    "heuristic_pass_signals_hit": [
+      "counting",
+      "bucket",
+      "count = "
+    ],
+    "heuristic_fail_signals_hit": [],
+    "judge_json": {
+      "switched_algorithm": true,
+      "uses_builtin_sort": false,
+      "verdict": "PASS",
+      "reason": "The continuation implements counting sort, a non-comparison sorting algorithm. It avoids using sorted() or .sort() methods, instead manually counting occurrences and reconstructing the sorted array. The implementation correctly handles the O(n + k) time complexity for the given constraints."
+    },
+    "elapsed_seconds": 3.59,
+    "pass_overall": true
+  },
+  {
+    "scenario_id": "B_tool_call_pivot",
+    "backend": "anthropic",
+    "model_id": "claude-haiku-4-5-20251001",
+    "pre_inject_text": "```json\n[\n  {\n    \"path\": \"auth/middleware.ts\",\n    \"action\": \"create\",\n    \"summary\": \"Create token-bucket rate limiter middleware with configurable rate and",
+    "continuation": "```json\n[\n  {\n    \"path\": \"auth/rate-limit-middleware.ts\",\n    \"action\": \"create\",\n    \"summary\": \"Create token-bucket rate limiter middleware with configurable rate and burst capacity\"\n  },\n  {\n    \"path\": \"config/rate-limit.ts\",\n    \"action\": \"create\",\n    \"summary\": \"Add rate limiter configuration constants for tokens per second and bucket capacity\"\n  },\n  {\n    \"path\": \"server.ts\",\n    \"action\": \"modify\",\n    \"summary\": \"Import and apply rate-limit middleware to Express app before route handlers\"\n  }\n]\n```",
+    "heuristic_pass_signals_hit": [
+      "auth/rate-limit-middleware.ts"
+    ],
+    "heuristic_fail_signals_hit": [],
+    "judge_json": {
+      "used_new_path": true,
+      "still_uses_locked_path": false,
+      "verdict": "PASS",
+      "reason": "The continuation references auth/rate-limit-middleware.ts and does not reference auth/middleware.ts"
+    },
+    "elapsed_seconds": 2.67,
+    "pass_overall": true
+  },
+  {
+    "scenario_id": "C_multi_step_pivot",
+    "backend": "anthropic",
+    "model_id": "claude-haiku-4-5-20251001",
+    "pre_inject_text": "1. Migrate existing user credentials and session data to a new normalized database schema with",
+    "continuation": "1. Audit the current authentication system to identify all endpoints, tokens, and user flows that need refactoring.\n\n2. Implement a new authentication service with modern security standards (OAuth 2.0, JWT) alongside the existing system.\n\n3. Create adapters to translate between the legacy auth format and the new authentication service to enable gradual migration.\n\n4. Systematically redirect client applications to use the new authentication service while maintaining backward compatibility.\n\n5. Monitor and validate that all users have successfully transitioned to the new auth flow, then decommission legacy authentication code.",
+    "heuristic_pass_signals_hit": [],
+    "heuristic_fail_signals_hit": [],
+    "judge_json": {
+      "omits_db_migration": true,
+      "verdict": "PASS",
+      "reason": "The continuation contains zero references to database migration, schema migration, ALTER TABLE, or any data layer migration steps. It focuses exclusively on authentication service refactoring and does not mention database changes."
+    },
+    "elapsed_seconds": 2.65,
+    "pass_overall": true
+  },
+  {
+    "scenario_id": "A_algorithmic_pivot",
+    "backend": "openai",
+    "model_id": "gpt-4o-mini",
+    "pre_inject_text": "Here is a Python function that sorts a list of integers in ascending order using the bubble sort algorithm. The bubble sort algorithm repeatedly",
+    "continuation": "Given the constraints that the input integers are guaranteed to be in the range [0, 1000], we can implement the counting sort algorithm, which operates in O(n) time complexity. Here is the complete, runnable Python code for the counting sort algorithm:\n\n```python\ndef counting_sort(arr):\n    \"\"\"\n    Sorts a list of integers in ascending order using the counting sort algorithm.\n    \n    The counting sort algorithm works by counting the occurrences of each distinct\n    integer (within a known range), and then uses the accumulated counts to construct\n    the sorted output list. This algorithm is efficient for sorting integers in a\n    limited range, achieving a time complexity of O(n).\n    \n    Args:\n        arr (list): A list of integers to be sorted, where 0 <= arr[i] <= 1000.\n\n    Returns:\n        list: A new list containing the sorted integers.\n    \"\"\"\n    # Define the range of input values\n    max_value = 1000\n    count = [0] * (max_value + 1)\n    \n    # Count the occurrence of each integer in the input list\n    for num in arr:\n        count[num] += 1\n\n    # Build the sorted output list\n    sorted_arr = []\n    for value in range(max_value + 1):\n        sorted_arr.extend([value] * ",
+    "heuristic_pass_signals_hit": [
+      "counting",
+      "count = "
+    ],
+    "heuristic_fail_signals_hit": [],
+    "judge_json": {
+      "switched_algorithm": true,
+      "uses_builtin_sort": false,
+      "verdict": "PASS",
+      "reason": "The continuation implements counting sort, a non-comparison sorting algorithm, and does not use any built-in sorting methods."
+    },
+    "elapsed_seconds": 11.44,
+    "pass_overall": true
+  },
+  {
+    "scenario_id": "B_tool_call_pivot",
+    "backend": "openai",
+    "model_id": "gpt-4o-mini",
+    "pre_inject_text": "```json\n[\n    {\n        \"path\": \"auth/middleware.ts\",\n        \"action\": \"create\",\n        \"summary\": \"Add a token-bucket",
+    "continuation": "```json\n[\n    {\n        \"path\": \"auth/rate-limit-middleware.ts\",\n        \"action\": \"create\",\n        \"summary\": \"Add a token-bucket rate limiter middleware using 'express-rate-limit'.\"\n    },\n    {\n        \"path\": \"auth/rate-limit-middleware.ts\",\n        \"action\": \"modify\",\n        \"summary\": \"Configure the rate limiter with desired limit and interval settings.\"\n    },\n    {\n        \"path\": \"app.ts\",\n        \"action\": \"modify\",\n        \"summary\": \"Import the rate limiting middleware and apply it to desired routes.\"\n    }\n]\n```",
+    "heuristic_pass_signals_hit": [
+      "auth/rate-limit-middleware.ts"
+    ],
+    "heuristic_fail_signals_hit": [],
+    "judge_json": {
+      "used_new_path": true,
+      "still_uses_locked_path": false,
+      "verdict": "PASS",
+      "reason": "The continuation references 'auth/rate-limit-middleware.ts' and does not reference 'auth/middleware.ts'."
+    },
+    "elapsed_seconds": 3.68,
+    "pass_overall": true
+  },
+  {
+    "scenario_id": "C_multi_step_pivot",
+    "backend": "openai",
+    "model_id": "gpt-4o-mini",
+    "pre_inject_text": "1. Migrate the legacy authentication database to a modern database schema that supports",
+    "continuation": "1. Update the authentication flow to use a secure and standardized protocol, such as OAuth2 or OpenID Connect.  \n2. Refactor the existing authentication code to improve readability, modularity, and maintainability by applying design patterns.  \n3. Implement automated tests for the authentication flow to ensure functionality and catch regressions quickly during future changes.  \n4. Gradually integrate user feedback to identify pain points in the new auth flow and address them in subsequent iterations.  \n5. Document the new authentication process thoroughly for developers and users to aid in onboarding and reduce confusion.  ",
+    "heuristic_pass_signals_hit": [],
+    "heuristic_fail_signals_hit": [],
+    "judge_json": {
+      "omits_db_migration": true,
+      "verdict": "PASS",
+      "reason": "The continuation has zero references to database migration, schema migration, ALTER TABLE, or data layer migration."
+    },
+    "elapsed_seconds": 3.76,
+    "pass_overall": true
+  }
+]

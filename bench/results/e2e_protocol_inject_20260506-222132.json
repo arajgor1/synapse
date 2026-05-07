@@ -1,0 +1,14 @@
+{
+  "conflict_detected": true,
+  "conflict_latency_ms": 18.4,
+  "pre_inject_text": "```json\n[\n  {\n    \"path\": \"package.json\",\n    \"action\": \"modify\",\n    \"summary\": \"Add express",
+  "post_inject_text": "```json\n[\n  {\n    \"path\": \"package.json\",\n    \"action\": \"modify\",\n    \"summary\": \"Add express-rate-limit dependency\"\n  },\n  {\n    \"path\": \"auth/rate-limit-middleware.ts\",\n    \"action\": \"create\",\n    \"summary\": \"Create token-bucket rate limiter middleware using express-rate-limit\"\n  },\n  {\n    \"path\": \"src/app.ts\",\n    \"action\": \"modify\",\n    \"summary\": \"Import and apply rate-limit middleware to Express app\"\n  }\n]\n```",
+  "references_locked_path": false,
+  "references_alt_path": true,
+  "pivot_envelope_emitted": true,
+  "pivot_new_scope": [
+    "auth.rate_limit_middleware:w"
+  ],
+  "overall_pass": true,
+  "notes": []
+}
