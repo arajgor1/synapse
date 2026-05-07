@@ -58,8 +58,10 @@ def _autodetect_framework() -> Optional[str]:
     """
     import sys
     candidates = (
-        "langgraph", "crewai", "autogen", "autogen_agentchat",
-        "openai_swarm", "smolagents", "pydantic_ai",
+        "langgraph", "crewai",
+        "autogen", "autogen_agentchat", "autogen_core",
+        "agents", "openai_agents", "openai_swarm",
+        "smolagents", "pydantic_ai",
     )
     for c in candidates:
         if c in sys.modules:
@@ -71,8 +73,8 @@ def _autodetect_framework() -> Optional[str]:
 def _normalize(mod: str) -> str:
     if mod.startswith("autogen"):
         return "autogen"
-    if mod == "openai_swarm":
-        return "swarm"
+    if mod in ("openai_swarm", "agents"):
+        return "openai_agents"
     return mod
 
 
@@ -150,8 +152,16 @@ def _ensure_framework_loaded(name: str) -> None:
             from synapse.frameworks import langgraph  # noqa: F401
         elif name == "crewai":
             from synapse.frameworks import crewai  # noqa: F401
-        elif name in ("autogen", "autogen_agentchat"):
+        elif name in ("autogen", "autogen_agentchat", "autogen_core"):
             from synapse.frameworks import autogen  # noqa: F401
+        elif name in ("openai_agents", "openai_agents_sdk", "swarm"):
+            from synapse.frameworks import openai_agents  # noqa: F401
+        elif name in ("pydantic_ai", "pydantic-ai"):
+            from synapse.frameworks import pydantic_ai  # noqa: F401
+        elif name == "smolagents":
+            from synapse.frameworks import smolagents  # noqa: F401
+        elif name == "hermes":
+            from synapse.frameworks import hermes  # noqa: F401
     except ImportError as e:
         logger.warning(
             "synapse.install: framework adapter %r not yet shipped or its "

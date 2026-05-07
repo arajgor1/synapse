@@ -67,6 +67,8 @@ image = (
         "langchain-core>=0.3",
         "langgraph>=0.2",
         "langchain-anthropic>=0.2",
+        # v0.2 Week 3a: CrewAI live test
+        "crewai>=0.86,<0.130",
     )
     .add_local_dir(
         # Mount the Synapse SDK source so we can `pip install -e` inside
@@ -976,6 +978,65 @@ def v02_langgraph_live(api_keys: dict[str, str]) -> dict[str, Any]:
             "stderr": "TIMEOUT",
             "elapsed_seconds": round(time.time() - started, 1),
         }
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=900, scaledown_window=10,
+)
+def v02_crewai_live(api_keys: dict[str, str]) -> dict[str, Any]:
+    """v0.2 Week 3a: real CrewAI 3-agent crew + real Anthropic Haiku +
+    synapse.install(framework='crewai')."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\npython3 /opt/synapse-payloads/v02_crewai_live.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", script],
+            capture_output=True, text=True, timeout=900, env=env,
+        )
+        return {
+            "exit_code": proc.returncode,
+            "stdout": proc.stdout[-50000:],
+            "stderr": proc.stderr[-3000:],
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+    except subprocess.TimeoutExpired as e:
+        return {
+            "exit_code": -1,
+            "stdout": (e.stdout or b"").decode("utf-8", errors="ignore")[-50000:],
+            "stderr": "TIMEOUT",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+
+@app.local_entrypoint()
+def v02_crewai() -> None:
+    """Drive v0.2 Week 3a CrewAI live test."""
+    import json
+    import os
+    import time
+
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set")
+        return
+    print(">>> v0.2 Week 3a: CrewAI + synapse.install() live test...")
+    r = v02_crewai_live.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"])
+    if r.get("stderr"):
+        print("\n--- stderr ---")
+        print(r["stderr"][:2000])
+    out = "bench/results"
+    os.makedirs(out, exist_ok=True)
+    path = os.path.join(out, f"v02_crewai_live_{time.strftime('%Y%m%d-%H%M%S')}.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {path}")
 
 
 @app.local_entrypoint()
