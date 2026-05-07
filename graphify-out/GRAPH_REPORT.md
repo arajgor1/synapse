@@ -1,12 +1,12 @@
 # Graph Report - .  (2026-05-07)
 
 ## Corpus Check
-- 158 files · ~90,559 words
+- 165 files · ~95,975 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1643 nodes · 3380 edges · 46 communities detected
-- Extraction: 57% EXTRACTED · 43% INFERRED · 0% AMBIGUOUS · INFERRED: 1455 edges (avg confidence: 0.6)
+- 1768 nodes · 3770 edges · 47 communities detected
+- Extraction: 55% EXTRACTED · 45% INFERRED · 0% AMBIGUOUS · INFERRED: 1695 edges (avg confidence: 0.59)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -35,39 +35,40 @@
 - [[_COMMUNITY_Inject + Replay|Inject + Replay]]
 - [[_COMMUNITY_Cost Telemetry|Cost Telemetry]]
 - [[_COMMUNITY_Bus + Streams|Bus + Streams]]
-- [[_COMMUNITY_Conflict Semantics|Conflict Semantics]]
+- [[_COMMUNITY_State Graph Persistence|State Graph Persistence]]
 - [[_COMMUNITY_OpenAI Adapter|OpenAI Adapter]]
-- [[_COMMUNITY_Ollama Adapter|Ollama Adapter]]
+- [[_COMMUNITY_Gemini Adapter|Gemini Adapter]]
 - [[_COMMUNITY_Paperclip Integration|Paperclip Integration]]
 - [[_COMMUNITY_OpenClaw Integration|OpenClaw Integration]]
 - [[_COMMUNITY_LangGraph Integration|LangGraph Integration]]
-- [[_COMMUNITY_Migrations + Schema|Migrations + Schema]]
-- [[_COMMUNITY_Universal Intend SDK (v0.2)|Universal Intend SDK (v0.2)]]
-- [[_COMMUNITY_Cluster 41|Cluster 41]]
-- [[_COMMUNITY_Cluster 43|Cluster 43]]
+- [[_COMMUNITY_Real Product-Dev Tests|Real Product-Dev Tests]]
+- [[_COMMUNITY_Smart Router Phases|Smart Router Phases]]
+- [[_COMMUNITY_Cluster 40|Cluster 40]]
+- [[_COMMUNITY_Cluster 42|Cluster 42]]
 - [[_COMMUNITY_Cluster 44|Cluster 44]]
 - [[_COMMUNITY_Cluster 45|Cluster 45]]
 - [[_COMMUNITY_Cluster 46|Cluster 46]]
 - [[_COMMUNITY_Cluster 47|Cluster 47]]
 - [[_COMMUNITY_Cluster 48|Cluster 48]]
 - [[_COMMUNITY_Cluster 49|Cluster 49]]
-- [[_COMMUNITY_Cluster 62|Cluster 62]]
+- [[_COMMUNITY_Cluster 50|Cluster 50]]
 - [[_COMMUNITY_Cluster 63|Cluster 63]]
 - [[_COMMUNITY_Cluster 64|Cluster 64]]
 - [[_COMMUNITY_Cluster 65|Cluster 65]]
 - [[_COMMUNITY_Cluster 66|Cluster 66]]
+- [[_COMMUNITY_Cluster 67|Cluster 67]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `StateGraph` - 119 edges
-2. `InferenceAdapter` - 118 edges
-3. `Bus` - 97 edges
-4. `Router` - 73 edges
-5. `MockAdapter` - 71 edges
-6. `BackendCapabilities` - 66 edges
-7. `AuditEvent` - 65 edges
-8. `Conflict` - 59 edges
+1. `InferenceAdapter` - 129 edges
+2. `StateGraph` - 128 edges
+3. `Bus` - 105 edges
+4. `MockAdapter` - 86 edges
+5. `Router` - 76 edges
+6. `Conflict` - 75 edges
+7. `BackendCapabilities` - 75 edges
+8. `AuditEvent` - 65 edges
 9. `BackendUnavailable` - 52 edges
-10. `StreamHandle` - 50 edges
+10. `Agent` - 51 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Agent` --uses--> `Synapse integration for Hermes Agent (NousResearch).  Hermes is a single-agent f`  [INFERRED]
@@ -85,246 +86,250 @@
 
 ### Community 0 - "Coordinator + Bench Workloads"
 Cohesion: 0.03
-Nodes (146): BaseModel, `synapse bench` — standardized backend benchmark.  Workloads: - pair-coding:, _agent(), main(), ``synapse demo`` — built-in 2-agent demo workload.  Runs a self-contained scenar, One agent: emit INTENTION, sleep (simulating work), check conflicts, exit., _run(), cli() (+138 more)
+Nodes (151): BaseModel, `synapse bench` — standardized backend benchmark.  Workloads: - pair-coding:, _agent(), main(), ``synapse demo`` — built-in 2-agent demo workload.  Runs a self-contained scenar, One agent: emit INTENTION, sleep (simulating work), check conflicts, exit., _run(), cli() (+143 more)
 
 ### Community 1 - "InferenceAdapter Protocol Surface"
-Cohesion: 0.02
-Nodes (151): AuditConflict, detect_conflicts(), In-memory conflict detector for audit-mode events.  Replicates the live L2 route, Run the L2-style detector across an event list.      Args:         events: Audit, AuditEvent, is_write(), Normalized audit-event schema.  All trace formats (OpenInference OTel, LangSmith, One tool-call observation extracted from a trace.      Mirrors the minimal shape (+143 more)
+Cohesion: 0.03
+Nodes (99): BackendUnavailable, InferenceAdapter, InferenceAdapter Protocol — see spec/adapter.md for the canonical contract., Opaque handle to an in-flight generation. Adapter-specific contents., Raised when the backend cannot be reached. SDK falls back to no-coordination mod, Raised when an operation is requested that the backend does not support     (e.g, StreamHandle, Token (+91 more)
 
 ### Community 2 - "Architecture Decisions + Adapter Tiers"
-Cohesion: 0.03
-Nodes (84): BackendUnavailable, InferenceAdapter, InferenceAdapter Protocol — see spec/adapter.md for the canonical contract., Opaque handle to an in-flight generation. Adapter-specific contents., Raised when the backend cannot be reached. SDK falls back to no-coordination mod, Raised when an operation is requested that the backend does not support     (e.g, StreamHandle, Token (+76 more)
+Cohesion: 0.02
+Nodes (137): AuditConflict, detect_conflicts(), In-memory conflict detector for audit-mode events.  Replicates the live L2 route, Run the L2-style detector across an event list.      Args:         events: Audit, AuditEvent, is_write(), Normalized audit-event schema.  All trace formats (OpenInference OTel, LangSmith, One tool-call observation extracted from a trace.      Mirrors the minimal shape (+129 more)
 
 ### Community 3 - "Demo Entry Points"
+Cohesion: 0.02
+Nodes (108): app_data_analysis(), app_instagram(), _common_setup_script(), fetch_docs(), fetch_integration_docs(), product_dev(), product_dev_openclaw(), product_dev_paperclip() (+100 more)
+
+### Community 4 - "Architecture Baseline Rationale"
 Cohesion: 0.03
 Nodes (104): Hosted adapter tier, Local-API adapter tier, Native adapter tier, ADR-1 JSON Schema for protocol, ADR-2 Redis Streams as message bus, ADR-3 Postgres + JSONB for state graph, ADR-4 Three-tier filtering rules->SQL->LLM, ADR-5 Event-driven coordinator (+96 more)
 
-### Community 4 - "Architecture Baseline Rationale"
-Cohesion: 0.02
-Nodes (95): app_data_analysis(), app_instagram(), _common_setup_script(), fetch_docs(), fetch_integration_docs(), product_dev(), product_dev_openclaw(), product_dev_paperclip() (+87 more)
-
 ### Community 5 - "Hermes Integration"
 Cohesion: 0.04
-Nodes (46): main(), make_coordinator_backend(), _section(), _wait_for_ready(), _finish(), main(), _main_with_timeout(), _make_a_backend() (+38 more)
+Nodes (48): Identifies who owns a request in a multi-tenant deployment.      All four fields, Raised when an operation tries to act on a request_id that belongs to a     diff, TenantContext, TenantViolation, Shared multi-tenant isolation helpers for adapters.  Native and Local-API adapte, Mix into an adapter that advertises multi_tenant_isolation='request_id'.      Ad, RequestIdIsolatedMixin, MockAdapter (+40 more)
 
 ### Community 6 - "Multi-Tenant Isolation"
 Cohesion: 0.04
-Nodes (45): Identifies who owns a request in a multi-tenant deployment.      All four fields, Raised when an operation tries to act on a request_id that belongs to a     diff, TenantContext, TenantViolation, Shared multi-tenant isolation helpers for adapters.  Native and Local-API adapte, Mix into an adapter that advertises multi_tenant_isolation='request_id'.      Ad, RequestIdIsolatedMixin, MockAdapter (+37 more)
+Nodes (45): main(), make_coordinator_backend(), _section(), _wait_for_ready(), _extract_url_field_name(), main(), _make_backend(), _print_table() (+37 more)
 
 ### Community 7 - "Adapter Family Landscape"
+Cohesion: 0.07
+Nodes (61): ABC, Enum, MergePolicy, MergeAction, MergeDecision, MergePolicy, SynapseConflict, AbortPolicy (+53 more)
+
+### Community 8 - "Two-Agent Conflict Demo"
 Cohesion: 0.03
 Nodes (75): Will revisit: L3 router cost at scale, Will revisit: mid-thinking injection, Will revisit: vLLM KV append API stability, ADR-0001 v1.0 Components, Append-and-continue primary mechanism, Backend-aware routing, Multi-tenant isolation in adapter contract, Three-tier urgency (+67 more)
 
-### Community 8 - "Two-Agent Conflict Demo"
+### Community 9 - "Coordinator Event Handlers"
 Cohesion: 0.04
 Nodes (57): A2A (cross-vendor agent interop), Aadit Rajgor, Anthropic adapter, Gemini adapter, Mock adapter, Ollama adapter, OpenAI adapter, Standardized adapter test suite (+49 more)
 
-### Community 9 - "Coordinator Event Handlers"
+### Community 10 - "Modal Sandbox Runner"
+Cohesion: 0.06
+Nodes (31): HermesSynapseConflict, install_hermes_synapse_hooks(), Synapse integration for Hermes Agent (NousResearch).  Hermes is a single-agent f, Install runtime hooks into Hermes' tool dispatch path.      Returns a status dic, Register an additional Synapse agent in the same session.      Used for multi-ag, Raised inside a wrapped Hermes tool dispatch when CONFLICT arrives., Wrap a Hermes tool dispatch with Synapse coordination.      Args:         tool_n, Map a Hermes tool call to a Synapse scope claim.      Convention:       file ops (+23 more)
+
+### Community 11 - "Scope Matcher"
 Cohesion: 0.04
 Nodes (50): Two-Agents Conflict Demo (Phase 1 deliverable), L2 conflict detection (SQL + Python scope matcher), Pre-execution gate (blocking=True drains inbox), Demo Prerequisites: Docker Desktop, Python 3.11+, Synapse Examples README, Fresh random session ID rationale, One-time setup (docker compose up, pip install -e sdk-python), two_agents_conflict_demo.py (+42 more)
 
-### Community 10 - "Modal Sandbox Runner"
-Cohesion: 0.07
-Nodes (24): HermesSynapseConflict, install_hermes_synapse_hooks(), Synapse integration for Hermes Agent (NousResearch).  Hermes is a single-agent f, Install runtime hooks into Hermes' tool dispatch path.      Returns a status dic, Register an additional Synapse agent in the same session.      Used for multi-ag, Raised inside a wrapped Hermes tool dispatch when CONFLICT arrives., Wrap a Hermes tool dispatch with Synapse coordination.      Args:         tool_n, Map a Hermes tool call to a Synapse scope claim.      Convention:       file ops (+16 more)
-
-### Community 11 - "Scope Matcher"
-Cohesion: 0.05
-Nodes (37): _agent_id_from_task(), _install_crewai(), CrewAI adapter for ``synapse.install(framework="crewai")``.  Wraps CrewAI's Task, Map a CrewAI Task to a scope claim.      Heuristics:       - If task.expected_ou, _scope_from_task(), _wrap_async(), _wrap_sync(), _autodetect_framework() (+29 more)
-
 ### Community 12 - "Anthropic Test Fakes"
-Cohesion: 0.1
-Nodes (30): FakeAnthropicEvent, FakeAnthropicInputJsonDelta, FakeAnthropicMessages, FakeAnthropicStream, FakeAnthropicStreamCtx, FakeAnthropicTextDelta, FakeAnthropicThinkingDelta, FakeOpenAIChoice (+22 more)
+Cohesion: 0.05
+Nodes (36): _agent_id_from_task(), _install_crewai(), CrewAI adapter for ``synapse.install(framework="crewai")``.  Wraps CrewAI's Task, Map a CrewAI Task to a scope claim.      Heuristics:       - If task.expected_ou, _scope_from_task(), _wrap_async(), _wrap_sync(), _autodetect_framework() (+28 more)
 
 ### Community 13 - "Protocol Freeze + v0.2 ADR-0003"
+Cohesion: 0.09
+Nodes (31): adapter(), FakeAnthropicEvent, FakeAnthropicInputJsonDelta, FakeAnthropicMessages, FakeAnthropicStream, FakeAnthropicStreamCtx, FakeAnthropicTextDelta, FakeAnthropicThinkingDelta (+23 more)
+
+### Community 14 - "Framework Integrations Surface"
 Cohesion: 0.08
 Nodes (15): conflicts(), find_overlapping_scopes(), has_write(), _intersect_parts(), parse_scope(), patterns_intersect(), pool(), Unit tests for spec/conflict-semantics.md.  Runs without infrastructure — pure f (+7 more)
 
-### Community 14 - "Framework Integrations Surface"
+### Community 15 - "Gateway WebSocket State"
 Cohesion: 0.06
 Nodes (40): Protocol v1.0 frozen at commit 7656e13, Protocol Evolution Rules, ADR-0002: Protocol v1.0 Freeze, synapse spec validate CLI, Alt A: Bundle hosted LLM, Alt B: OTel as canonical wire format, Alt C: Live-first integration (skip audit), ADR-0003: BYO-LLM, Audit-First, OpenInference (+32 more)
 
-### Community 15 - "Gateway WebSocket State"
+### Community 16 - "L3 Semantic Router"
 Cohesion: 0.06
 Nodes (38): CONFLICT envelope, Frameworks unchanged - Synapse adapts to their APIs, Hermes Agent, INTENTION envelope, Modal sandbox smoke test, OpenClaw, Paperclip AI, Postgres state graph (+30 more)
 
-### Community 16 - "L3 Semantic Router"
+### Community 17 - "CrewAI Integration"
 Cohesion: 0.08
 Nodes (22): GatewayState, get_agents(), get_beliefs(), get_intentions(), get_recent_events(), lifespan(), list_sessions(), _parse_jsonb() (+14 more)
 
-### Community 17 - "CrewAI Integration"
-Cohesion: 0.12
-Nodes (15): AgentBelief, BeliefDivergence, beliefs_from_db_rows(), detect_divergences(), Belief divergence detection.  When multiple agents assert different values for t, Two or more agents holding distinct values for the same key., Structural equality, with float fuzz., Group beliefs by key. Within each key, find sets of agents with     distinct val (+7 more)
-
 ### Community 18 - "Synapse CLI"
-Cohesion: 0.11
-Nodes (24): _check_docker_available(), cmd_down(), cmd_status(), cmd_up(), _compose_cmd(), _find_compose_file(), main(), ``synapse up / down / status`` — one-command local stack lifecycle.  Wraps ``doc (+16 more)
+Cohesion: 0.09
+Nodes (23): FakeCrewTask, main(), Exception, CrewAI integration — wrap a CrewAI Task or any callable so that its execution pa, Monkey-patch the task's execute methods to emit Synapse messages., Wrap a CrewAI Task (or any callable) with Synapse coordination.      Returns a f, synapse_task(), _wrap_task_object() (+15 more)
 
 ### Community 19 - "vLLM Modal Engine"
-Cohesion: 0.11
-Nodes (15): _percentile(), run_bench(), _wait_ready(), cmd_audit(), cmd_bench(), cmd_spec_validate(), `synapse` CLI entry point.  Subcommands: - `synapse spec validate [PATH ...]` —, _iter_inputs() (+7 more)
+Cohesion: 0.1
+Nodes (10): main(), _section(), _wait_for_ready(), L3SemanticRouter, L3Stats, L3 router unit tests — JSON parsing, candidate filter, threshold logic.  No live, The adjust_threshold logic on a fake router. We instantiate a partial     L3Sema, TestL3Stats (+2 more)
 
 ### Community 20 - "TS SDK Surface"
 Cohesion: 0.12
-Nodes (15): CrewAI integration — wrap a CrewAI Task or any callable so that its execution pa, Monkey-patch the task's execute methods to emit Synapse messages., Wrap a CrewAI Task (or any callable) with Synapse coordination.      Returns a f, synapse_task(), _wrap_task_object(), synapse_node(), fake_agent(), _FakeAgent (+7 more)
+Nodes (15): AgentBelief, BeliefDivergence, beliefs_from_db_rows(), detect_divergences(), Belief divergence detection.  When multiple agents assert different values for t, Two or more agents holding distinct values for the same key., Structural equality, with float fuzz., Group beliefs by key. Within each key, find sets of agents with     distinct val (+7 more)
 
 ### Community 21 - "Belief Divergence"
+Cohesion: 0.11
+Nodes (24): _check_docker_available(), cmd_down(), cmd_status(), cmd_up(), _compose_cmd(), _find_compose_file(), main(), ``synapse up / down / status`` — one-command local stack lifecycle.  Wraps ``doc (+16 more)
+
+### Community 22 - "Inject + Replay"
+Cohesion: 0.11
+Nodes (15): _percentile(), run_bench(), _wait_ready(), cmd_audit(), cmd_bench(), cmd_spec_validate(), `synapse` CLI entry point.  Subcommands: - `synapse spec validate [PATH ...]` —, _iter_inputs() (+7 more)
+
+### Community 23 - "Cost Telemetry"
 Cohesion: 0.14
 Nodes (12): clear(), get_internal_llm(), get_llm(), LLMConfig, Module-level LLM config — set once, read everywhere., The two-LLM split: a primary model for user-facing decisions     (auto-merge, es, Configure the LLM(s) Synapse will use for internal reasoning.      Args:, Return the primary adapter, or None if unconfigured. (+4 more)
 
-### Community 22 - "Inject + Replay"
-Cohesion: 0.24
-Nodes (4): main(), _section(), _wait_for_ready(), L3SemanticRouter
-
-### Community 23 - "Cost Telemetry"
+### Community 24 - "Bus + Streams"
 Cohesion: 0.25
 Nodes (4): Modal serverless GPU engine for Synapse native-tier adapter.  Uses real **vLLM**, Stateful container hosting a real vLLM AsyncLLMEngine.      Each container insta, smoke_test(), VLLMEngine
 
-### Community 24 - "Bus + Streams"
+### Community 25 - "State Graph Persistence"
 Cohesion: 0.57
 Nodes (5): agents, beliefs, blocks, events, intentions
 
-### Community 26 - "Conflict Semantics"
+### Community 27 - "OpenAI Adapter"
 Cohesion: 0.67
 Nodes (2): main(), runScenario()
 
-### Community 27 - "OpenAI Adapter"
+### Community 28 - "Gemini Adapter"
 Cohesion: 0.5
 Nodes (3): _install_hermes(), Hermes adapter for ``synapse.install(framework="hermes")``.  The v0.1 ``synapse., Bootstrap the v0.1 Hermes integration via the v0.2 install path.      Runs ``ins
 
-### Community 29 - "Ollama Adapter"
+### Community 30 - "Paperclip Integration"
 Cohesion: 1.0
 Nodes (1): Synapse router — L1 (rules) + L2 (SQL conflict) for Phase 1.  L3 (semantic relev
 
-### Community 30 - "Paperclip Integration"
+### Community 31 - "OpenClaw Integration"
 Cohesion: 1.0
 Nodes (1): synapse CLI — `synapse spec validate`, `synapse bench`, and friends.
 
-### Community 31 - "OpenClaw Integration"
+### Community 32 - "LangGraph Integration"
 Cohesion: 1.0
 Nodes (1): Framework-specific install hooks for ``synapse.install(framework=...)``.  Each m
 
-### Community 32 - "LangGraph Integration"
+### Community 33 - "Real Product-Dev Tests"
 Cohesion: 1.0
 Nodes (1): Synapse framework integrations.  These are NOT inference adapters (those wrap LL
 
-### Community 36 - "Migrations + Schema"
+### Community 37 - "Smart Router Phases"
 Cohesion: 1.0
 Nodes (2): Router (L1 rules, L2 SQL, L3 LLM-mediated), stale_base_overwrite detection
 
-### Community 39 - "Universal Intend SDK (v0.2)"
+### Community 40 - "Cluster 40"
 Cohesion: 1.0
 Nodes (1): Combined confidence + source-rank score, 0..1.          observed > inferred > as
 
-### Community 41 - "Cluster 41"
+### Community 42 - "Cluster 42"
 Cohesion: 1.0
 Nodes (1): Stream tokens via vLLM's native async generator.          Yields dicts: {"delta"
 
-### Community 43 - "Cluster 43"
+### Community 44 - "Cluster 44"
 Cohesion: 1.0
 Nodes (1): Construct a fresh envelope with a new ULID and current timestamp.
 
-### Community 44 - "Cluster 44"
+### Community 45 - "Cluster 45"
 Cohesion: 1.0
 Nodes (1): Documented happy path: a sequence of content_block_delta events with         tex
 
-### Community 45 - "Cluster 45"
+### Community 46 - "Cluster 46"
 Cohesion: 1.0
 Nodes (1): Tool-use streaming sends input_json_delta. Adapter should skip         these (th
 
-### Community 46 - "Cluster 46"
+### Community 47 - "Cluster 47"
 Cohesion: 1.0
 Nodes (1): Extended-thinking models emit thinking_delta. v1 adapter ignores.
 
-### Community 47 - "Cluster 47"
+### Community 48 - "Cluster 48"
 Cohesion: 1.0
 Nodes (1): Verify the cached-restart message structure matches the documented         promp
 
-### Community 48 - "Cluster 48"
+### Community 49 - "Cluster 49"
 Cohesion: 1.0
 Nodes (1): Standard openai-python chunk shape:         chunk.choices[0].delta.content -> st
 
-### Community 49 - "Cluster 49"
+### Community 50 - "Cluster 50"
 Cohesion: 1.0
 Nodes (1): Some chunks can have an empty choices list (rare but documented).
 
-### Community 62 - "Cluster 62"
+### Community 63 - "Cluster 63"
 Cohesion: 1.0
 Nodes (1): Gateway (FastAPI WebSocket + REST)
 
-### Community 63 - "Cluster 63"
+### Community 64 - "Cluster 64"
 Cohesion: 1.0
 Nodes (1): Observability UI (Next.js dashboard)
 
-### Community 64 - "Cluster 64"
+### Community 65 - "Cluster 65"
 Cohesion: 1.0
 Nodes (1): Synapse CLI
 
-### Community 65 - "Cluster 65"
+### Community 66 - "Cluster 66"
 Cohesion: 1.0
 Nodes (1): AutoGen framework
 
-### Community 66 - "Cluster 66"
+### Community 67 - "Cluster 67"
 Cohesion: 1.0
 Nodes (1): runtime README (stub)
 
 ## Knowledge Gaps
-- **224 isolated node(s):** `Anthropic adapter live smoke test.  Verifies, against the real Anthropic API: 1.`, `OpenAI adapter live smoke test.  Verifies, against the real OpenAI API: 1. Can i`, `Belief divergence detection.  When multiple agents assert different values for t`, `Combined confidence + source-rank score, 0..1.          observed > inferred > as`, `Two or more agents holding distinct values for the same key.` (+219 more)
+- **238 isolated node(s):** `Anthropic adapter live smoke test.  Verifies, against the real Anthropic API: 1.`, `OpenAI adapter live smoke test.  Verifies, against the real OpenAI API: 1. Can i`, `Belief divergence detection.  When multiple agents assert different values for t`, `Combined confidence + source-rank score, 0..1.          observed > inferred > as`, `Two or more agents holding distinct values for the same key.` (+233 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Conflict Semantics`** (4 nodes): `main()`, `makeWriteCodeExtension()`, `runScenario()`, `real_product_dev_openclaw.mjs`
+- **Thin community `OpenAI Adapter`** (4 nodes): `main()`, `makeWriteCodeExtension()`, `runScenario()`, `real_product_dev_openclaw.mjs`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Ollama Adapter`** (2 nodes): `Synapse router — L1 (rules) + L2 (SQL conflict) for Phase 1.  L3 (semantic relev`, `__init__.py`
+- **Thin community `Paperclip Integration`** (2 nodes): `Synapse router — L1 (rules) + L2 (SQL conflict) for Phase 1.  L3 (semantic relev`, `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Paperclip Integration`** (2 nodes): `synapse CLI — `synapse spec validate`, `synapse bench`, and friends.`, `__init__.py`
+- **Thin community `OpenClaw Integration`** (2 nodes): `synapse CLI — `synapse spec validate`, `synapse bench`, and friends.`, `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `OpenClaw Integration`** (2 nodes): `Framework-specific install hooks for ``synapse.install(framework=...)``.  Each m`, `__init__.py`
+- **Thin community `LangGraph Integration`** (2 nodes): `Framework-specific install hooks for ``synapse.install(framework=...)``.  Each m`, `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `LangGraph Integration`** (2 nodes): `Synapse framework integrations.  These are NOT inference adapters (those wrap LL`, `__init__.py`
+- **Thin community `Real Product-Dev Tests`** (2 nodes): `Synapse framework integrations.  These are NOT inference adapters (those wrap LL`, `__init__.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Migrations + Schema`** (2 nodes): `Router (L1 rules, L2 SQL, L3 LLM-mediated)`, `stale_base_overwrite detection`
+- **Thin community `Smart Router Phases`** (2 nodes): `Router (L1 rules, L2 SQL, L3 LLM-mediated)`, `stale_base_overwrite detection`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Universal Intend SDK (v0.2)`** (1 nodes): `Combined confidence + source-rank score, 0..1.          observed > inferred > as`
+- **Thin community `Cluster 40`** (1 nodes): `Combined confidence + source-rank score, 0..1.          observed > inferred > as`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 41`** (1 nodes): `Stream tokens via vLLM's native async generator.          Yields dicts: {"delta"`
+- **Thin community `Cluster 42`** (1 nodes): `Stream tokens via vLLM's native async generator.          Yields dicts: {"delta"`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 43`** (1 nodes): `Construct a fresh envelope with a new ULID and current timestamp.`
+- **Thin community `Cluster 44`** (1 nodes): `Construct a fresh envelope with a new ULID and current timestamp.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 44`** (1 nodes): `Documented happy path: a sequence of content_block_delta events with         tex`
+- **Thin community `Cluster 45`** (1 nodes): `Documented happy path: a sequence of content_block_delta events with         tex`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 45`** (1 nodes): `Tool-use streaming sends input_json_delta. Adapter should skip         these (th`
+- **Thin community `Cluster 46`** (1 nodes): `Tool-use streaming sends input_json_delta. Adapter should skip         these (th`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 46`** (1 nodes): `Extended-thinking models emit thinking_delta. v1 adapter ignores.`
+- **Thin community `Cluster 47`** (1 nodes): `Extended-thinking models emit thinking_delta. v1 adapter ignores.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 47`** (1 nodes): `Verify the cached-restart message structure matches the documented         promp`
+- **Thin community `Cluster 48`** (1 nodes): `Verify the cached-restart message structure matches the documented         promp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 48`** (1 nodes): `Standard openai-python chunk shape:         chunk.choices[0].delta.content -> st`
+- **Thin community `Cluster 49`** (1 nodes): `Standard openai-python chunk shape:         chunk.choices[0].delta.content -> st`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 49`** (1 nodes): `Some chunks can have an empty choices list (rare but documented).`
+- **Thin community `Cluster 50`** (1 nodes): `Some chunks can have an empty choices list (rare but documented).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 62`** (1 nodes): `Gateway (FastAPI WebSocket + REST)`
+- **Thin community `Cluster 63`** (1 nodes): `Gateway (FastAPI WebSocket + REST)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 63`** (1 nodes): `Observability UI (Next.js dashboard)`
+- **Thin community `Cluster 64`** (1 nodes): `Observability UI (Next.js dashboard)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 64`** (1 nodes): `Synapse CLI`
+- **Thin community `Cluster 65`** (1 nodes): `Synapse CLI`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 65`** (1 nodes): `AutoGen framework`
+- **Thin community `Cluster 66`** (1 nodes): `AutoGen framework`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Cluster 66`** (1 nodes): `runtime README (stub)`
+- **Thin community `Cluster 67`** (1 nodes): `runtime README (stub)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `InferenceAdapter` connect `Architecture Decisions + Adapter Tiers` to `Coordinator + Bench Workloads`, `InferenceAdapter Protocol Surface`, `Multi-Tenant Isolation`, `Scope Matcher`, `TS SDK Surface`, `Belief Divergence`, `Inject + Replay`?**
-  _High betweenness centrality (0.097) - this node is a cross-community bridge._
-- **Why does `StateGraph` connect `Coordinator + Bench Workloads` to `InferenceAdapter Protocol Surface`, `Architecture Decisions + Adapter Tiers`, `Hermes Integration`, `Modal Sandbox Runner`, `Protocol Freeze + v0.2 ADR-0003`, `L3 Semantic Router`, `vLLM Modal Engine`, `Inject + Replay`?**
-  _High betweenness centrality (0.065) - this node is a cross-community bridge._
-- **Why does `AuditEvent` connect `InferenceAdapter Protocol Surface` to `Scope Matcher`?**
-  _High betweenness centrality (0.060) - this node is a cross-community bridge._
-- **Are the 110 inferred relationships involving `StateGraph` (e.g. with `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief` and `Coordinator uses Gemini Flash (free via Vertex AI).`) actually correct?**
-  _`StateGraph` has 110 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 112 inferred relationships involving `InferenceAdapter` (e.g. with `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief` and `Coordinator uses Gemini Flash (free via Vertex AI).`) actually correct?**
-  _`InferenceAdapter` has 112 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 84 inferred relationships involving `Bus` (e.g. with `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief` and `Coordinator uses Gemini Flash (free via Vertex AI).`) actually correct?**
-  _`Bus` has 84 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 65 inferred relationships involving `Router` (e.g. with `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief` and `Coordinator uses Gemini Flash (free via Vertex AI).`) actually correct?**
-  _`Router` has 65 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `StateGraph` connect `Coordinator + Bench Workloads` to `Hermes Integration`, `Multi-Tenant Isolation`, `Modal Sandbox Runner`, `Framework Integrations Surface`, `CrewAI Integration`, `Synapse CLI`, `vLLM Modal Engine`, `Inject + Replay`?**
+  _High betweenness centrality (0.082) - this node is a cross-community bridge._
+- **Why does `InferenceAdapter` connect `InferenceAdapter Protocol Surface` to `Coordinator + Bench Workloads`, `Architecture Decisions + Adapter Tiers`, `Hermes Integration`, `Anthropic Test Fakes`, `Synapse CLI`, `vLLM Modal Engine`, `Cost Telemetry`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
+- **Why does `AuditEvent` connect `Architecture Decisions + Adapter Tiers` to `Anthropic Test Fakes`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
+- **Are the 123 inferred relationships involving `InferenceAdapter` (e.g. with `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief` and `Coordinator uses Gemini Flash (free via Vertex AI).`) actually correct?**
+  _`InferenceAdapter` has 123 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 119 inferred relationships involving `StateGraph` (e.g. with `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief` and `Coordinator uses Gemini Flash (free via Vertex AI).`) actually correct?**
+  _`StateGraph` has 119 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 92 inferred relationships involving `Bus` (e.g. with `Phase 4 deliverable — coordinator agent in action.  Three scenarios: 1. **Belief` and `Coordinator uses Gemini Flash (free via Vertex AI).`) actually correct?**
+  _`Bus` has 92 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 71 inferred relationships involving `MockAdapter` (e.g. with `IntentionHandle` and ```synapse.intend()`` — the universal context-manager SDK.  Wraps a tool dispatch`) actually correct?**
+  _`MockAdapter` has 71 INFERRED edges - model-reasoned connections that need verification._
