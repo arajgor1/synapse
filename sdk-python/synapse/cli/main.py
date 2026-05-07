@@ -36,6 +36,26 @@ def cmd_bench(args: argparse.Namespace) -> int:
     )
 
 
+def cmd_up(args: argparse.Namespace) -> int:
+    from synapse.cli.up import cmd_up as _up
+    return _up(args)
+
+
+def cmd_down(args: argparse.Namespace) -> int:
+    from synapse.cli.up import cmd_down as _down
+    return _down(args)
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    from synapse.cli.up import cmd_status as _status
+    return _status(args)
+
+
+def cmd_demo(args: argparse.Namespace) -> int:
+    from synapse.cli.demo import main as demo_main
+    return demo_main([])
+
+
 def cmd_audit(args: argparse.Namespace) -> int:
     from synapse.cli.audit import main as audit_main
 
@@ -134,6 +154,34 @@ def main(argv: list[str] | None = None) -> int:
         help="Skip the textual summary",
     )
     p_audit.set_defaults(func=cmd_audit)
+
+    # up
+    p_up = sub.add_parser(
+        "up",
+        help="Bring up the local Synapse stack (Redis + Postgres) via Docker Compose.",
+    )
+    p_up.add_argument("--services", nargs="+", default=None,
+                       help="Subset of services to start (default: all)")
+    p_up.add_argument("--timeout", type=int, default=30,
+                       help="Health-check timeout in seconds (default: 30)")
+    p_up.set_defaults(func=cmd_up)
+
+    # down
+    p_down = sub.add_parser("down", help="Stop the local Synapse stack.")
+    p_down.add_argument("--volumes", action="store_true",
+                         help="Also remove volumes (wipes Redis + Postgres data)")
+    p_down.set_defaults(func=cmd_down)
+
+    # status
+    p_status = sub.add_parser("status", help="Show Synapse stack status + relevant env vars.")
+    p_status.set_defaults(func=cmd_status)
+
+    # demo
+    p_demo = sub.add_parser(
+        "demo",
+        help="Run a local multi-agent demo against the running Synapse stack.",
+    )
+    p_demo.set_defaults(func=cmd_demo)
 
     ns = parser.parse_args(argv)
     return int(ns.func(ns))

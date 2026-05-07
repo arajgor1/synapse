@@ -1,16 +1,44 @@
 # Synapse
 
-> A real-time coordination protocol for parallel AI agents working in the same session.
+> The missing observability + safety layer for any multi-agent AI stack.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Status: Pre-alpha](https://img.shields.io/badge/Status-Pre--alpha-orange.svg)](#status)
+[![Version: v0.2.0-alpha](https://img.shields.io/badge/Version-v0.2.0--alpha-blue.svg)](#status)
 [![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/)
+
+## 30-second hello-world
+
+```bash
+pip install synapse-protocol
+
+# Already shipping a multi-agent stack and want to see what's broken?
+# Audit your existing trace exports — works with OpenInference, LangSmith, JSONL.
+synapse audit ./your-traces.json
+
+# Or wire it into your agent framework live (one of: langgraph, crewai, autogen,
+# openai_agents, pydantic_ai, smolagents, hermes — more on the way)
+python - <<'PY'
+import synapse
+synapse.set_llm(synapse.from_anthropic())
+synapse.install(framework="langgraph")
+# ... your normal agent code, now with conflict detection ...
+PY
+
+# Spin up the local observability stack (Redis + Postgres + dashboard)
+synapse up
+```
 
 ## What this is
 
-Synapse is a coordination layer for multi-agent AI systems. When multiple agents work in parallel on the same project, repository, or task, Synapse lets them announce intentions before acting, detect conflicts before they become collisions, and pivot together when one agent's work changes the picture for the others.
+Synapse is the layer that catches the silent disasters in multi-agent AI systems: two agents writing the same file with conflicting changes, one agent overwriting another's recent work, the third agent acting on a stale belief that contradicts what its colleague already learned.
 
-Think of it as **OpenTelemetry + Redis Streams + a conflict-aware intent protocol** for autonomous agents — the layer that prevents three coding agents from racing each other to modify the same file with three different ideas.
+Three product surfaces:
+
+1. **`synapse audit`** — read-only conflict detection on existing trace exports. Works with any framework that emits OpenInference OTel, LangSmith, or JSONL traces. No infrastructure required.
+2. **`synapse.intend()`** — a universal context-manager API that any Python codebase can use to announce intentions, detect conflicts, and emit resolutions through Synapse's protocol.
+3. **`synapse.install(framework=...)`** — one-line wiring for the major agent frameworks (LangGraph, CrewAI, AutoGen, OpenAI Agents SDK, Pydantic AI, smolagents, Hermes). Auto-instruments every tool dispatch.
+
+All three speak the same envelope protocol underneath, persist to the same state graph, and surface in the same live dashboard. **Bring your own LLM** — Synapse never makes a paid LLM call without explicit caller consent.
 
 ## What this is *not*
 

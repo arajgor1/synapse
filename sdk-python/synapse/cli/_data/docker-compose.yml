@@ -1,0 +1,40 @@
+# Synapse local development stack
+# Brings up Redis (message bus) and Postgres (state graph).
+# Runtime services (router, coordinator) land in Phase 1+.
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    container_name: synapse-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: synapse-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: synapse_dev
+      POSTGRES_DB: synapse
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synapse"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  redis-data:
+  postgres-data:
