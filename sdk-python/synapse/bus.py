@@ -12,7 +12,25 @@ import json
 import logging
 from typing import Any, AsyncIterator, Optional
 
-import redis.asyncio as aioredis
+# redis lives behind the [live] extras. Audit-only installs don't need it
+# and shouldn't crash on import. Tolerate the missing dep here; raise a
+# clean error in Bus.connect() if someone tries to use it without [live].
+try:
+    import redis.asyncio as aioredis  # type: ignore[import-not-found]
+    _REDIS_AVAILABLE = True
+except ImportError:  # pragma: no cover — exercised in audit-only installs
+    aioredis = None  # type: ignore[assignment]
+    _REDIS_AVAILABLE = False
+
+
+def _require_redis() -> None:
+    if not _REDIS_AVAILABLE:
+        raise ImportError(
+            "synapse.bus requires the 'live' extras. Install with "
+            "`pip install synapse-protocol[live]`. The `synapse audit` "
+            "subcommand and read-only audit pipeline do NOT need this."
+        )
+
 
 from synapse.messages import Envelope
 
@@ -39,6 +57,7 @@ class Bus:
         self._redis: Optional[aioredis.Redis] = None
 
     async def connect(self) -> None:
+        _require_redis()
         self._redis = aioredis.from_url(self._url, decode_responses=True)
         await self._redis.ping()
         logger.info("Bus connected: %s", self._url)

@@ -1,197 +1,200 @@
 # Synapse
 
-> The missing observability + safety layer for any multi-agent AI stack.
+> **The safety layer for multi-agent AI systems.**
+> Audit existing logs for silent collisions, prevent them live, and resolve them with your own LLM.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Version: v0.2.0-alpha](https://img.shields.io/badge/Version-v0.2.0--alpha-blue.svg)](#status)
-[![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/)
+[![Version: v0.2.1-alpha](https://img.shields.io/badge/Version-v0.2.1--alpha-blue.svg)](#status)
+[![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
+[![Tests](https://img.shields.io/badge/tests-482%20passing-brightgreen.svg)](#tests)
 
-## 30-second hello-world
+---
+
+## What Synapse is for
+
+When AI agents share state — the same repo, the same database, the same customer — they collide. Two agents rewrite the same file with different ideas. Three agents independently decide on three different revenue formulas. The last writer wins, contributions vanish silently, and nobody notices until production breaks.
+
+Synapse is the open-source protocol + libraries that **detect, audit, and resolve those collisions** before they corrupt your output.
+
+It sits next to — not against — the observability tools you already use. The collisions that LangSmith / Arize Phoenix / Langfuse log, Synapse catches and resolves.
+
+## What Synapse is NOT
+
+- Not another LLM-call observability tool. Use [LangSmith](https://www.langchain.com/langsmith) / [Phoenix](https://phoenix.arize.com) / [Langfuse](https://langfuse.com) for traces and eval. We sit on top.
+- Not a cross-vendor agent interop standard. [A2A](https://github.com/a2aproject/A2A) covers that.
+- Not a tool-access standard. [MCP](https://modelcontextprotocol.io) covers that.
+- Not a new agent framework. We wrap the ones you already use ([LangGraph](https://github.com/langchain-ai/langgraph), [CrewAI](https://github.com/crewAIInc/crewAI), [AutoGen](https://github.com/microsoft/autogen), [Vercel AI SDK](https://sdk.vercel.ai), and 7 more).
+
+## Three layers, one product
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  AUDIT (the wedge)                                         │
+│    synapse audit ./traces.json                             │
+│  → free, no install, reads OpenInference / LangSmith / JSONL │
+│  → output: HTML report listing every silent collision      │
+│    in your existing logs                                   │
+└─────────────────────────┬──────────────────────────────────┘
+                          ▼ once you see the problem
+┌────────────────────────────────────────────────────────────┐
+│  STANDARD + LIBRARY (the protocol)                         │
+│    synapse-protocol v1.0 — open spec + Python + TS SDKs    │
+│  → 11 framework adapters: LangGraph, CrewAI, AutoGen,      │
+│    OpenAI Agents SDK, Pydantic AI, smolagents, Vercel AI   │
+│    SDK, LangGraph.js, Hermes, Paperclip, OpenClaw          │
+│  → BYO-LLM, self-hosted, Apache 2.0                        │
+└─────────────────────────┬──────────────────────────────────┘
+                          ▼ wire it in, get
+┌────────────────────────────────────────────────────────────┐
+│  SAFETY (the value-add)                                    │
+│  → MergePolicy.auto_merge — LLM-mediated reconciliation    │
+│  → critical_scopes — hard-block on production paths        │
+│  → BELIEF divergence — catches semantic conflicts          │
+│    that file-overlap detection misses                      │
+└────────────────────────────────────────────────────────────┘
+```
+
+## 60-second hello-world
+
+### 1. Audit your existing logs (no infrastructure needed)
 
 ```bash
 pip install synapse-protocol
-
-# Already shipping a multi-agent stack and want to see what's broken?
-# Audit your existing trace exports — works with OpenInference, LangSmith, JSONL.
-synapse audit ./your-traces.json
-
-# Or wire it into your agent framework live (one of: langgraph, crewai, autogen,
-# openai_agents, pydantic_ai, smolagents, hermes — more on the way)
-python - <<'PY'
-import synapse
-synapse.set_llm(synapse.from_anthropic())
-synapse.install(framework="langgraph")
-# ... your normal agent code, now with conflict detection ...
-PY
-
-# Spin up the local observability stack (Redis + Postgres + dashboard)
-synapse up
+synapse audit ./your-langsmith-export.json
 ```
 
-## What this is
+```
+Found 23 silent conflicts across 8 sessions.
+Estimated waste: ~15.4k tokens / ~$0.31.
+Full report: ./synapse-audit-2026-05-08.html
+```
 
-Synapse is the layer that catches the silent disasters in multi-agent AI systems: two agents writing the same file with conflicting changes, one agent overwriting another's recent work, the third agent acting on a stale belief that contradicts what its colleague already learned.
+The audit CLI reads OpenInference OTel JSON, LangSmith export JSON, or generic JSONL. **No Redis. No Postgres. No live integration.** Just point it at trace data you already have.
 
-Three product surfaces:
+### 2. Wire it into your live stack (3 lines)
 
-1. **`synapse audit`** — read-only conflict detection on existing trace exports. Works with any framework that emits OpenInference OTel, LangSmith, or JSONL traces. No infrastructure required.
-2. **`synapse.intend()`** — a universal context-manager API that any Python codebase can use to announce intentions, detect conflicts, and emit resolutions through Synapse's protocol.
-3. **`synapse.install(framework=...)`** — one-line wiring for the major agent frameworks (LangGraph, CrewAI, AutoGen, OpenAI Agents SDK, Pydantic AI, smolagents, Hermes). Auto-instruments every tool dispatch.
+Once you see the problem, install the live runtime and add 3 lines to your existing agent code:
 
-All three speak the same envelope protocol underneath, persist to the same state graph, and surface in the same live dashboard. **Bring your own LLM** — Synapse never makes a paid LLM call without explicit caller consent.
+```bash
+pip install 'synapse-protocol[live]'   # adds Redis + Postgres clients
+synapse up                              # starts local stack via Docker Compose
+```
 
-## What this is *not*
+```python
+import synapse
+from anthropic import AsyncAnthropic
 
-| Synapse is | Synapse is not |
+synapse.set_llm(synapse.from_anthropic(AsyncAnthropic()))   # bring your own LLM
+synapse.install(framework="langgraph")                      # one of: langgraph, crewai,
+                                                            # autogen, openai_agents,
+                                                            # pydantic_ai, smolagents,
+                                                            # vercel-ai, hermes, ...
+# ... your normal agent code, now with safety semantics ...
+```
+
+### 3. Turn on auto-merge for the case that matters
+
+```python
+synapse.install(
+    framework="langgraph",
+    merge_policy=synapse.MergePolicy.auto_merge,   # LLM-mediated merge on collision
+    critical_scopes=["billing.*", "prod.deploy.*"],  # hard-block on these scopes
+    emit_beliefs_from_tool_results=True,             # catch semantic conflicts
+)
+```
+
+That's the entire surface. **Bring your own LLM**, self-hosted by design, never auto-charges your account.
+
+## Where Synapse helps (and where it doesn't)
+
+Honest scope from real benchmark runs:
+
+| Pattern | Synapse value |
 |---|---|
-| Coordination *inside* one work session | A cross-vendor agent interop standard ([A2A](https://github.com/google/A2A) covers that) |
-| Pre-action intent broadcasting | Tool/context provisioning ([MCP](https://modelcontextprotocol.io) covers that) |
-| Middleware for any agent runtime | A new agent framework ([LangGraph](https://github.com/langchain-ai/langgraph), [CrewAI](https://github.com/crewAIInc/crewAI), [AutoGen](https://github.com/microsoft/autogen) cover that) |
-| Conflict detection + observability | A replacement for any of the above |
+| **Multi-team / multi-orchestrator** sharing a codebase | ✅ **Real safety.** SDLC benchmark: coherence 0.33 → 0.93 with auto_merge. |
+| **Sub-agent spawning** (Hermes-style, swarm patterns) | ✅ **Real safety.** Children don't know about each other. |
+| **Audit existing trace data** for past collisions | ✅ **Real audit.** No false positives, runs without infra. |
+| **Hierarchical orchestrator + workers** (LangGraph supervisor, CrewAI hierarchy) | ⚠️ **Mostly observability.** A competent orchestrator pre-deconflicts; Synapse runs cleanly but adds little detection value. |
+| **Single agent** | ❌ **Pure overhead.** Synapse correctly does nothing. Don't install it. |
 
-See [`spec/positioning.md`](spec/positioning.md) for the full landscape.
+We had to learn this empirically — see [`bench/results/v02_autonomous_*/FINDINGS.md`](bench/results/) for the autonomous-test write-up that disconfirmed the early "any multi-agent system" pitch.
+
+## Installs
+
+| Install | What you get | Heavy deps |
+|---|---|---|
+| `pip install synapse-protocol` | `synapse audit` CLI + read-only audit pipeline | none (pydantic + jsonschema only) |
+| `pip install 'synapse-protocol[live]'` | Above + Bus + StateGraph + framework adapters + dashboard | Redis client, asyncpg, python-ulid |
+| `pip install 'synapse-protocol[live,hosted]'` | Above + Anthropic / OpenAI / Gemini bridges | + provider SDKs |
+| `pip install 'synapse-protocol[all]'` | Everything | all of the above |
+
+```bash
+# JavaScript / TypeScript ecosystem
+npm install @synapse-protocol/sdk
+```
+
+## Frameworks supported (11 adapters across Python + TypeScript)
+
+| Framework | Python | TypeScript |
+|---|---|---|
+| LangGraph | ✅ | ✅ (LangGraph.js) |
+| CrewAI | ✅ | — |
+| AutoGen (0.4+) | ✅ | — |
+| OpenAI Agents SDK | ✅ | — |
+| Pydantic AI | ✅ | — |
+| smolagents | ✅ | — |
+| Vercel AI SDK | — | ✅ |
+| Hermes Agent | ✅ | — |
+| Paperclip AI | — | ✅ |
+| OpenClaw | — | ✅ |
+
+Don't see yours? `synapse.intend()` (Python) and `synapse.intendWith()` (TypeScript) are universal context-manager APIs that work in *any* codebase.
 
 ## Status
 
-**v0.1.0-alpha — feature-complete.** v0.2 in planning: re-position around audit + observability, BYO-LLM, framework-agnostic via OpenInference. See [`docs/roadmap/v0.2-observability-and-safety.md`](docs/roadmap/v0.2-observability-and-safety.md) and [`spec/adr/ADR-0003-byo-llm-and-audit-first.md`](spec/adr/ADR-0003-byo-llm-and-audit-first.md).
+**v0.2.1-alpha — feature-complete, launch-ready, tagged.**
 
-### What works today (v0.1)
+- Protocol spec: [`spec/protocol-v1.0/`](spec/protocol-v1.0/) (frozen at v1.0)
+- Python SDK: 249 tests passing
+- TypeScript SDK: 233 tests passing
+- 6 live benchmarks in [`bench/benchmarks.md`](bench/benchmarks.md), all real-LLM
+- Architecture decisions in [`spec/adr/`](spec/adr/)
+- Roadmap: [`docs/roadmap/v0.2-observability-and-safety.md`](docs/roadmap/v0.2-observability-and-safety.md)
 
-- **Protocol** — 8 message types (THOUGHT, INTENTION, PIVOT, BELIEF, BLOCK, CONFLICT, RESOLUTION, COST_REPORT) with frozen v1.0 schemas (`spec/protocol-v1.0/`)
-- **Python SDK** (`sdk-python/`) — bus, state graph, Agent class, 5 inference adapters (Mock, Anthropic, OpenAI, Gemini, Ollama) — 123 tests passing
-- **TypeScript SDK** (`sdk-typescript/`) — full mirror of Python SDK — 20 tests passing
-- **Router** — L1 (rules) + L2 (SQL conflict, GIN-indexed scope[]) + L3 (LLM-mediated semantic), with `stale_base_overwrite` detection for sequential same-resource overwrites
-- **Coordinator** — event-driven, belief-divergence detection, BLOCK escalation
-- **Gateway** — FastAPI WebSocket + REST, broadcasts session events
-- **Observability UI** — Next.js dashboard with AgentGrid, IntentionsTable, BeliefPanel, EventStream, CostChart, ReplayScrubber
-- **CLI** — `synapse spec validate`, `synapse bench`
-- **Framework integrations**:
-  - **Hermes Agent** (Python): `wrap_tool_call_for_synapse` with multi-agent registry
-  - **Paperclip AI** (TypeScript): `wrapAdapterWithSynapse`
-  - **OpenClaw** (TypeScript): `wrapExtensionWithSynapse` + `makeSynapseExtension`
-  - **LangGraph**, **CrewAI**: `@synapse_node` / `synapse_task` decorators
-- **Realistic product-dev tests** — 4-agent Instagram-clone backend + 4-agent data-analysis pipeline running real Anthropic Haiku 4.5 calls in Modal sandboxes (`runtime/modal/_payloads/real_app_*.py`)
-
-### Where v0.2 is going
-
-The honest distillation after pressure-testing v0.1 against five real multi-agent personas:
-
-> **Synapse is the missing observability + safety layer for any multi-agent stack, with conflict detection as the headline safety feature.**
->
-> Not a coordination protocol that happens to come with a dashboard.
-
-v0.2 ships in 5 weeks of focused work:
-
-| Week | Ship |
-|---|---|
-| 1 | `synapse audit` CLI — read-only conflict report on any framework's trace export (OpenInference / LangSmith / JSONL) |
-| 2 | Universal `synapse.intend()` SDK + `synapse.set_llm()` (BYO-LLM) + LangGraph adapter |
-| 3 | `synapse up` (one-line self-hosted) + dashboard re-positioning + CrewAI / AutoGen / OpenAI Assistants adapters |
-| 4 | `MergePolicy.{redirect, wait, abort, auto_merge}` + `critical_scopes` selective enforcement |
-| 5 | BELIEF divergence on integration path — catches semantic conflicts that scope-overlap detection misses |
-
-See the [v0.2 roadmap](docs/roadmap/v0.2-observability-and-safety.md) for the full plan, demo gallery, and what we're explicitly *not* doing.
-
-## What it does (when complete)
-
-- **Intention broadcasting** — agents announce what they're about to do, with declared scope and expected outcome, before any tool call fires
-- **Conflict detection** — overlapping scopes are detected at the bus layer; affected agents receive a `CONFLICT` signal before collision
-- **Mid-stream injection** *(Phase 2+)* — high-urgency signals can interrupt active LLM generation via append-and-continue (true KV append on native backends, cached restart on hosted)
-- **Backend-agnostic** — same SDK across vLLM, Ollama, Anthropic, OpenAI, Gemini via the typed Inference Adapter Layer
-- **Live observability** *(Phase 6)* — see every agent's intentions, conflicts, and pivots in real-time
-
-## Architecture at a glance
+## Tests
 
 ```
-┌─────────────────────────────────────────────────┐
-│             Synapse Core                        │
-│  Bus (Redis) · State Graph (Postgres) ·         │
-│  Router (L1/L2/L3) · Coordinator (LLM agent)    │
-└─────────────────┬───────────────────────────────┘
-                  │ inbox streams
-                  ▼
-       ┌─────────────────────────┐
-       │      Synapse SDK        │
-       │  Inference Adapter      │
-       │  ┌───────┬───────┬────┐ │
-       │  │Native │Local  │Host│ │
-       │  └───────┴───────┴────┘ │
-       └─────────────────────────┘
-            │       │       │
-        vLLM/etc Ollama  Claude/GPT
+Python:     249 tests
+TypeScript: 233 tests
+Total:      482 tests passing
+Regressions across 5 weeks of dev: 0
 ```
 
-> The **Coordinator** is a model-agnostic role. The first reference implementation uses a Sonnet-class hosted model, but any sufficiently capable LLM can fill it.
+## Live benchmarks (real Anthropic Haiku, real Modal sandboxes)
 
-See [`spec/`](spec/) for the protocol definitions, adapter contract, and conflict semantics. The full architecture and execution plan are in [`docs/Synapse_Architecture_and_Execution_Plan.docx`](docs/Synapse_Architecture_and_Execution_Plan.docx).
+| # | Demo | Headline |
+|---|---|---|
+| 1 | Instagram-clone backend (4 engineers) | 3 stale-base overwrites caught |
+| 2 | Data analysis pipeline (3 agents, disjoint files) | 2 BELIEF divergences caught (semantic conflicts scope-overlap can't see) |
+| 3 | Auto-merge demo (3 engineers + same file) | 3/3 fields preserved (vs 2/3 baseline) |
+| 4 | Cross-framework test (LangGraph + CrewAI on one session) | 3 conflicts including 2 cross-framework |
+| 5 | **SDLC benchmark — multi-tenant SaaS billing platform (6 agents, 4 stages)** | **Coherence 0.33 → 0.93** (2.8x improvement) |
+| 6 | **Autonomous observer test (LangGraph orchestrator + 4 workers)** | **0 conflicts caught** — orchestrator pre-deconflicted. Honest finding that narrowed the pitch. |
 
-## Quickstart
+Full numbers + capture artifacts: [`bench/benchmarks.md`](bench/benchmarks.md) and [`bench/results/`](bench/results/).
 
-Phase 1 has shipped — the conflict demo runs end-to-end with mocked inference.
+## Self-hosted by design
 
-```bash
-# Bring up Redis + Postgres + initial schema
-docker compose up -d
-
-# Install the SDK
-pip install -e sdk-python
-
-# Run the conflict demo
-python examples/two_agents_conflict_demo.py
-```
-
-You'll see two agents both claim `auth.middleware`, the router detect the overlap, the second agent receive a `CONFLICT` signal during its 500ms pre-execution gate, and pivot to `auth.logging` — all without any human in the loop.
-
-See [`examples/README.md`](examples/README.md) for expected output and how it works.
-
-### Run the unit tests (no Docker needed)
-
-```bash
-pytest sdk-python/tests/
-```
-
-39 tests covering scope matching, envelope construction, message models, and the mock adapter.
-
-## Repository layout
-
-```
-synapse/
-├── spec/                      Protocol specifications
-│   ├── protocol-v1.0/         JSON Schemas for envelope + 8 message types
-│   ├── adapter.md             InferenceAdapter interface contract
-│   ├── conflict-semantics.md  Scope matching rules
-│   ├── positioning.md         Synapse vs MCP / A2A / LangGraph / AutoGen
-│   └── adr/                   Architectural Decision Records
-├── sdk-python/                Python SDK (Phase 1+)
-├── runtime/                   Bus + state graph + router + coordinator
-├── adapters/
-│   ├── native/                vLLM, SGLang, TGI, llama.cpp
-│   ├── local/                 Ollama, LM Studio
-│   └── hosted/                Anthropic, OpenAI, Gemini
-├── ui/                        Observability UI (Next.js, Phase 6)
-├── bench/                     synapse bench CLI (Phase 6)
-├── examples/                  Demo scenarios
-├── docs/                      Architecture and execution plan
-└── docker-compose.yml         Local dev stack (Redis + Postgres)
-```
-
-## Design principles
-
-1. **Fail-open.** Synapse going down must not block agent work — agents continue uncoordinated and reconcile when the bus recovers.
-2. **Sub-50ms happy path.** Coordination overhead must be invisible in the no-conflict case.
-3. **Protocol over framework.** The wire format outlives any single implementation.
-4. **Backend-agnostic, capability-aware.** Same SDK across all inference backends; routing adapts to each backend's capabilities.
-5. **Honest costs.** Every signal's token cost is reported and visible.
-6. **Operational state, not raw reasoning.** Agents share intentions, scopes, beliefs, and pivots — not private chain-of-thought tokens.
-
-## Contributing
-
-The protocol is the artifact that matters most. Before sending a PR that changes message schemas, the adapter contract, or routing semantics, open an issue with an ADR-style proposal. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Synapse never makes a paid LLM call without your explicit `set_llm()` config. There is no Synapse SaaS. Run it on your own infrastructure with `synapse up`.
 
 ## License
 
-Apache 2.0 — see [LICENSE](LICENSE).
+Apache 2.0 — see [`LICENSE`](LICENSE).
 
-## Author
+## Contributing
 
-Aadit Rajgor ([@arajgor1](https://github.com/arajgor1))
+Issues + PRs welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md). The protocol spec changes go through [`spec/adr/`](spec/adr/) — open an ADR before proposing breaking changes.
+
+---
+
+Built by Aadit Rajgor · v0.2.1-alpha · 2026

@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "synapse-protocol"
-version = "0.2.0a0"
-description = "Observability + safety layer for any multi-agent AI stack — conflict detection, audit, BYO-LLM"
+version = "0.2.1a0"
+description = "The safety layer for multi-agent AI systems — audit existing traces for silent collisions, prevent them live, BYO-LLM"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Aadit Rajgor", email = "aadityarajgor27@gmail.com" }]
@@ -21,10 +21,9 @@ classifiers = [
 ]
 
 dependencies = [
+    # Core deps for `synapse audit` (the wedge) — keep this list tiny.
+    # Audit reads existing trace exports; it has zero infrastructure needs.
     "pydantic>=2.6,<3",
-    "redis[hiredis]>=5.0,<6",
-    "asyncpg>=0.29,<0.31",
-    "python-ulid>=2.2,<4",
     "jsonschema>=4.20",
 ]
 
@@ -32,6 +31,15 @@ dependencies = [
 synapse = "synapse.cli.main:main"
 
 [project.optional-dependencies]
+# Live coordination runtime: Redis bus + Postgres state graph + envelope IDs.
+# Required only when calling synapse.intend() / synapse.install() / synapse up.
+# The audit CLI does NOT need any of these — `pip install synapse-protocol`
+# alone is enough to run `synapse audit ./traces.json`.
+live = [
+    "redis[hiredis]>=5.0,<6",
+    "asyncpg>=0.29,<0.31",
+    "python-ulid>=2.2,<4",
+]
 dev = [
     "pytest>=8",
     "pytest-asyncio>=0.23",
@@ -51,7 +59,7 @@ gateway = [
     "uvicorn[standard]>=0.30",
 ]
 all = [
-    "synapse-protocol[hosted,local]",
+    "synapse-protocol[live,hosted,local]",
 ]
 
 [project.urls]

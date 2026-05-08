@@ -1,126 +1,45 @@
-# Synapse: when 6 AI agents build a SaaS billing platform together, coherence jumps from 33% to 93%
+# Synapse: the safety layer for multi-agent AI systems
 
-*v0.2.0-alpha is out. The headline result + how Synapse gets there.*
+*v0.2.1-alpha — open-source under Apache 2.0. Audit existing logs, prevent collisions live, and resolve them with your own LLM.*
 
 ---
 
-## The setup
+## What this post is
 
-I've been building **Synapse** — an observability + safety layer for any
-multi-agent AI stack. The pitch is simple: when multiple agents work on
-the same project, they silently step on each other in ways that scope-only
-detection can't catch. Synapse fixes that with a real-time coordination
-protocol + an LLM-mediated merge step + cross-agent belief tracking.
+I built [Synapse](https://github.com/arajgor1/synapse) — an open-source protocol + libraries that detect, audit, and resolve agent collisions. This post explains:
 
-To prove it works on something real, I ran six AI agents (PM / Architect
-/ Backend Engineer / Frontend Engineer / Integrations Engineer / QA /
-DevOps) through a full SDLC cycle building a **multi-tenant SaaS billing
-platform** — the kind of mini-Stripe app every B2B startup builds.
+- What problem Synapse solves (and where it doesn't)
+- The two benchmarks that ground every claim
+- An honest finding that *disconfirmed* my early pitch and forced me to narrow it
+- How to try it on your own data in under a minute
 
-The agents shared:
-- A `models/User.js` that 4 agents wanted to add fields to
-- A `models/Subscription.js` with 4-way contention
-- A `.env.example` everyone wanted to write
-- BELIEF disagreements on `pricing_model`, `tax_calculation`, `currency_handling`
+No SaaS pitch. Self-hosted by design. **Bring your own LLM** — Synapse never charges your account without explicit consent.
 
-Same workload, 3 modes:
+---
 
-1. **`no_synapse`** — agents fire and forget, last writer wins.
-2. **`with_synapse_redirect`** — Synapse detects conflicts but only logs them.
-3. **`with_synapse_full`** — Synapse detects, auto-merges via LLM,
-   tracks beliefs for divergence.
+## The problem
 
-## The headline number
+When AI agents share state — same repo, same database, same customer — they collide. The autonomous AI agents you're shipping today already step on each other in ways your observability tools don't surface.
 
-```
-Mode                         Coherence  Conflicts caught   Auto-merges   Wall-clock
---------------------------   ---------  ----------------   -----------   ----------
-no_synapse                   0.33        0                 0             65s
-with_synapse_redirect        0.33        9                 0             73s
-with_synapse_full            0.93        18                9             122s
-```
+Three concrete cases I've measured live:
 
-**Coherence** = how many of the planted contributions from each agent
-survived in the final artifacts. `no_synapse` keeps 33% (basically the
-last writer's contribution). `with_synapse_full` keeps 93%.
+1. **The silent overwrite.** Two coding agents both rewrite `models/User.js`. The last one wins. The first one's contribution — say, the `bio` and `avatar_url` fields — is gone. Nobody notices until production.
+2. **The stale-base.** Agent A finishes a write at T=5s. Agent B starts a related write at T=15s, never having seen A's version. B clobbers A. The intentions never overlapped in time, but the result is corrupted.
+3. **The semantic divergence.** Three data agents each compute `revenue` differently — `qty*price` vs `qty*price*(1-discount)` vs `qty*price - returns`. They write to different files (no scope overlap). The downstream report has three contradictory totals.
 
-For 2x the wall-clock and zero extra LLM tokens, Synapse turned a
-Frankenstein output into a coherent app. **2.8x coherence improvement.**
+LangSmith / Phoenix / Langfuse will *log* all three of these. None of them will *prevent* any of them.
 
-## What's actually happening
+---
 
-Three things, layered:
+## What Synapse does
 
-### 1. INTENTION / CONFLICT / RESOLUTION envelopes
+Three layers, designed to fit into the funnel:
 
-Every tool call now goes through `synapse.intend({ scope, agent })`.
-Synapse emits an INTENTION envelope; if another agent has a recent or
-active intention on an overlapping scope, the L2 router fires a CONFLICT
-back. This catches both *concurrent* collisions and *stale-base
-overwrites* (the more common pattern: agent A finishes, agent B turns up
-later and silently clobbers).
-
-### 2. MergePolicy.auto_merge
-
-When CONFLICT fires and the user has `MergePolicy.auto_merge` configured,
-Synapse uses the user's BYO-LLM (their existing Anthropic / OpenAI /
-Vercel AI / Ollama / etc.) to merge the conflicting drafts. The prompt
-gives the LLM all prior agents' content and asks it to produce a unified
-version that preserves every agent's intent.
-
-Result on the SaaS billing platform: 9 LLM-mediated merges. The final
-`models/User.js` contains the auth fields, the Stripe customer ID, the
-profile bio, and the QA test fixtures — without any single agent
-needing to know about the others.
-
-### 3. BELIEF divergence detection
-
-After every successful tool call (when `emit_beliefs_from_tool_results=True`),
-Synapse asks the BYO-LLM "what facts does this agent now believe?" and
-emits BELIEF envelopes. When two agents emit different values for the
-same belief key, the live divergence detector fires within ~200ms.
-
-On the SaaS billing benchmark, this caught:
-- `pricing_model`: PM said "per_seat", architect said "usage_based",
-  backend said "hybrid". All three would have shipped.
-- `currency_handling`: PM said "USD_only", architect said
-  "multi_currency", integrations said "stripe_tax_api".
-
-Either disagreement quietly shipping = a bug that ships to production.
-Synapse caught both before the downstream agents committed to anything.
-
-## Bring your own LLM, no SaaS
-
-Synapse never makes a paid LLM call without your explicit consent. You
-pass your existing client:
-
-```python
-import synapse
-from anthropic import AsyncAnthropic
-synapse.set_llm(synapse.from_anthropic(AsyncAnthropic()))
-synapse.install(
-    framework="langgraph",  # or crewai, autogen, openai_agents, smolagents,
-                            # pydantic_ai, hermes, vercel-ai, paperclip, openclaw
-    merge_policy=synapse.MergePolicy.auto_merge,
-    critical_scopes=["billing.*", "prod.deploy.*"],
-    emit_beliefs_from_tool_results=True,
-)
-# ... your normal agent code, now with the full v0.2 stack ...
-```
-
-Self-hosted by design. There's no Synapse SaaS. `synapse up` brings the
-local stack (Redis + Postgres + router + UI) up in one command. Anyone
-running multi-agent systems already has servers.
-
-## Try it on your existing data, no install
-
-The first thing I shipped is `synapse audit`. Point it at any agent
-framework's trace export — OpenInference / OpenTelemetry, LangSmith,
-JSONL — and it produces a conflict report:
+### Layer 1: `synapse audit` — see what you've already missed
 
 ```bash
 pip install synapse-protocol
-synapse audit ./langsmith-export.json
+synapse audit ./your-langsmith-export.json
 ```
 
 ```
@@ -129,51 +48,152 @@ Estimated waste: ~15.4k tokens / ~$0.31.
 Full report: ./synapse-audit-2026-05-08.html
 ```
 
-No infrastructure required. No live integration. Read-only.
+No infrastructure. No live integration. Just point it at OpenInference OTel JSON, LangSmith export JSON, or generic JSONL — Synapse reads what you already have and produces an HTML report.
 
-## What's in the box
+### Layer 2: `synapse-protocol` — the open standard + library
 
-| Surface | What it does |
-|---|---|
-| `synapse audit` | Read-only conflict detection on any framework's trace export |
-| `synapse.intend()` | Universal context-manager API (works with any Python codebase) |
-| `synapse.install(framework=...)` | One-line wiring for **8 agent frameworks** |
-| `synapse.set_llm()` | BYO-LLM — never makes a paid call without consent |
-| `synapse.MergePolicy.{redirect,wait,abort,auto_merge,no_op}` | Pluggable conflict-resolution strategies |
-| `critical_scopes=["billing.*"]` | Hard-block on production-sensitive scope patterns |
-| `synapse.emit_belief()` + auto-extraction | Semantic-conflict detection where scope-overlap is blind |
-| `synapse up / down / status / demo` | Docker-Compose-bundled local stack |
-| TypeScript SDK | Full v0.2 parity — Vercel AI / LangGraph.js / Paperclip / OpenClaw / etc. |
+```bash
+pip install 'synapse-protocol[live]'
+```
 
-## Test counts (zero regressions across the whole v0.2 dev cycle)
+```python
+import synapse
+async with synapse.intend(scope=["repo.fs.user.py:w"], agent="reviewer") as i:
+    if i.has_conflicts:
+        await i.pivot()
+    result = await my_tool_call()
+```
 
-- **407 tests passing** (Python: 249, TypeScript: 233 — wait, that's 482… let me re-check)
-- **Zero regressions** at any commit
-- **5 live demos** + 1 SDLC benchmark all real-LLM, all on Modal sandboxes
-- **Total LLM cost across all v0.2 development + benchmarks**: ~$0.46
+A single envelope protocol (frozen at v1.0) backed by Python and TypeScript SDKs. **11 framework adapters** across both ecosystems: LangGraph, CrewAI, AutoGen, OpenAI Agents SDK, Pydantic AI, smolagents, Vercel AI SDK, LangGraph.js, Hermes, Paperclip, OpenClaw.
 
-## The honest gaps
+### Layer 3: safety policies — fix what audit detected
 
-- The TS SDK is at v0.2 parity now, but TS-side audit-mode trace import
-  isn't shipped yet (Python is the canonical importer).
-- The dashboard ships as a single shareable `bundle.html` artifact;
-  a hosted live-update version is future work.
-- Auto_merge wins big on code-shaped artifacts. On long-form prose
-  artifacts (specs, reports), the LLM merge sometimes picks one author's
-  voice over another's. Tune the merge prompt or use `MergePolicy.redirect`
-  for prose-heavy workflows.
-- BELIEF divergence depends on the BYO-LLM's extractor accurately picking
-  stable belief keys. Two agents can occasionally pick different keys for
-  the same fact (e.g. `revenue_formula` vs `revenue_calc`). Future work:
-  cluster keys before divergence detection.
+```python
+synapse.install(
+    framework="langgraph",
+    merge_policy=synapse.MergePolicy.auto_merge,    # LLM-mediated reconciliation
+    critical_scopes=["billing.*", "prod.deploy.*"], # hard-block on these
+    emit_beliefs_from_tool_results=True,             # catch semantic conflicts
+)
+```
 
-## Try it
+When CONFLICT fires:
+- `redirect` (default) — log + continue
+- `wait` — block briefly + retry
+- `abort` — fail with a clean `SynapseConflict` exception
+- **`auto_merge`** — call your BYO-LLM with both versions, use the merged result
 
-- Repo: https://github.com/arajgor1/synapse
-- Quickstart: `pip install synapse-protocol && synapse audit ./your-traces.json`
-- Roadmap: [`docs/roadmap/v0.2-observability-and-safety.md`](../roadmap/v0.2-observability-and-safety.md)
-- Decision log: [`spec/adr/`](../../spec/adr/)
+Plus `critical_scopes` for hard-blocks on production-sensitive paths, and BELIEF auto-extraction for the semantic-conflict case.
 
 ---
 
-*v0.2.0-alpha · Apache 2.0 · Aadit Rajgor*
+## The headline benchmark
+
+I built a realistic 6-agent SDLC workflow — the kind of thing real teams use AI agents for: build a multi-tenant SaaS billing platform (mini-Stripe). Six agents (PM / Architect / Backend / Integrations / Frontend / QA / DevOps), 25 file artifacts, real Anthropic Haiku calls, real Postgres state graph, real Redis bus, no scripted oracle.
+
+Same workload, three modes:
+
+| Mode | Coherence | Conflicts caught | Auto-merges | Wall clock |
+|---|---|---|---|---|
+| `no_synapse` (fire and forget) | **0.33** | 0 | 0 | 65s |
+| `with_synapse_redirect` (warn-only) | 0.33 | 9 | 0 | 73s |
+| **`with_synapse_full` (auto_merge + beliefs)** | **0.93** ✓ | 18 | 9 | 122s |
+
+**Coherence** = the fraction of each agent's planted contribution that survived in the final files. Without Synapse, only one third of the team's intended contributions made it through (last writer wins). With full Synapse, 93% — every engineer's fields, decorators, and tests survived because the LLM-mediated auto-merge reconciled their conflicting drafts.
+
+**2.8x coherence improvement.** Same agents, same prompts, same model. The only difference is whether Synapse is active.
+
+---
+
+## The benchmark that disconfirmed my early pitch
+
+I'd been telling people Synapse helps "any multi-agent system." Then I ran an autonomous test where a real LangGraph orchestrator decided what each of 4 worker agents should build, turn by turn, with full visibility into what had been done so far.
+
+| Mode | Files | Cross-agent collisions | Synapse caught |
+|---|---|---|---|
+| `no_synapse` | 34 | 1 | n/a (not installed) |
+| `observer` (Synapse watches, never blocks) | 27 | **0** | **0** |
+| `full` (auto_merge + beliefs) | 26 | **0** | **0** |
+
+**Synapse caught zero conflicts in observer + full modes — not because it broke, but because the orchestrator pre-deconflicted everything.** Each agent owned their files (auth → backend, Stripe → integrations, UI → frontend, tests → QA). They never overlapped. There was nothing to detect.
+
+That's a problem for the "any multi-agent system" pitch. The honest narrowing:
+
+| Pattern | Synapse value |
+|---|---|
+| Multi-team / multi-orchestrator sharing a codebase | ✅ **Real safety.** This is the SDLC-benchmark case. |
+| Sub-agent spawning (Hermes / swarm patterns) | ✅ **Real safety.** Children don't know about each other. |
+| Audit existing trace data | ✅ **Real audit.** Works on any framework's exports. |
+| Hierarchical orchestrator + workers (LangGraph supervisor, CrewAI hierarchy) | ⚠️ **Mostly observability.** Synapse runs cleanly but the orchestrator already coordinates. |
+| Single agent | ❌ **Pure overhead.** Don't install. |
+
+The full write-up + capture artifacts are in [`bench/results/v02_autonomous_*/FINDINGS.md`](https://github.com/arajgor1/synapse/blob/main/bench/results/) — the run produced asciinema-style transcripts, structured event timelines, and filesystem snapshots that you can replay with the included viewer.
+
+---
+
+## How Synapse fits with the tools you already use
+
+Synapse is **complementary**, not competitive:
+
+| Layer | Standard | What it solves |
+|---|---|---|
+| Tool access | [MCP](https://modelcontextprotocol.io) | agents ↔ tools |
+| Cross-vendor agent comms | [A2A](https://github.com/a2aproject/A2A) | agent ↔ agent across vendors |
+| Commerce | ACP / UCP | agent payments |
+| Observability | LangSmith / Phoenix / Langfuse | tracing + eval |
+| **Coordination + safety** | **Synapse** | "who writes what when 3 agents share state" |
+
+Use LangSmith for traces. Use Synapse to catch the collisions LangSmith logs but doesn't prevent. They sit on top of each other.
+
+---
+
+## Bring your own LLM
+
+Synapse never makes a paid LLM call without explicit caller consent:
+
+```python
+synapse.set_llm(synapse.from_anthropic(your_anthropic_client))
+# or
+synapse.set_llm(synapse.from_openai(your_openai_client))
+# or
+synapse.set_llm(synapse.from_vercel_ai(your_vercel_model))
+# or local Ollama, or LangChain bridge, or anything else
+```
+
+If you don't call `set_llm()`, the LLM-mediated paths (auto_merge, BELIEF divergence detection) become no-ops with clear log messages. The structural detection (scope overlap, stale-base overwrite, critical scopes) still works. **Zero surprise charges, zero vendor lock-in.**
+
+---
+
+## The gaps I'd flag honestly
+
+Things I'm not hiding:
+
+1. **`emit_beliefs_from_tool_results=True` is expensive.** It runs the BYO-LLM on every successful tool call to extract beliefs. The autonomous benchmark showed it 6.5x slower than no_synapse mode. Recommended for high-value workflows only, not as a default.
+2. **BELIEF-key clustering is missing.** Two agents can pick `revenue_formula` vs `revenue_calc` for the same fact. Synapse currently treats them as different keys. v0.3 work.
+3. **Hierarchical orchestrator pattern adds little.** Synapse runs cleanly but the orchestrator pre-deconflicts. If your stack is purely orchestrator + workers, audit-only is the right install.
+4. **Multi-orchestrator benchmark not yet done.** SDLC benchmark proxies it, but a true two-team-no-shared-coordinator test is v0.3 work.
+
+---
+
+## Try it
+
+```bash
+# Audit your existing trace data, no infrastructure needed
+pip install synapse-protocol
+synapse audit ./your-langsmith-export.json
+
+# Or wire it in live with full safety semantics
+pip install 'synapse-protocol[live]'
+synapse up
+```
+
+- Repo: [github.com/arajgor1/synapse](https://github.com/arajgor1/synapse)
+- Spec: [`spec/protocol-v1.0/`](https://github.com/arajgor1/synapse/tree/main/spec/protocol-v1.0)
+- Benchmarks: [`bench/benchmarks.md`](https://github.com/arajgor1/synapse/blob/main/bench/benchmarks.md)
+- Issues: [github.com/arajgor1/synapse/issues](https://github.com/arajgor1/synapse/issues)
+
+Open-source. Apache 2.0. No SaaS. Self-hosted by design.
+
+---
+
+*v0.2.1-alpha · Aadit Rajgor*

@@ -11,7 +11,29 @@ from enum import Enum
 from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
-from ulid import ULID
+
+# python-ulid is part of the [live] extras. Audit-only installs don't ship
+# Redis/Postgres/ULID — but they may still want to validate envelopes they
+# read from a trace file. Provide a fallback ULID-shaped string for those
+# paths, and only raise at MINT time (Envelope.make()) if real ULIDs aren't
+# available.
+try:
+    from ulid import ULID  # type: ignore[import-not-found]
+    _ULID_AVAILABLE = True
+except ImportError:  # pragma: no cover — exercised only in audit-only installs
+    ULID = None  # type: ignore[misc,assignment]
+    _ULID_AVAILABLE = False
+
+
+def _ulid_str_or_raise() -> str:
+    if not _ULID_AVAILABLE:
+        raise ImportError(
+            "Envelope.make() requires the 'live' extras. "
+            "Install with `pip install synapse-protocol[live]` to mint envelopes. "
+            "If you only need to AUDIT existing traces, use synapse.audit "
+            "directly — it doesn't need this code path."
+        )
+    return str(ULID())  # type: ignore[misc]
 
 
 # ---------------------------------------------------------------------------
@@ -150,8 +172,14 @@ class Envelope(BaseModel):
     def _validate_ulid(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        # ULIDs are 26 chars in Crockford base32. python-ulid will raise on bad input.
-        ULID.from_str(v)
+        # ULIDs are 26 chars in Crockford base32. Skip strict validation if
+        # python-ulid isn't installed (audit-only install case) — callers
+        # building envelopes from trace exports only need them to parse.
+        if _ULID_AVAILABLE:
+            ULID.from_str(v)  # type: ignore[union-attr]
+        else:
+            if not isinstance(v, str) or len(v) != 26:
+                raise ValueError(f"msg_id must be a 26-char ULID string, got {v!r}")
         return v
 
     @classmethod
@@ -172,7 +200,7 @@ class Envelope(BaseModel):
         else:
             payload_dict = payload
         return cls(
-            msg_id=str(ULID()),
+            msg_id=_ulid_str_or_raise(),
             type=type,
             agent_id=agent_id,
             session_id=session_id,

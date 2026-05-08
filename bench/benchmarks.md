@@ -11,7 +11,8 @@ Each benchmark runs in a clean Modal sandbox (Debian + Python 3.11 + Node 20
 | 3 | `v02_w4_auto_merge`                   | Does `MergePolicy.auto_merge` produce a final `models/user.py` containing all 3 engineers' fields?            | `no_synapse` vs `with_synapse_redirect` vs `with_synapse_automerge` | ~$0.50 |
 | 4 | `v02_w5_belief_divergence`            | Does `emit_beliefs_from_tool_results=True` auto-detect 3 distinct revenue formulas across 3 disjoint files?   | `no_synapse` vs `with_synapse` vs `with_synapse_beliefs`| ~$0.20 |
 | 5 | `v02_crewai_live` + `v02_langgraph_live` | Does `synapse.install(framework=...)` auto-instrument a real LangGraph / CrewAI workflow end-to-end?       | `with_synapse` only (instrumentation correctness)        | ~$0.30 |
-| 6 | **`v02_sdlc_billing`** (this design) | On a realistic 6-agent SDLC workflow, does Synapse improve coherence on a multi-tenant SaaS billing platform? | `no_synapse` vs `with_synapse_redirect` vs `with_synapse_full` | ~$6.00 |
+| 6 | **`v02_sdlc_billing`** (this design) | On a realistic 6-agent SDLC workflow, does Synapse improve coherence on a multi-tenant SaaS billing platform? | `no_synapse` vs `with_synapse_redirect` vs `with_synapse_full` | ~$0.30 |
+| 7 | **`v02_autonomous_observer`** | When a real LangGraph orchestrator + workers build mini-Stripe end-to-end, does Synapse add value? | `no_synapse` vs `observer` vs `full` | ~$0.20 |
 
 All results live in `bench/results/`. Re-run any of them with:
 
@@ -346,3 +347,66 @@ quality jump, not the conflict detection alone.
   invocations are sequential when they shouldn't be.
 - 0 divergences → the `state_diff_extras` aren't getting picked up by
   the extractor (regression in the v0.2-w5 path).
+
+---
+
+## 7 · `v02_autonomous_observer` — what happens with a real autonomous loop
+
+This is the **honesty benchmark** that disconfirmed parts of the early
+v0.2 pitch. The setup: a single orchestrator agent decides what 4 worker
+agents (backend / integrations / frontend / qa) should build turn by turn,
+based on what's been done so far. Workers each pick one file per turn.
+Real Anthropic Haiku, no scripted oracle, true autonomous loop.
+
+**Three modes compared:**
+- `no_synapse` — agents fire and forget
+- `observer` — `synapse.install()` with `MergePolicy.redirect` (warn-only)
+- `full` — `MergePolicy.auto_merge` + `emit_beliefs_from_tool_results=True`
+
+**Result (run 2026-05-07):**
+
+| Mode | Files | Intentions | **Cross-agent collisions** | Beliefs | Elapsed |
+|---|---|---|---|---|---|
+| `no_synapse` | 34 | 0 | **1** | 0 | 120s |
+| `observer` | 27 | 48 | **0** | 0 | 178s |
+| `full` | 26 | 48 | **0** | 124 | **782s** |
+
+**Synapse caught zero conflicts in observer + full modes.** Not because
+it broke — because the orchestrator pre-deconflicted the work. Each
+agent owned their files (auth → backend, Stripe → integrations, UI →
+frontend, tests → qa). They never overlapped. There was nothing to detect.
+
+### What this means
+
+| Pattern | Synapse value |
+|---|---|
+| Multi-team / multi-orchestrator (the SDLC benchmark proxies) | ✅ **Real safety.** 0.33 → 0.93 coherence. |
+| Sub-agent spawning (Hermes-style) | ✅ **Real safety.** Children don't know about each other. |
+| Hierarchical orchestrator + workers (this test) | ⚠️ **Mostly observability.** The orchestrator IS the coordinator. Synapse runs cleanly but adds little detection value. |
+| Same-agent rewriting many turns | ✅ **Correctly does nothing** (`agent_id != $new_agent` filter). |
+
+### The cost finding
+
+Wall clock: 120s → 178s → **782s**. That's **6.5× slowdown** from
+`no_synapse` to `full` mode. The big jump comes from
+`emit_beliefs_from_tool_results=True` calling the BYO-LLM on every
+successful tool call to extract beliefs (~48 extra LLM calls × ~500
+tokens). Belief auto-extraction should be opt-in for production
+workloads, not default.
+
+### Capture artifacts
+
+The run produced 9 files in `bench/results/v02_autonomous_20260507-194945/`:
+- `auto_*.cast` — asciinema-style stdout transcript per mode
+- `auto_*_timeline.json` — structured Synapse event timeline per mode
+- `auto_*_snapshots.json` — filesystem state before/after each tool call
+
+Drag any of these into [`ui/artifacts/replay-viewer.html`](../ui/artifacts/replay-viewer.html) to scrub through the run interactively.
+
+### Full write-up
+
+[`bench/results/v02_autonomous_20260507-194945/FINDINGS.md`](results/v02_autonomous_20260507-194945/FINDINGS.md)
+
+This is the test that narrowed the v0.2 launch pitch from "any
+multi-agent system" to "multi-team / multi-orchestrator / sub-agent
+patterns." The data led; the marketing followed.

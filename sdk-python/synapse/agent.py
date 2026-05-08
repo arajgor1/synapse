@@ -12,9 +12,10 @@ import logging
 from contextlib import asynccontextmanager
 from typing import Any, Optional
 
-from ulid import ULID
-
+# Note: ULID lives behind the [live] extras. Imported lazily by messages.py.
 from synapse.adapters.base import InferenceAdapter
+# Bus is also part of [live]; import lazily where used to keep audit-only
+# imports cheap.
 from synapse.bus import Bus
 from synapse.messages import (
     AgentRegistration,

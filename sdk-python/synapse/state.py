@@ -11,7 +11,25 @@ import logging
 import re
 from typing import Any, Optional
 
-import asyncpg
+# asyncpg lives behind the [live] extras. Tolerate missing dep at import
+# time (so `synapse audit` works on a slim install) and raise a clear
+# error if someone tries to use the state graph without [live].
+try:
+    import asyncpg  # type: ignore[import-not-found]
+    _ASYNCPG_AVAILABLE = True
+except ImportError:  # pragma: no cover
+    asyncpg = None  # type: ignore[assignment]
+    _ASYNCPG_AVAILABLE = False
+
+
+def _require_asyncpg() -> None:
+    if not _ASYNCPG_AVAILABLE:
+        raise ImportError(
+            "synapse.state requires the 'live' extras. Install with "
+            "`pip install synapse-protocol[live]`. The audit pipeline "
+            "uses an in-memory detector and does NOT need this."
+        )
+
 
 from synapse.messages import AgentRegistration, Intention
 
@@ -99,6 +117,7 @@ class StateGraph:
         self._pool: Optional[asyncpg.Pool] = None
 
     async def connect(self) -> None:
+        _require_asyncpg()
         self._pool = await asyncpg.create_pool(self._dsn, min_size=1, max_size=8)
         logger.info("StateGraph connected")
 
