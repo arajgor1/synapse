@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synapse Audit · drop a trace, find silent collisions</title>
+<style>
+  :root {
+    --bg: #0b0c10;
+    --fg: #e8e8e8;
+    --muted: #9aa1ac;
+    --accent: #66d9ef;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --good: #22c55e;
+    --card: #14161c;
+    --border: #2a2d36;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    margin: 0;
+    padding: 0;
+  }
+  .container { max-width: 920px; margin: 0 auto; padding: 40px 24px 80px; }
+  header { padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  h1 { font-size: 22px; margin: 0 0 8px; font-weight: 600; }
+  h1 .accent { color: var(--accent); }
+  .tag { color: var(--muted); font-size: 13px; }
+  .lead { color: var(--muted); margin-top: 12px; max-width: 620px; }
+  .lead a { color: var(--accent); }
+
+  .drop {
+    margin-top: 28px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 120ms, background 120ms;
+  }
+  .drop.hover, .drop:hover {
+    border-color: var(--accent);
+    background: rgba(102, 217, 239, 0.04);
+  }
+  .drop p { margin: 0; color: var(--muted); }
+  .drop .big { color: var(--fg); font-size: 16px; margin-bottom: 6px; }
+
+  .formats { color: var(--muted); font-size: 12px; margin-top: 14px; text-align: center; }
+  .formats code { background: var(--card); padding: 2px 6px; border-radius: 4px; color: var(--fg); }
+
+  .row { display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .btn {
+    background: var(--card); color: var(--fg); border: 1px solid var(--border);
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  #report { margin-top: 28px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .card h2 { font-size: 14px; font-weight: 600; margin: 0 0 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .stat { padding: 12px; background: var(--bg); border-radius: 8px; }
+  .stat .num { font-size: 24px; font-weight: 600; }
+  .stat .num.warn { color: var(--warn); }
+  .stat .num.bad { color: var(--bad); }
+  .stat .num.good { color: var(--good); }
+  .stat .lbl { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+  .conflict {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    background: var(--bg);
+  }
+  .conflict.scope_overlap { border-left: 3px solid var(--bad); }
+  .conflict.stale_base_overwrite { border-left: 3px solid var(--warn); }
+  .conflict .head { color: var(--fg); margin-bottom: 4px; }
+  .conflict .body { color: var(--muted); font-size: 11px; }
+  .conflict .scope { color: var(--accent); }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 10px; background: var(--card); border: 1px solid var(--border); margin-right: 6px; }
+
+  .err { background: rgba(239, 68, 68, 0.08); border-color: var(--bad); color: var(--bad); }
+  footer { color: var(--muted); margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1><span class="accent">synapse</span> audit · drop a trace, find silent collisions</h1>
+  <p class="tag">v0.2.1 · zero install · runs in your browser</p>
+  <p class="lead">
+    Two agents on the same codebase will quietly overwrite each other and disagree on the schema.
+    Drop your trace export below and we'll find the conflicts. Supports OpenInference / OTel,
+    LangSmith, AWS Bedrock Agents, GCP Vertex Agent Builder, Azure AI Agent Service, and JSONL.
+    Your file is processed locally — nothing is uploaded.
+  </p>
+</header>
+
+<div id="drop" class="drop">
+  <p class="big">Drop a <code>.json</code> or <code>.jsonl</code> trace file</p>
+  <p>or click to choose a file</p>
+  <input id="file" type="file" accept=".json,.jsonl,.ndjson" style="display:none">
+</div>
+<p class="formats">
+  Supports:
+  <code>OpenInference</code>
+  <code>LangSmith</code>
+  <code>AWS Bedrock</code>
+  <code>GCP Vertex</code>
+  <code>Azure AI Agents</code>
+  <code>JSONL</code>
+</p>
+
+<div class="row">
+  <button class="btn" data-sample="bedrock">Try a Bedrock sample</button>
+  <button class="btn" data-sample="vertex">Try a Vertex sample</button>
+  <button class="btn" data-sample="azure">Try an Azure sample</button>
+  <button class="btn" data-sample="multi-orch">Try the multi-orch case study</button>
+</div>
+
+<div id="report"></div>
+
+<footer>
+  Open source · <a href="https://github.com/arajgor1/synapse" target="_blank" rel="noopener">github.com/arajgor1/synapse</a>
+  · <code>pip install synapse-protocol</code>
+</footer>
+</div>
+
+<script>
+// Browser-side audit lite. Mirrors the Python pipeline closely:
+//   1. Sniff format
+//   2. Normalize spans into AuditEvent shape
+//   3. Infer scope (FS / DB / HTTP / Bedrock action group)
+//   4. Detect conflicts (scope overlap with 24h lookback)
+// This is the SAME algorithm as the server pipeline, in JS, so users
+// can see real value before they install anything.
+
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('file');
+const reportDiv = document.getElementById('report');
+
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => {
+  e.preventDefault(); drop.classList.add('hover');
+}));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => {
+  e.preventDefault(); drop.classList.remove('hover');
+}));
+drop.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+drop.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+document.querySelectorAll('[data-sample]').forEach(b => {
+  b.addEventListener('click', async () => {
+    const which = b.getAttribute('data-sample');
+    const url = {
+      bedrock: 'samples/bedrock_two_agents_billing.json',
+      vertex: 'samples/vertex_two_agents_billing.json',
+      azure: 'samples/azure_two_agents_billing.json',
+      'multi-orch': 'samples/multi_orch_full_traces.json',
+    }[which];
+    if (!url) return;
+    try {
+      const r = await fetch(url);
+      const text = await r.text();
+      audit(text, `sample/${which}`);
+    } catch (e) {
+      showError(`Sample not available: ${e.message}`);
+    }
+  });
+});
+
+function handleFile(f) {
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => audit(reader.result, f.name);
+  reader.readAsText(f);
+}
+
+function showError(msg) {
+  reportDiv.innerHTML = `<div class="card err">${escapeHtml(msg)}</div>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function audit(text, name) {
+  let data;
+  try {
+    if (name.endsWith('.jsonl') || name.endsWith('.ndjson')) {
+      data = text.split(/\r?\n/).filter(Boolean).map(l => JSON.parse(l));
+    } else {
+      data = JSON.parse(text);
+    }
+  } catch (e) {
+    showError(`Failed to parse ${name}: ${e.message}`);
+    return;
+  }
+
+  const events = normalize(data);
+  if (!events.length) {
+    showError(`No tool-call events found in ${name}. Format may be unsupported — try OpenInference, LangSmith, Bedrock, Vertex, or Azure.`);
+    return;
+  }
+  events.forEach(ev => ev.scope = inferScope(ev));
+  const conflicts = detectConflicts(events);
+  render(events, conflicts, name);
+}
+
+// ---- normalization across formats ----
+function normalize(data) {
+  // Bedrock
+  if (sniffBedrock(data)) return normalizeBedrock(data);
+  // Azure
+  if (sniffAzure(data)) return normalizeAzure(data);
+  // Vertex / OpenInference / OTel
+  return normalizeOTelLike(data);
+}
+
+function sniffBedrock(d) {
+  const sample = Array.isArray(d) ? d[0] : d;
+  if (!sample || typeof sample !== 'object') return false;
+  if ('agentSessionId' in sample || 'agentId' in sample) return true;
+  if (sample.trace && sample.trace.orchestrationTrace) return true;
+  if (sample.traces && Array.isArray(sample.traces)) {
+    const t0 = sample.traces[0];
+    return t0 && (t0.trace || t0.orchestrationTrace);
+  }
+  return false;
+}
+
+function sniffAzure(d) {
+  const sample = Array.isArray(d) ? d[0] : d;
+  if (!sample) return false;
+  if ('operation_Id' in sample || 'customDimensions' in sample) return true;
+  if (sample.value && Array.isArray(sample.value) && sample.value[0]) {
+    const v0 = sample.value[0];
+    return ('operation_Id' in v0) || ('customDimensions' in v0);
+  }
+  return false;
+}
+
+function normalizeBedrock(data) {
+  const out = [];
+  const arr = Array.isArray(data) ? data : [data];
+  for (const root of arr) {
+    if (!root || typeof root !== 'object') continue;
+    const session = root.agentSessionId || root.sessionId || 'bedrock-session';
+    const traces = root.traces || (root.trace ? [{trace: root.trace, agentId: root.agentId}] : []);
+    for (const wrap of traces) {
+      const t = wrap.trace || wrap;
+      const agent = wrap.agentId || root.agentId || 'bedrock-agent';
+      const orch = (t && t.orchestrationTrace) || {};
+      const inv = orch.invocationInput || {};
+      const obs = orch.observation || {};
+      const ai = inv.actionGroupInvocationInput;
+      if (!ai) continue;
+      const fn = ai.function || (ai.apiPath || '').replace(/^\//, '') || 'unknown';
+      const group = ai.actionGroupName || '';
+      const tool = group ? `${group}.${fn}` : fn;
+      const args = {};
+      (ai.parameters || []).forEach(p => {
+        if (p && p.name) args[p.name] = p.value;
+      });
+      if (ai.requestBody) args._requestBody = ai.requestBody;
+      const ts = parseTs(inv.startTime || (t && t.startTime));
+      out.push({
+        agent_id: agent, session_id: session,
+        tool_name: tool, tool_args: args,
+        ts_start: ts, ts_end: ts + 100,
+      });
+    }
+  }
+  return out;
+}
+
+function normalizeAzure(data) {
+  const out = [];
+  const rows = data.value || (Array.isArray(data) ? data : [data]);
+  for (const row of rows) {
+    let cd = row.customDimensions;
+    if (typeof cd === 'string') {
+      try { cd = JSON.parse(cd); } catch(_) { cd = {}; }
+    }
+    cd = cd || {};
+    const tool = cd['ai.tool.name'] || cd.ai_tool_name || cd['tool.name'];
+    if (!tool) continue;
+    const inputRaw = cd['ai.tool.input'] || cd['ai.tool.arguments'] || '{}';
+    let args;
+    try { args = typeof inputRaw === 'string' ? JSON.parse(inputRaw) : inputRaw; }
+    catch(_) { args = {_raw: inputRaw}; }
+    out.push({
+      agent_id: cd['ai.agent.id'] || cd.ai_agent_id || row.cloud_RoleName || 'azure-agent',
+      session_id: cd['ai.agent.run_id'] || cd.ai_agent_run_id || row.session_Id || row.operation_Id || 'azure-session',
+      tool_name: tool, tool_args: args,
+      ts_start: parseTs(row.timestamp || row.start),
+      ts_end: parseTs(row.timestamp) + (Number(row.duration) || 100),
+    });
+  }
+  return out;
+}
+
+function normalizeOTelLike(data) {
+  const out = [];
+  const spans = collectSpans(data);
+  for (const span of spans) {
+    const attrs = flattenAttrs(span.attributes);
+    const tool = attrs['gen_ai.tool.name'] || attrs['tool.name'] || attrs.name || span.name || (span.displayName && span.displayName.value);
+    if (!tool) continue;
+    // Only tool-shaped spans
+    const op = attrs['gen_ai.operation.name'] || attrs['openinference.span.kind'];
+    if (op && !/tool|execute_tool/i.test(op)) continue;
+    let args = attrs['gcp.vertex.agent.input'] || attrs['input.value'] || attrs['tool.args'] || '{}';
+    if (typeof args === 'string') {
+      try { args = JSON.parse(args); } catch(_) { args = {_raw: args}; }
+    }
+    out.push({
+      agent_id: attrs['gen_ai.agent.name'] || attrs['agent.id'] || attrs['agent.name'] || 'agent',
+      session_id: attrs['gcp.vertex.agent.session_id'] || attrs['session.id'] || 'session',
+      tool_name: tool, tool_args: args,
+      ts_start: parseTs(span.startTime),
+      ts_end:   parseTs(span.endTime) || parseTs(span.startTime) + 100,
+    });
+  }
+  return out;
+}
+
+function collectSpans(d) {
+  if (Array.isArray(d)) {
+    const out = [];
+    for (const x of d) out.push(...collectSpans(x));
+    return out;
+  }
+  if (!d || typeof d !== 'object') return [];
+  if (Array.isArray(d.spans)) return d.spans;
+  if (Array.isArray(d.resourceSpans)) {
+    const out = [];
+    for (const rs of d.resourceSpans) for (const ss of (rs.scopeSpans || [])) for (const s of (ss.spans || [])) out.push(s);
+    return out;
+  }
+  if (d.name && (d.attributes || d.spanId || d.span_id)) return [d];
+  return [];
+}
+
+function flattenAttrs(a) {
+  if (!a) return {};
+  if (Array.isArray(a)) {
+    const o = {};
+    for (const kv of a) {
+      const v = kv.value || {};
+      o[kv.key] = v.stringValue || v.intValue || v.boolValue || v;
+    }
+    return o;
+  }
+  if (a.attributeMap) {
+    const o = {};
+    for (const k of Object.keys(a.attributeMap)) {
+      const v = a.attributeMap[k];
+      const sv = v.stringValue || v.intValue || v.boolValue;
+      o[k] = (sv && typeof sv === 'object' && 'value' in sv) ? sv.value : sv;
+    }
+    return o;
+  }
+  return a;
+}
+
+function parseTs(ts) {
+  if (!ts) return Date.now();
+  if (typeof ts === 'number') return ts;
+  if (typeof ts === 'object' && 'seconds' in ts) return Number(ts.seconds) * 1000 + Math.floor((Number(ts.nanos)||0)/1e6);
+  if (typeof ts === 'string') {
+    const t = Date.parse(ts);
+    return Number.isFinite(t) ? t : Date.now();
+  }
+  return Date.now();
+}
+
+// ---- scope inference ----
+function sanitizePath(p) {
+  return String(p).replace(/[^a-zA-Z0-9._/-]/g, '_').replace(/^\//, '');
+}
+
+function inferScope(ev) {
+  const name = (ev.tool_name || '').toLowerCase();
+  // Filesystem
+  const fsTools = new Set(['edit_file','write_file','write','edit','patch','create_file','delete_file','str_replace_editor','filesystem.write','filesystem.edit']);
+  if (fsTools.has(name) || name.endsWith('.write') || name.endsWith('.edit')) {
+    const p = ev.tool_args.path || ev.tool_args.file_path || ev.tool_args.filename;
+    if (p) return [`repo.fs.${sanitizePath(p)}:w`];
+  }
+  // Schema migration
+  if (name.includes('schema_migration') || name.includes('add_column') || name.includes('alter_table')) {
+    const t = ev.tool_args.table || ev.tool_args.table_name;
+    if (t) return [`db.${sanitizePath(t)}:w`];
+  }
+  // HTTP-shaped paths (Bedrock api routes)
+  if (/[/](cancel|restore|admin|create|update|delete)/.test(name)) {
+    const path = name.split('.').pop().replace(/^\//, '').replace(/\{[^}]+\}/g, '_id');
+    return [`http.${sanitizePath(path)}:w`];
+  }
+  return [];
+}
+
+// ---- conflict detection ----
+function detectConflicts(events) {
+  const lookbackMs = 24 * 60 * 60 * 1000;
+  const sorted = events.slice().sort((a,b) => a.ts_start - b.ts_start);
+  // Group by session
+  const bySession = new Map();
+  for (const ev of sorted) {
+    if (!ev.scope || !ev.scope.length) continue;
+    if (!bySession.has(ev.session_id)) bySession.set(ev.session_id, []);
+    bySession.get(ev.session_id).push(ev);
+  }
+  const conflicts = [];
+  for (const sessionEvents of bySession.values()) {
+    for (let i = 0; i < sessionEvents.length; i++) {
+      const ev = sessionEvents[i];
+      const colliding = [];
+      let kind = null;
+      for (let j = 0; j < i; j++) {
+        const prior = sessionEvents[j];
+        if (prior.agent_id === ev.agent_id) continue;
+        const overlap = ev.scope.filter(s => prior.scope.includes(s));
+        if (!overlap.length) continue;
+        if (prior.ts_end >= ev.ts_start) { kind = 'scope_overlap'; }
+        else if (ev.ts_start - prior.ts_end <= lookbackMs) { kind = kind || 'stale_base_overwrite'; }
+        else continue;
+        colliding.push({prior, overlap});
+      }
+      if (colliding.length) {
+        conflicts.push({intention: ev, conflicting: colliding, kind});
+      }
+    }
+  }
+  return conflicts;
+}
+
+// ---- render ----
+function render(events, conflicts, name) {
+  const sessions = new Set(events.map(e => e.session_id));
+  const agents = new Set(events.map(e => e.agent_id));
+  const html = `
+    <div class="card">
+      <h2>Source · ${escapeHtml(name)}</h2>
+      <div class="stat-grid">
+        <div class="stat"><div class="num">${events.length}</div><div class="lbl">tool-call events</div></div>
+        <div class="stat"><div class="num">${sessions.size}</div><div class="lbl">sessions</div></div>
+        <div class="stat"><div class="num">${agents.size}</div><div class="lbl">agents</div></div>
+        <div class="stat"><div class="num ${conflicts.length>0?'bad':'good'}">${conflicts.length}</div><div class="lbl">conflicts</div></div>
+      </div>
+    </div>
+    ${conflicts.length === 0 ? `
+      <div class="card"><h2>All clear</h2><p>No cross-agent scope collisions detected. Either your agents are well-coordinated or this trace doesn't include the kind of overlapping writes that conflict. Try the multi-orch case study to see Synapse catch a real one.</p></div>
+    ` : `
+      <div class="card">
+        <h2>Conflicts detected</h2>
+        ${conflicts.map(c => {
+          const scopes = c.conflicting[0] ? c.conflicting[0].overlap.join(', ') : '?';
+          const involved = new Set([c.intention.agent_id, ...c.conflicting.map(x => x.prior.agent_id)]);
+          return `
+            <div class="conflict ${c.kind}">
+              <div class="head"><span class="pill">${c.kind.replace('_', ' ')}</span><span class="scope">${escapeHtml(scopes)}</span></div>
+              <div class="body">
+                ${[...involved].map(a => `<span class="pill">${escapeHtml(a)}</span>`).join('')}
+                · <code>${escapeHtml(c.intention.tool_name)}</code>
+                · ${c.conflicting.length} prior write(s) on this scope
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `}
+    <div class="card">
+      <h2>Next step</h2>
+      <p style="color:var(--muted)">
+        This is the post-hoc audit. To <em>prevent</em> these collisions in real time:
+        <code>pip install synapse-protocol[live]</code> and add
+        <code>synapse.install(framework="langgraph")</code> to your agent code.
+        <a href="https://github.com/arajgor1/synapse#live-mode" target="_blank">Read the live-mode guide</a>.
+      </p>
+    </div>
+  `;
+  reportDiv.innerHTML = html;
+}
+</script>
+</body>
+</html>

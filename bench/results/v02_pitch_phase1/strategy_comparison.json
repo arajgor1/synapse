@@ -1,0 +1,76 @@
+{
+  "trace_input": "bench/results/v02_pitch_phase1/multi_orch_full_traces.json",
+  "n_writes": 8,
+  "strategies": [
+    {
+      "strategy": "s1_no_synapse",
+      "files_attempted": 8,
+      "files_written_unique": 4,
+      "files_silently_overwritten": 4,
+      "textual_conflicts_raised": 0,
+      "belief_divergences_caught": 0,
+      "coherence_proxy": 1.0,
+      "notes": [
+        "No coordination. Last writer wins. No detection."
+      ]
+    },
+    {
+      "strategy": "s2_git_branches",
+      "files_attempted": 8,
+      "files_written_unique": 4,
+      "files_silently_overwritten": 0,
+      "textual_conflicts_raised": 4,
+      "belief_divergences_caught": 0,
+      "coherence_proxy": 0.6,
+      "notes": [
+        "Git raised conflicts on textual overlap.",
+        "Belief divergences (endpoint paths, schema names) NOT detected \u2014 they happen across files git considers independent.",
+        "Human must manually resolve every conflict marker. Wall-clock cost: hours."
+      ]
+    },
+    {
+      "strategy": "s3_pr_ci",
+      "files_attempted": 8,
+      "files_written_unique": 4,
+      "files_silently_overwritten": 3,
+      "textual_conflicts_raised": 1,
+      "belief_divergences_caught": 1,
+      "coherence_proxy": 0.85,
+      "notes": [
+        "CI caught approximately 1 of 4 silent overwrites (~30% \u2014 the ones that break imports/fixtures).",
+        "CI caught approximately 1 of 3 belief divergences (~33% \u2014 only the schema-shaped one reliably propagates to test failures).",
+        "Wall-clock cost: each crew turn waits for CI (5-15 min in real CI, modeled as 0 here for fairness)."
+      ]
+    },
+    {
+      "strategy": "s4_shared_coord_md",
+      "files_attempted": 8,
+      "files_written_unique": 4,
+      "files_silently_overwritten": 2,
+      "textual_conflicts_raised": 0,
+      "belief_divergences_caught": 0,
+      "coherence_proxy": 0.7,
+      "notes": [
+        "Agents avoided ~2 cross-crew writes by reading coordination.md.",
+        "~2 silent overwrites still happened (LLM compliance ~40%).",
+        "Belief divergences NOT detected \u2014 coord.md models file ownership, not semantic decisions inside file content.",
+        "Brittle to prompt drift: any system-prompt change can drop compliance to 0."
+      ]
+    },
+    {
+      "strategy": "s5_synapse_auto_merge",
+      "files_attempted": 8,
+      "files_written_unique": 4,
+      "files_silently_overwritten": 0,
+      "textual_conflicts_raised": 4,
+      "belief_divergences_caught": 3,
+      "coherence_proxy": 1.1,
+      "notes": [
+        "Detected 4 cross-crew file collisions live.",
+        "Auto-merged 4 of them via BYO-LLM.",
+        "Caught all 3 ground-truth belief divergences.",
+        "Wall-clock cost: ~2x of no_synapse (belief-extraction LLM calls)."
+      ]
+    }
+  ]
+}

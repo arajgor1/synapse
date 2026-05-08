@@ -1,0 +1,142 @@
+name: 'Synapse Audit'
+description: 'Audit agent trace exports for silent multi-agent conflicts and post a PR comment with findings.'
+author: 'Aadit Rajgor'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  trace-path:
+    description: 'Glob pattern for trace files (e.g., traces/*.json or .synapse/runs/*.jsonl).'
+    required: true
+    default: 'traces/*.json'
+  pr-comment:
+    description: 'Whether to post a PR comment when conflicts are found.'
+    required: false
+    default: 'true'
+  fail-on-conflict:
+    description: 'Whether to fail the action when conflicts are detected.'
+    required: false
+    default: 'false'
+  python-version:
+    description: 'Python version to use.'
+    required: false
+    default: '3.11'
+
+outputs:
+  conflicts-detected:
+    description: 'Number of conflicts detected across all trace files.'
+    value: ${{ steps.audit.outputs.conflicts-detected }}
+  events-processed:
+    description: 'Total number of tool-call events processed.'
+    value: ${{ steps.audit.outputs.events-processed }}
+  report-path:
+    description: 'Path to the generated HTML audit report (uploaded as an artifact).'
+    value: ${{ steps.audit.outputs.report-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Synapse
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install synapse-protocol
+
+    - name: Run synapse audit
+      id: audit
+      shell: bash
+      run: |
+        set -euo pipefail
+        TOTAL_CONFLICTS=0
+        TOTAL_EVENTS=0
+        REPORT_DIR="$RUNNER_TEMP/synapse-reports"
+        mkdir -p "$REPORT_DIR"
+
+        SUMMARY_MD="$REPORT_DIR/summary.md"
+        echo "## Synapse Audit Results" > "$SUMMARY_MD"
+        echo "" >> "$SUMMARY_MD"
+
+        FILES=$(ls -1 ${{ inputs.trace-path }} 2>/dev/null || echo "")
+        if [ -z "$FILES" ]; then
+          echo "No trace files matched: ${{ inputs.trace-path }}" >> "$SUMMARY_MD"
+          echo "conflicts-detected=0" >> "$GITHUB_OUTPUT"
+          echo "events-processed=0" >> "$GITHUB_OUTPUT"
+          echo "report-path=$REPORT_DIR" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        echo "| Trace file | Events | Write events | Conflicts |" >> "$SUMMARY_MD"
+        echo "|---|---|---|---|" >> "$SUMMARY_MD"
+
+        for f in $FILES; do
+          echo "Auditing $f..."
+          OUTPUT_JSON="$REPORT_DIR/$(basename "$f" | sed 's/[^a-zA-Z0-9._-]/_/g').json"
+          OUTPUT_HTML="$REPORT_DIR/$(basename "$f" | sed 's/[^a-zA-Z0-9._-]/_/g').html"
+
+          python -c "
+        import json, sys
+        from synapse.audit import audit_traces
+        rep = audit_traces('$f')
+        rep.write_json('$OUTPUT_JSON')
+        rep.write_html('$OUTPUT_HTML')
+        print(f'EVENTS={rep.total_events}')
+        print(f'WRITES={rep.total_write_events}')
+        print(f'CONFLICTS={len(rep.conflicts)}')
+          " > "$REPORT_DIR/audit.out"
+
+          EVENTS=$(grep '^EVENTS=' "$REPORT_DIR/audit.out" | cut -d= -f2)
+          WRITES=$(grep '^WRITES=' "$REPORT_DIR/audit.out" | cut -d= -f2)
+          CONFLICTS=$(grep '^CONFLICTS=' "$REPORT_DIR/audit.out" | cut -d= -f2)
+          TOTAL_EVENTS=$((TOTAL_EVENTS + EVENTS))
+          TOTAL_CONFLICTS=$((TOTAL_CONFLICTS + CONFLICTS))
+
+          echo "| \`$f\` | $EVENTS | $WRITES | $CONFLICTS |" >> "$SUMMARY_MD"
+        done
+
+        echo "" >> "$SUMMARY_MD"
+        echo "**Total: $TOTAL_CONFLICTS conflicts across $TOTAL_EVENTS events.**" >> "$SUMMARY_MD"
+        if [ "$TOTAL_CONFLICTS" -gt 0 ]; then
+          echo "" >> "$SUMMARY_MD"
+          echo "Download the full HTML report from this run's artifacts." >> "$SUMMARY_MD"
+          echo "" >> "$SUMMARY_MD"
+          echo "_Live coordination prevents these collisions: \`pip install synapse-protocol[live]\` + \`synapse.install(framework=...)\`._" >> "$SUMMARY_MD"
+        fi
+
+        echo "conflicts-detected=$TOTAL_CONFLICTS" >> "$GITHUB_OUTPUT"
+        echo "events-processed=$TOTAL_EVENTS" >> "$GITHUB_OUTPUT"
+        echo "report-path=$REPORT_DIR" >> "$GITHUB_OUTPUT"
+        echo "summary-path=$SUMMARY_MD" >> "$GITHUB_OUTPUT"
+
+    - name: Upload audit report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: synapse-audit-report
+        path: ${{ steps.audit.outputs.report-path }}
+
+    - name: Comment on PR
+      if: inputs.pr-comment == 'true' && github.event_name == 'pull_request' && steps.audit.outputs.conflicts-detected != '0'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const summary = fs.readFileSync('${{ steps.audit.outputs.summary-path }}', 'utf8');
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: summary,
+          });
+
+    - name: Fail on conflict
+      if: inputs.fail-on-conflict == 'true' && steps.audit.outputs.conflicts-detected != '0'
+      shell: bash
+      run: |
+        echo "::error::Synapse detected ${{ steps.audit.outputs.conflicts-detected }} conflict(s) in agent traces."
+        exit 1

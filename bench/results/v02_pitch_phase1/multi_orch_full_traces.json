@@ -1,0 +1,116 @@
+{
+  "spans": [
+    {
+      "name": "edit_file",
+      "spanId": "span-0000",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:00Z",
+      "endTime": "2026-05-08T14:17:00.100000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/db/schema.sql\"}",
+        "agent.id": "alpha_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    },
+    {
+      "name": "edit_file",
+      "spanId": "span-0001",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:00.200000Z",
+      "endTime": "2026-05-08T14:17:00.300000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/db/schema.sql\"}",
+        "agent.id": "bravo_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    },
+    {
+      "name": "edit_file",
+      "spanId": "span-0002",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:00.400000Z",
+      "endTime": "2026-05-08T14:17:00.500000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/routes/auth.js\"}",
+        "agent.id": "alpha_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    },
+    {
+      "name": "edit_file",
+      "spanId": "span-0003",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:00.600000Z",
+      "endTime": "2026-05-08T14:17:00.700000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/routes/auth.js\"}",
+        "agent.id": "bravo_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    },
+    {
+      "name": "edit_file",
+      "spanId": "span-0004",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:00.800000Z",
+      "endTime": "2026-05-08T14:17:00.900000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/routes/subscriptions.js\"}",
+        "agent.id": "alpha_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    },
+    {
+      "name": "edit_file",
+      "spanId": "span-0005",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:01Z",
+      "endTime": "2026-05-08T14:17:01.100000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/routes/subscriptions.js\"}",
+        "agent.id": "bravo_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    },
+    {
+      "name": "edit_file",
+      "spanId": "span-0006",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:01.200000Z",
+      "endTime": "2026-05-08T14:17:01.300000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/routes/invoices.js\"}",
+        "agent.id": "alpha_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    },
+    {
+      "name": "edit_file",
+      "spanId": "span-0007",
+      "traceId": "trace-multi-orch",
+      "startTime": "2026-05-08T14:17:01.400000Z",
+      "endTime": "2026-05-08T14:17:01.500000Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "tool.args": "{\"path\": \"src/routes/invoices.js\"}",
+        "agent.id": "bravo_backend",
+        "session.id": "v02_multi_orch_audit"
+      }
+    }
+  ]
+}

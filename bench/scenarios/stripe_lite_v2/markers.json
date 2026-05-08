@@ -1,0 +1,117 @@
+{
+  "description": "Coherence-scoring markers. Each marker checks one specific decision the two crews had to make in alignment. Score = matched / total.",
+  "markers": [
+    {
+      "id": "col_canceled_at",
+      "category": "schema",
+      "file_glob": "**/models.py",
+      "regex": "canceled_at\\s*=\\s*Column\\s*\\(\\s*DateTime",
+      "expected": true,
+      "note": "American spelling, DateTime type"
+    },
+    {
+      "id": "col_cancel_reason",
+      "category": "schema",
+      "file_glob": "**/models.py",
+      "regex": "cancel_reason\\s*=\\s*Column\\s*\\(\\s*String",
+      "expected": true
+    },
+    {
+      "id": "col_grace_until",
+      "category": "schema",
+      "file_glob": "**/models.py",
+      "regex": "grace_until\\s*=\\s*Column\\s*\\(\\s*DateTime",
+      "expected": true,
+      "note": "Naming chosen: grace_until, not grace_period_end"
+    },
+    {
+      "id": "no_cancelled_with_two_l",
+      "category": "schema",
+      "file_glob": "**/models.py",
+      "regex": "cancelled_at",
+      "expected": false,
+      "note": "British spelling collision indicator"
+    },
+    {
+      "id": "endpoint_cancel",
+      "category": "endpoint",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "/subscriptions/\\{[^}]+\\}/cancel",
+      "expected": true
+    },
+    {
+      "id": "endpoint_restore",
+      "category": "endpoint",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "/admin/subscriptions/\\{[^}]+\\}/restore",
+      "expected": true
+    },
+    {
+      "id": "endpoint_status",
+      "category": "endpoint",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "/subscriptions/\\{[^}]+\\}/status",
+      "expected": true
+    },
+    {
+      "id": "state_value_active",
+      "category": "state_machine",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "[\"']active[\"']",
+      "expected": true
+    },
+    {
+      "id": "state_value_grace",
+      "category": "state_machine",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "[\"']grace[\"']",
+      "expected": true,
+      "note": "agreed value: 'grace' not 'in_grace' or 'grace_period'"
+    },
+    {
+      "id": "state_value_canceled",
+      "category": "state_machine",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "[\"']canceled[\"']",
+      "expected": true
+    },
+    {
+      "id": "already_canceled_409",
+      "category": "error_handling",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "status_code\\s*=\\s*409",
+      "expected": true,
+      "note": "Already-canceled returns 409 Conflict, not 400"
+    },
+    {
+      "id": "grace_period_seven_days",
+      "category": "business_logic",
+      "file_glob": "**/routes/**/*.py",
+      "regex": "(timedelta\\s*\\(\\s*days\\s*=\\s*7|days=7)",
+      "expected": true,
+      "note": "7-day grace period as specified"
+    },
+    {
+      "id": "invoice_skip_past_grace",
+      "category": "business_logic",
+      "file_glob": "**/routes/invoices.py",
+      "regex": "grace_until",
+      "expected": true,
+      "note": "invoice generator references grace_until"
+    },
+    {
+      "id": "invoice_prorated_flag",
+      "category": "business_logic",
+      "file_glob": "**/routes/invoices.py",
+      "regex": "prorated",
+      "expected": true
+    },
+    {
+      "id": "tests_for_cancel",
+      "category": "tests",
+      "file_glob": "**/tests/**/*.py",
+      "regex": "def\\s+test_.*cancel",
+      "expected": true
+    }
+  ]
+}

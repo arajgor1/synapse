@@ -27,14 +27,16 @@ def _events_from_path(path: str | Path) -> list[AuditEvent]:
 def audit_traces(
     path: str | Path,
     *,
-    lookback_ms: int = 60_000,
+    lookback_ms: int = 24 * 60 * 60 * 1000,  # 24h — production traces span hours
     write_only: bool = True,
 ) -> AuditReport:
     """Run the audit pipeline and return an AuditReport.
 
     Args:
         path: trace file (.json, .jsonl, .ndjson). Auto-detects format.
-        lookback_ms: stale-base-overwrite window. Default 60s.
+        lookback_ms: stale-base-overwrite window. Default 24h for audit
+            mode (production trace exports often span hours/days). Live
+            mode uses a much tighter window (60s) — see runtime/router.
         write_only: only consider write-class tool calls. Default True.
 
     Returns:

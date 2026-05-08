@@ -1,0 +1,77 @@
+{
+  "_doc": "Realistic adversarial Vertex AI Agent Builder Cloud Trace export. Two ADK agents (vertex-billing-engineer-a, vertex-billing-engineer-b) running in parallel reasoning engines, working the same Stripe Lite v2 cancellation feature. Includes mixed attribute shapes (some flat, some nested attributeMap), missing endTime, span without traceId, and the same kind of cross-agent semantic divergence Bedrock shows: spelling, status code, endpoint path. Tool spans only — model spans omitted (auditor only cares about side-effect spans).",
+  "spans": [
+    {
+      "name": "execute_tool",
+      "displayName": {"value": "execute_tool"},
+      "spanId": "span-a-001",
+      "traceId": "trace-vertex-001",
+      "startTime": "2026-05-08T14:20:00.123Z",
+      "endTime": "2026-05-08T14:20:00.500Z",
+      "attributes": {
+        "gen_ai.operation.name": "execute_tool",
+        "gen_ai.tool.name": "edit_file",
+        "gen_ai.system": "vertex_ai",
+        "gen_ai.agent.name": "vertex-billing-engineer-a",
+        "gcp.vertex.agent.session_id": "vertex-multiagent-billing",
+        "gcp.vertex.agent.input": "{\"path\": \"app/models.py\", \"diff\": \"+    canceled_at = Column(DateTime, nullable=True)\"}",
+        "gcp.vertex.agent.output": "ok"
+      }
+    },
+    {
+      "name": "execute_tool",
+      "spanId": "span-a-002",
+      "traceId": "trace-vertex-001",
+      "startTime": "2026-05-08T14:20:02.000Z",
+      "endTime": "2026-05-08T14:20:02.300Z",
+      "attributes": {
+        "gen_ai.operation.name": "execute_tool",
+        "gen_ai.tool.name": "edit_file",
+        "gen_ai.agent.name": "vertex-billing-engineer-a",
+        "gcp.vertex.agent.session_id": "vertex-multiagent-billing",
+        "gcp.vertex.agent.input": "{\"path\": \"app/routes/subscriptions.py\", \"diff\": \"+@router.post(\\\"/subscriptions/{id}/cancel\\\")\\n+def cancel(id: int):\\n+    raise HTTPException(status_code=409, detail=\\\"already canceled\\\")\"}",
+        "gcp.vertex.agent.output": "ok"
+      }
+    },
+    {
+      "name": "execute_tool",
+      "spanId": "span-b-001",
+      "startTime": {"seconds": 1778291101, "nanos": 100000000},
+      "endTime": {"seconds": 1778291101, "nanos": 700000000},
+      "attributes": {
+        "attributeMap": {
+          "gen_ai.operation.name": {"stringValue": {"value": "execute_tool"}},
+          "gen_ai.tool.name": {"stringValue": {"value": "edit_file"}},
+          "gen_ai.agent.name": {"stringValue": {"value": "vertex-billing-engineer-b"}},
+          "gcp.vertex.agent.session_id": {"stringValue": {"value": "vertex-multiagent-billing"}},
+          "gcp.vertex.agent.input": {"stringValue": {"value": "{\"path\": \"app/models.py\", \"diff\": \"+    cancelled_at = Column(DateTime, nullable=True)\"}"}},
+          "gcp.vertex.agent.output": {"stringValue": {"value": "ok"}}
+        }
+      }
+    },
+    {
+      "name": "execute_tool",
+      "spanId": "span-b-002",
+      "startTime": "2026-05-08T14:20:04.000Z",
+      "attributes": {
+        "gen_ai.operation.name": "execute_tool",
+        "gen_ai.tool.name": "edit_file",
+        "gen_ai.agent.name": "vertex-billing-engineer-b",
+        "gcp.vertex.agent.session_id": "vertex-multiagent-billing",
+        "gcp.vertex.agent.input": "{\"path\": \"app/routes/admin.py\", \"diff\": \"+@router.post(\\\"/admin/subscriptions/{id}/restore\\\")\\n+def restore(id: int):\\n+    raise HTTPException(status_code=400, detail=\\\"not cancelled\\\")\"}",
+        "gcp.vertex.agent.output": "ok"
+      }
+    },
+    {
+      "name": "model_call",
+      "spanId": "span-b-003",
+      "startTime": "2026-05-08T14:20:05.000Z",
+      "endTime": "2026-05-08T14:20:05.500Z",
+      "attributes": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.system": "vertex_ai",
+        "gen_ai.request.model": "gemini-2.5-flash"
+      }
+    }
+  ]
+}

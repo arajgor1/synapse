@@ -64,6 +64,9 @@ def is_write(event: AuditEvent) -> bool:
         "write", "edit", "patch", "delete", "create", "update", "modify",
         "execute", "run", "send", "post", "publish", "deploy", "commit",
         "save", "insert", "upsert", "merge", "render", "generate",
+        # Cloud-vendor functional tool names
+        "add_column", "alter_table", "drop_table", "migrate",
+        "set_", "put_", "remove_", "register_", "deregister_",
     )
     if any(kw in name for kw in write_kws):
         return True
@@ -72,4 +75,20 @@ def is_write(event: AuditEvent) -> bool:
         # Read tools usually have "read" in the name; assume write otherwise
         if "read" not in name and "search" not in name and "list" not in name:
             return True
+    # Bedrock action-group calls always mutate by convention (the agent
+    # is calling out to a user-defined API, not a built-in read).
+    # Heuristic: tool_name has form "<group>.<fn>" with non-empty group.
+    if "." in name:
+        # api routes (POST/PUT/DELETE-shaped paths) — Bedrock encodes as
+        # "<group>.<path-with-slashes>" or just "<path>"
+        if any(verb in name for verb in ("/cancel", "/restore", "/create", "/delete", "/update", "/admin")):
+            return True
+    # HTTP-shaped tool names with action verbs in the path
+    if name.startswith("/") and any(
+        verb in name for verb in ("/cancel", "/restore", "/create", "/delete", "/update")
+    ):
+        return True
+    # Bedrock requestBody is a strong write hint
+    if "_requestBody" in event.tool_args or "body" in event.tool_args:
+        return True
     return False

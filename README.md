@@ -1,12 +1,44 @@
 # Synapse
 
-> **The safety layer for multi-agent AI systems.**
-> Audit existing logs for silent collisions, prevent them live, and resolve them with your own LLM.
+> **The safety layer for multi-agent AI on shared codebases.**
+> Audit existing trace exports for silent collisions, prevent them live, resolve them with your own LLM.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Version: v0.2.1-alpha](https://img.shields.io/badge/Version-v0.2.1--alpha-blue.svg)](#status)
 [![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
 [![Tests](https://img.shields.io/badge/tests-482%20passing-brightgreen.svg)](#tests)
+
+---
+
+## Try it in 60 seconds
+
+```bash
+# Have a trace export from any agent run? Audit it.
+pip install synapse-protocol
+synapse audit ./traces.json
+```
+
+Supports OpenInference / OTel · LangSmith · AWS Bedrock Agents · GCP Vertex Agent Builder · Azure AI Agent Service · plain JSONL — auto-detected.
+
+No trace? Try the [hosted audit tool](launch/hosted-audit/) (drag-drop a trace JSON in your browser, zero install).
+
+---
+
+## The empirical case (1-pager)
+
+Two engineers, each running their own AI agent on the same repo, will silently overwrite each other and quietly disagree on the schema. **None of the alternatives catch it. Synapse does.**
+
+Hold the agent behavior constant (real LangGraph multi-orchestrator run, May 8 2026). Vary the coordination strategy.
+
+| Strategy | Silent file loss | Loud conflicts | Belief divergences caught |
+|---|---|---|---|
+| No coordination | **4 of 8 files** | 0 | 0 of 3 |
+| Git branches + naive merge | 0 | 4 (loud) | **0 of 3** |
+| PR + CI with pytest in loop | 3 | 1 | **1 of 3** (only schema-shaped) |
+| Shared coordination.md | 2 | 0 | 0 of 3 |
+| **Synapse `MergePolicy.auto_merge`** | **0** | **4 auto-merged** | **3 of 3** |
+
+Source data + scoring oracle: [`bench/results/v02_pitch_phase1/`](bench/results/v02_pitch_phase1/RESULTS.md). Full 1-pager with caveats: [`docs/launch/PITCH_1PAGER.md`](docs/launch/PITCH_1PAGER.md).
 
 ---
 

@@ -1,0 +1,151 @@
+{
+  "_doc": "Realistic adversarial Bedrock Agents trace export. Two Bedrock Agents with different agentIds (bedrock-billing-svc and bedrock-billing-admin) running in parallel sessions, both editing schema for the same logical 'subscription cancellation' feature. Includes the messy real-world quirks: missing endTime on some traces, mixed apiPath/function styles, parameters list with mixed types, multi-collaborator agentCollaboratorInvocationInput, and one trace where actionGroupName is empty. The two agents land on conflicting column names and conflicting endpoint paths — exactly what synapse audit should catch.",
+  "agentSessionId": "session-multi-agent-bedrock-2026-05-08",
+  "traces": [
+    {
+      "agentId": "bedrock-billing-svc",
+      "agentVersion": "DRAFT",
+      "trace": {
+        "orchestrationTrace": {
+          "traceId": "trace-svc-001",
+          "modelInvocationInput": {
+            "text": "User wants to cancel subscription with grace period",
+            "type": "ORCHESTRATION"
+          }
+        }
+      }
+    },
+    {
+      "agentId": "bedrock-billing-svc",
+      "trace": {
+        "orchestrationTrace": {
+          "traceId": "trace-svc-002",
+          "invocationInput": {
+            "traceId": "trace-svc-002",
+            "startTime": "2026-05-08T14:17:54.123Z",
+            "actionGroupInvocationInput": {
+              "actionGroupName": "schema_migration",
+              "function": "add_column",
+              "parameters": [
+                {"name": "table", "value": "subscriptions", "type": "string"},
+                {"name": "column_name", "value": "canceled_at", "type": "string"},
+                {"name": "column_type", "value": "TIMESTAMP", "type": "string"},
+                {"name": "nullable", "value": "true", "type": "boolean"}
+              ]
+            }
+          },
+          "observation": {
+            "actionGroupInvocationOutput": {
+              "text": "Column canceled_at added to subscriptions"
+            }
+          }
+        }
+      }
+    },
+    {
+      "agentId": "bedrock-billing-svc",
+      "trace": {
+        "orchestrationTrace": {
+          "traceId": "trace-svc-003",
+          "invocationInput": {
+            "traceId": "trace-svc-003",
+            "startTime": "2026-05-08T14:17:55.444Z",
+            "actionGroupInvocationInput": {
+              "actionGroupName": "api_routes",
+              "apiPath": "/subscriptions/{id}/cancel",
+              "verb": "POST",
+              "requestBody": "{\"reason\": \"user requested\"}"
+            }
+          },
+          "observation": {
+            "actionGroupInvocationOutput": {
+              "text": "Endpoint /subscriptions/{id}/cancel created. Returns 409 if already canceled."
+            }
+          }
+        }
+      }
+    },
+    {
+      "agentId": "bedrock-billing-admin",
+      "trace": {
+        "orchestrationTrace": {
+          "traceId": "trace-adm-001",
+          "modelInvocationInput": {
+            "text": "Build admin restore endpoint for canceled subscriptions"
+          }
+        }
+      }
+    },
+    {
+      "agentId": "bedrock-billing-admin",
+      "trace": {
+        "orchestrationTrace": {
+          "traceId": "trace-adm-002",
+          "invocationInput": {
+            "traceId": "trace-adm-002",
+            "startTime": "2026-05-08T14:17:56.001Z",
+            "actionGroupInvocationInput": {
+              "actionGroupName": "schema_migration",
+              "function": "add_column",
+              "parameters": [
+                {"name": "table", "value": "subscriptions", "type": "string"},
+                {"name": "column_name", "value": "cancelled_at", "type": "string"},
+                {"name": "column_type", "value": "TIMESTAMP", "type": "string"}
+              ]
+            }
+          },
+          "observation": {
+            "actionGroupInvocationOutput": {
+              "text": "Column cancelled_at added"
+            }
+          }
+        }
+      }
+    },
+    {
+      "agentId": "bedrock-billing-admin",
+      "trace": {
+        "orchestrationTrace": {
+          "traceId": "trace-adm-003",
+          "invocationInput": {
+            "traceId": "trace-adm-003",
+            "startTime": "2026-05-08T14:17:57.222Z",
+            "actionGroupInvocationInput": {
+              "actionGroupName": "",
+              "apiPath": "/admin/subs/{id}/restore",
+              "verb": "POST"
+            }
+          },
+          "observation": {
+            "actionGroupInvocationOutput": {
+              "text": "Restore endpoint at /admin/subs/{id}/restore"
+            }
+          }
+        }
+      }
+    },
+    {
+      "agentId": "bedrock-billing-admin",
+      "trace": {
+        "orchestrationTrace": {
+          "traceId": "trace-adm-004",
+          "invocationInput": {
+            "traceId": "trace-adm-004",
+            "startTime": "2026-05-08T14:17:58.500Z",
+            "actionGroupInvocationInput": {
+              "actionGroupName": "api_routes",
+              "apiPath": "/subscriptions/{id}/cancel",
+              "verb": "POST",
+              "requestBody": "{\"reason\": \"admin override\"}"
+            }
+          },
+          "observation": {
+            "actionGroupInvocationOutput": {
+              "text": "Endpoint at /subscriptions/{id}/cancel returns 400 when already cancelled"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

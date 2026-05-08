@@ -1,0 +1,180 @@
+{
+  "cell": "C12",
+  "description": "synapse audit on cloud trace formats",
+  "date": "2026-05-08T20:45:03.652978Z",
+  "formats": {
+    "bedrock": {
+      "sample_path": "bench/scenarios/cloud_trace_samples/bedrock_two_agents_billing.json",
+      "events_total": 5,
+      "events_write": 4,
+      "sessions": {
+        "session-multi-agent-bedrock-2026-05-08": [
+          "bedrock-billing-svc",
+          "bedrock-billing-admin"
+        ]
+      },
+      "conflicts_detected": 2,
+      "conflicts": [
+        {
+          "intention": {
+            "agent_id": "bedrock-billing-admin",
+            "tool_name": "schema_migration.add_column",
+            "scope": [
+              "db.subscriptions:w",
+              "db.subscriptions.cancelled_at:w"
+            ],
+            "ts_start_ms": 1778249876001,
+            "tool_args": {
+              "table": "subscriptions",
+              "column_name": "cancelled_at",
+              "column_type": "TIMESTAMP"
+            }
+          },
+          "conflicting": [
+            {
+              "agent_id": "bedrock-billing-svc",
+              "tool_name": "schema_migration.add_column",
+              "scope": [
+                "db.subscriptions:w",
+                "db.subscriptions.canceled_at:w"
+              ],
+              "ts_start_ms": 1778249874123,
+              "ts_end_ms": 1778249874123
+            }
+          ],
+          "overlapping_scopes": [
+            "db.subscriptions:w"
+          ],
+          "kind": "stale_base_overwrite",
+          "rationale": "bedrock-billing-admin's write to ['db.subscriptions:w', 'db.subscriptions.cancelled_at:w'] would clobber recent changes by bedrock-billing-svc. Their work resolved less than 86400s ago \u2014 bedrock-billing-admin likely never saw it."
+        },
+        {
+          "intention": {
+            "agent_id": "bedrock-billing-admin",
+            "tool_name": "api_routes.subscriptions/{id}/cancel",
+            "scope": [
+              "http.subscriptions/_id/cancel:w"
+            ],
+            "ts_start_ms": 1778249878500,
+            "tool_args": {
+              "_requestBody": "{\"reason\": \"admin override\"}"
+            }
+          },
+          "conflicting": [
+            {
+              "agent_id": "bedrock-billing-svc",
+              "tool_name": "api_routes.subscriptions/{id}/cancel",
+              "scope": [
+                "http.subscriptions/_id/cancel:w"
+              ],
+              "ts_start_ms": 1778249875444,
+              "ts_end_ms": 1778249875444
+            }
+          ],
+          "overlapping_scopes": [
+            "http.subscriptions/_id/cancel:w"
+          ],
+          "kind": "stale_base_overwrite",
+          "rationale": "bedrock-billing-admin's write to ['http.subscriptions/_id/cancel:w'] would clobber recent changes by bedrock-billing-svc. Their work resolved less than 86400s ago \u2014 bedrock-billing-admin likely never saw it."
+        }
+      ],
+      "estimated_wasted_tokens": 400,
+      "estimated_wasted_usd": 0.0004
+    },
+    "vertex": {
+      "sample_path": "bench/scenarios/cloud_trace_samples/vertex_two_agents_billing.json",
+      "events_total": 4,
+      "events_write": 4,
+      "sessions": {
+        "vertex-multiagent-billing": [
+          "vertex-billing-engineer-b",
+          "vertex-billing-engineer-a"
+        ]
+      },
+      "conflicts_detected": 1,
+      "conflicts": [
+        {
+          "intention": {
+            "agent_id": "vertex-billing-engineer-b",
+            "tool_name": "edit_file",
+            "scope": [
+              "repo.fs.app/models.py:w"
+            ],
+            "ts_start_ms": 1778291101100,
+            "tool_args": {
+              "path": "app/models.py",
+              "diff": "+    cancelled_at = Column(DateTime, nullable=True)"
+            }
+          },
+          "conflicting": [
+            {
+              "agent_id": "vertex-billing-engineer-a",
+              "tool_name": "edit_file",
+              "scope": [
+                "repo.fs.app/models.py:w"
+              ],
+              "ts_start_ms": 1778250000123,
+              "ts_end_ms": 1778250000500
+            }
+          ],
+          "overlapping_scopes": [
+            "repo.fs.app/models.py:w"
+          ],
+          "kind": "stale_base_overwrite",
+          "rationale": "vertex-billing-engineer-b's write to ['repo.fs.app/models.py:w'] would clobber recent changes by vertex-billing-engineer-a. Their work resolved less than 86400s ago \u2014 vertex-billing-engineer-b likely never saw it."
+        }
+      ],
+      "estimated_wasted_tokens": 200,
+      "estimated_wasted_usd": 0.0002
+    },
+    "azure": {
+      "sample_path": "bench/scenarios/cloud_trace_samples/azure_two_agents_billing.json",
+      "events_total": 4,
+      "events_write": 4,
+      "sessions": {
+        "azure-multiagent-billing-run-001": [
+          "azure-billing-mainline",
+          "azure-billing-admin"
+        ],
+        "azure-trace-admin": [
+          "azure-agent"
+        ]
+      },
+      "conflicts_detected": 1,
+      "conflicts": [
+        {
+          "intention": {
+            "agent_id": "azure-billing-admin",
+            "tool_name": "edit_file",
+            "scope": [
+              "repo.fs.app/models.py:w"
+            ],
+            "ts_start_ms": 1778250304000,
+            "tool_args": {
+              "path": "app/models.py",
+              "content": "cancelled_at = Column(DateTime, nullable=True)"
+            }
+          },
+          "conflicting": [
+            {
+              "agent_id": "azure-billing-mainline",
+              "tool_name": "edit_file",
+              "scope": [
+                "repo.fs.app/models.py:w"
+              ],
+              "ts_start_ms": 1778250300000,
+              "ts_end_ms": 1778250300312
+            }
+          ],
+          "overlapping_scopes": [
+            "repo.fs.app/models.py:w"
+          ],
+          "kind": "stale_base_overwrite",
+          "rationale": "azure-billing-admin's write to ['repo.fs.app/models.py:w'] would clobber recent changes by azure-billing-mainline. Their work resolved less than 86400s ago \u2014 azure-billing-admin likely never saw it."
+        }
+      ],
+      "estimated_wasted_tokens": 200,
+      "estimated_wasted_usd": 0.0002
+    }
+  }
+}

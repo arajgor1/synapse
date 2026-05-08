@@ -1,0 +1,80 @@
+{
+  "_doc": "Realistic adversarial Azure AI Agent Service / App Insights export. Two Azure AI agents (azure-billing-mainline, azure-billing-admin) emitting tool-call dependencies. Includes the messy real-world quirks: customDimensions sometimes a JSON string (App Insights serializes it that way for some exporters), some rows are model calls not tool calls (we filter them), one row has a tool name but no agent id (we fall back), and the cross-agent divergences mirror Bedrock/Vertex.",
+  "value": [
+    {
+      "timestamp": "2026-05-08T14:25:00.000Z",
+      "type": "Dependency",
+      "name": "ai.tool.call",
+      "id": "azure-span-a1",
+      "operation_Id": "azure-trace-mainline",
+      "operation_ParentId": null,
+      "duration": 312,
+      "success": true,
+      "customDimensions": {
+        "ai.agent.id": "azure-billing-mainline",
+        "ai.agent.run_id": "azure-multiagent-billing-run-001",
+        "ai.tool.name": "edit_file",
+        "ai.tool.input": "{\"path\": \"app/models.py\", \"content\": \"canceled_at = Column(DateTime, nullable=True)\"}",
+        "ai.tool.output": "ok"
+      }
+    },
+    {
+      "timestamp": "2026-05-08T14:25:01.500Z",
+      "type": "Dependency",
+      "name": "ai.tool.call",
+      "id": "azure-span-a2",
+      "operation_Id": "azure-trace-mainline",
+      "operation_ParentId": "azure-span-a1",
+      "duration": 215,
+      "success": true,
+      "customDimensions": "{\"ai.agent.id\": \"azure-billing-mainline\", \"ai.agent.run_id\": \"azure-multiagent-billing-run-001\", \"ai.tool.name\": \"edit_file\", \"ai.tool.input\": \"{\\\"path\\\": \\\"app/routes/subscriptions.py\\\", \\\"content\\\": \\\"@router.post('/subscriptions/{id}/cancel')\\\\nstatus_code=409\\\"}\"}"
+    },
+    {
+      "timestamp": "2026-05-08T14:25:03.000Z",
+      "type": "Dependency",
+      "name": "model_call",
+      "id": "azure-span-b0",
+      "operation_Id": "azure-trace-admin",
+      "duration": 1432,
+      "success": true,
+      "customDimensions": {
+        "ai.agent.id": "azure-billing-admin",
+        "ai.agent.run_id": "azure-multiagent-billing-run-001",
+        "ai.model.name": "gpt-4o-mini",
+        "ai.tokens.input": 540,
+        "ai.tokens.output": 120
+      }
+    },
+    {
+      "timestamp": "2026-05-08T14:25:04.000Z",
+      "type": "Dependency",
+      "name": "ai.tool.call",
+      "id": "azure-span-b1",
+      "operation_Id": "azure-trace-admin",
+      "duration": 287,
+      "success": true,
+      "customDimensions": {
+        "ai.agent.id": "azure-billing-admin",
+        "ai.agent.run_id": "azure-multiagent-billing-run-001",
+        "ai.tool.name": "edit_file",
+        "ai.tool.input": "{\"path\": \"app/models.py\", \"content\": \"cancelled_at = Column(DateTime, nullable=True)\"}",
+        "ai.tool.output": "ok"
+      }
+    },
+    {
+      "timestamp": "2026-05-08T14:25:05.500Z",
+      "type": "Dependency",
+      "name": "ai.tool.call",
+      "id": "azure-span-b2",
+      "operation_Id": "azure-trace-admin",
+      "operation_ParentId": "azure-span-b1",
+      "duration": 195,
+      "success": true,
+      "customDimensions": {
+        "ai.tool.name": "edit_file",
+        "ai.tool.input": "{\"path\": \"app/routes/admin.py\", \"content\": \"@router.post('/admin/subs/{id}/restore')\\nstatus_code=400\"}",
+        "ai.tool.output": "ok"
+      }
+    }
+  ]
+}

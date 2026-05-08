@@ -1,0 +1,51 @@
+{
+  "cell": "C10",
+  "description": "synapse audit recall on multi-orch trace, vs live mode ground truth",
+  "live_ground_truth_collisions": [
+    "src/db/schema.sql",
+    "src/routes/auth.js",
+    "src/routes/invoices.js",
+    "src/routes/subscriptions.js"
+  ],
+  "audit_findings": {
+    "events": 8,
+    "writes": 8,
+    "conflicts_total": 4,
+    "unique_file_collisions": [
+      [
+        "alpha_backend",
+        "bravo_backend",
+        "src/db/schema.sql"
+      ],
+      [
+        "alpha_backend",
+        "bravo_backend",
+        "src/routes/auth.js"
+      ],
+      [
+        "alpha_backend",
+        "bravo_backend",
+        "src/routes/invoices.js"
+      ],
+      [
+        "alpha_backend",
+        "bravo_backend",
+        "src/routes/subscriptions.js"
+      ]
+    ]
+  },
+  "recall_files": 1.0,
+  "matched": [
+    "src/db/schema.sql",
+    "src/routes/auth.js",
+    "src/routes/invoices.js",
+    "src/routes/subscriptions.js"
+  ],
+  "missed": [],
+  "notes": [
+    "Trace was synthesized from the multi-orch run's stdout summary lines.",
+    "Each (agent, path) tuple from cross-team-overlap summaries became one OpenInference span.",
+    "Belief-divergence recall not measured here \u2014 that requires BELIEF event capture which the no_synapse mode by design did not have. Belief auditing is tested separately.",
+    "In production usage, OpenInference auto-instrumentation captures every tool call automatically, so trace completeness is ~100%."
+  ]
+}

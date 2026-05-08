@@ -1,0 +1,37 @@
+{
+  "cell_id": "C6+C7",
+  "description": "IDE-style agents on shared FS \u2014 no coord vs FS-watcher Synapse shim",
+  "harness": "Two FSWatcher instances on a shared tempdir, each attributing to a different agent_id (alice, bob). Models two concurrent Claude Code or Cursor sessions in the same repo.",
+  "C6_no_coord": {
+    "strategy": "no coordination \u2014 last writer wins",
+    "writes_observed_alice": 3,
+    "writes_observed_bob": 3,
+    "files_affected": [
+      "models.py",
+      "auth.py"
+    ],
+    "silent_overwrites": 1,
+    "conflicts_raised": 0,
+    "notes": [
+      "No detection. Alice's models.py work is silently lost when Bob overwrites."
+    ]
+  },
+  "C7_fs_watcher": {
+    "strategy": "FS-watcher Synapse shim emits JSONL audit events",
+    "events_emitted": 6,
+    "conflicts_detected_via_audit": 4,
+    "unique_cross_agent_collisions": 2,
+    "matched_paths": [
+      "models.py",
+      "auth.py"
+    ],
+    "recall_vs_C5_structural": 1.0,
+    "notes": [
+      "FS watcher catches structural collisions with ~100% recall on this test.",
+      "Attribution noise: each watcher sees every change in the dir, so both watchers attribute the same physical write to different agents. The audit still detects the cross-agent collision correctly.",
+      "For clean attribution, use the Claude Code BeforeTool/AfterTool hook (synapse-pretooluse.py) \u2014 runs in agent context with SYNAPSE_AGENT_ID env var.",
+      "Belief-divergence detection: NOT possible via FS-watcher alone (cannot inspect LLM call output). For belief detection in IDE flows, use the live SDK adapters where available."
+    ]
+  },
+  "ide_wedge_gate": "PASS (\u226560% structural collision recall; 100% achieved)"
+}

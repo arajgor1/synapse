@@ -128,13 +128,48 @@ def _generic_write_rule(ev: AuditEvent) -> Optional[list[str]]:
     return None
 
 
+def _bedrock_action_group_rule(ev: AuditEvent) -> Optional[list[str]]:
+    """Bedrock action-group calls: tool_name is `<group>.<fn>` or contains
+    a slash-shaped path. Map to db.<table> for schema_migration calls and
+    http.<path> for api_routes calls.
+    """
+    name = ev.tool_name.lower()
+
+    # Schema migration: schema_migration.add_column with table arg
+    if "schema_migration" in name or "alter_table" in name or "add_column" in name:
+        table = ev.tool_args.get("table") or ev.tool_args.get("table_name")
+        col = ev.tool_args.get("column_name") or ev.tool_args.get("column")
+        if table:
+            scopes = [f"db.{_sanitize_path(str(table))}:w"]
+            if col:
+                scopes.append(f"db.{_sanitize_path(str(table))}.{_sanitize_path(str(col))}:w")
+            return scopes
+        return ["db.unknown:w"]
+
+    # API routes encoded as "<group>.<path-with-slashes>" or just "/path/..."
+    has_path_shape = "/" in name and any(
+        seg in name for seg in ("/cancel", "/restore", "/admin", "/create", "/update", "/delete")
+    )
+    if has_path_shape:
+        # Strip the group prefix if present, normalize the path
+        path_part = name.split(".", 1)[-1] if "." in name else name
+        path_part = path_part.lstrip("/")
+        # Replace path params {x} with :x for stable canonicalization
+        canonical = re.sub(r"\{[^}]+\}", "_id", path_part)
+        return [f"http.{_sanitize_path(canonical)}:w"]
+
+    return None
+
+
 # Built-in defaults, tried after any user-registered rules.
+# bedrock rule must come BEFORE generic so its specific handling wins.
 _DEFAULTS: list[ScopeRule] = [
     _filesystem_rule,
     _shell_rule,
     _http_rule,
     _db_rule,
     _browser_rule,
+    _bedrock_action_group_rule,
     _generic_write_rule,
 ]
 
