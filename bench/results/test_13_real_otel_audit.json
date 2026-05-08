@@ -1,0 +1,28 @@
+{
+  "test_id": "13",
+  "scenario": "Real OpenInference auto-instrumentor against real Anthropic SDK -> synapse audit",
+  "anthropic_calls": 2,
+  "agent_answers": {
+    "alice": "canceled_at",
+    "bob": "canceled_at"
+  },
+  "otel_spans_captured": 4,
+  "audit_findings": {
+    "events": 2,
+    "writes": 2,
+    "conflicts": 1,
+    "conflict_summary": [
+      {
+        "kind": "scope_overlap",
+        "scopes": [
+          "repo.fs.app/models.py:w"
+        ],
+        "intention_agent": "bob",
+        "conflicting_agents": [
+          "alice"
+        ]
+      }
+    ]
+  },
+  "trace_path": "C:\\C3\\synapse\\bench\\results\\test_13_real_otel_trace.json"
+}

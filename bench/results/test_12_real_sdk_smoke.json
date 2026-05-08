@@ -1,0 +1,110 @@
+{
+  "test_id": "12",
+  "scenario": "Real-SDK smoke test \u2014 does each adapter actually patch the real published SDK?",
+  "started_at": "2026-05-08T21:38:52Z",
+  "host": "AADITYA",
+  "frameworks": [
+    {
+      "framework": "langgraph",
+      "pip_package": "langgraph",
+      "expected_dispatch_path": "ToolNode.invoke or similar",
+      "install_attempted": true,
+      "install_ok": true,
+      "import_ok": true,
+      "import_version": "?",
+      "synapse_install_log": [
+        "INFO synapse.frameworks.langgraph: synapse.install(framework='langgraph'): callback ready. Attach via graph.invoke(input, config={'callbacks':[synapse.frameworks.langgraph.get_callback()]}) for explicit control, or rely on LangChain's global callback manager when configured."
+      ],
+      "patched": null,
+      "exception": null
+    },
+    {
+      "framework": "crewai",
+      "fatal_error": "TimeoutExpired: Command '['C:\\\\Users\\\\aadit\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe', '-m', 'pip', 'install', '-q', 'crewai>=0.86,<0.130']' timed out after 180 seconds"
+    },
+    {
+      "framework": "autogen",
+      "pip_package": "autogen-agentchat>=0.4",
+      "expected_dispatch_path": "AssistantAgent / dispatch path",
+      "install_attempted": true,
+      "install_ok": true,
+      "import_ok": true,
+      "import_version": "0.7.5",
+      "synapse_install_log": [
+        "INFO synapse.frameworks.autogen: synapse.install(framework='autogen'): patched autogen_core.FunctionTool.run"
+      ],
+      "patched": true,
+      "exception": null
+    },
+    {
+      "framework": "openai_agents",
+      "pip_package": "openai-agents",
+      "expected_dispatch_path": "Agent.run or runner",
+      "install_attempted": true,
+      "install_ok": true,
+      "import_ok": true,
+      "import_version": "0.17.0",
+      "synapse_install_log": [
+        "INFO synapse.frameworks.openai_agents: synapse.install(framework='openai_agents'): patched agents.tool.function_tool"
+      ],
+      "patched": true,
+      "exception": null
+    },
+    {
+      "framework": "pydantic_ai",
+      "pip_package": "pydantic-ai",
+      "expected_dispatch_path": "Agent.run_tool path",
+      "install_attempted": true,
+      "install_ok": true,
+      "import_ok": true,
+      "import_version": "1.92.0",
+      "synapse_install_log": [
+        "WARNING synapse.frameworks.pydantic_ai: synapse.install(framework='pydantic_ai'): could not find Tool.run/call to patch. Use synapse.intend() manually."
+      ],
+      "patched": false,
+      "exception": null
+    },
+    {
+      "framework": "smolagents",
+      "pip_package": "smolagents",
+      "expected_dispatch_path": "Tool.__call__",
+      "install_attempted": true,
+      "install_ok": true,
+      "import_ok": true,
+      "import_version": "1.24.0",
+      "synapse_install_log": [
+        "INFO synapse.frameworks.smolagents: synapse.install(framework='smolagents'): patched Tool.__call__"
+      ],
+      "patched": true,
+      "exception": null
+    },
+    {
+      "framework": "hermes",
+      "pip_package": "hermes-mcp",
+      "expected_dispatch_path": "Hermes tool dispatch",
+      "install_attempted": true,
+      "install_ok": false,
+      "import_ok": false,
+      "import_version": null,
+      "synapse_install_log": [],
+      "patched": null,
+      "exception": null,
+      "install_output_tail": "ERROR: Could not find a version that satisfies the requirement hermes-mcp (from versions: none)\n\n[notice] A new release of pip is available: 26.1 -> 26.1.1\n[notice] To update, run: python.exe -m pip install --upgrade pip\nERROR: No matching distribution found for hermes-mcp\n"
+    },
+    {
+      "framework": "strands",
+      "pip_package": "strands-agents",
+      "expected_dispatch_path": "event_loop._handle_tool_execution (after fix)",
+      "install_attempted": true,
+      "install_ok": true,
+      "import_ok": true,
+      "import_version": "?",
+      "synapse_install_log": [
+        "INFO synapse.frameworks.strands: synapse.install(framework='strands'): patched module-level strands.event_loop.event_loop._handle_tool_execution"
+      ],
+      "patched": true,
+      "exception": null
+    }
+  ],
+  "elapsed_s": 405.2
+}

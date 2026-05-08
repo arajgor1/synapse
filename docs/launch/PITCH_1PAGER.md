@@ -107,14 +107,17 @@ python -c "import synapse; synapse.install(framework='langgraph')"
 
 ## What changed between this 1-pager and the prior version
 
-The previous draft conflated modeled cells with real cells. After the user demanded IRL testing of the three cells most readers would fixate on, this draft now reports:
+The user pushed for IRL testing of every claim, and a forensic record of every prompt and methodology. Three additional tests ran this round (Tests 11-RETRY, 12, 13). The result: **2 more refutations surfaced, 1 more claim cleanly validated.**
 
-- **3 hypotheses real-confirmed** (down from "8 of 9 modeled-passed")
-- **1 hypothesis refuted IRL** (Strands adapter)
-- **2 hypotheses partially refuted on outcome** (CI+Synapse coherence, H5)
-- **3 hypotheses still modeled-only** (git, shared coord.md, full audit recall on real cloud exports)
+| Round | Claims tested | Real-confirmed | Refuted | Modeled | New finding |
+|---|---|---|---|---|---|
+| Original "8 of 9 pass" | 9 hypotheses | 0 IRL | 0 IRL | 9 modeled | (the framing was misleading) |
+| Options A/B/C | 9 hypotheses | 3 | 1 | 5 modeled | Strands adapter broken; H5 partially refuted |
+| **This round (Tests 11-RETRY, 12, 13)** | + adapter health + real-exporter audit | **+1 (Test 13: OpenInference→audit)** | **+1 (pydantic_ai)** | unchanged | Of 8 SDK adapters, only 4 confirmed patching real SDKs |
 
-Trust gained. Pitch narrowed. The audit path and the LangGraph + Claude Code paths are real. The Strands path needs a re-run before being claimed. The cloud-vendor audit story needs real exports before being claimed.
+**The trust-but-verify forensic doc** (`bench/TESTING_PROTOCOL.md`) is the new source of truth. Every prompt is verbatim; every test is classified Tier 1–4 by evidence quality. Tier 1 claims are quotable; Tiers 3 and 4 are not.
+
+Pitch narrowed again. The audit path (incl. real OpenInference exports) and the Claude Code IDE wedge are Tier 1. The full-SDK-coverage claim is now Tier 2 (4 of 8 confirmed working). Cloud-vendor real exports remain unvalidated. Strands adapter is structurally fixed but functionally unverified end-to-end.
 
 ## Repo
 

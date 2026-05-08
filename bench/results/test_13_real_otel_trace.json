@@ -1,0 +1,82 @@
+{
+  "spans": [
+    {
+      "name": "messages.create",
+      "spanId": "94bb00cc4ff7b955",
+      "traceId": "523e00671abb56683f16f00f666031d7",
+      "startTime": "2026-05-08T21:40:33Z",
+      "endTime": "2026-05-08T21:40:33Z",
+      "attributes": {
+        "llm.provider": "anthropic",
+        "llm.system": "anthropic",
+        "input.value": "{\"model\": \"claude-haiku-4-5-20251001\", \"max_tokens\": 20, \"messages\": [{\"role\": \"user\", \"content\": \"You are alice. The team is building a billing service. Pick a column name for 'when subscription was canceled' and reply with ONE WORD ONLY (snake_case). Do not explain.\"}]}",
+        "input.mime_type": "application/json",
+        "llm.input_messages.0.message.role": "user",
+        "llm.input_messages.0.message.content": "You are alice. The team is building a billing service. Pick a column name for 'when subscription was canceled' and reply with ONE WORD ONLY (snake_case). Do not explain.",
+        "llm.invocation_parameters": "{\"max_tokens\": 20}",
+        "llm.model_name": "claude-haiku-4-5-20251001",
+        "llm.output_messages.0.message.role": "assistant",
+        "llm.output_messages.0.message.content": "canceled_at",
+        "llm.token_count.prompt": 48,
+        "llm.token_count.completion": 6,
+        "output.value": "{\"id\":\"msg_016cBgrCjio9ibHAVa3LrZhF\",\"container\":null,\"content\":[{\"citations\":null,\"text\":\"canceled_at\",\"type\":\"text\"}],\"model\":\"claude-haiku-4-5-20251001\",\"role\":\"assistant\",\"stop_details\":null,\"stop_reason\":\"end_turn\",\"stop_sequence\":null,\"type\":\"message\",\"usage\":{\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"inference_geo\":\"not_available\",\"input_tokens\":48,\"output_tokens\":6,\"server_tool_use\":null,\"service_tier\":\"standard\"}}",
+        "output.mime_type": "application/json",
+        "openinference.span.kind": "LLM"
+      }
+    },
+    {
+      "name": "agent.tool_call.alice",
+      "spanId": "072af57f92e23ff7",
+      "traceId": "523e00671abb56683f16f00f666031d7",
+      "startTime": "2026-05-08T21:40:33Z",
+      "endTime": "2026-05-08T21:40:33Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "agent.id": "alice",
+        "session.id": "test_13_session",
+        "tool.args": "{\"path\": \"app/models.py\", \"column\": \"TBD\"}",
+        "tool.result": "canceled_at"
+      }
+    },
+    {
+      "name": "messages.create",
+      "spanId": "a5d9ce31885408b9",
+      "traceId": "d57ac77325e16f2eb591ce5ba14d580d",
+      "startTime": "2026-05-08T21:40:33Z",
+      "endTime": "2026-05-08T21:40:34Z",
+      "attributes": {
+        "llm.provider": "anthropic",
+        "llm.system": "anthropic",
+        "input.value": "{\"model\": \"claude-haiku-4-5-20251001\", \"max_tokens\": 20, \"messages\": [{\"role\": \"user\", \"content\": \"You are bob. The team is building a billing service. Pick a column name for 'when subscription was canceled' and reply with ONE WORD ONLY (snake_case). Do not explain.\"}]}",
+        "input.mime_type": "application/json",
+        "llm.input_messages.0.message.role": "user",
+        "llm.input_messages.0.message.content": "You are bob. The team is building a billing service. Pick a column name for 'when subscription was canceled' and reply with ONE WORD ONLY (snake_case). Do not explain.",
+        "llm.invocation_parameters": "{\"max_tokens\": 20}",
+        "llm.model_name": "claude-haiku-4-5-20251001",
+        "llm.output_messages.0.message.role": "assistant",
+        "llm.output_messages.0.message.content": "canceled_at",
+        "llm.token_count.prompt": 48,
+        "llm.token_count.completion": 6,
+        "output.value": "{\"id\":\"msg_01GDLMx3oGToPfhj9RCG5cTD\",\"container\":null,\"content\":[{\"citations\":null,\"text\":\"canceled_at\",\"type\":\"text\"}],\"model\":\"claude-haiku-4-5-20251001\",\"role\":\"assistant\",\"stop_details\":null,\"stop_reason\":\"end_turn\",\"stop_sequence\":null,\"type\":\"message\",\"usage\":{\"cache_creation\":{\"ephemeral_1h_input_tokens\":0,\"ephemeral_5m_input_tokens\":0},\"cache_creation_input_tokens\":0,\"cache_read_input_tokens\":0,\"inference_geo\":\"not_available\",\"input_tokens\":48,\"output_tokens\":6,\"server_tool_use\":null,\"service_tier\":\"standard\"}}",
+        "output.mime_type": "application/json",
+        "openinference.span.kind": "LLM"
+      }
+    },
+    {
+      "name": "agent.tool_call.bob",
+      "spanId": "8d3d0402823457f8",
+      "traceId": "d57ac77325e16f2eb591ce5ba14d580d",
+      "startTime": "2026-05-08T21:40:33Z",
+      "endTime": "2026-05-08T21:40:34Z",
+      "attributes": {
+        "openinference.span.kind": "TOOL",
+        "tool.name": "edit_file",
+        "agent.id": "bob",
+        "session.id": "test_13_session",
+        "tool.args": "{\"path\": \"app/models.py\", \"column\": \"TBD\"}",
+        "tool.result": "canceled_at"
+      }
+    }
+  ]
+}
