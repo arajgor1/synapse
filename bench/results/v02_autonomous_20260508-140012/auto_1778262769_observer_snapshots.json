@@ -1,0 +1,674 @@
+[
+  {
+    "t": 15.839,
+    "path": "/tmp/auto_observer_9df2/src/db/schema.sql",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 15.841,
+    "path": "/tmp/auto_observer_9df2/src/auth/authService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 15.842,
+    "path": "/tmp/auto_observer_9df2/src/stripe/stripeClient.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 15.843,
+    "path": "/tmp/auto_observer_9df2/src/pages/Dashboard.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 18.735,
+    "path": "/tmp/auto_observer_9df2/src/stripe/stripeClient.ts",
+    "phase": "after",
+    "size": 1464,
+    "preview": "import Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nexport async function createCustomer(email: string, name: string) {\n  try {\n    return await stripe.customers.create({ email, name });\n  } catch (error) {\n    if (error ins"
+  },
+  {
+    "t": 19.241,
+    "path": "/tmp/auto_observer_9df2/src/auth/authService.ts",
+    "phase": "after",
+    "size": 1744,
+    "preview": "import jwt from 'jsonwebtoken';\nimport bcrypt from 'bcrypt';\nimport { Request, Response, NextFunction } from 'express';\n\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';\nconst BCRYPT_ROUNDS = 10;\n\ninterface User {\n  id: string;\n  email: string;\n  password: string;\n}\n\nconst users: Map<"
+  },
+  {
+    "t": 19.476,
+    "path": "/tmp/auto_observer_9df2/src/pages/Dashboard.tsx",
+    "phase": "after",
+    "size": 1688,
+    "preview": "import React from 'react';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  email: string;\n  subscription: string;\n  status: 'active' | 'inactive';\n  createdAt: string;\n}\n\nconst stubTenants: Tenant[] = [\n  {\n    id: '1',\n    name: 'Acme Corp',\n    email: 'admin@acme.com',\n    subscription: 'Profe"
+  },
+  {
+    "t": 19.537,
+    "path": "/tmp/auto_observer_9df2/src/db/schema.sql",
+    "phase": "after",
+    "size": 2045,
+    "preview": "CREATE TABLE tenants (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  name VARCHAR(255) NOT NULL,\n  stripe_customer_id VARCHAR(255) UNIQUE,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE users (\n  id UUID PRIMARY KEY DEFAULT ge"
+  },
+  {
+    "t": 26.822,
+    "path": "/tmp/auto_observer_9df2/src/routes/auth.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 26.823,
+    "path": "/tmp/auto_observer_9df2/src/routes/tenants.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 26.824,
+    "path": "/tmp/auto_observer_9df2/src/stripe/webhookHandler.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 26.825,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 30.262,
+    "path": "/tmp/auto_observer_9df2/src/routes/auth.ts",
+    "phase": "after",
+    "size": 2019,
+    "preview": "import express, { Router, Request, Response } from 'express';\nimport bcrypt from 'bcrypt';\nimport jwt from 'jsonwebtoken';\nimport { body, validationResult } from 'express-validator';\nimport db from '../db';\n\nconst router = Router();\n\nconst validateEmail = body('email').isEmail().normalizeEmail();\nco"
+  },
+  {
+    "t": 30.51,
+    "path": "/tmp/auto_observer_9df2/src/stripe/webhookHandler.ts",
+    "phase": "after",
+    "size": 1978,
+    "preview": "import Stripe from 'stripe';\nimport { Request, Response } from 'express';\nimport { db } from '../db';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';\n\nexport async function handleStripeWebhook(req: Request, res: Response"
+  },
+  {
+    "t": 30.556,
+    "path": "/tmp/auto_observer_9df2/src/routes/tenants.ts",
+    "phase": "after",
+    "size": 1887,
+    "preview": "import { Router, Request, Response, NextFunction } from 'express';\nimport { verifyToken } from '../middleware/auth';\nimport { db } from '../db';\n\nconst router = Router();\n\n// Middleware to verify auth\nconst authRequired = (req: Request, res: Response, next: NextFunction) => {\n  const token = req.hea"
+  },
+  {
+    "t": 30.705,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth.test.ts",
+    "phase": "after",
+    "size": 1957,
+    "preview": "import request from 'supertest';\nimport { app } from '../index';\nimport { db } from '../db';\n\ndescribe('Auth', () => {\n  beforeEach(() => {\n    db.users = [];\n  });\n\n  describe('POST /auth/signup', () => {\n    it('should signup with valid credentials', async () => {\n      const res = await request(a"
+  },
+  {
+    "t": 42.863,
+    "path": "/tmp/auto_observer_9df2/src/routes/subscriptions.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 42.865,
+    "path": "/tmp/auto_observer_9df2/src/routes/invoices.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 42.865,
+    "path": "/tmp/auto_observer_9df2/src/routes/webhooks.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 42.867,
+    "path": "/tmp/auto_observer_9df2/src/pages/SubscriptionsDetail.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 45.413,
+    "path": "/tmp/auto_observer_9df2/src/routes/webhooks.ts",
+    "phase": "after",
+    "size": 1048,
+    "preview": "import { Router, Request, Response } from 'express';\nimport Stripe from 'stripe';\nimport { webhookHandler } from '../handlers/webhookHandler';\n\nconst router = Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';\n\nrou"
+  },
+  {
+    "t": 46.145,
+    "path": "/tmp/auto_observer_9df2/src/routes/subscriptions.ts",
+    "phase": "after",
+    "size": 1881,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { db } from '../db';\nimport { authenticate } from '../middleware/auth';\n\nconst router = Router();\n\nrouter.post('/subscriptions', authenticate, async (req: Request, res: Response) => {\n  try {\n    const { tenantId, seats, planId } = req.body"
+  },
+  {
+    "t": 46.603,
+    "path": "/tmp/auto_observer_9df2/src/pages/SubscriptionsDetail.tsx",
+    "phase": "after",
+    "size": 1900,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useParams } from 'react-router-dom';\n\ninterface Subscription {\n  id: string;\n  name: string;\n  seats: number;\n  pricing: number;\n}\n\ninterface Invoice {\n  id: string;\n  date: string;\n  amount: number;\n  status: string;\n}\n\nexport default fun"
+  },
+  {
+    "t": 46.776,
+    "path": "/tmp/auto_observer_9df2/src/routes/invoices.ts",
+    "phase": "after",
+    "size": 1896,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { db } from '../db';\nimport { invoices, lineItems } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst router = Router();\n\n// GET /invoices/:tenantId - List invoices for tenant\nrouter.get('/:tenantId', async (req: Request, res: R"
+  },
+  {
+    "t": 59.039,
+    "path": "/tmp/auto_observer_9df2/src/db/schema.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 59.041,
+    "path": "/tmp/auto_observer_9df2/src/middleware/tenantAuth.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 59.042,
+    "path": "/tmp/auto_observer_9df2/src/pages/AdminDashboard.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 59.042,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/subscriptions.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 62.259,
+    "path": "/tmp/auto_observer_9df2/src/db/schema.ts",
+    "phase": "after",
+    "size": 1708,
+    "preview": "import { pgTable, text, timestamp, integer, varchar, serial, foreignKey } from 'drizzle-orm/pg-core';\n\nexport const users = pgTable('users', {\n  id: serial('id').primaryKey(),\n  email: varchar('email', { length: 255 }).notNull().unique(),\n  passwordHash: varchar('password_hash', { length: 255 }).not"
+  },
+  {
+    "t": 62.259,
+    "path": "/tmp/auto_observer_9df2/src/middleware/tenantAuth.ts",
+    "phase": "after",
+    "size": 1424,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport jwt from 'jsonwebtoken';\n\nexport interface TenantRequest extends Request {\n  tenant?: {\n    id: string;\n    userId: string;\n  };\n}\n\nexport const tenantAuth = (req: TenantRequest, res: Response, next: NextFunction): void => {\n  try {\n "
+  },
+  {
+    "t": 63.047,
+    "path": "/tmp/auto_observer_9df2/src/pages/AdminDashboard.tsx",
+    "phase": "after",
+    "size": 1681,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { ChevronDown } from 'lucide-react';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  stripe_id: string;\n  created_at: string;\n}\n\ninterface Subscription {\n  id: string;\n  tenant_name: string;\n  seats: number;\n  price: number;\n  status: st"
+  },
+  {
+    "t": 70.871,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/subscriptions.test.ts",
+    "phase": "after",
+    "size": 1822,
+    "preview": "import request from 'supertest';\nimport { app } from '../app';\nimport * as stripeService from '../services/stripeService';\n\njest.mock('../services/stripeService');\n\nconst mockStripeService = stripeService as jest.Mocked<typeof stripeService>;\n\ndescribe('Subscriptions API', () => {\n  const tenantId1 "
+  },
+  {
+    "t": 74.728,
+    "path": "/tmp/auto_observer_9df2/src/db/index.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 74.73,
+    "path": "/tmp/auto_observer_9df2/src/routes/auth.ts",
+    "phase": "before",
+    "size": 2019,
+    "preview": "import express, { Router, Request, Response } from 'express';\nimport bcrypt from 'bcrypt';\nimport jwt from 'jsonwebtoken';\nimport { body, validationResult } from 'express-validator';\nimport db from '../db';\n\nconst router = Router();\n\nconst validateEmail = body('email').isEmail().normalizeEmail();\nco"
+  },
+  {
+    "t": 74.731,
+    "path": "/tmp/auto_observer_9df2/src/services/stripeService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 74.732,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth.test.ts",
+    "phase": "before",
+    "size": 1957,
+    "preview": "import request from 'supertest';\nimport { app } from '../index';\nimport { db } from '../db';\n\ndescribe('Auth', () => {\n  beforeEach(() => {\n    db.users = [];\n  });\n\n  describe('POST /auth/signup', () => {\n    it('should signup with valid credentials', async () => {\n      const res = await request(a"
+  },
+  {
+    "t": 78.013,
+    "path": "/tmp/auto_observer_9df2/src/services/stripeService.ts",
+    "phase": "after",
+    "size": 1453,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\n\nexport async function createStripeCustomer(tenantId: string) {\n  const tenant = await db.tenant.findUnique({ where: { id: tenantId } });\n  \n  const customer = await stripe.customers."
+  },
+  {
+    "t": 78.084,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth.test.ts",
+    "phase": "after",
+    "size": 2055,
+    "preview": "import request from 'supertest';\nimport { app } from '../app';\nimport { db } from '../db';\n\ndescribe('Auth Endpoints', () => {\n  beforeEach(async () => {\n    await db.query('DELETE FROM users');\n  });\n\n  describe('POST /auth/register', () => {\n    it('should register a new user successfully', async "
+  },
+  {
+    "t": 78.175,
+    "path": "/tmp/auto_observer_9df2/src/db/index.ts",
+    "phase": "after",
+    "size": 1462,
+    "preview": "import { Pool, QueryResult } from 'pg';\n\nconst pool = new Pool({\n  user: process.env.DB_USER || 'postgres',\n  password: process.env.DB_PASSWORD || 'postgres',\n  host: process.env.DB_HOST || 'localhost',\n  port: parseInt(process.env.DB_PORT || '5432'),\n  database: process.env.DB_NAME || 'myapp',\n});\n"
+  },
+  {
+    "t": 78.336,
+    "path": "/tmp/auto_observer_9df2/src/routes/auth.ts",
+    "phase": "after",
+    "size": 1968,
+    "preview": "import { Router, Request, Response } from 'express';\nimport bcrypt from 'bcrypt';\nimport jwt from 'jsonwebtoken';\nimport { db } from '../db';\n\nconst router = Router();\n\nrouter.post('/register', async (req: Request, res: Response) => {\n  try {\n    const { email, password } = req.body;\n\n    if (!email"
+  },
+  {
+    "t": 89.235,
+    "path": "/tmp/auto_observer_9df2/src/routes/subscriptions.ts",
+    "phase": "before",
+    "size": 1881,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { db } from '../db';\nimport { authenticate } from '../middleware/auth';\n\nconst router = Router();\n\nrouter.post('/subscriptions', authenticate, async (req: Request, res: Response) => {\n  try {\n    const { tenantId, seats, planId } = req.body"
+  },
+  {
+    "t": 89.236,
+    "path": "/tmp/auto_observer_9df2/src/routes/invoices.ts",
+    "phase": "before",
+    "size": 1896,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { db } from '../db';\nimport { invoices, lineItems } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst router = Router();\n\n// GET /invoices/:tenantId - List invoices for tenant\nrouter.get('/:tenantId', async (req: Request, res: R"
+  },
+  {
+    "t": 89.237,
+    "path": "/tmp/auto_observer_9df2/src/webhooks/stripeWebhook.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 89.238,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/invoices.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 92.502,
+    "path": "/tmp/auto_observer_9df2/src/routes/subscriptions.ts",
+    "phase": "after",
+    "size": 1706,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { db } from '../db';\nimport { stripeService } from '../services/stripeService';\n\nconst router = Router();\n\nrouter.post('/subscriptions', async (req: Request, res: Response) => {\n  try {\n    const { tenant_id, stripe_customer_id, plan_id, se"
+  },
+  {
+    "t": 93.058,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/invoices.test.ts",
+    "phase": "after",
+    "size": 1759,
+    "preview": "import request from 'supertest';\nimport { describe, it, expect, beforeAll, afterAll } from '@jest/globals';\nimport app from '../app';\nimport { db } from '../db';\n\ndescribe('Invoices API', () => {\n  const tenantId = 'test-tenant-123';\n  let invoiceId: string;\n\n  beforeAll(async () => {\n    await db.m"
+  },
+  {
+    "t": 93.307,
+    "path": "/tmp/auto_observer_9df2/src/routes/invoices.ts",
+    "phase": "after",
+    "size": 1801,
+    "preview": "import { Router, Request, Response } from \"express\";\nimport { pool } from \"../db\";\n\nconst router = Router();\n\ninterface LineItem {\n  id: string;\n  description: string;\n  amount: number;\n  quantity: number;\n}\n\ninterface Invoice {\n  id: string;\n  tenant_id: string;\n  subscription_id: string;\n  total_a"
+  },
+  {
+    "t": 94.388,
+    "path": "/tmp/auto_observer_9df2/src/webhooks/stripeWebhook.ts",
+    "phase": "after",
+    "size": 2169,
+    "preview": "import Anthropic from \"@anthropic-ai/sdk\";\nimport { EventEmitter } from \"events\";\n\nconst client = new Anthropic();\nconst eventEmitter = new EventEmitter();\n\n// Store conversation history for multi-turn interactions\nconst conversationHistory: Anthropic.MessageParam[] = [];\n\ninterface StripeEvent {\n  "
+  },
+  {
+    "t": 105.05,
+    "path": "/tmp/auto_observer_9df2/src/app.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 105.051,
+    "path": "/tmp/auto_observer_9df2/src/services/invoiceService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 105.052,
+    "path": "/tmp/auto_observer_9df2/src/admin/Dashboard.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 105.053,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/webhooks.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 108.117,
+    "path": "/tmp/auto_observer_9df2/src/app.ts",
+    "phase": "after",
+    "size": 1391,
+    "preview": "import express, { Express, Request, Response, NextFunction } from 'express';\nimport cors from 'cors';\nimport authRoutes from './routes/auth';\nimport subscriptionsRoutes from './routes/subscriptions';\nimport invoicesRoutes from './routes/invoices';\nimport { stripeWebhookHandler } from './webhooks/str"
+  },
+  {
+    "t": 108.669,
+    "path": "/tmp/auto_observer_9df2/src/services/invoiceService.ts",
+    "phase": "after",
+    "size": 1570,
+    "preview": "import { db } from '../db';\nimport { invoices } from '../db/schema';\nimport { v4 as uuidv4 } from 'uuid';\n\nexport interface LineItem {\n  description: string;\n  quantity: number;\n  unitPrice: number;\n}\n\nexport interface InvoiceInput {\n  subscriptionId: string;\n  lineItems: LineItem[];\n  status: 'draf"
+  },
+  {
+    "t": 108.753,
+    "path": "/tmp/auto_observer_9df2/src/admin/Dashboard.tsx",
+    "phase": "after",
+    "size": 1852,
+    "preview": "import React, { useEffect, useState } from 'react';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  email: string;\n  createdAt: string;\n}\n\ninterface Subscription {\n  id: string;\n  plan: string;\n  status: string;\n  renewalDate: string;\n}\n\ninterface Invoice {\n  id: string;\n  tenantId: string;\n  am"
+  },
+  {
+    "t": 109.44,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/webhooks.test.ts",
+    "phase": "after",
+    "size": 1983,
+    "preview": "import request from 'supertest';\nimport { createServer } from '../server';\nimport Stripe from 'stripe';\n\njest.mock('stripe');\n\ndescribe('POST /webhooks/stripe', () => {\n  let app: any;\n  let mockInvoiceUpdate: jest.Mock;\n\n  beforeEach(() => {\n    app = createServer();\n    mockInvoiceUpdate = jest.fn"
+  },
+  {
+    "t": 120.756,
+    "path": "/tmp/auto_observer_9df2/src/routes/tenants.ts",
+    "phase": "before",
+    "size": 1887,
+    "preview": "import { Router, Request, Response, NextFunction } from 'express';\nimport { verifyToken } from '../middleware/auth';\nimport { db } from '../db';\n\nconst router = Router();\n\n// Middleware to verify auth\nconst authRequired = (req: Request, res: Response, next: NextFunction) => {\n  const token = req.hea"
+  },
+  {
+    "t": 120.757,
+    "path": "/tmp/auto_observer_9df2/src/admin/SubscriptionManager.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 120.758,
+    "path": "/tmp/auto_observer_9df2/src/services/stripeCustomerService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 120.759,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth-subscription.integration.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 122.759,
+    "path": "/tmp/auto_observer_9df2/src/services/stripeCustomerService.ts",
+    "phase": "after",
+    "size": 806,
+    "preview": "import Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nexport async function createStripeCustomer(\n  tenantId: string,\n  email: string,\n): Promise<string> {\n  const customer = await stripe.customers.create({\n    email,\n    meta"
+  },
+  {
+    "t": 124.004,
+    "path": "/tmp/auto_observer_9df2/src/admin/SubscriptionManager.tsx",
+    "phase": "after",
+    "size": 2034,
+    "preview": "import React, { useEffect, useState } from 'react';\n\ninterface Subscription {\n  id: string;\n  plan: string;\n  status: string;\n  next_billing_date: string;\n  tenant_id: string;\n}\n\ninterface SubscriptionManagerProps {\n  tenantId: string;\n}\n\nexport const SubscriptionManager: React.FC<SubscriptionManage"
+  },
+  {
+    "t": 124.084,
+    "path": "/tmp/auto_observer_9df2/src/routes/tenants.ts",
+    "phase": "after",
+    "size": 1759,
+    "preview": "import { Router, Request, Response, NextFunction } from 'express';\nimport { db } from '../db';\nimport { authenticateToken } from '../middleware/auth';\n\nconst router = Router();\n\ninterface AuthRequest extends Request {\n  user?: { id: string };\n}\n\nconst verifyTenantOwnership = async (req: AuthRequest,"
+  },
+  {
+    "t": 124.365,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth-subscription.integration.test.ts",
+    "phase": "after",
+    "size": 1864,
+    "preview": "import request from 'supertest';\nimport { app } from '../app';\nimport { prisma } from '../lib/prisma';\nimport { stripe } from '../lib/stripe';\n\njest.mock('../lib/stripe');\n\ndescribe('Auth & Subscription Integration', () => {\n  let userId: string;\n  let tenantId: string;\n  let customerId: string;\n\n  "
+  },
+  {
+    "t": 135.592,
+    "path": "/tmp/auto_observer_9df2/src/db/schema.sql",
+    "phase": "before",
+    "size": 2045,
+    "preview": "CREATE TABLE tenants (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  name VARCHAR(255) NOT NULL,\n  stripe_customer_id VARCHAR(255) UNIQUE,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE users (\n  id UUID PRIMARY KEY DEFAULT ge"
+  },
+  {
+    "t": 135.593,
+    "path": "/tmp/auto_observer_9df2/src/webhooks/stripeWebhookHandler.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 135.594,
+    "path": "/tmp/auto_observer_9df2/src/admin/InvoiceViewer.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 135.595,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/invoices.test.ts",
+    "phase": "before",
+    "size": 1759,
+    "preview": "import request from 'supertest';\nimport { describe, it, expect, beforeAll, afterAll } from '@jest/globals';\nimport app from '../app';\nimport { db } from '../db';\n\ndescribe('Invoices API', () => {\n  const tenantId = 'test-tenant-123';\n  let invoiceId: string;\n\n  beforeAll(async () => {\n    await db.m"
+  },
+  {
+    "t": 138.231,
+    "path": "/tmp/auto_observer_9df2/src/db/schema.sql",
+    "phase": "after",
+    "size": 1283,
+    "preview": "CREATE TABLE users (\n  id SERIAL PRIMARY KEY,\n  email VARCHAR(255) NOT NULL UNIQUE,\n  password_hash VARCHAR(255) NOT NULL,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE tenants (\n  id SERIAL PRIMARY KEY,\n  org_name VARCHAR(255) NOT NULL,\n  created_at TIMESTAMP DEFAULT CURRENT_TIM"
+  },
+  {
+    "t": 139.042,
+    "path": "/tmp/auto_observer_9df2/src/admin/InvoiceViewer.tsx",
+    "phase": "after",
+    "size": 1909,
+    "preview": "import React, { useState, useEffect } from 'react';\n\ninterface LineItem {\n  id: string;\n  description: string;\n  quantity: number;\n  amount: number;\n}\n\ninterface Invoice {\n  id: string;\n  number: string;\n  amount: number;\n  status: 'paid' | 'unpaid';\n  date: string;\n  lineItems: LineItem[];\n}\n\ninter"
+  },
+  {
+    "t": 139.112,
+    "path": "/tmp/auto_observer_9df2/src/webhooks/stripeWebhookHandler.ts",
+    "phase": "after",
+    "size": 1869,
+    "preview": "import Stripe from 'stripe';\nimport { Request, Response } from 'express';\nimport { db } from '../db';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;\n\nexport async function handleStripeWebhook(req: Request, res: Response) {\n  cons"
+  },
+  {
+    "t": 139.319,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/invoices.test.ts",
+    "phase": "after",
+    "size": 2034,
+    "preview": "import request from 'supertest';\nimport { app } from '../app';\nimport { createTestSubscription, cleanupDatabase } from './helpers';\n\ndescribe('POST /subscriptions/:id/invoices', () => {\n  let subscriptionId: string;\n\n  beforeAll(async () => {\n    const subscription = await createTestSubscription();\n"
+  },
+  {
+    "t": 150.895,
+    "path": "/tmp/auto_observer_9df2/src/routes/subscriptions.ts",
+    "phase": "before",
+    "size": 1706,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { db } from '../db';\nimport { stripeService } from '../services/stripeService';\n\nconst router = Router();\n\nrouter.post('/subscriptions', async (req: Request, res: Response) => {\n  try {\n    const { tenant_id, stripe_customer_id, plan_id, se"
+  },
+  {
+    "t": 150.896,
+    "path": "/tmp/auto_observer_9df2/src/services/invoiceService.ts",
+    "phase": "before",
+    "size": 1570,
+    "preview": "import { db } from '../db';\nimport { invoices } from '../db/schema';\nimport { v4 as uuidv4 } from 'uuid';\n\nexport interface LineItem {\n  description: string;\n  quantity: number;\n  unitPrice: number;\n}\n\nexport interface InvoiceInput {\n  subscriptionId: string;\n  lineItems: LineItem[];\n  status: 'draf"
+  },
+  {
+    "t": 150.897,
+    "path": "/tmp/auto_observer_9df2/src/admin/AdminDashboard.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 150.898,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/webhook-invoice-flow.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 154.411,
+    "path": "/tmp/auto_observer_9df2/src/services/invoiceService.ts",
+    "phase": "after",
+    "size": 1712,
+    "preview": "import { db } from '../db';\nimport { invoices, invoiceLineItems } from '../db/schema';\nimport { v4 as uuidv4 } from 'uuid';\n\nexport interface LineItem {\n  description: string;\n  quantity: number;\n  unitPrice: number;\n}\n\nexport interface InvoiceResponse {\n  id: string;\n  subscriptionId: string;\n  tot"
+  },
+  {
+    "t": 154.586,
+    "path": "/tmp/auto_observer_9df2/src/routes/subscriptions.ts",
+    "phase": "after",
+    "size": 1909,
+    "preview": "import { Router, Request, Response } from \"express\";\nimport Stripe from \"stripe\";\nimport { db } from \"../db\";\nimport { authenticate } from \"../middleware/auth\";\n\nconst router = Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\n\nrouter.post(\"/subscriptions\", authenticate, async (re"
+  },
+  {
+    "t": 154.715,
+    "path": "/tmp/auto_observer_9df2/src/admin/AdminDashboard.tsx",
+    "phase": "after",
+    "size": 1898,
+    "preview": "import React, { useState } from 'react';\nimport { useParams, useNavigate, Outlet } from 'react-router-dom';\nimport { ChevronDown } from 'lucide-react';\n\nexport default function AdminDashboard() {\n  const [tenants] = useState([\n    { id: '1', name: 'Acme Corp' },\n    { id: '2', name: 'TechStart Inc' "
+  },
+  {
+    "t": 154.88,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/webhook-invoice-flow.test.ts",
+    "phase": "after",
+    "size": 1876,
+    "preview": "import request from 'supertest';\nimport { app } from '../app';\nimport { db } from '../db';\nimport { Queue } from 'bull';\n\njest.mock('../db');\njest.mock('bull');\n\ndescribe('Webhook Invoice Flow', () => {\n  let emailQueue: jest.Mocked<Queue>;\n\n  beforeEach(() => {\n    jest.clearAllMocks();\n    emailQu"
+  },
+  {
+    "t": 167.245,
+    "path": "/tmp/auto_observer_9df2/src/middleware/auth.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 167.247,
+    "path": "/tmp/auto_observer_9df2/src/routes/tenants.ts",
+    "phase": "before",
+    "size": 1759,
+    "preview": "import { Router, Request, Response, NextFunction } from 'express';\nimport { db } from '../db';\nimport { authenticateToken } from '../middleware/auth';\n\nconst router = Router();\n\ninterface AuthRequest extends Request {\n  user?: { id: string };\n}\n\nconst verifyTenantOwnership = async (req: AuthRequest,"
+  },
+  {
+    "t": 167.248,
+    "path": "/tmp/auto_observer_9df2/src/services/stripeCustomerService.ts",
+    "phase": "before",
+    "size": 806,
+    "preview": "import Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nexport async function createStripeCustomer(\n  tenantId: string,\n  email: string,\n): Promise<string> {\n  const customer = await stripe.customers.create({\n    email,\n    meta"
+  },
+  {
+    "t": 167.249,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth-tenant-flow.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 169.921,
+    "path": "/tmp/auto_observer_9df2/src/middleware/auth.ts",
+    "phase": "after",
+    "size": 1194,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport jwt from 'jsonwebtoken';\n\nexport interface AuthUser {\n  userId: string;\n  tenantId: string;\n}\n\ndeclare global {\n  namespace Express {\n    interface Request {\n      user?: AuthUser;\n    }\n  }\n}\n\nconst JWT_SECRET = process.env.JWT_SECRE"
+  },
+  {
+    "t": 170.568,
+    "path": "/tmp/auto_observer_9df2/src/services/stripeCustomerService.ts",
+    "phase": "after",
+    "size": 1162,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nexport async function createStripeCustomer(\n  tenantId: string,\n  tenantName: string,\n): Promise<string> {\n  const customer = await stripe.custo"
+  },
+  {
+    "t": 170.608,
+    "path": "/tmp/auto_observer_9df2/src/routes/tenants.ts",
+    "phase": "after",
+    "size": 1850,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { authenticate } from '../middleware/auth';\nimport { db } from '../db';\n\nconst router = Router();\n\nrouter.post('/tenants', authenticate, async (req: Request, res: Response) => {\n  const { name } = req.body;\n  const userId = req.user.id;\n\n  "
+  },
+  {
+    "t": 170.876,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/auth-tenant-flow.test.ts",
+    "phase": "after",
+    "size": 1973,
+    "preview": "import request from 'supertest';\nimport { app } from '../app';\n\ndescribe('Auth & Tenant Flow', () => {\n  let authToken: string;\n  let userId: string;\n  let tenantId: string;\n\n  describe('Authentication', () => {\n    it('should signup a new user', async () => {\n      const res = await request(app)\n  "
+  },
+  {
+    "t": 181.164,
+    "path": "/tmp/auto_observer_9df2/src/routes/invoices.ts",
+    "phase": "before",
+    "size": 1801,
+    "preview": "import { Router, Request, Response } from \"express\";\nimport { pool } from \"../db\";\n\nconst router = Router();\n\ninterface LineItem {\n  id: string;\n  description: string;\n  amount: number;\n  quantity: number;\n}\n\ninterface Invoice {\n  id: string;\n  tenant_id: string;\n  subscription_id: string;\n  total_a"
+  },
+  {
+    "t": 181.165,
+    "path": "/tmp/auto_observer_9df2/src/middleware/stripeWebhookVerify.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 181.166,
+    "path": "/tmp/auto_observer_9df2/src/admin/pages/SubscriptionsPage.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 181.167,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/billing-end-to-end.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 183.98,
+    "path": "/tmp/auto_observer_9df2/src/middleware/stripeWebhookVerify.ts",
+    "phase": "after",
+    "size": 1277,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\ndeclare global {\n  namespace Express {\n    interface Request {\n      stripeEvent?: Stripe.Event;\n      rawBody?: "
+  },
+  {
+    "t": 184.609,
+    "path": "/tmp/auto_observer_9df2/src/routes/invoices.ts",
+    "phase": "after",
+    "size": 1610,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { authMiddleware } from '../middleware/auth';\nimport { db } from '../db';\n\nconst router = Router();\n\nrouter.use(authMiddleware);\n\nrouter.get('/', async (req: Request, res: Response) => {\n  try {\n    const tenantId = req.user?.tenantId;\n    "
+  },
+  {
+    "t": 184.791,
+    "path": "/tmp/auto_observer_9df2/src/__tests__/billing-end-to-end.test.ts",
+    "phase": "after",
+    "size": 1803,
+    "preview": "import { describe, it, expect, beforeAll, afterAll } from \"@jest/globals\";\nimport axios, { AxiosInstance } from \"axios\";\n\ndescribe(\"Billing End-to-End Flow\", () => {\n  let client: AxiosInstance;\n  let userId: string;\n  let tenantId: string;\n  let subscriptionId: string;\n  let invoiceId: string;\n\n  b"
+  },
+  {
+    "t": 184.804,
+    "path": "/tmp/auto_observer_9df2/src/admin/pages/SubscriptionsPage.tsx",
+    "phase": "after",
+    "size": 2009,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { createSubscription, updateSubscription, cancelSubscription, getSubscriptions } from '../../api/subscriptions';\n\ninterface Subscription {\n  id: string;\n  tenantId: string;\n  status: 'active' | 'cancelled' | 'pending';\n  seats: number;\n  pri"
+  }
+]

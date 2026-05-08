@@ -1,0 +1,674 @@
+[
+  {
+    "t": 4.511,
+    "path": "/tmp/auto_no_synapse_175a/src/db/schema.sql",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 4.513,
+    "path": "/tmp/auto_no_synapse_175a/src/middleware/auth.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 4.514,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Tenant.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 4.515,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/auth.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 7.057,
+    "path": "/tmp/auto_no_synapse_175a/src/db/schema.sql",
+    "phase": "after",
+    "size": 1700,
+    "preview": "CREATE TABLE users (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  email VARCHAR(255) NOT NULL UNIQUE,\n  password_hash VARCHAR(255) NOT NULL,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE tenants (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  name VARCHAR(255) NOT NULL"
+  },
+  {
+    "t": 7.225,
+    "path": "/tmp/auto_no_synapse_175a/src/middleware/auth.js",
+    "phase": "after",
+    "size": 1612,
+    "preview": "const jwt = require('jsonwebtoken');\nconst bcrypt = require('bcrypt');\nconst express = require('express');\n\nconst router = express.Router();\n\n// Hash password\nconst hashPassword = async (password) => {\n  const salt = await bcrypt.genSalt(10);\n  return bcrypt.hash(password, salt);\n};\n\n// Verify passw"
+  },
+  {
+    "t": 7.739,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/auth.js",
+    "phase": "after",
+    "size": 1904,
+    "preview": "const express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst User = require('../models/User');\n\nconst router = express.Router();\n\nconst validateEmail = (email) => {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(email);"
+  },
+  {
+    "t": 7.816,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Tenant.js",
+    "phase": "after",
+    "size": 1518,
+    "preview": "const db = require('../config/database');\n\nclass Tenant {\n  static async create(name, owner_id) {\n    const query = 'INSERT INTO tenants (name, owner_id) VALUES (?, ?) RETURNING *';\n    const result = await db.query(query, [name, owner_id]);\n    return result.rows[0];\n  }\n\n  static async getById(id)"
+  },
+  {
+    "t": 11.474,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Subscription.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 11.476,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Invoice.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 11.477,
+    "path": "/tmp/auto_no_synapse_175a/src/services/StripeService.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 11.478,
+    "path": "/tmp/auto_no_synapse_175a/src/pages/Dashboard.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 14.154,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Invoice.js",
+    "phase": "after",
+    "size": 1535,
+    "preview": "const db = require('../db');\n\nclass Invoice {\n  static async create(tenant_id, subscription_id, amount, status, due_date) {\n    const query = `\n      INSERT INTO invoices (tenant_id, subscription_id, amount, status, due_date)\n      VALUES ($1, $2, $3, $4, $5)\n      RETURNING id, tenant_id, subscript"
+  },
+  {
+    "t": 14.216,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Subscription.js",
+    "phase": "after",
+    "size": 1580,
+    "preview": "const db = require('../config/database');\n\nclass Subscription {\n  static async create(tenant_id, plan_type, seat_count, status = 'active') {\n    const query = `\n      INSERT INTO subscriptions (tenant_id, plan_type, seat_count, status, created_at, updated_at)\n      VALUES (?, ?, ?, ?, NOW(), NOW())\n"
+  },
+  {
+    "t": 14.504,
+    "path": "/tmp/auto_no_synapse_175a/src/pages/Dashboard.jsx",
+    "phase": "after",
+    "size": 1856,
+    "preview": "import React, { useEffect, useState } from 'react';\nimport { Link } from 'react-router-dom';\n\nexport default function Dashboard() {\n  const [tenants, setTenants] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    fetch"
+  },
+  {
+    "t": 14.716,
+    "path": "/tmp/auto_no_synapse_175a/src/services/StripeService.js",
+    "phase": "after",
+    "size": 1424,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createCustomer(email, tenantId) {\n    const customer = await stripe.customers.create({\n      email,\n      metadata: { tenant_id: tenantId },\n    });\n    return customer;\n  }\n\n  async createPaymentIntent(i"
+  },
+  {
+    "t": 19.372,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/subscriptions.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 19.373,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/invoices.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 19.374,
+    "path": "/tmp/auto_no_synapse_175a/src/services/WebhookHandler.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 19.375,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/auth.test.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 22.325,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/auth.test.js",
+    "phase": "after",
+    "size": 2047,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\nconst User = require('../models/User');\n\ndescribe('Auth Endpoints', () => {\n  beforeEach(async () => {\n    await User.deleteMany({});\n  });\n\n  describe('POST /auth/register', () => {\n    it('should register a new user successfully'"
+  },
+  {
+    "t": 22.488,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/invoices.js",
+    "phase": "after",
+    "size": 1933,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst db = require('../db');\nconst { authenticate, authorize } = require('../middleware/auth');\n\n// GET /invoices/:tenantId - List tenant invoices\nrouter.get('/tenant/:tenantId', authenticate, async (req, res) => {\n  try {\n    cons"
+  },
+  {
+    "t": 22.595,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/subscriptions.js",
+    "phase": "after",
+    "size": 2016,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst Subscription = require('../models/Subscription');\nconst StripeService = require('../services/StripeService');\n\n// POST /subscriptions - Create subscription for tenant\nrouter.post('/', async (req, res) => {\n  try {\n    const {"
+  },
+  {
+    "t": 22.936,
+    "path": "/tmp/auto_no_synapse_175a/src/services/WebhookHandler.js",
+    "phase": "after",
+    "size": 2092,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst Invoice = require('../models/Invoice');\nconst Subscription = require('../models/Subscription');\nconst EventEmitter = require('events');\n\nconst webhookEmitter = new EventEmitter();\n\nconst handle"
+  },
+  {
+    "t": 26.844,
+    "path": "/tmp/auto_no_synapse_175a/src/models/User.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 26.846,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Tenant.js",
+    "phase": "before",
+    "size": 1518,
+    "preview": "const db = require('../config/database');\n\nclass Tenant {\n  static async create(name, owner_id) {\n    const query = 'INSERT INTO tenants (name, owner_id) VALUES (?, ?) RETURNING *';\n    const result = await db.query(query, [name, owner_id]);\n    return result.rows[0];\n  }\n\n  static async getById(id)"
+  },
+  {
+    "t": 26.847,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/auth.js",
+    "phase": "before",
+    "size": 1904,
+    "preview": "const express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst User = require('../models/User');\n\nconst router = express.Router();\n\nconst validateEmail = (email) => {\n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  return emailRegex.test(email);"
+  },
+  {
+    "t": 26.848,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/webhooks.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 28.552,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Tenant.js",
+    "phase": "after",
+    "size": 775,
+    "preview": "const mongoose = require('mongoose');\n\nconst tenantSchema = new mongoose.Schema(\n  {\n    name: {\n      type: String,\n      required: true,\n      trim: true,\n    },\n    owner_id: {\n      type: mongoose.Schema.Types.ObjectId,\n      ref: 'User',\n      required: true,\n    },\n    stripe_customer_id: {\n  "
+  },
+  {
+    "t": 28.962,
+    "path": "/tmp/auto_no_synapse_175a/src/models/User.js",
+    "phase": "after",
+    "size": 980,
+    "preview": "const mongoose = require('mongoose');\nconst bcrypt = require('bcrypt');\n\nconst userSchema = new mongoose.Schema({\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    lowercase: true,\n    trim: true,\n    match: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/\n  },\n  password_hash: {\n    type: String,\n"
+  },
+  {
+    "t": 29.832,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/auth.js",
+    "phase": "after",
+    "size": 1830,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcryptjs');\nconst User = require('../models/User');\nconst authMiddleware = require('../middleware/auth');\n\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';"
+  },
+  {
+    "t": 29.88,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/webhooks.js",
+    "phase": "after",
+    "size": 1236,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst WebhookHandler = require('../handlers/WebhookHandler');\n\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;\n\nrouter.post('/stripe', express.raw({ type: 'a"
+  },
+  {
+    "t": 33.494,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Subscription.js",
+    "phase": "before",
+    "size": 1580,
+    "preview": "const db = require('../config/database');\n\nclass Subscription {\n  static async create(tenant_id, plan_type, seat_count, status = 'active') {\n    const query = `\n      INSERT INTO subscriptions (tenant_id, plan_type, seat_count, status, created_at, updated_at)\n      VALUES (?, ?, ?, ?, NOW(), NOW())\n"
+  },
+  {
+    "t": 33.496,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Invoice.js",
+    "phase": "before",
+    "size": 1535,
+    "preview": "const db = require('../db');\n\nclass Invoice {\n  static async create(tenant_id, subscription_id, amount, status, due_date) {\n    const query = `\n      INSERT INTO invoices (tenant_id, subscription_id, amount, status, due_date)\n      VALUES ($1, $2, $3, $4, $5)\n      RETURNING id, tenant_id, subscript"
+  },
+  {
+    "t": 33.497,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/tenants.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 33.498,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/subscriptions.test.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 35.952,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/tenants.js",
+    "phase": "after",
+    "size": 1449,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { authenticate } = require('../middleware/auth');\nconst Tenant = require('../models/Tenant');\nconst Subscription = require('../models/Subscription');\n\nrouter.post('/tenants', authenticate, async (req, res) => {\n  try {\n    co"
+  },
+  {
+    "t": 36.108,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Subscription.js",
+    "phase": "after",
+    "size": 1336,
+    "preview": "const { DataTypes } = require('sequelize');\n\nmodule.exports = (sequelize) => {\n  const Subscription = sequelize.define('Subscription', {\n    id: {\n      type: DataTypes.UUID,\n      defaultValue: DataTypes.UUIDV4,\n      primaryKey: true,\n    },\n    tenant_id: {\n      type: DataTypes.UUID,\n      allow"
+  },
+  {
+    "t": 36.596,
+    "path": "/tmp/auto_no_synapse_175a/src/models/Invoice.js",
+    "phase": "after",
+    "size": 1131,
+    "preview": "const mongoose = require('mongoose');\n\nconst invoiceSchema = new mongoose.Schema({\n  tenant_id: {\n    type: mongoose.Schema.Types.ObjectId,\n    ref: 'Tenant',\n    required: true,\n    index: true\n  },\n  stripe_invoice_id: {\n    type: String,\n    required: true,\n    unique: true,\n    index: true\n  },\n"
+  },
+  {
+    "t": 36.697,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/subscriptions.test.js",
+    "phase": "after",
+    "size": 2065,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\n\ndescribe('Subscriptions API', () => {\n  const validTenantId = 'tenant-123';\n  const invalidTenantId = 'invalid-id';\n  const authToken = 'Bearer valid-token';\n\n  describe('POST /subscriptions', () => {\n    it('should create subscri"
+  },
+  {
+    "t": 41.539,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/subscriptions.js",
+    "phase": "before",
+    "size": 2016,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst Subscription = require('../models/Subscription');\nconst StripeService = require('../services/StripeService');\n\n// POST /subscriptions - Create subscription for tenant\nrouter.post('/', async (req, res) => {\n  try {\n    const {"
+  },
+  {
+    "t": 41.54,
+    "path": "/tmp/auto_no_synapse_175a/src/services/StripeService.js",
+    "phase": "before",
+    "size": 1424,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createCustomer(email, tenantId) {\n    const customer = await stripe.customers.create({\n      email,\n      metadata: { tenant_id: tenantId },\n    });\n    return customer;\n  }\n\n  async createPaymentIntent(i"
+  },
+  {
+    "t": 41.541,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/Dashboard.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 41.542,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/auth.test.js",
+    "phase": "before",
+    "size": 2047,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\nconst User = require('../models/User');\n\ndescribe('Auth Endpoints', () => {\n  beforeEach(async () => {\n    await User.deleteMany({});\n  });\n\n  describe('POST /auth/register', () => {\n    it('should register a new user successfully'"
+  },
+  {
+    "t": 43.543,
+    "path": "/tmp/auto_no_synapse_175a/src/services/StripeService.js",
+    "phase": "after",
+    "size": 1342,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createProduct(name) {\n    try {\n      const product = await stripe.products.create({ name });\n      return product;\n    } catch (error) {\n      throw new Error(`Failed to create product: ${error.message}`"
+  },
+  {
+    "t": 44.084,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/subscriptions.js",
+    "phase": "after",
+    "size": 1517,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { auth } = require('../middleware/auth');\nconst Subscription = require('../models/Subscription');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nrouter.post('/', auth, async (req, res) => {\n  try {\n    cons"
+  },
+  {
+    "t": 44.693,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/Dashboard.jsx",
+    "phase": "after",
+    "size": 1906,
+    "preview": "import React, { useState, useEffect } from 'react';\n\nexport default function Dashboard() {\n  const [tenants, setTenants] = useState([]);\n  const [subscriptions, setSubscriptions] = useState({});\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    const fetchData = async () => {\n"
+  },
+  {
+    "t": 47.284,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/auth.test.js",
+    "phase": "after",
+    "size": 1873,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\n\njest.mock('../models/User');\nconst User = require('../models/User');\n\ndescribe('POST /auth/register', () => {\n  beforeEach(() => {\n    jest.clearAllMocks();\n  });\n\n  test('should register with valid email and password', async () ="
+  },
+  {
+    "t": 51.265,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/invoices.js",
+    "phase": "before",
+    "size": 1933,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst db = require('../db');\nconst { authenticate, authorize } = require('../middleware/auth');\n\n// GET /invoices/:tenantId - List tenant invoices\nrouter.get('/tenant/:tenantId', authenticate, async (req, res) => {\n  try {\n    cons"
+  },
+  {
+    "t": 51.266,
+    "path": "/tmp/auto_no_synapse_175a/src/services/WebhookHandler.js",
+    "phase": "before",
+    "size": 2092,
+    "preview": "const express = require('express');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst Invoice = require('../models/Invoice');\nconst Subscription = require('../models/Subscription');\nconst EventEmitter = require('events');\n\nconst webhookEmitter = new EventEmitter();\n\nconst handle"
+  },
+  {
+    "t": 51.268,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/webhooks.js",
+    "phase": "before",
+    "size": 1236,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst WebhookHandler = require('../handlers/WebhookHandler');\n\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;\n\nrouter.post('/stripe', express.raw({ type: 'a"
+  },
+  {
+    "t": 51.268,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/SubscriptionsPage.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 53.176,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/webhooks.js",
+    "phase": "after",
+    "size": 838,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst WebhookHandler = require('../handlers/WebhookHandler');\n\nrouter.post('/stripe', express.raw({ type: 'application/json' }), async (req, res) => {\n  const sig = r"
+  },
+  {
+    "t": 54.182,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/invoices.js",
+    "phase": "after",
+    "size": 1738,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst authenticateToken = require('../middleware/auth');\nconst Invoice = require('../models/Invoice');\n\nrouter.use(authenticateToken);\n\nrouter.get('/', async (req, res) => {\n  try {\n    const tenantId = req.user.tenantId;\n    const"
+  },
+  {
+    "t": 54.431,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/SubscriptionsPage.jsx",
+    "phase": "after",
+    "size": 1994,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Link, useNavigate } from 'react-router-dom';\nimport { getSubscriptions, deleteSubscription } from '../../api/subscriptions';\n\nexport default function SubscriptionsPage() {\n  const [subscriptions, setSubscriptions] = useState([]);\n  const ["
+  },
+  {
+    "t": 55.076,
+    "path": "/tmp/auto_no_synapse_175a/src/services/WebhookHandler.js",
+    "phase": "after",
+    "size": 1994,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst Invoice = require('../models/Invoice');\nconst Subscription = require('../models/Subscription');\n\nclass WebhookHandler {\n  static async handleInvoiceCreated(event) {\n    const { id, customer, amount_due, status } = event.data.obje"
+  },
+  {
+    "t": 59.79,
+    "path": "/tmp/auto_no_synapse_175a/src/db/migrations/001_init_schema.sql",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 59.792,
+    "path": "/tmp/auto_no_synapse_175a/src/models/index.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 59.793,
+    "path": "/tmp/auto_no_synapse_175a/src/services/BillingService.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 59.794,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/billing.test.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 62.307,
+    "path": "/tmp/auto_no_synapse_175a/src/db/migrations/001_init_schema.sql",
+    "phase": "after",
+    "size": 1744,
+    "preview": "CREATE TABLE users (\n    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    email VARCHAR(255) NOT NULL UNIQUE,\n    password_hash VARCHAR(255) NOT NULL,\n    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE tenants (\n    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    name "
+  },
+  {
+    "t": 62.908,
+    "path": "/tmp/auto_no_synapse_175a/src/models/index.js",
+    "phase": "after",
+    "size": 1868,
+    "preview": "const { DataTypes } = require('sequelize');\nconst sequelize = require('../config/database');\n\nconst User = sequelize.define('User', {\n  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },\n  email: { type: DataTypes.STRING, allowNull: false, unique: true, validate: { isEma"
+  },
+  {
+    "t": 63.188,
+    "path": "/tmp/auto_no_synapse_175a/src/services/BillingService.js",
+    "phase": "after",
+    "size": 2122,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst db = require('../db');\n\nclass BillingService {\n  async generateInvoiceOnSubscriptionCreated(subscriptionId) {\n    try {\n      const subscription = await db.query(\n        'SELECT tenant_id, stripe_subscription_id FROM subscriptio"
+  },
+  {
+    "t": 63.496,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/billing.test.js",
+    "phase": "after",
+    "size": 1781,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\nconst db = require('../db');\nconst stripe = require('../stripe');\n\njest.mock('../stripe');\njest.mock('../db');\n\ndescribe('Billing Flow', () => {\n  beforeEach(() => {\n    jest.clearAllMocks();\n  });\n\n  test('POST /subscriptions crea"
+  },
+  {
+    "t": 67.637,
+    "path": "/tmp/auto_no_synapse_175a/src/middleware/auth.js",
+    "phase": "before",
+    "size": 1612,
+    "preview": "const jwt = require('jsonwebtoken');\nconst bcrypt = require('bcrypt');\nconst express = require('express');\n\nconst router = express.Router();\n\n// Hash password\nconst hashPassword = async (password) => {\n  const salt = await bcrypt.genSalt(10);\n  return bcrypt.hash(password, salt);\n};\n\n// Verify passw"
+  },
+  {
+    "t": 67.639,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/auth.js",
+    "phase": "before",
+    "size": 1830,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcryptjs');\nconst User = require('../models/User');\nconst authMiddleware = require('../middleware/auth');\n\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';"
+  },
+  {
+    "t": 67.64,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/tenants.js",
+    "phase": "before",
+    "size": 1449,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { authenticate } = require('../middleware/auth');\nconst Tenant = require('../models/Tenant');\nconst Subscription = require('../models/Subscription');\n\nrouter.post('/tenants', authenticate, async (req, res) => {\n  try {\n    co"
+  },
+  {
+    "t": 67.641,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/TenantsPage.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 70.025,
+    "path": "/tmp/auto_no_synapse_175a/src/middleware/auth.js",
+    "phase": "after",
+    "size": 932,
+    "preview": "const jwt = require('jsonwebtoken');\n\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';\n\nconst generateToken = (userId, tenantId) => {\n  return jwt.sign(\n    { userId, tenantId },\n    JWT_SECRET,\n    { expiresIn: '24h' }\n  );\n};\n\nconst verifyToken = (req, res, next) => {\n  const authHe"
+  },
+  {
+    "t": 70.624,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/tenants.js",
+    "phase": "after",
+    "size": 1654,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst auth = require('../middleware/auth');\nconst Tenant = require('../models/Tenant');\nconst User = require('../models/User');\n\nrouter.post('/', auth, async (req, res) => {\n  try {\n    const { name, slug } = req.body;\n    \n    if "
+  },
+  {
+    "t": 70.7,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/TenantsPage.jsx",
+    "phase": "after",
+    "size": 1937,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Link } from 'react-router-dom';\n\nconst TenantsPage = () => {\n  const [tenants, setTenants] = useState([]);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    fetchTenants();\n  }, []);\n\n  const fetchTenants = async () "
+  },
+  {
+    "t": 72.384,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/auth.js",
+    "phase": "after",
+    "size": 1890,
+    "preview": "const express = require('express');\nconst bcrypt = require('bcrypt');\nconst jwt = require('jsonwebtoken');\nconst router = express.Router();\n\nconst db = require('../db');\n\nrouter.post('/register', async (req, res) => {\n  try {\n    const { email, password } = req.body;\n\n    if (!email || !password) {\n"
+  },
+  {
+    "t": 81.583,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/subscriptions.js",
+    "phase": "before",
+    "size": 1517,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { auth } = require('../middleware/auth');\nconst Subscription = require('../models/Subscription');\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nrouter.post('/', auth, async (req, res) => {\n  try {\n    cons"
+  },
+  {
+    "t": 81.584,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/webhooks.js",
+    "phase": "before",
+    "size": 838,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst WebhookHandler = require('../handlers/WebhookHandler');\n\nrouter.post('/stripe', express.raw({ type: 'application/json' }), async (req, res) => {\n  const sig = r"
+  },
+  {
+    "t": 81.585,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/invoices.js",
+    "phase": "before",
+    "size": 1738,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst authenticateToken = require('../middleware/auth');\nconst Invoice = require('../models/Invoice');\n\nrouter.use(authenticateToken);\n\nrouter.get('/', async (req, res) => {\n  try {\n    const tenantId = req.user.tenantId;\n    const"
+  },
+  {
+    "t": 81.586,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/SubscriptionsPage.jsx",
+    "phase": "before",
+    "size": 1994,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Link, useNavigate } from 'react-router-dom';\nimport { getSubscriptions, deleteSubscription } from '../../api/subscriptions';\n\nexport default function SubscriptionsPage() {\n  const [subscriptions, setSubscriptions] = useState([]);\n  const ["
+  },
+  {
+    "t": 84.897,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/webhooks.js",
+    "phase": "after",
+    "size": 1981,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst { Invoice } = require('../models');\nconst { generateInvoice } = require('../services/invoiceService');\n\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;"
+  },
+  {
+    "t": 84.907,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/invoices.js",
+    "phase": "after",
+    "size": 1848,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst { db } = require('../db');\nconst { authMiddleware, tenantMiddleware } = require('../middleware/auth');\n\nrouter.get('/', authMiddleware, tenantMiddleware, async (req, res) => {\n  try {\n    const { page = 1, limit = 20 } = req."
+  },
+  {
+    "t": 85.012,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/subscriptions.js",
+    "phase": "after",
+    "size": 1985,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst { authMiddleware } = require('../middleware/auth');\nconst Subscription = require('../models/Subscription');\n\nrouter.post('/subscriptions', authMiddleware, async"
+  },
+  {
+    "t": 85.028,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/SubscriptionsPage.jsx",
+    "phase": "after",
+    "size": 1886,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Table, Button, Modal, Form, Select, Spin, Empty, Drawer } from 'antd';\nimport { PlusOutlined } from '@ant-design/icons';\n\nexport default function SubscriptionsPage() {\n  const [subscriptions, setSubscriptions] = useState([]);\n  const [load"
+  },
+  {
+    "t": 98.454,
+    "path": "/tmp/auto_no_synapse_175a/src/services/StripeService.js",
+    "phase": "before",
+    "size": 1342,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\n\nclass StripeService {\n  async createProduct(name) {\n    try {\n      const product = await stripe.products.create({ name });\n      return product;\n    } catch (error) {\n      throw new Error(`Failed to create product: ${error.message}`"
+  },
+  {
+    "t": 98.456,
+    "path": "/tmp/auto_no_synapse_175a/src/services/InvoiceService.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 98.457,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/auth.test.js",
+    "phase": "before",
+    "size": 1873,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\n\njest.mock('../models/User');\nconst User = require('../models/User');\n\ndescribe('POST /auth/register', () => {\n  beforeEach(() => {\n    jest.clearAllMocks();\n  });\n\n  test('should register with valid email and password', async () ="
+  },
+  {
+    "t": 98.458,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/InvoicesPage.jsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 101.4,
+    "path": "/tmp/auto_no_synapse_175a/src/services/StripeService.js",
+    "phase": "after",
+    "size": 1749,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst db = require('../db');\n\nclass StripeService {\n  async createCustomer(email, tenantId) {\n    const customer = await stripe.customers.create({\n      email,\n      metadata: { tenantId }\n    });\n    \n    await db.query(\n      'INSERT"
+  },
+  {
+    "t": 101.522,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/auth.test.js",
+    "phase": "after",
+    "size": 2019,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\nconst User = require('../models/User');\n\ndescribe('Auth Routes', () => {\n  beforeEach(async () => {\n    await User.deleteMany({});\n  });\n\n  describe('POST /auth/register', () => {\n    test('should register user successfully', async"
+  },
+  {
+    "t": 101.826,
+    "path": "/tmp/auto_no_synapse_175a/src/services/InvoiceService.js",
+    "phase": "after",
+    "size": 1858,
+    "preview": "const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);\nconst db = require('../db');\n\nclass InvoiceService {\n  async createInvoiceFromStripeEvent(stripeInvoiceId, tenantId) {\n    try {\n      const stripeInvoice = await stripe.invoices.retrieve(stripeInvoiceId);\n\n      const pdfUrl = stripeI"
+  },
+  {
+    "t": 102.264,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/InvoicesPage.jsx",
+    "phase": "after",
+    "size": 1827,
+    "preview": "import React, { useState } from 'react';\nimport { ChevronDown, ChevronUp, Download } from 'lucide-react';\n\nexport default function InvoicesPage() {\n  const [expandedId, setExpandedId] = useState(null);\n  const [invoices] = useState([\n    {\n      id: 'INV001',\n      tenant: 'Acme Corp',\n      amount:"
+  },
+  {
+    "t": 114.627,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/tenants.js",
+    "phase": "before",
+    "size": 1654,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst auth = require('../middleware/auth');\nconst Tenant = require('../models/Tenant');\nconst User = require('../models/User');\n\nrouter.post('/', auth, async (req, res) => {\n  try {\n    const { name, slug } = req.body;\n    \n    if "
+  },
+  {
+    "t": 114.628,
+    "path": "/tmp/auto_no_synapse_175a/src/services/TenantService.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 114.629,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/tenants.test.js",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 114.63,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/TenantsPage.jsx",
+    "phase": "before",
+    "size": 1937,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Link } from 'react-router-dom';\n\nconst TenantsPage = () => {\n  const [tenants, setTenants] = useState([]);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    fetchTenants();\n  }, []);\n\n  const fetchTenants = async () "
+  },
+  {
+    "t": 117.303,
+    "path": "/tmp/auto_no_synapse_175a/src/routes/tenants.js",
+    "phase": "after",
+    "size": 1678,
+    "preview": "const express = require('express');\nconst router = express.Router();\nconst auth = require('../middleware/auth');\nconst Tenant = require('../models/Tenant');\n\n// Middleware: require auth for all routes\nrouter.use(auth);\n\n// POST /tenants - Create a new tenant\nrouter.post('/', async (req, res) => {\n  "
+  },
+  {
+    "t": 117.707,
+    "path": "/tmp/auto_no_synapse_175a/src/services/TenantService.js",
+    "phase": "after",
+    "size": 2001,
+    "preview": "const db = require('../db');\n\nclass TenantService {\n  async createTenant(name, email, userId) {\n    if (!name || typeof name !== 'string' || name.trim() === '') {\n      throw new Error('Tenant name is required and must be a string');\n    }\n    if (!email || typeof email !== 'string' || !email.includ"
+  },
+  {
+    "t": 117.91,
+    "path": "/tmp/auto_no_synapse_175a/src/admin/pages/TenantsPage.jsx",
+    "phase": "after",
+    "size": 1866,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { Plus, Edit2, Trash2 } from 'lucide-react';\nimport TenantModal from '../components/TenantModal';\nimport { getTenants, deleteTenant } from '../../api/tenants';\n\nexport default function TenantsPage() {\n  const [tenants, setTenants] = useState"
+  },
+  {
+    "t": 118.469,
+    "path": "/tmp/auto_no_synapse_175a/src/tests/tenants.test.js",
+    "phase": "after",
+    "size": 1733,
+    "preview": "const request = require('supertest');\nconst app = require('../app');\nconst db = require('../db');\n\ndescribe('Tenants API', () => {\n  let token1, token2, tenantId1, tenantId2;\n\n  beforeAll(async () => {\n    await db.reset();\n    // Create users and get tokens\n    const res1 = await request(app)\n     "
+  }
+]

@@ -1,0 +1,674 @@
+[
+  {
+    "t": 8.67,
+    "path": "/tmp/auto_full_a85e/src/models/index.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 8.671,
+    "path": "/tmp/auto_full_a85e/src/middleware/auth.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 8.673,
+    "path": "/tmp/auto_full_a85e/src/webhooks/stripe.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 8.674,
+    "path": "/tmp/auto_full_a85e/src/pages/Dashboard.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 13.553,
+    "path": "/tmp/auto_full_a85e/src/pages/Dashboard.tsx",
+    "phase": "after",
+    "size": 1199,
+    "preview": "import React from 'react';\nimport { useQuery } from '@tanstack/react-query';\nimport Sidebar from '../components/Sidebar';\nimport TenantTable from '../components/TenantTable';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  stripeId: string;\n  subscriptionStatus: string;\n  invoiceCount: number;\n}"
+  },
+  {
+    "t": 17.861,
+    "path": "/tmp/auto_full_a85e/src/middleware/auth.ts",
+    "phase": "after",
+    "size": 1819,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport jwt from 'jsonwebtoken';\nimport bcrypt from 'bcrypt';\nimport { db } from '../db';\n\nexport interface AuthRequest extends Request {\n  user?: { id: string; tenantId: string };\n}\n\nexport const verifyToken = (\n  req: AuthRequest,\n  res: Re"
+  },
+  {
+    "t": 23.186,
+    "path": "/tmp/auto_full_a85e/src/webhooks/stripe.ts",
+    "phase": "after",
+    "size": 2062,
+    "preview": "import express, { Router, Request, Response } from 'express';\nimport Stripe from 'stripe';\nimport { Invoice } from '../models/Invoice';\nimport { Subscription } from '../models/Subscription';\n\nconst router = Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\nconst webhookSecret"
+  },
+  {
+    "t": 23.439,
+    "path": "/tmp/auto_full_a85e/src/models/index.ts",
+    "phase": "after",
+    "size": 1803,
+    "preview": "import { DataTypes, Model, Sequelize } from 'sequelize';\n\nexport interface IUser extends Model {\n  id: string;\n  email: string;\n  passwordHash: string;\n  createdAt: Date;\n  updatedAt: Date;\n}\n\nexport interface ITenant extends Model {\n  id: string;\n  name: string;\n  stripeId: string | null;\n  ownerId"
+  },
+  {
+    "t": 27.974,
+    "path": "/tmp/auto_full_a85e/src/routes/auth.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 27.976,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 27.977,
+    "path": "/tmp/auto_full_a85e/src/services/stripeService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 27.979,
+    "path": "/tmp/auto_full_a85e/src/__tests__/auth.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 39.775,
+    "path": "/tmp/auto_full_a85e/src/routes/auth.ts",
+    "phase": "after",
+    "size": 1737,
+    "preview": "import express, { Request, Response } from 'express';\nimport bcrypt from 'bcrypt';\nimport jwt from 'jsonwebtoken';\nimport { db } from '../db';\n\nconst router = express.Router();\n\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';\n\nrouter.post('/register', async (req: Request, res: Respon"
+  },
+  {
+    "t": 40.324,
+    "path": "/tmp/auto_full_a85e/src/__tests__/auth.test.ts",
+    "phase": "after",
+    "size": 2031,
+    "preview": "import request from 'supertest';\nimport jwt from 'jsonwebtoken';\n\nconst BASE_URL = 'http://localhost:3000';\n\ndescribe('Auth Endpoints', () => {\n  const testUser = {\n    email: 'test@example.com',\n    password: 'password123',\n  };\n\n  describe('POST /auth/register', () => {\n    it('should register a n"
+  },
+  {
+    "t": 40.533,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionService.ts",
+    "phase": "after",
+    "size": 1186,
+    "preview": "import Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nexport const subscriptionService = {\n  async createSubscription(\n    tenantId: string,\n    priceId: string,\n    seatCount: number,\n  ): Promise<Stripe.Subscription> {\n    c"
+  },
+  {
+    "t": 40.668,
+    "path": "/tmp/auto_full_a85e/src/services/stripeService.ts",
+    "phase": "after",
+    "size": 1333,
+    "preview": "import Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nexport const initializeCustomer = async (\n  tenantId: string,\n  email: string,\n): Promise<string> => {\n  const customer = await stripe.customers.create({\n    email,\n    met"
+  },
+  {
+    "t": 47.611,
+    "path": "/tmp/auto_full_a85e/src/services/invoiceService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 47.613,
+    "path": "/tmp/auto_full_a85e/src/routes/tenants.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 47.613,
+    "path": "/tmp/auto_full_a85e/src/services/stripeWebhookService.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 47.614,
+    "path": "/tmp/auto_full_a85e/src/__tests__/invoices.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 52.54,
+    "path": "/tmp/auto_full_a85e/src/routes/tenants.ts",
+    "phase": "after",
+    "size": 1526,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { authMiddleware } from '../middleware/auth';\nimport { db } from '../db';\nimport { tenants, subscriptions } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst router = Router();\n\nrouter.use(authMiddleware);\n\nrouter.get('/', async"
+  },
+  {
+    "t": 63.481,
+    "path": "/tmp/auto_full_a85e/src/services/invoiceService.ts",
+    "phase": "after",
+    "size": 1894,
+    "preview": "import { db } from '../db';\nimport { invoices, invoiceLineItems, subscriptions } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nexport interface InvoiceLineItem {\n  description: string;\n  quantity: number;\n  unitPrice: number;\n  total: number;\n}\n\nexport interface Invoice {\n  id: string;\n  t"
+  },
+  {
+    "t": 63.555,
+    "path": "/tmp/auto_full_a85e/src/services/stripeWebhookService.ts",
+    "phase": "after",
+    "size": 2056,
+    "preview": "import Stripe from 'stripe';\nimport { Request, Response } from 'express';\nimport { db } from '../db';\nimport { invoices, subscriptions } from '../db/schema';\nimport { eq } from 'drizzle-orm';\nimport winston from 'winston';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\nconst logger = wi"
+  },
+  {
+    "t": 67.757,
+    "path": "/tmp/auto_full_a85e/src/__tests__/invoices.test.ts",
+    "phase": "after",
+    "size": 1808,
+    "preview": "import { generateInvoice } from '../invoices';\nimport { db } from '../db';\n\njest.mock('../db');\n\ndescribe('generateInvoice', () => {\n  beforeEach(() => {\n    jest.clearAllMocks();\n  });\n\n  it('should generate invoice with valid subscriptionId and create line items', async () => {\n    const mockSubsc"
+  },
+  {
+    "t": 72.577,
+    "path": "/tmp/auto_full_a85e/src/db/schema.sql",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 72.578,
+    "path": "/tmp/auto_full_a85e/src/routes/subscriptions.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 72.579,
+    "path": "/tmp/auto_full_a85e/src/routes/invoices.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 72.58,
+    "path": "/tmp/auto_full_a85e/src/admin-dashboard/Dashboard.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 77.33,
+    "path": "/tmp/auto_full_a85e/src/db/schema.sql",
+    "phase": "after",
+    "size": 1671,
+    "preview": "CREATE TABLE users (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  email VARCHAR(255) NOT NULL UNIQUE,\n  password_hash VARCHAR(255) NOT NULL,\n  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE tenants (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  name VARCHAR(255)"
+  },
+  {
+    "t": 85.977,
+    "path": "/tmp/auto_full_a85e/src/routes/invoices.ts",
+    "phase": "after",
+    "size": 1858,
+    "preview": "import { Router, Request, Response, NextFunction } from 'express';\nimport { PrismaClient } from '@prisma/client';\nimport Stripe from 'stripe';\n\nconst router = Router();\nconst prisma = new PrismaClient();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\n\ninterface AuthRequest extends R"
+  },
+  {
+    "t": 86.14,
+    "path": "/tmp/auto_full_a85e/src/routes/subscriptions.ts",
+    "phase": "after",
+    "size": 1966,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { tenantIdMiddleware } from '../middleware/tenantId';\nimport { stripeService } from '../services/stripeService';\nimport { subscriptionsDB } from '../db/subscriptions';\n\nconst router = Router();\n\nrouter.use(tenantIdMiddleware);\n\nrouter.get('"
+  },
+  {
+    "t": 86.542,
+    "path": "/tmp/auto_full_a85e/src/admin-dashboard/Dashboard.tsx",
+    "phase": "after",
+    "size": 1774,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { ChevronLeft, ChevronRight } from 'lucide-react';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  stripe_customer_id: string;\n  created_at: string;\n}\n\nexport default function Dashboard() {\n  const [tenants, setTenants] = useState<Tenant"
+  },
+  {
+    "t": 92.436,
+    "path": "/tmp/auto_full_a85e/src/middleware/auth.ts",
+    "phase": "before",
+    "size": 1819,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport jwt from 'jsonwebtoken';\nimport bcrypt from 'bcrypt';\nimport { db } from '../db';\n\nexport interface AuthRequest extends Request {\n  user?: { id: string; tenantId: string };\n}\n\nexport const verifyToken = (\n  req: AuthRequest,\n  res: Re"
+  },
+  {
+    "t": 92.437,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionService.ts",
+    "phase": "before",
+    "size": 1186,
+    "preview": "import Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nexport const subscriptionService = {\n  async createSubscription(\n    tenantId: string,\n    priceId: string,\n    seatCount: number,\n  ): Promise<Stripe.Subscription> {\n    c"
+  },
+  {
+    "t": 92.438,
+    "path": "/tmp/auto_full_a85e/src/config/stripe.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 92.439,
+    "path": "/tmp/auto_full_a85e/src/routes/webhooks.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 96.374,
+    "path": "/tmp/auto_full_a85e/src/config/stripe.ts",
+    "phase": "after",
+    "size": 996,
+    "preview": "import Stripe from 'stripe';\n\nconst apiKey = process.env.STRIPE_API_KEY;\nif (!apiKey) {\n  throw new Error('STRIPE_API_KEY environment variable is not set');\n}\n\nexport const stripeClient = new Stripe(apiKey, {\n  apiVersion: '2023-10-16',\n});\n\nexport async function createStripeCustomer(\n  tenantId: st"
+  },
+  {
+    "t": 104.376,
+    "path": "/tmp/auto_full_a85e/src/middleware/auth.ts",
+    "phase": "after",
+    "size": 1158,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport jwt from 'jsonwebtoken';\n\nexport interface AuthRequest extends Request {\n  user?: {\n    userId: string;\n    tenantId: string;\n  };\n}\n\nexport const signToken = (\n  userId: string,\n  tenantId: string,\n  secret: string\n): string => {\n  r"
+  },
+  {
+    "t": 104.552,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionService.ts",
+    "phase": "after",
+    "size": 1773,
+    "preview": "import { PrismaClient } from '@prisma/client';\n\nconst prisma = new PrismaClient();\n\nconst PRICING_TIERS = {\n  basic: { basePrice: 29, perSeat: 5, maxSeats: 100 },\n  pro: { basePrice: 99, perSeat: 8, maxSeats: 500 },\n  enterprise: { basePrice: 299, perSeat: 10, maxSeats: 5000 },\n};\n\nexport const subs"
+  },
+  {
+    "t": 104.643,
+    "path": "/tmp/auto_full_a85e/src/routes/webhooks.ts",
+    "phase": "after",
+    "size": 1516,
+    "preview": "import { Router, Request, Response } from 'express';\nimport Stripe from 'stripe';\nimport { stripeWebhookService } from '../services/stripeWebhookService';\n\nconst router = Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET"
+  },
+  {
+    "t": 110.593,
+    "path": "/tmp/auto_full_a85e/src/routes/auth.ts",
+    "phase": "before",
+    "size": 1737,
+    "preview": "import express, { Request, Response } from 'express';\nimport bcrypt from 'bcrypt';\nimport jwt from 'jsonwebtoken';\nimport { db } from '../db';\n\nconst router = express.Router();\n\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';\n\nrouter.post('/register', async (req: Request, res: Respon"
+  },
+  {
+    "t": 110.595,
+    "path": "/tmp/auto_full_a85e/src/routes/tenants.ts",
+    "phase": "before",
+    "size": 1526,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { authMiddleware } from '../middleware/auth';\nimport { db } from '../db';\nimport { tenants, subscriptions } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst router = Router();\n\nrouter.use(authMiddleware);\n\nrouter.get('/', async"
+  },
+  {
+    "t": 110.596,
+    "path": "/tmp/auto_full_a85e/src/services/stripeWebhookHandler.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 110.597,
+    "path": "/tmp/auto_full_a85e/src/__tests__/auth.test.ts",
+    "phase": "before",
+    "size": 2031,
+    "preview": "import request from 'supertest';\nimport jwt from 'jsonwebtoken';\n\nconst BASE_URL = 'http://localhost:3000';\n\ndescribe('Auth Endpoints', () => {\n  const testUser = {\n    email: 'test@example.com',\n    password: 'password123',\n  };\n\n  describe('POST /auth/register', () => {\n    it('should register a n"
+  },
+  {
+    "t": 124.779,
+    "path": "/tmp/auto_full_a85e/src/routes/tenants.ts",
+    "phase": "after",
+    "size": 1923,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { PrismaClient } from '@prisma/client';\nimport { authenticate } from '../middleware/auth';\n\nconst router = Router();\nconst prisma = new PrismaClient();\n\n// GET /tenants - List all tenants for current user\nrouter.get('/', authenticate, async"
+  },
+  {
+    "t": 125.012,
+    "path": "/tmp/auto_full_a85e/src/routes/auth.ts",
+    "phase": "after",
+    "size": 1936,
+    "preview": "import { Router, Request, Response } from 'express';\nimport bcrypt from 'bcrypt';\nimport jwt from 'jsonwebtoken';\nimport { db } from '../db';\n\nconst router = Router();\n\nrouter.post('/register', async (req: Request, res: Response) => {\n  try {\n    const { email, password } = req.body;\n\n    if (!email"
+  },
+  {
+    "t": 125.422,
+    "path": "/tmp/auto_full_a85e/src/services/stripeWebhookHandler.ts",
+    "phase": "after",
+    "size": 1771,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\nimport { invoices, subscriptions } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\n\nexport async function handleStripeWebhook(event: Stripe.Event) {\n  switch (event.type) "
+  },
+  {
+    "t": 125.549,
+    "path": "/tmp/auto_full_a85e/src/__tests__/auth.test.ts",
+    "phase": "after",
+    "size": 1967,
+    "preview": "import request from 'supertest';\nimport jwt from 'jsonwebtoken';\n\nconst BASE_URL = 'http://localhost:3000';\nconst JWT_SECRET = process.env.JWT_SECRET || 'test-secret';\n\ndescribe('Auth Endpoints', () => {\n  const testUser = {\n    email: 'test@example.com',\n    password: 'password123'\n  };\n\n  describe"
+  },
+  {
+    "t": 132.996,
+    "path": "/tmp/auto_full_a85e/src/routes/subscriptions.ts",
+    "phase": "before",
+    "size": 1966,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { tenantIdMiddleware } from '../middleware/tenantId';\nimport { stripeService } from '../services/stripeService';\nimport { subscriptionsDB } from '../db/subscriptions';\n\nconst router = Router();\n\nrouter.use(tenantIdMiddleware);\n\nrouter.get('"
+  },
+  {
+    "t": 132.997,
+    "path": "/tmp/auto_full_a85e/src/models/invoice.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 132.998,
+    "path": "/tmp/auto_full_a85e/src/pages/Dashboard.tsx",
+    "phase": "before",
+    "size": 1199,
+    "preview": "import React from 'react';\nimport { useQuery } from '@tanstack/react-query';\nimport Sidebar from '../components/Sidebar';\nimport TenantTable from '../components/TenantTable';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  stripeId: string;\n  subscriptionStatus: string;\n  invoiceCount: number;\n}"
+  },
+  {
+    "t": 132.999,
+    "path": "/tmp/auto_full_a85e/src/__tests__/subscriptions.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 146.036,
+    "path": "/tmp/auto_full_a85e/src/routes/subscriptions.ts",
+    "phase": "after",
+    "size": 1591,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { authMiddleware } from '../middleware/auth';\nimport { subscriptionService } from '../services/subscriptionService';\n\nconst router = Router();\n\nrouter.use(authMiddleware);\n\nrouter.get('/', async (req: Request, res: Response) => {\n  try {\n  "
+  },
+  {
+    "t": 146.503,
+    "path": "/tmp/auto_full_a85e/src/pages/Dashboard.tsx",
+    "phase": "after",
+    "size": 1863,
+    "preview": "import React, { useEffect, useState } from 'react';\nimport { useNavigate } from 'react-router-dom';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  email: string;\n}\n\ninterface Subscription {\n  id: string;\n  tenantId: string;\n  plan: string;\n  seats: number;\n  status: string;\n}\n\ninterface Invoice"
+  },
+  {
+    "t": 146.685,
+    "path": "/tmp/auto_full_a85e/src/models/invoice.ts",
+    "phase": "after",
+    "size": 1539,
+    "preview": "import { Invoice, InvoiceLineItem } from '@prisma/client';\n\nexport interface InvoiceWithLineItems extends Invoice {\n  lineItems: InvoiceLineItem[];\n}\n\nexport interface CreateInvoiceInput {\n  tenantId: string;\n  subscriptionId: string;\n  totalAmount: number;\n  dueDate: Date;\n  lineItems: CreateLineIt"
+  },
+  {
+    "t": 146.77,
+    "path": "/tmp/auto_full_a85e/src/__tests__/subscriptions.test.ts",
+    "phase": "after",
+    "size": 1970,
+    "preview": "import request from 'supertest';\nimport app from '../app';\n\nconst API_URL = '/api/subscriptions';\n\ndescribe('Subscriptions API', () => {\n  const validToken = 'Bearer test-token-123';\n  const tenant1Token = 'Bearer tenant1-token';\n  const tenant2Token = 'Bearer tenant2-token';\n\n  describe('POST /subs"
+  },
+  {
+    "t": 153.907,
+    "path": "/tmp/auto_full_a85e/src/routes/invoices.ts",
+    "phase": "before",
+    "size": 1858,
+    "preview": "import { Router, Request, Response, NextFunction } from 'express';\nimport { PrismaClient } from '@prisma/client';\nimport Stripe from 'stripe';\n\nconst router = Router();\nconst prisma = new PrismaClient();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\n\ninterface AuthRequest extends R"
+  },
+  {
+    "t": 153.909,
+    "path": "/tmp/auto_full_a85e/src/services/stripeSync.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 153.909,
+    "path": "/tmp/auto_full_a85e/src/middleware/stripeWebhookAuth.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 153.91,
+    "path": "/tmp/auto_full_a85e/src/pages/TenantDetail.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 166.5,
+    "path": "/tmp/auto_full_a85e/src/services/stripeSync.ts",
+    "phase": "after",
+    "size": 1973,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\nimport { products, prices } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\n\nexport async function syncStripeProducts(): Promise<void> {\n  try {\n    const stripeProducts = awai"
+  },
+  {
+    "t": 166.508,
+    "path": "/tmp/auto_full_a85e/src/middleware/stripeWebhookAuth.ts",
+    "phase": "after",
+    "size": 897,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {\n  apiVersion: '2023-10-16',\n});\n\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';\n\nexport const stripeWebhookAuth = (\n  req: Request"
+  },
+  {
+    "t": 166.542,
+    "path": "/tmp/auto_full_a85e/src/pages/TenantDetail.tsx",
+    "phase": "after",
+    "size": 1877,
+    "preview": "import React, { useEffect, useState } from 'react';\nimport { useParams, useNavigate } from 'react-router-dom';\nimport axios from 'axios';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  email: string;\n}\n\ninterface Subscription {\n  id: string;\n  plan: string;\n  status: string;\n  startDate: string"
+  },
+  {
+    "t": 166.628,
+    "path": "/tmp/auto_full_a85e/src/routes/invoices.ts",
+    "phase": "after",
+    "size": 1809,
+    "preview": "import { Router, Request, Response } from 'express';\nimport { verifyTenant } from '../middleware/auth';\nimport { db } from '../db';\n\nconst router = Router();\n\nrouter.use(verifyTenant);\n\nrouter.get('/', async (req: Request, res: Response) => {\n  try {\n    const tenantId = req.user?.tenantId;\n    cons"
+  },
+  {
+    "t": 173.936,
+    "path": "/tmp/auto_full_a85e/src/routes/webhooks.ts",
+    "phase": "before",
+    "size": 1516,
+    "preview": "import { Router, Request, Response } from 'express';\nimport Stripe from 'stripe';\nimport { stripeWebhookService } from '../services/stripeWebhookService';\n\nconst router = Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\nconst webhookSecret = process.env.STRIPE_WEBHOOK_SECRET"
+  },
+  {
+    "t": 173.937,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionManager.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 173.938,
+    "path": "/tmp/auto_full_a85e/src/pages/SubscriptionDetail.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 173.939,
+    "path": "/tmp/auto_full_a85e/src/__tests__/auth.integration.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 187.727,
+    "path": "/tmp/auto_full_a85e/src/pages/SubscriptionDetail.tsx",
+    "phase": "after",
+    "size": 1813,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useParams } from 'react-router-dom';\n\ninterface LineItem {\n  description: string;\n  amount: number;\n  quantity: number;\n}\n\ninterface Invoice {\n  id: string;\n  date: string;\n  amount: number;\n  status: 'paid' | 'pending' | 'failed';\n  lineI"
+  },
+  {
+    "t": 188.457,
+    "path": "/tmp/auto_full_a85e/src/__tests__/auth.integration.test.ts",
+    "phase": "after",
+    "size": 1891,
+    "preview": "import request from 'supertest';\nimport { app } from '../app';\nimport { db } from '../db';\nimport { stripe } from '../stripe';\n\ndescribe('Auth Integration Tests', () => {\n  let userId: string;\n  let tenantId: string;\n  let subscriptionId: string;\n  let invoiceId: string;\n\n  beforeAll(async () => {\n "
+  },
+  {
+    "t": 188.572,
+    "path": "/tmp/auto_full_a85e/src/routes/webhooks.ts",
+    "phase": "after",
+    "size": 1834,
+    "preview": "import { Router, Request, Response } from 'express';\nimport Stripe from 'stripe';\nimport { updateInvoiceStatus } from '../services/invoiceService';\nimport { sendEmailNotification } from '../services/emailService';\n\nconst router = Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\nc"
+  },
+  {
+    "t": 188.802,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionManager.ts",
+    "phase": "after",
+    "size": 1965,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\nimport { subscriptions, invoices } from '../db/schema';\nimport { eq, and } from 'drizzle-orm';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\n\nexport async function syncSubscriptionStatus(customerId: string, subscriptionId: string"
+  },
+  {
+    "t": 199.867,
+    "path": "/tmp/auto_full_a85e/src/pages/InvoiceList.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 199.869,
+    "path": "/tmp/auto_full_a85e/src/pages/Dashboard.tsx",
+    "phase": "before",
+    "size": 1863,
+    "preview": "import React, { useEffect, useState } from 'react';\nimport { useNavigate } from 'react-router-dom';\n\ninterface Tenant {\n  id: string;\n  name: string;\n  email: string;\n}\n\ninterface Subscription {\n  id: string;\n  tenantId: string;\n  plan: string;\n  seats: number;\n  status: string;\n}\n\ninterface Invoice"
+  },
+  {
+    "t": 199.87,
+    "path": "/tmp/auto_full_a85e/src/__tests__/subscriptions.integration.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 199.871,
+    "path": "/tmp/auto_full_a85e/db/migrations/001_init.sql",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 210.318,
+    "path": "/tmp/auto_full_a85e/db/migrations/001_init.sql",
+    "phase": "after",
+    "size": 2015,
+    "preview": "CREATE TABLE tenants (\n  id BIGSERIAL PRIMARY KEY,\n  name VARCHAR(255) NOT NULL,\n  slug VARCHAR(255) NOT NULL UNIQUE,\n  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE users (\n  id BIGSERIAL PRIMARY KEY,\n  tenant_id "
+  },
+  {
+    "t": 210.427,
+    "path": "/tmp/auto_full_a85e/src/__tests__/subscriptions.integration.test.ts",
+    "phase": "after",
+    "size": 2066,
+    "preview": "import { describe, it, expect, beforeAll, afterAll, jest } from '@jest/globals';\nimport axios from 'axios';\nimport { PrismaClient } from '@prisma/client';\n\nconst prisma = new PrismaClient();\nconst API_URL = 'http://localhost:3000/api';\n\ndescribe('Subscriptions Integration Tests', () => {\n  const tes"
+  },
+  {
+    "t": 210.908,
+    "path": "/tmp/auto_full_a85e/src/pages/Dashboard.tsx",
+    "phase": "after",
+    "size": 1583,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { BarChart3, Users, CreditCard, TrendingUp } from 'lucide-react';\n\ninterface SummaryCard {\n  label: string;\n  value: string;\n  icon: React.ReactNode;\n  change: string;\n}\n\ninterface Invoice {\n  id: string;\n  tenant: string;\n  amount: number;\n"
+  },
+  {
+    "t": 211.167,
+    "path": "/tmp/auto_full_a85e/src/pages/InvoiceList.tsx",
+    "phase": "after",
+    "size": 1941,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useNavigate } from 'react-router-dom';\nimport { Invoice } from '../types';\nimport { invoiceApi } from '../api/invoiceApi';\n\nexport const InvoiceList: React.FC = () => {\n  const navigate = useNavigate();\n  const [invoices, setInvoices] = us"
+  },
+  {
+    "t": 220.057,
+    "path": "/tmp/auto_full_a85e/src/services/invoiceManager.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 220.059,
+    "path": "/tmp/auto_full_a85e/src/services/stripeSync.ts",
+    "phase": "before",
+    "size": 1973,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\nimport { products, prices } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\n\nexport async function syncStripeProducts(): Promise<void> {\n  try {\n    const stripeProducts = awai"
+  },
+  {
+    "t": 220.059,
+    "path": "/tmp/auto_full_a85e/src/pages/AdminTenants.tsx",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 220.06,
+    "path": "/tmp/auto_full_a85e/src/__tests__/billing.integration.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 224.882,
+    "path": "/tmp/auto_full_a85e/src/services/invoiceManager.ts",
+    "phase": "after",
+    "size": 1313,
+    "preview": "import { db } from '../db';\nimport { invoices, lineItems, subscriptions, plans } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nexport async function createInvoiceFromSubscription(\n  subscriptionId: string,\n  periodStart: Date,\n  periodEnd: Date\n) {\n  const subscription = await db\n    .sele"
+  },
+  {
+    "t": 233.465,
+    "path": "/tmp/auto_full_a85e/src/__tests__/billing.integration.test.ts",
+    "phase": "after",
+    "size": 2046,
+    "preview": "import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';\nimport { PrismaClient } from '@prisma/client';\nimport Stripe from 'stripe';\nimport { subscribeUser } from '../services/billing';\nimport { handleStripeWebhook } from '../webhooks/stripe';\n\nconst prisma = new PrismaClient();\nco"
+  },
+  {
+    "t": 234.147,
+    "path": "/tmp/auto_full_a85e/src/pages/AdminTenants.tsx",
+    "phase": "after",
+    "size": 1744,
+    "preview": "import React, { useState, useEffect } from 'react';\nimport { useNavigate } from 'react-router-dom';\n\ninterface Tenant {\n  id: string;\n  email: string;\n  status: 'active' | 'inactive' | 'suspended';\n  subscriptionCount: number;\n  createdDate: string;\n}\n\nexport default function AdminTenants() {\n  cons"
+  },
+  {
+    "t": 234.169,
+    "path": "/tmp/auto_full_a85e/src/services/stripeSync.ts",
+    "phase": "after",
+    "size": 1841,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\nimport { invoices, stripeCustomers } from '../db/schema';\nimport { eq } from 'drizzle-orm';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\n\nexport async function syncStripeCustomer(tenantId: string): Promise<string> {\n  const"
+  },
+  {
+    "t": 239.762,
+    "path": "/tmp/auto_full_a85e/src/middleware/auth.ts",
+    "phase": "before",
+    "size": 1158,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport jwt from 'jsonwebtoken';\n\nexport interface AuthRequest extends Request {\n  user?: {\n    userId: string;\n    tenantId: string;\n  };\n}\n\nexport const signToken = (\n  userId: string,\n  tenantId: string,\n  secret: string\n): string => {\n  r"
+  },
+  {
+    "t": 239.764,
+    "path": "/tmp/auto_full_a85e/src/routes/webhooks.ts",
+    "phase": "before",
+    "size": 1834,
+    "preview": "import { Router, Request, Response } from 'express';\nimport Stripe from 'stripe';\nimport { updateInvoiceStatus } from '../services/invoiceService';\nimport { sendEmailNotification } from '../services/emailService';\n\nconst router = Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\nc"
+  },
+  {
+    "t": 239.765,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionManager.ts",
+    "phase": "before",
+    "size": 1965,
+    "preview": "import Stripe from 'stripe';\nimport { db } from '../db';\nimport { subscriptions, invoices } from '../db/schema';\nimport { eq, and } from 'drizzle-orm';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\n\nexport async function syncSubscriptionStatus(customerId: string, subscriptionId: string"
+  },
+  {
+    "t": 239.766,
+    "path": "/tmp/auto_full_a85e/src/__tests__/smoke.test.ts",
+    "phase": "before",
+    "size": 0,
+    "preview": "(missing)"
+  },
+  {
+    "t": 251.835,
+    "path": "/tmp/auto_full_a85e/src/middleware/auth.ts",
+    "phase": "after",
+    "size": 1488,
+    "preview": "import { Request, Response, NextFunction } from 'express';\nimport jwt from 'jsonwebtoken';\n\ndeclare global {\n  namespace Express {\n    interface Request {\n      userId?: string;\n      tenantId?: string;\n      user?: any;\n    }\n  }\n}\n\nconst JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';\nco"
+  },
+  {
+    "t": 252.12,
+    "path": "/tmp/auto_full_a85e/src/routes/webhooks.ts",
+    "phase": "after",
+    "size": 1717,
+    "preview": "import express, { Request, Response } from 'express';\nimport Stripe from 'stripe';\nimport { invoiceManager } from '../services/invoiceManager';\nimport { stripeSync } from '../services/stripeSync';\n\nconst router = express.Router();\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);\nconst webh"
+  },
+  {
+    "t": 252.361,
+    "path": "/tmp/auto_full_a85e/src/services/subscriptionManager.ts",
+    "phase": "after",
+    "size": 1419,
+    "preview": "import Stripe from 'stripe';\n\nconst stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');\n\nexport interface SubscriptionInput {\n  tenantId: string;\n  priceId: string;\n  quantity: number;\n}\n\nexport interface UpdateSubscriptionInput {\n  subscriptionId: string;\n  quantity?: number;\n  priceId?: stri"
+  },
+  {
+    "t": 252.414,
+    "path": "/tmp/auto_full_a85e/src/__tests__/smoke.test.ts",
+    "phase": "after",
+    "size": 1904,
+    "preview": "import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';\nimport request from 'supertest';\nimport { PrismaClient } from '@prisma/client';\n\nconst prisma = new PrismaClient();\nconst baseURL = process.env.API_URL || 'http://localhost:3000';\n\ndescribe('Smoke Test: User Signup \u2192 Tenant \u2192"
+  }
+]
