@@ -1,0 +1,13 @@
+All 11 tests pass. Here's a summary of what's implemented:
+
+**Models (`app/models.py`)**: `Subscription` has `canceled_at`, `cancel_reason`, `grace_until`; `Invoice` has `prorated`.
+
+**Cancel endpoint** (`POST /subscriptions/{id}/cancel`): Sets `canceled_at=now`, `grace_until=now+7d`, returns 409 if already canceled.
+
+**Status endpoint** (`GET /subscriptions/{id}/status`): Returns `active` / `grace` / `canceled` based on cancellation state and current time.
+
+**Admin restore** (`POST /admin/subscriptions/{id}/restore` in `app/routes/admin.py`): Clears all three cancellation fields; requires admin token.
+
+**Invoice generation** (`app/routes/invoices.py`): Skips subscriptions whose `grace_until` is in the past; marks invoices `prorated=1` when inside the grace window.
+
+**Tests** (`tests/test_cancel.py`): 9 tests covering all new endpoints and invoice logic â€” all passing.

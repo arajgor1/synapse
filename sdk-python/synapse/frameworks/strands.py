@@ -182,6 +182,74 @@ def _wrap_sync_dispatch(original):
     return wrapper
 
 
+def _wrap_module_level_async(original):
+    """Patch a module-level async function. Strands' real SDK exposes
+    `_handle_tool_execution` and `event_loop_cycle` as module functions,
+    not class methods. The signatures vary across versions but the
+    relevant ToolUse object is generally findable in the args."""
+
+    async def wrapper(*args, **kwargs):
+        # Heuristic: scan args/kwargs for a ToolUse-shaped object
+        tool_use = None
+        for cand in list(args) + list(kwargs.values()):
+            if hasattr(cand, "name") and hasattr(cand, "input"):
+                tool_use = cand
+                break
+            if isinstance(cand, dict) and "name" in cand and ("input" in cand or "tool_use_id" in cand):
+                tool_use = type("TU", (), cand)
+                break
+
+        if tool_use is None:
+            # Cannot find a tool — fall through unwrapped
+            async for ev in original(*args, **kwargs):
+                yield ev
+            return
+
+        tool_name = (
+            getattr(tool_use, "name", None)
+            or (tool_use.get("name") if isinstance(tool_use, dict) else None)
+            or "unknown_tool"
+        )
+        tool_input = (
+            getattr(tool_use, "input", None)
+            or (tool_use.get("input") if isinstance(tool_use, dict) else None)
+            or {}
+        )
+        if not isinstance(tool_input, dict):
+            try:
+                tool_input = dict(tool_input)
+            except Exception:
+                tool_input = {"_arg0": str(tool_input)[:200]}
+
+        agent_id = os.environ.get("SYNAPSE_AGENT_ID", _agent_id_default())
+
+        if not _is_write_call(tool_name, tool_input):
+            async for ev in original(*args, **kwargs):
+                yield ev
+            return
+
+        scope = _scope_from_call(tool_name, tool_input)
+
+        async with intend(
+            scope=scope,
+            agent=agent_id,
+            session=_session_id(),
+            expected_outcome=f"strands:{tool_name}",
+            blocking=True,
+            gate_ms=int(os.environ.get("SYNAPSE_GATE_MS", "200")),
+        ) as i:
+            try:
+                async for ev in original(*args, **kwargs):
+                    yield ev
+                i.set_state_diff({"tool": tool_name})
+            except Exception as e:
+                i.mark_failed(str(e))
+                raise
+
+    wrapper.__wrapped__ = original
+    return wrapper
+
+
 def _install_strands(opts: dict[str, Any]) -> None:
     global _INSTALL_LOOP
     try:
@@ -192,72 +260,60 @@ def _install_strands(opts: dict[str, Any]) -> None:
     if _PATCHED["tool_handler"]:
         return
 
-    handler_cls = None
+    # Strands SDK 1.x: dispatch is in strands.event_loop.event_loop as
+    # module-level functions, not on a ToolHandler class.
     try:
-        # Strands SDK 0.4+ canonical path
-        from strands.tools.handler import ToolHandler  # type: ignore[import-not-found]
-        handler_cls = ToolHandler
+        import strands.event_loop.event_loop as ev_mod  # type: ignore[import-not-found]
     except ImportError:
+        # Older / alternate paths
         try:
-            # Older / alternative path
-            from strands.tools import ToolHandler  # type: ignore[import-not-found]
+            from strands.tools.handler import ToolHandler  # type: ignore[import-not-found]
             handler_cls = ToolHandler
+            ev_mod = None
         except ImportError:
             try:
-                # Some versions expose dispatch on Agent directly
-                from strands import Agent  # type: ignore[import-not-found]
-                handler_cls = Agent
+                from strands.tools import ToolHandler  # type: ignore[import-not-found]
+                handler_cls = ToolHandler
+                ev_mod = None
             except ImportError:
                 logger.warning(
                     "synapse.install(framework='strands'): strands SDK not "
                     "installed. `pip install strands-agents`."
                 )
                 return
+    else:
+        handler_cls = None
 
-    # Patch async path if present
-    if hasattr(handler_cls, "handle_tool_call") and asyncio.iscoroutinefunction(
-        handler_cls.handle_tool_call
-    ):
-        handler_cls.handle_tool_call = _wrap_handle_tool_call(handler_cls.handle_tool_call)
+    # Modern Strands: patch _handle_tool_execution at module level
+    if ev_mod is not None and hasattr(ev_mod, "_handle_tool_execution"):
+        original = ev_mod._handle_tool_execution
+        ev_mod._handle_tool_execution = _wrap_module_level_async(original)
         _PATCHED["tool_handler"] = True
         logger.info(
-            "synapse.install(framework='strands'): patched async %s.handle_tool_call",
-            handler_cls.__name__,
+            "synapse.install(framework='strands'): patched module-level "
+            "strands.event_loop.event_loop._handle_tool_execution"
         )
         return
 
-    # Sync fallback
-    if hasattr(handler_cls, "handle_tool_call"):
-        handler_cls.handle_tool_call = _wrap_sync_dispatch(handler_cls.handle_tool_call)
+    # Older Strands: patch class method
+    if handler_cls is not None and hasattr(handler_cls, "handle_tool_call"):
+        if asyncio.iscoroutinefunction(handler_cls.handle_tool_call):
+            handler_cls.handle_tool_call = _wrap_handle_tool_call(handler_cls.handle_tool_call)
+        else:
+            handler_cls.handle_tool_call = _wrap_sync_dispatch(handler_cls.handle_tool_call)
         _PATCHED["tool_handler"] = True
         logger.info(
-            "synapse.install(framework='strands'): patched sync %s.handle_tool_call",
+            "synapse.install(framework='strands'): patched %s.handle_tool_call",
             handler_cls.__name__,
         )
         return
-
-    # Last-resort: patch the canonical _dispatch path
-    for candidate in ("_dispatch_tool", "dispatch_tool", "_invoke_tool"):
-        if hasattr(handler_cls, candidate):
-            orig = getattr(handler_cls, candidate)
-            wrapped = (
-                _wrap_handle_tool_call(orig)
-                if asyncio.iscoroutinefunction(orig)
-                else _wrap_sync_dispatch(orig)
-            )
-            setattr(handler_cls, candidate, wrapped)
-            _PATCHED["tool_handler"] = True
-            logger.info(
-                "synapse.install(framework='strands'): patched %s.%s",
-                handler_cls.__name__, candidate,
-            )
-            return
 
     logger.warning(
-        "synapse.install(framework='strands'): could not find a "
-        "tool-dispatch hook on %s. Open an issue with your Strands "
-        "version so we can add support.",
-        handler_cls.__name__,
+        "synapse.install(framework='strands'): could not find a known "
+        "Strands dispatch entry point. Probed: "
+        "strands.event_loop.event_loop._handle_tool_execution, "
+        "strands.tools.handler.ToolHandler.handle_tool_call. "
+        "Open an issue with your Strands version."
     )
 
 

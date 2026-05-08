@@ -1,82 +1,121 @@
 # Synapse — the safety layer for multi-agent AI on shared codebases
 
-## The problem
+## The problem (real, measured)
 
-Two engineers, each running their own AI agent on the same repo, will silently overwrite each other's work and quietly disagree on the schema. Existing tools don't catch it.
+Two engineers, each running their own AI agent on the same repo, will silently overwrite each other and quietly disagree on the schema. We tested this with **two real Claude Code 2.1.87 sessions on a real Stripe-Lite codebase** — they collided on 7 files (`models.py`, `routes/{cancel,subscriptions,admin,invoices}.py`, `main.py`, `tests/test_cancel.py`) producing 21 cross-agent conflicts the FS watcher captured organically.
 
-This isn't theoretical. We measured it.
+This isn't simulated. It's two real Claude Codes, real Anthropic Haiku, real file overlap, zero rigging.
 
-## The evidence
+## What we measured (real runs, not models)
 
-Hold the agent behavior constant (a real LangGraph multi-orchestrator run on a Stripe-Lite billing task, May 8 2026). Vary the coordination strategy. Measure what survives.
+### Option A — Real CI/CD loop · 2 LangGraph crews + pytest after every turn
 
-| Strategy | Silent loss | Loud conflicts | Belief divergences caught |
-|---|---|---|---|
-| No coordination | **4 of 8 files** | 0 | 0 of 3 |
-| Git branches + naive merge | 0 | 4 (loud markers) | **0 of 3** |
-| PR + CI with pytest in loop | 3 | 1 | **1 of 3** (only schema-shaped) |
-| Shared coordination.md | 2 | 0 | 0 of 3 |
-| **Synapse `MergePolicy.auto_merge`** | **0** | **4 (auto-merged)** | **3 of 3** |
-
-**Synapse is the only strategy that catches both classes.** Source data + scoring oracle: [bench/results/v02_pitch_phase1/](../bench/results/v02_pitch_phase1/RESULTS.md).
-
-## Why git, CI, and shared context are not enough
-
-- **Git** is loud on textual collisions but blind to semantic. One agent writes `/api/login`, the other `/auth/login`. Branches don't overlap. CI is green. Production 500s.
-- **CI** catches the 1-of-3 belief divergence that breaks tests (schema column-name mismatch). Endpoint paths and form-shape divergences are mocked away. CI also costs 5–15 min per agent iteration.
-- **Shared coord files** rely on the LLM to obey. ~40% compliance observed. Brittle to prompt drift.
-
-## What ships today
-
-| For | Install | Time |
+| Metric | ci_only | ci_plus_synapse |
 |---|---|---|
-| Anyone with trace exports | `pip install synapse-protocol` → `synapse audit ./traces.json` | 30 seconds |
-| Anyone, no install | [hosted audit tool](https://github.com/arajgor1/synapse/tree/main/launch/hosted-audit) (drop trace JSON in browser) | 10 seconds |
-| Teams with PR-based AI workflows | GitHub Action `arajgor1/synapse-audit-action@v1` | 1 PR diff |
-| LangGraph / CrewAI / AutoGen / Pydantic-AI / smolagents / Hermes / OpenAI Agents / Vercel AI SDK / Strands / Paperclip / OpenClaw | `pip install synapse-protocol[live]` + `synapse.install(framework="...")` | 5 min |
-| Cursor / Claude Code / Codex CLI / Aider | [Claude Code BeforeTool hook](../launch/claude-code-hook/) + JSONL audit fallback | 5 min |
-| AWS Bedrock / Azure AI Agent / GCP Vertex Agent Builder | `synapse audit` on the trace export (3 importers shipped) | post-hoc |
+| Cross-team file overlaps (silent) | **3** | 1 |
+| CI runs / red | 12 / 12 | 12 / 12 |
+| **CONFLICT envelopes detected** | **0** | **27** |
+| **BELIEF DIVERGENCEs caught** (real schema-drift events) | **0** | **5** |
 
-Day-1 friction for the audit path: `pip install` + run on existing trace data. Zero infrastructure required (Redis/Postgres only needed for live mode).
+Real example of what Synapse caught and CI didn't: alpha and bravo independently chose
+`["id","email","is_admin","created_at","updated_at"]` vs `["id","username","email","password_hash","is_admin"]` for the user table. Both passed CI in their own branches. Both would 500 in prod.
 
-## Where Synapse genuinely doesn't help
+**Honest gap:** auto_merge didn't fire in this run because both agents did full-file rewrites in response to red CI rather than incremental edits. Coherence actually dropped (0.40→0.27) with Synapse on, because the conflict-routing slowed throughput. Synapse made the collisions **visible**; whether agents converge depends on whether their prompts know what to do with the visibility signal.
 
-- **Single-agent flows.** Pure overhead, no benefit.
-- **Hierarchical orchestrator + workers.** The orchestrator pre-deconflicts file ownership; Synapse mostly observes (still catches semantic divergences via BELIEF, but lower lift).
-- **Highly mocked test suites with monoculture agents.** If both agents share fixtures and mock everything, CI catches what Synapse catches.
-- **Trivial textual conflicts.** Git already raises these. Synapse just catches them earlier.
+### Option B — Real two-Claude-Code-sessions · same shared dir
 
-## What's empirically demonstrated
+Two `claude -p` headless processes, different `SYNAPSE_AGENT_ID`, same task on the same Stripe-Lite repo. FS watcher captured every write.
 
-- ✅ Multi-team / multi-orchestrator collisions are real and silent without coordination — May 8 multi-orch run, 4 cross-team file collisions emerged organically with zero rigging.
-- ✅ Audit path covers all 3 major cloud agent services (Bedrock + Vertex + Azure trace formats), 3 conflicts detected on adversarial samples.
-- ✅ SDK adapter pattern extends cleanly beyond the existing 11 frameworks — Strands adapter shipped, Semantic Kernel + ADK same-pattern.
-- ✅ FS-watcher fallback gives ≥60% structural collision recall for IDE/CLI agents that don't expose hooks. Claude Code hook gives full attribution.
-- ✅ Synapse + CI is strictly better than CI alone — same overhead, broader coverage.
+| Result | |
+|---|---|
+| Both Claude Codes finished | 124s + 127s, exit 0 |
+| FS-watcher events captured | 28 |
+| **Cross-agent conflicts detected by audit** | **21 across 7 files** |
+| Coherence | **0.80** (12/15 markers) |
 
-## What's open and honest
+The 3 missing markers: each Claude Code chose slightly different URL paths for the cancel/restore/status endpoints — exactly the kind of belief-divergence Synapse warns about pre-merge.
 
-- Belief false-positive rate not yet measured at scale. Live ground truth (multi-orch run) had zero false positives across 3 divergences caught — but n=3.
-- Strands live benchmark deferred to v0.2.2 (smoke-test passed; full Modal run with AWS Strands SDK requires a design partner).
-- IDE-side hooks for Cursor / Codex / VS Code Copilot remain roadmap. Today: Claude Code hook + FS-watcher fallback only.
-- "How often does this collision pattern actually bite users in 2026?" — empirically real but pain sharpness varies. We're betting it gets sharper as multi-agent stacks grow. Stop-loss criteria documented in [campaign README](../bench/results/v02_pitch_phase1/RESULTS.md).
+### Option C — Real Strands Agents SDK · BROKEN, honest disclosure
+
+Real `pip install strands-agents` in Modal, two Strands agents on Stripe-Lite, with `synapse.install(framework="strands")` enabled.
+
+| Mode | Conflicts detected |
+|---|---|
+| no_synapse | 0 (expected) |
+| synapse | **0 — adapter never patched the real SDK** |
+
+The shipped Strands adapter probes for `ToolHandler.handle_tool_call` (a class method that exists in older SDKs and in my smoke-test mock). The real Strands SDK 1.x dispatches via `strands.event_loop.event_loop._handle_tool_execution` (a module-level async generator). Adapter logged `could not find a tool-dispatch hook` and silently no-op'd. The fake-module smoke test passed. The real SDK fails.
+
+The fix (patch the module-level function) is in `sdk-python/synapse/frameworks/strands.py` but **has not been re-run against real Strands**. Until it is, the SDK wedge claim for AWS Strands is unsubstantiated.
+
+## Strategy comparison — what's real vs modeled
+
+| Strategy | Silent file loss | Loud conflicts | Belief divergences | Real or Modeled |
+|---|---|---|---|---|
+| No coordination (Option A ci_only) | **3** | 0 | 0 | **REAL** |
+| PR + CI w/ pytest in loop | 3 (CI doesn't catch them) | 1 | 0 | **REAL (Option A)** |
+| Two Claude Codes on shared dir | implicit (not gated) | 0 (no gate) | 0 | **REAL (Option B)** |
+| Synapse + CI (LangGraph) | 1 | 27 detected | 5 detected | **REAL (Option A)** |
+| Synapse + FS watcher (Claude Code) | n/a | 21 detected post-hoc | 0 (no LLM oracle) | **REAL (Option B)** |
+| Synapse on Strands | n/a | **0** (broken) | 0 | **REAL (Option C — broken)** |
+| Git branches + naive merge | unknown | unknown | unknown | **MODELED (untested IRL)** |
+| Shared coordination.md | unknown | unknown | unknown | **MODELED (untested IRL)** |
+
+## What ships today (with realistic caveats)
+
+| Path | Real evidence | Caveat |
+|---|---|---|
+| `pip install synapse-protocol` + `synapse audit` | day-1 install works on slim install, validated end-to-end | trace-format importers (Bedrock/Vertex/Azure) tested only on hand-crafted samples, not real cloud exports |
+| Hosted browser audit tool | self-contained, zero install, samples included | ditto |
+| GitHub Action skeleton | code complete | not yet published as `arajgor1/synapse-audit-action@v1` |
+| Synapse + LangGraph live | **real Option A run: 27 conflicts + 5 beliefs caught** | auto_merge needs incremental-edit agents; full-file rewriters don't trigger merges |
+| Synapse FS-watcher for Claude Code/Cursor/Codex | **real Option B run: 21 conflicts, 0.80 coherence** | attribution noise when 2 watchers run on same dir; per-session hook is the right path |
+| Synapse + Strands adapter | **REFUTED — broken against real SDK** | fix exists in code, unverified; v0.2.2 |
+| Synapse + CrewAI/AutoGen/OpenAI Agents/Pydantic AI/smolagents/Hermes/Vercel/Paperclip/OpenClaw | smoke-tested only against fake modules | **same risk as Strands** — needs real-SDK validation per adapter |
+
+## Where Synapse genuinely doesn't help (also tested)
+
+- **CI alone is not enough.** Option A showed that with both crews seeing red CI, they kept overwriting each other anyway.
+- **CI + Synapse is more visible but not automatically more convergent.** Real Option A coherence dropped 0.40→0.27 with Synapse on. The visibility signal needs prompt engineering on top to translate into convergence.
+- **Auto_merge requires incremental edits.** Full-file-rewrite agents (which is what Strands and Claude Code default to in many configurations) don't produce the kind of competing drafts auto_merge can reconcile. The 4 auto-merges in the May-8 multi-orch run came from agents making incremental patches, not full rewrites.
+- **Single-agent flow.** Pure overhead.
+
+## Honest open items
+
+1. **Re-validate every SDK adapter against current published versions.** Strands case shows the smoke-test-against-fake approach catches 0% of API drift. The other 11 adapters may also be broken.
+2. **Real cloud-vendor trace exports** for the audit path (generate one Bedrock Agent run, one Vertex, one Azure, audit each).
+3. **Test auto_merge with incremental-edit agents** under CI pressure to see if convergence improves.
+4. **Belief false-positive rate at scale** — n=8 in real runs (5 from Option A + 3 from May-8 multi-orch). All 8 were real divergences, 0 false positives, but the sample is small.
 
 ## Try it in 60 seconds
 
 ```bash
-# Have a trace export from any agent run? Audit it.
+# Audit path — works today, day-1 install validated
 pip install synapse-protocol
 synapse audit ./traces.json
 
-# Or use the hosted tool — no install:
-# https://github.com/arajgor1/synapse/tree/main/launch/hosted-audit
-
-# Live mode for your LangGraph / CrewAI / AutoGen / etc. crew:
+# Live mode for LangGraph (validated in Option A — detection works)
 pip install 'synapse-protocol[live]'
-synapse up                     # local Redis + Postgres via docker-compose
+synapse up
 python -c "import synapse; synapse.install(framework='langgraph')"
+
+# Live mode for Strands — DON'T USE v0.2.1; wait for v0.2.2
+
+# Two-Claude-Code coordination — install the BeforeTool hook
+# (see launch/claude-code-hook/README.md)
 ```
+
+## What changed between this 1-pager and the prior version
+
+The previous draft conflated modeled cells with real cells. After the user demanded IRL testing of the three cells most readers would fixate on, this draft now reports:
+
+- **3 hypotheses real-confirmed** (down from "8 of 9 modeled-passed")
+- **1 hypothesis refuted IRL** (Strands adapter)
+- **2 hypotheses partially refuted on outcome** (CI+Synapse coherence, H5)
+- **3 hypotheses still modeled-only** (git, shared coord.md, full audit recall on real cloud exports)
+
+Trust gained. Pitch narrowed. The audit path and the LangGraph + Claude Code paths are real. The Strands path needs a re-run before being claimed. The cloud-vendor audit story needs real exports before being claimed.
 
 ## Repo
 
-[github.com/arajgor1/synapse](https://github.com/arajgor1/synapse) · Apache 2.0 · v0.2.1-alpha
+[github.com/arajgor1/synapse](https://github.com/arajgor1/synapse) · Apache 2.0 · v0.2.1-alpha (with v0.2.2 in flight to fix Strands)

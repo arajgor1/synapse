@@ -1,0 +1,117 @@
+{
+  "scenario": "Option B: real Claude Code two-session on Stripe Lite v2",
+  "workdir": "C:\\Users\\aadit\\AppData\\Local\\Temp\\option_b_shared_h7hn_0n8",
+  "agents": [
+    "alice-claude-code",
+    "bob-claude-code"
+  ],
+  "alice_session": {
+    "agent_id": "alice-claude-code",
+    "exit_code": 0,
+    "elapsed_s": 127.18000841140747,
+    "stdout_path": "C:\\C3\\synapse\\bench\\results\\option_b\\alice_transcript.json",
+    "stderr_tail": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+  },
+  "bob_session": {
+    "agent_id": "bob-claude-code",
+    "exit_code": 0,
+    "elapsed_s": 124.64599895477295,
+    "stdout_path": "C:\\C3\\synapse\\bench\\results\\option_b\\bob_transcript.json",
+    "stderr_tail": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+  },
+  "fs_watcher_log": "C:\\Users\\aadit\\AppData\\Local\\Temp\\option_b_shared_h7hn_0n8\\.synapse\\runs\\option_b_session.jsonl",
+  "alice_writes_emitted": 14,
+  "bob_writes_emitted": 14,
+  "audit_findings": {
+    "events": 28,
+    "writes": 28,
+    "conflicts": 21,
+    "conflict_paths": [
+      "app/routes/invoices.py",
+      "app/routes/subscriptions.py",
+      "app/main.py",
+      "app/routes/admin.py",
+      "app/models.py",
+      "stripe_lite.db",
+      "tests/test_cancel.py"
+    ]
+  },
+  "coherence": 0.8,
+  "coherence_breakdown": [
+    {
+      "id": "col_canceled_at",
+      "category": "schema",
+      "matched": true
+    },
+    {
+      "id": "col_cancel_reason",
+      "category": "schema",
+      "matched": true
+    },
+    {
+      "id": "col_grace_until",
+      "category": "schema",
+      "matched": true
+    },
+    {
+      "id": "no_cancelled_with_two_l",
+      "category": "schema",
+      "matched": true
+    },
+    {
+      "id": "endpoint_cancel",
+      "category": "endpoint",
+      "matched": false
+    },
+    {
+      "id": "endpoint_restore",
+      "category": "endpoint",
+      "matched": false
+    },
+    {
+      "id": "endpoint_status",
+      "category": "endpoint",
+      "matched": false
+    },
+    {
+      "id": "state_value_active",
+      "category": "state_machine",
+      "matched": true
+    },
+    {
+      "id": "state_value_grace",
+      "category": "state_machine",
+      "matched": true
+    },
+    {
+      "id": "state_value_canceled",
+      "category": "state_machine",
+      "matched": true
+    },
+    {
+      "id": "already_canceled_409",
+      "category": "error_handling",
+      "matched": true
+    },
+    {
+      "id": "grace_period_seven_days",
+      "category": "business_logic",
+      "matched": true
+    },
+    {
+      "id": "invoice_skip_past_grace",
+      "category": "business_logic",
+      "matched": true
+    },
+    {
+      "id": "invoice_prorated_flag",
+      "category": "business_logic",
+      "matched": true
+    },
+    {
+      "id": "tests_for_cancel",
+      "category": "tests",
+      "matched": true
+    }
+  ]
+}

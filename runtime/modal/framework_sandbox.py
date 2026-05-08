@@ -94,6 +94,15 @@ image = (
         remote_path="/opt/synapse-ts-sdk",
         copy=True,
     )
+    .add_local_dir(
+        # Mount Stripe Lite v2 starter for CI-loop test
+        local_path=os.path.abspath(os.path.join(
+            os.path.dirname(__file__), "..", "..",
+            "bench", "scenarios", "stripe_lite_v2", "starter",
+        )),
+        remote_path="/opt/stripe_lite_v2_starter",
+        copy=True,
+    )
 )
 
 app = modal.App(APP_NAME, image=image)
@@ -1245,6 +1254,158 @@ def v02_multi_orchestrator_run(api_keys: dict[str, str]) -> dict[str, Any]:
         "stderr": "",
         "elapsed_seconds": round(time.time() - started, 1),
     }
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=2400, scaledown_window=10,
+)
+def v02_ci_loop_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Real CI/CD loop test — Option A. Two LangGraph crews + pytest in
+    the loop. ci_only vs ci_plus_synapse."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    # Need pytest + httpx + sqlalchemy + fastapi for the Stripe Lite v2 tests
+    extra = (
+        "\npython3 -m pip install -q "
+        "fastapi 'sqlalchemy>=2.0' 'pydantic>=2.6' httpx pytest 'uvicorn>=0.29' "
+        ">/dev/null 2>&1 || true\n"
+    )
+    script = setup + extra + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v02_ci_loop.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None:
+                    break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 2400:
+                proc.terminate()
+                return {
+                    "exit_code": -1,
+                    "stdout": "".join(captured)[-100000:],
+                    "stderr": "TIMEOUT",
+                    "elapsed_seconds": round(time.time() - started, 1),
+                }
+        proc.wait()
+    except Exception as e:
+        return {
+            "exit_code": -2,
+            "stdout": "".join(captured)[-100000:],
+            "stderr": f"streaming exception: {e}",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+    return {
+        "exit_code": proc.returncode,
+        "stdout": "".join(captured)[-100000:],
+        "stderr": "",
+        "elapsed_seconds": round(time.time() - started, 1),
+    }
+
+
+@app.function(
+    cpu=4.0, memory=4096, timeout=2400, scaledown_window=10,
+)
+def v02_strands_real_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Real Strands Agents test — Option C. Validates synapse.install(framework='strands')
+    against the real strands-agents package."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v02_strands_real.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None:
+                    break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 2400:
+                proc.terminate()
+                return {
+                    "exit_code": -1,
+                    "stdout": "".join(captured)[-100000:],
+                    "stderr": "TIMEOUT",
+                    "elapsed_seconds": round(time.time() - started, 1),
+                }
+        proc.wait()
+    except Exception as e:
+        return {
+            "exit_code": -2,
+            "stdout": "".join(captured)[-100000:],
+            "stderr": f"streaming exception: {e}",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+    return {
+        "exit_code": proc.returncode,
+        "stdout": "".join(captured)[-100000:],
+        "stderr": "",
+        "elapsed_seconds": round(time.time() - started, 1),
+    }
+
+
+@app.local_entrypoint()
+def v02_strands_real() -> None:
+    """Drive the real Strands Agents test (Option C)."""
+    import json, os, time
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set"); return
+    print(">>> v0.2.1 Real Strands Agents test (Option C)...")
+    r = v02_strands_real_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    if r.get("stderr"):
+        print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/v02_strands_real_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
+
+
+@app.local_entrypoint()
+def v02_ci_loop() -> None:
+    """Drive the CI/CD loop test (Option A)."""
+    import json, os, time
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set"); return
+    print(">>> v0.2.1 CI/CD-loop comparison test (ci_only vs ci_plus_synapse)...")
+    r = v02_ci_loop_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    if r.get("stderr"):
+        print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/v02_ci_loop_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
 
 
 @app.local_entrypoint()

@@ -1,0 +1,15 @@
+All 11 tests pass. Here's a summary of what was implemented:
+
+**`app/models.py`** â€” Added `canceled_at`, `cancel_reason`, `grace_until` to `Subscription`; `prorated` column was already present on `Invoice`.
+
+**`app/routes/subscriptions.py`** â€” Added:
+- `POST /subscriptions/{id}/cancel` â€” sets cancellation fields, returns 409 if already canceled
+- `GET /subscriptions/{id}/status` â€” returns `active`, `grace`, or `canceled`
+
+**`app/routes/admin.py`** (new) â€” `POST /admin/subscriptions/{id}/restore` clears all cancellation fields; requires admin token.
+
+**`app/routes/invoices.py`** â€” `generate_monthly_invoices` now skips subscriptions with expired grace periods and marks invoices `prorated=1` when inside the grace window.
+
+**`app/main.py`** â€” Registers the new admin router.
+
+**`tests/test_cancel.py`** (new) â€” 9 tests covering cancel, double-cancel 409, status transitions, admin restore, non-admin 403, invoice skip, and prorated invoice marking.
