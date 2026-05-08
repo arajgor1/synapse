@@ -13,6 +13,7 @@ Each benchmark runs in a clean Modal sandbox (Debian + Python 3.11 + Node 20
 | 5 | `v02_crewai_live` + `v02_langgraph_live` | Does `synapse.install(framework=...)` auto-instrument a real LangGraph / CrewAI workflow end-to-end?       | `with_synapse` only (instrumentation correctness)        | ~$0.30 |
 | 6 | **`v02_sdlc_billing`** (this design) | On a realistic 6-agent SDLC workflow, does Synapse improve coherence on a multi-tenant SaaS billing platform? | `no_synapse` vs `with_synapse_redirect` vs `with_synapse_full` | ~$0.30 |
 | 7 | **`v02_autonomous_observer`** | When a real LangGraph orchestrator + workers build mini-Stripe end-to-end, does Synapse add value? | `no_synapse` vs `observer` vs `full` | ~$0.20 |
+| 8 | **`v02_multi_orchestrator`** | When TWO independent teams (no shared coordinator) build the same project on the same codebase, does Synapse catch the natural collisions? | `no_synapse` vs `observer` vs `full` | ~$0.30 |
 
 All results live in `bench/results/`. Re-run any of them with:
 
@@ -410,3 +411,92 @@ Drag any of these into [`ui/artifacts/replay-viewer.html`](../ui/artifacts/repla
 This is the test that narrowed the v0.2 launch pitch from "any
 multi-agent system" to "multi-team / multi-orchestrator / sub-agent
 patterns." The data led; the marketing followed.
+
+---
+
+## 8 · `v02_multi_orchestrator` — the missing organic test
+
+The natural-workload test that closes the empirical gap. **Two
+independent teams** (orchestrator + 2 workers each) build the same
+mini-Stripe project on the same codebase. **No shared coordinator,
+no shared planning history.** Cross-team collisions emerge organically
+when both teams' orchestrators independently pick the same "obvious"
+file paths.
+
+**Why this matters.** Benchmark 6 (SDLC billing) used hand-planted
+collisions and showed `0.33 → 0.93` coherence — designed to surface
+Synapse's value. Benchmark 7 (autonomous observer) ran a single
+orchestrator and showed Synapse caught nothing because the
+orchestrator pre-deconflicted. This benchmark is the missing case:
+**collisions without rigging, value without orchestrator coordination.**
+
+### Result (run 2026-05-08)
+
+| Mode | Files | Cross-team file overlaps | Intentions | CONFLICTs caught | **Auto-merges** | Belief divergences | Elapsed |
+|---|---|---|---|---|---|---|---|
+| `no_synapse` | 27 | 1 *(visible)* | 0 | 0 | 0 | 0 | 53s |
+| `observer` (warn-only + beliefs ON) | 21 | 4 | 32 | **6** | 0 | **3** | 157s |
+| `full` (auto_merge + beliefs ON) | 17 | 4 | 24 | **10** | **4** ✓ | 2 | 142s |
+
+The "1 visible" overlap in `no_synapse` is post-hoc analysis only — the
+same 4 files almost certainly collided in that mode too, but the first
+writes were silently overwritten with no record. Synapse's detection
+in the other two modes is what makes the silent visible.
+
+### The 4 organic file collisions (no rigging)
+
+Both teams independently picked these file paths:
+- `src/db/schema.sql`
+- `src/routes/auth.js`
+- `src/routes/subscriptions.js`
+- `src/routes/invoices.js`
+
+In `full` mode, **4 auto-merges fired** on these collisions live during
+the run. The BYO-LLM produced merged versions that incorporated both
+teams' contributions instead of last-writer-wins.
+
+### The 3 belief divergences caught organically
+
+```
+login_api_endpoint:        "/api/login"   vs   "/auth/login"
+                           "/api/login"   vs   "/api/auth/login"
+subscriptions_table_columns:
+  ["user_id", "plan",    "seat_count",  "created_at"]
+  vs
+  ["user_id", "plan_id", "seats",       "billing_date", "status"]
+```
+
+Real production-bug patterns. Two backend teams independently chose
+different URLs for the same login endpoint, and totally incompatible
+schemas for the subscriptions table.
+
+### Honest gaps
+
+- **Anthropic rate limit hit** in mode 3 at alpha's turn 5 (10K output
+  tokens/min, org tier-1). Alpha's loop stopped at t4; bravo continued
+  through t8. Real-world implication: `auto_merge + emit_beliefs +
+  parallel teams` is LLM-call-heavy. Higher Anthropic tier or batched
+  execution recommended for production use.
+- Mode 3 caught 2 divergences vs observer's 3 — likely variance
+  + alpha's early stoppage. Both modes have `emit_beliefs=True` so
+  the divergence detector path is identical.
+
+### What this confirms
+
+| Pattern | Synapse value | Evidence |
+|---|---|---|
+| Multi-team / multi-orchestrator | ✅ Real safety | This test: 4 organic collisions auto-merged, 3 organic semantic divergences caught |
+| Single-orchestrator | ⚠️ Mostly observability | Benchmark 7: orchestrator pre-deconflicts, 0 conflicts |
+| Hand-planted file overlaps | ✅ Coherence 0.33 → 0.93 | Benchmark 6 (designed demo) |
+
+### Entrypoint
+
+```bash
+modal run runtime/modal/framework_sandbox.py::v02_multi
+```
+
+Payload: `runtime/modal/_payloads/v02_multi_orchestrator.py`
+Result file: `bench/results/v02_multi_orchestrator_<timestamp>.json`
+Findings: `bench/results/v02_multi_orchestrator_<timestamp>_FINDINGS.md`
+
+### Cumulative v0.2 dev spend after this benchmark: ~$1.16 / $10

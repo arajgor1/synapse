@@ -1193,6 +1193,80 @@ def v02_autonomous_observer_run(api_keys: dict[str, str]) -> dict[str, Any]:
     }
 
 
+@app.function(
+    cpu=4.0, memory=4096, timeout=2400, scaledown_window=10,
+)
+def v02_multi_orchestrator_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Multi-orchestrator natural workload — two independent teams, no
+    shared coordinator, same codebase."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v02_multi_orchestrator.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None:
+                    break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 2400:
+                proc.terminate()
+                return {
+                    "exit_code": -1,
+                    "stdout": "".join(captured)[-100000:],
+                    "stderr": "TIMEOUT",
+                    "elapsed_seconds": round(time.time() - started, 1),
+                }
+        proc.wait()
+    except Exception as e:
+        return {
+            "exit_code": -2,
+            "stdout": "".join(captured)[-100000:],
+            "stderr": f"streaming exception: {e}",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+    return {
+        "exit_code": proc.returncode,
+        "stdout": "".join(captured)[-100000:],
+        "stderr": "",
+        "elapsed_seconds": round(time.time() - started, 1),
+    }
+
+
+@app.local_entrypoint()
+def v02_multi() -> None:
+    """Drive the multi-orchestrator natural-workload experiment."""
+    import json, os, time
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set"); return
+    print(">>> v0.2.1 multi-orchestrator natural workload (two teams, no coord)...")
+    r = v02_multi_orchestrator_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    print(r["stdout"][-30000:])
+    if r.get("stderr"):
+        print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/v02_multi_orchestrator_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
+
+
 @app.local_entrypoint()
 def v02_autonomous() -> None:
     """Drive the autonomous observer test (3 modes: no_synapse / observer / full)."""
