@@ -6,7 +6,8 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Version: v0.2.2-alpha](https://img.shields.io/badge/Version-v0.2.2--alpha-blue.svg)](#status)
 [![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
-[![Tests](https://img.shields.io/badge/tests-261%20passing-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-276%20passing-brightgreen.svg)](#tests)
+[![Adapters](https://img.shields.io/badge/adapters-11%2F11%20real--SDK%20pass-brightgreen.svg)](sdk-python/tests/test_adapter_health.py)
 [![AgenticFlict F1](https://img.shields.io/badge/AgenticFlict_F1-0.865-brightgreen.svg)](bench/results/agenticflict_benchmark.json)
 
 ---
@@ -38,7 +39,26 @@ We share the conflict taxonomy and SCF-aligned metrics:
 We differ in three ways:
 1. **Audit-on-existing-trace-exports** with no middleware deployment, no agent-runtime patching, no hand-authored process model. SCF requires inline blocking; Synapse runs post-hoc on what your agents already emit.
 2. **FS-watcher path for IDE/CLI agents** (Claude Code, Cursor, Codex CLI, Aider) that don't expose live coordination hooks.
-3. **Real-world evidence on real published SDKs** (5 of 8 framework adapters confirmed patching against real packages — see `tests/test_adapter_health.py`); SCF's evaluation uses simulated agents.
+3. **Real-world evidence on real published SDKs** (**11 of 11 framework adapters confirmed patching against real packages** — see `tests/test_adapter_health.py`); SCF's evaluation uses simulated agents.
+
+### Framework coverage (vs. Semantica's "Coming Soon" list)
+
+| Framework | Synapse v0.2.2 | Semantica |
+|---|---|---|
+| **Agno** | ✅ shipped (FunctionCall.execute) | First-class (only one they ship) |
+| **LangChain** | ✅ shipped (BaseTool.invoke/ainvoke) | "Coming soon" |
+| **LangGraph** | ✅ shipped (callback) | "Coming soon" |
+| **CrewAI** | ✅ shipped (Task.execute) | "Coming soon" |
+| **LlamaIndex** | ✅ shipped (FunctionTool.call) | "Coming soon" |
+| **AutoGen** | ✅ shipped (FunctionTool.run) | "Coming soon" |
+| **OpenAI Agents** | ✅ shipped (function_tool) | "Coming soon" |
+| **Google ADK** | ✅ shipped (BaseTool.run_async) | "Coming soon" |
+| **Pydantic AI** | ✅ shipped (AbstractToolset.call_tool) | not on list |
+| **smolagents** | ✅ shipped (Tool.__call__) | not on list |
+| **Strands Agents (AWS)** | ✅ shipped (event_loop._handle_tool_execution) | not on list |
+| **Hermes Agent** | ✅ shipped (sub-agent path) | not on list |
+
+All 11 verified against the actual published packages by `tests/test_adapter_health.py`. Synapse ships all 7 of Semantica's "Coming Soon" list **today**, plus 4 more they don't list.
 
 We also benchmark on the **AgenticFlict** dataset (Allamanis et al., arXiv 2604.03551 — 142,652 real AI-coding-agent PRs, 29,609 conflicting). On 5,408 paired PRs Synapse hits **F1 = 0.865, recall = 1.000, precision = 0.763** on the structural scope-overlap subtask. Per-agent: Claude Code F1 = 1.000, Cursor 0.970, Copilot 0.940, Devin 0.944, OpenAI Codex 0.786. Full results: [`bench/results/agenticflict_benchmark.json`](bench/results/agenticflict_benchmark.json).
 

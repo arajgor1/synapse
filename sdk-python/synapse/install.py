@@ -180,6 +180,14 @@ def _ensure_framework_loaded(name: str) -> None:
             from synapse.frameworks import hermes  # noqa: F401
         elif name in ("strands", "strands_agents", "strands-agents"):
             from synapse.frameworks import strands  # noqa: F401
+        elif name == "agno":
+            from synapse.frameworks import agno  # noqa: F401
+        elif name in ("llama_index", "llamaindex", "llama-index"):
+            from synapse.frameworks import llama_index  # noqa: F401
+        elif name in ("google_adk", "google-adk", "adk"):
+            from synapse.frameworks import google_adk  # noqa: F401
+        elif name == "langchain":
+            from synapse.frameworks import langchain  # noqa: F401
     except ImportError as e:
         logger.warning(
             "synapse.install: framework adapter %r not yet shipped or its "

@@ -26,16 +26,24 @@ from typing import Optional
 import pytest
 
 
-# (synapse framework name, pip package import name, is module path importable?)
+# (synapse framework name, pip package import name)
+# Note: "hermes" is intentionally OMITTED — it's a first-party Synapse
+# integration (synapse.integrations.hermes_integration), not an external
+# PyPI package. Its adapter is exercised via tests/test_hermes_integration.py
+# instead of via this real-SDK gate.
 ADAPTERS = [
     ("autogen", "autogen_agentchat"),
     ("crewai", "crewai"),
-    ("hermes", "hermes"),
     ("langgraph", "langgraph"),
     ("openai_agents", "agents"),
     ("pydantic_ai", "pydantic_ai"),
     ("smolagents", "smolagents"),
     ("strands", "strands"),
+    # New in v0.2.2 (Semantica's "Coming Soon" list — we ship now):
+    ("llama_index", "llama_index"),
+    ("google_adk", "google.adk"),
+    ("agno", "agno"),
+    ("langchain", "langchain_core"),
 ]
 
 
