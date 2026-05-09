@@ -10,11 +10,39 @@ Replicates the live L2 router's logic without requiring Postgres:
          start (stale-base overwrite — the v0.1 → v0.2 fix)
 
 Output: a list of AuditConflict records keyed to the offending event.
+
+CONFLICT TAXONOMY (v0.2.2+, aligned with Acharya 2026 SCF paper):
+
+  - "scope_overlap"        : SCF Type 2 (resource contention) — two
+                             agents hold concurrent intentions on the
+                             same scope.
+  - "stale_base_overwrite" : SCF Type 3 (causal violation, write-write) —
+                             agent B writes to a scope that A wrote
+                             recently, indicating B never saw A's change.
+  - "causal_violation"     : SCF Type 3 (causal violation, structural) —
+                             agent B's intention depends on a precondition
+                             that A's resolved intention invalidates. We
+                             surface a *hint* via state_diff comparison;
+                             full pre/post-condition reasoning requires
+                             the live runtime's state graph.
+
+Reference: Vivek Acharya, "Semantic Consensus: Process-Aware Conflict
+Detection and Resolution for Enterprise Multi-Agent LLM Systems",
+arXiv 2604.16339, March 2026. The SCF Type 1 (Contradictory Intent
+on the same logical action) is detected separately by the BELIEF
+divergence path (synapse.beliefs), which fires on conflicting values
+for the same belief key.
+
+RESOLUTION-TIER HINTS (also from SCF):
+  Each conflict carries `resolution_tier_hint` ∈ {"policy", "capability",
+  "temporal", "escalation"} describing which tier of the SCF cascade
+  would have resolved it in live mode. Audit consumers can use this to
+  prioritize investigation.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from ..state import find_overlapping_scopes
 from .events import AuditEvent, is_write
@@ -25,8 +53,11 @@ class AuditConflict:
     intention: AuditEvent           # the event whose write caused the collision
     conflicting: list[AuditEvent]    # events from other agents that collide
     overlapping_scopes: list[str]
-    kind: str                        # "scope_overlap" | "stale_base_overwrite"
+    kind: str                        # "scope_overlap" | "stale_base_overwrite" | "causal_violation"
     rationale: str
+    # SCF resolution-tier hint: which tier would resolve this in live mode.
+    # See module docstring for tier semantics.
+    resolution_tier_hint: str = "temporal"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -50,7 +81,42 @@ class AuditConflict:
             "overlapping_scopes": self.overlapping_scopes,
             "kind": self.kind,
             "rationale": self.rationale,
+            "resolution_tier_hint": self.resolution_tier_hint,
         }
+
+
+# Default critical-scope patterns that map to the SCF "policy" resolution
+# tier. Scopes matching any prefix here get tier="policy" (highest
+# severity) instead of "temporal". Override at call site.
+DEFAULT_CRITICAL_SCOPE_PREFIXES: tuple[str, ...] = (
+    "billing.", "prod.deploy.", "prod.delete.", "auth.admin.",
+    "db.users.", "db.payments.", "db.orders.",
+    "secrets.", "iam.", "kms.",
+)
+
+
+def _resolution_tier(
+    overlapping_scopes: list[str],
+    intention: AuditEvent,
+    critical_prefixes: tuple[str, ...],
+) -> str:
+    """SCF tier hint: policy > capability > temporal > escalation.
+
+    - policy: scope matches a critical-scope prefix (regulated/sensitive)
+    - capability: agent identity carries a role suffix (e.g. "_admin")
+    - temporal: default (first-writer-wins by timestamp)
+    - escalation: kept for future use when no auto-resolution is possible
+    """
+    for scope in overlapping_scopes:
+        for prefix in critical_prefixes:
+            # Strip the action suffix (":w", ":r") for matching
+            base = scope.split(":")[0]
+            if base.startswith(prefix):
+                return "policy"
+    agent = intention.agent_id.lower()
+    if any(agent.endswith(s) for s in ("_admin", "_root", "_owner", "_lead")):
+        return "capability"
+    return "temporal"
 
 
 def detect_conflicts(
@@ -58,6 +124,7 @@ def detect_conflicts(
     *,
     lookback_ms: int = 60_000,
     write_only: bool = True,
+    critical_scope_prefixes: Optional[tuple[str, ...]] = None,
 ) -> list[AuditConflict]:
     """Run the L2-style detector across an event list.
 
@@ -66,7 +133,11 @@ def detect_conflicts(
         lookback_ms: how far back to look for stale-base overwrites.
         write_only: if True, only consider write-class tools (skip
             reads since two reads can't collide).
+        critical_scope_prefixes: scopes whose prefix matches one of these
+            get a "policy" resolution-tier hint (highest priority).
+            Defaults to common production / billing / secrets paths.
     """
+    crit_prefixes = critical_scope_prefixes or DEFAULT_CRITICAL_SCOPE_PREFIXES
     # Sort by start time so we can do a single forward pass
     sorted_events = sorted(events, key=lambda e: e.ts_start_ms)
 
@@ -133,6 +204,7 @@ def detect_conflicts(
                         f"Their work resolved less than {lookback_ms//1000}s ago — "
                         f"{ev.agent_id} likely never saw it."
                     )
+                tier = _resolution_tier(sorted(overlap_all), ev, crit_prefixes)
                 conflicts.append(
                     AuditConflict(
                         intention=ev,
@@ -140,6 +212,7 @@ def detect_conflicts(
                         overlapping_scopes=sorted(overlap_all),
                         kind=kind,
                         rationale=rationale,
+                        resolution_tier_hint=tier,
                     )
                 )
 

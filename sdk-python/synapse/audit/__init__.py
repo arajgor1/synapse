@@ -18,11 +18,26 @@ from __future__ import annotations
 from .events import AuditEvent
 from .pipeline import audit_traces, AuditReport
 from .scope_inference import infer_scope, register_scope_rule
+from .conflict_detector import (
+    AuditConflict,
+    DEFAULT_CRITICAL_SCOPE_PREFIXES,
+    detect_conflicts,
+)
+from .drift import AgentPairSAS, compute_sas
 
 __all__ = [
+    # Events + pipeline
     "AuditEvent",
     "AuditReport",
     "audit_traces",
+    # Scope inference
     "infer_scope",
     "register_scope_rule",
+    # Conflict detection (SCF-aligned taxonomy)
+    "AuditConflict",
+    "DEFAULT_CRITICAL_SCOPE_PREFIXES",
+    "detect_conflicts",
+    # SAS drift score (SCF Drift Monitor)
+    "AgentPairSAS",
+    "compute_sas",
 ]

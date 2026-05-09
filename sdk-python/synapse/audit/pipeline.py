@@ -11,6 +11,7 @@ from typing import Iterable
 from .events import AuditEvent, is_write
 from .scope_inference import annotate_events
 from .conflict_detector import detect_conflicts
+from .drift import compute_sas
 from .report import AuditReport
 from .importers import auto_import
 
@@ -77,6 +78,11 @@ def audit_traces(
         for prior in c.conflicting:
             wasted_tokens += _tokens_for(prior)
 
+    # SCF drift score: per-agent-pair Semantic Alignment Score.
+    # Cheap pure-Python pass; flags soft drift even when no hard CONFLICT
+    # fired. Free (no LLM, no I/O) so always on.
+    sas_pairs = compute_sas(events)
+
     return AuditReport(
         source_path=str(path),
         total_events=len(events),
@@ -85,4 +91,5 @@ def audit_traces(
         conflicts=conflicts,
         estimated_wasted_tokens=wasted_tokens,
         estimated_wasted_usd=(wasted_tokens / 1000) * _AVG_HAIKU_USD_PER_KTOK,
+        sas_pairs=sas_pairs,
     )

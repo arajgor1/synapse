@@ -13,8 +13,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+from dataclasses import field
+
 from .events import AuditEvent
 from .conflict_detector import AuditConflict
+from .drift import AgentPairSAS
 
 
 @dataclass
@@ -31,6 +34,9 @@ class AuditReport:
     estimated_wasted_tokens: int = 0
     estimated_wasted_usd: float = 0.0
 
+    # SCF-aligned per-agent-pair drift score (computed in pipeline)
+    sas_pairs: list[AgentPairSAS] = field(default_factory=list)
+
     @property
     def total_conflicts(self) -> int:
         return len(self.conflicts)
@@ -42,6 +48,15 @@ class AuditReport:
             out[c.kind] = out.get(c.kind, 0) + 1
         return out
 
+    @property
+    def conflict_tiers(self) -> dict[str, int]:
+        """How many conflicts mapped to each SCF resolution tier."""
+        out: dict[str, int] = {}
+        for c in self.conflicts:
+            tier = getattr(c, "resolution_tier_hint", "temporal")
+            out[tier] = out.get(tier, 0) + 1
+        return out
+
     def to_json_dict(self) -> dict:
         return {
             "source": self.source_path,
@@ -51,10 +66,12 @@ class AuditReport:
             "total_sessions": len(self.sessions),
             "total_conflicts": self.total_conflicts,
             "conflict_kinds": self.conflict_kinds,
+            "conflict_tiers": self.conflict_tiers,
             "estimated_wasted_tokens": self.estimated_wasted_tokens,
             "estimated_wasted_usd": round(self.estimated_wasted_usd, 4),
             "sessions": {sid: sorted(set(agents)) for sid, agents in self.sessions.items()},
             "conflicts": [c.to_dict() for c in self.conflicts],
+            "sas_pairs": [s.to_dict() for s in self.sas_pairs],
         }
 
     def write_json(self, path: str) -> None:
@@ -69,11 +86,24 @@ class AuditReport:
         print(f"Loaded {self.total_events} events from {len(self.sessions)} session(s).")
         print(f"  write events:   {self.total_write_events}")
         print(f"  conflicts:      {self.total_conflicts} ({kind_str})")
+        tiers = self.conflict_tiers
+        if tiers:
+            tier_str = ", ".join(f"{n} {t}" for t, n in sorted(tiers.items()))
+            print(f"  by tier:        {tier_str}")
         if self.estimated_wasted_tokens:
             print(
                 f"  est. waste:     ~{self.estimated_wasted_tokens:,} tokens "
                 f"/ ~${self.estimated_wasted_usd:.2f}"
             )
+        # Surface low-SAS pairs as soft drift warnings
+        low_sas = [p for p in self.sas_pairs if p.sas < 0.3 and p.entity_overlap > 0]
+        if low_sas:
+            print(f"  drift warnings: {len(low_sas)} agent-pair(s) with SAS < 0.3 + shared scopes")
+            for p in low_sas[:3]:
+                print(f"    {p.agent_a} <> {p.agent_b}: SAS={p.sas:.2f} "
+                      f"(entity={p.entity_overlap:.2f}, "
+                      f"action={p.action_consistency:.2f}, "
+                      f"temporal={p.temporal_alignment:.2f})")
 
 
 def _render_html(report: AuditReport) -> str:
