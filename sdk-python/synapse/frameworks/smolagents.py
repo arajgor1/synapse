@@ -49,7 +49,12 @@ def _is_write(tool_name: str, args: dict) -> bool:
 
 
 def _agent_id_default() -> str:
-    return os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "smolagents_agent")
+    # Honor SYNAPSE_AGENT_ID first (per-call attribution), then fall back
+    # to SYNAPSE_DEFAULT_AGENT_ID (process-wide default).
+    return (
+        os.environ.get("SYNAPSE_AGENT_ID")
+        or os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "smolagents_agent")
+    )
 
 
 def _wrap_call(original_call):

@@ -1370,6 +1370,149 @@ def v02_strands_real_run(api_keys: dict[str, str]) -> dict[str, Any]:
     }
 
 
+@app.function(
+    cpu=4.0, memory=8192, timeout=3600, scaledown_window=10,
+)
+def v022_framework_races_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Real-life autonomous race tests for all 11 framework adapters.
+
+    For each framework: spawns 2 agents in parallel, all making real
+    edit_file tool calls on a shared workspace, with Synapse runtime
+    actively detecting conflicts.
+    """
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    script = setup + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v022_framework_races.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None:
+                    break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 3600:
+                proc.terminate()
+                return {
+                    "exit_code": -1,
+                    "stdout": "".join(captured)[-100000:],
+                    "stderr": "TIMEOUT",
+                    "elapsed_seconds": round(time.time() - started, 1),
+                }
+        proc.wait()
+    except Exception as e:
+        return {
+            "exit_code": -2,
+            "stdout": "".join(captured)[-100000:],
+            "stderr": f"streaming exception: {e}",
+            "elapsed_seconds": round(time.time() - started, 1),
+        }
+
+    return {
+        "exit_code": proc.returncode,
+        "stdout": "".join(captured)[-100000:],
+        "stderr": "",
+        "elapsed_seconds": round(time.time() - started, 1),
+    }
+
+
+@app.function(
+    cpu=4.0, memory=8192, timeout=2400, scaledown_window=10,
+)
+def v022_adapter_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Fixed adapter E2E test — invokes the actual patched dispatch path
+    of each framework's tool object, not the underlying user function."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    extra = (
+        "\npython3 -m pip install -q "
+        "autogen-agentchat 'crewai>=1.0' langchain-core openai-agents "
+        "'pydantic-ai>=1.0' smolagents strands-agents agno llama-index-core "
+        "google-adk "
+        ">/dev/null 2>&1 || true\n"
+    )
+    script = setup + extra + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v022_adapter_e2e.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None: break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 2400:
+                proc.terminate()
+                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                        "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
+        proc.wait()
+    except Exception as e:
+        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+                "stderr": f"streaming exception: {e}",
+                "elapsed_seconds": round(time.time() - started, 1)}
+
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+            "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
+
+
+@app.local_entrypoint()
+def v022_adapter_e2e() -> None:
+    """Drive the fixed v0.2.2 adapter E2E test."""
+    import json, os, time
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set"); return
+    print(">>> v0.2.2 adapter E2E test (11 frameworks via real dispatch path)...")
+    r = v022_adapter_e2e_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    if r.get("stderr"): print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/v022_adapter_e2e_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f: json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
+
+
+@app.local_entrypoint()
+def v022_framework_races() -> None:
+    """Drive the v0.2.2 real-life framework race test."""
+    import json, os, time
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set"); return
+    print(">>> v0.2.2 framework-race autonomous tests (11 frameworks, real agents)...")
+    r = v022_framework_races_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    if r.get("stderr"):
+        print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/v022_framework_races_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
+
+
 @app.local_entrypoint()
 def v02_strands_real() -> None:
     """Drive the real Strands Agents test (Option C)."""

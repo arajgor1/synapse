@@ -39,7 +39,7 @@ We share the conflict taxonomy and SCF-aligned metrics:
 We differ in three ways:
 1. **Audit-on-existing-trace-exports** with no middleware deployment, no agent-runtime patching, no hand-authored process model. SCF requires inline blocking; Synapse runs post-hoc on what your agents already emit.
 2. **FS-watcher path for IDE/CLI agents** (Claude Code, Cursor, Codex CLI, Aider) that don't expose live coordination hooks.
-3. **Real-world evidence on real published SDKs** (**11 of 11 framework adapters confirmed patching against real packages** — see `tests/test_adapter_health.py`); SCF's evaluation uses simulated agents.
+3. **Real-world evidence on real published SDKs.** All 11 framework adapters confirmed patching the real published SDK at install time (see `tests/test_adapter_health.py`). 4 of those (autogen, langchain, langgraph, smolagents) additionally verified through real two-agent dispatch with INTENTIONs persisted end-to-end (see `bench/REAL_LIFE_TESTING.md`). SCF's evaluation uses simulated agents.
 
 ### Framework coverage (vs. Semantica's "Coming Soon" list)
 

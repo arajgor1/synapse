@@ -1,0 +1,93 @@
+{
+  "results": [
+    {
+      "page": "landing.html",
+      "ok": true,
+      "checks": [
+        {
+          "name": "title",
+          "pass": true
+        },
+        {
+          "name": "hero text",
+          "pass": true
+        },
+        {
+          "name": "install snippet",
+          "pass": true
+        }
+      ],
+      "console_errors": []
+    },
+    {
+      "page": "index.html",
+      "ok": true,
+      "checks": [
+        {
+          "name": "dropzone",
+          "pass": true
+        },
+        {
+          "name": "sample buttons",
+          "pass": true
+        }
+      ],
+      "console_errors": []
+    },
+    {
+      "page": "benchmark.html",
+      "ok": true,
+      "checks": [
+        {
+          "name": "AgenticFlict card",
+          "pass": true
+        },
+        {
+          "name": "stats populated",
+          "pass": true
+        },
+        {
+          "name": "per-agent rows",
+          "pass": true
+        }
+      ],
+      "console_errors": []
+    },
+    {
+      "page": "explorer.html",
+      "ok": true,
+      "checks": [
+        {
+          "name": "svg ready",
+          "pass": true
+        },
+        {
+          "name": "toolbar buttons",
+          "pass": true
+        },
+        {
+          "name": "sample renders nodes",
+          "pass": true
+        }
+      ],
+      "console_errors": []
+    },
+    {
+      "page": "team-health.html",
+      "ok": true,
+      "checks": [
+        {
+          "name": "KPI grid populated",
+          "pass": true
+        },
+        {
+          "name": "SAS chart drawn",
+          "pass": true
+        }
+      ],
+      "console_errors": []
+    }
+  ],
+  "passed": 5,
+  "total": 5
+}

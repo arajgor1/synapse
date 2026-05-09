@@ -43,7 +43,11 @@ def _session_id() -> str:
 
 
 def _agent_id_default() -> str:
-    return os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "strands_agent")
+    # Honor SYNAPSE_AGENT_ID first (per-call), then SYNAPSE_DEFAULT_AGENT_ID
+    return (
+        os.environ.get("SYNAPSE_AGENT_ID")
+        or os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "strands_agent")
+    )
 
 
 def _scope_from_call(tool_name: str, args: dict) -> list[str]:

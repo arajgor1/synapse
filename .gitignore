@@ -73,3 +73,6 @@ graphify-out/converted/
 nosetests.xml
 coverage.xml
 *.log
+
+# mkdocs build output
+site/
