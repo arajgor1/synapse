@@ -167,9 +167,9 @@ class Agent:
         self, intention_id: str, window_ms: int
     ) -> list[Conflict]:
         """Drain inbox during the gate window, return any CONFLICT/BLOCK targeting this intention."""
-        deadline = asyncio.get_event_loop().time() + window_ms / 1000
+        deadline = asyncio.get_running_loop().time() + window_ms / 1000
         out: list[Conflict] = []
-        while asyncio.get_event_loop().time() < deadline:
+        while asyncio.get_running_loop().time() < deadline:
             entries = await self._bus.drain_inbox(self.id, last_id=self._inbox_cursor)
             for entry_id, env in entries:
                 self._inbox_cursor = entry_id
@@ -280,9 +280,9 @@ class Agent:
         """
         if self._bus is None:
             return None
-        deadline = asyncio.get_event_loop().time() + timeout_s
+        deadline = asyncio.get_running_loop().time() + timeout_s
         types_set = set(types) if types else None
-        while asyncio.get_event_loop().time() < deadline:
+        while asyncio.get_running_loop().time() < deadline:
             entries = await self._bus.drain_inbox(self.id, last_id=self._inbox_cursor)
             for entry_id, env in entries:
                 self._inbox_cursor = entry_id

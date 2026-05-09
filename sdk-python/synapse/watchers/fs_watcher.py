@@ -38,20 +38,41 @@ from typing import Callable, Optional
 
 logger = logging.getLogger(__name__)
 
-_IGNORE_PATTERNS = (
-    ".swp", ".swo", ".tmp", ".#", "~",
-    ".DS_Store", "__pycache__", ".git/", ".idea/",
-    ".vscode/", "node_modules/", "dist/", "build/",
+# Directory names whose entire subtree is ignored. Matched component-wise
+# (so "package.git/foo" is NOT a false positive for ".git").
+_IGNORE_DIRS = frozenset({
+    ".git", ".idea", ".vscode", "node_modules", "dist", "build",
+    "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache",
+    ".tox", ".venv", "venv", "env", ".env",
+    "target", "vendor", ".next", ".nuxt", ".turbo",
     # CRITICAL: ignore our own audit log directory or we re-detect our
     # own writes in an infinite loop.
-    ".synapse/",
-    # Common test/build outputs that change rapidly without user intent
-    ".pytest_cache/", ".mypy_cache/", ".ruff_cache/", "coverage.xml",
-)
+    ".synapse",
+})
+
+# Filename extensions/markers always ignored.
+_IGNORE_FILE_SUFFIXES = (".swp", ".swo", ".tmp", ".lock", ".log", ".pyc", ".pyo")
+_IGNORE_FILE_NAMES = frozenset({".DS_Store", "Thumbs.db", "coverage.xml", "4913"})  # 4913 = vim atomic-write probe
+_IGNORE_FILE_PREFIXES = (".#", "#", "~$")  # editor temp files
 
 
-def _should_ignore(path: str) -> bool:
-    return any(p in path for p in _IGNORE_PATTERNS)
+def _should_ignore(rel_path: str) -> bool:
+    """Component-aware ignore check. `rel_path` is forward-slash-normalised."""
+    parts = rel_path.split("/")
+    # Any directory component matches an ignored dir name?
+    for p in parts[:-1]:  # exclude the leaf (filename)
+        if p in _IGNORE_DIRS:
+            return True
+    name = parts[-1]
+    if name in _IGNORE_FILE_NAMES:
+        return True
+    if any(name.endswith(suf) for suf in _IGNORE_FILE_SUFFIXES):
+        return True
+    if any(name.startswith(pfx) for pfx in _IGNORE_FILE_PREFIXES):
+        return True
+    if name.endswith("~"):
+        return True
+    return False
 
 
 def _hash_content(content: bytes) -> str:
@@ -161,46 +182,80 @@ class FSWatcher:
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(event) + "\n")
 
-    def _scan(self) -> dict[str, str]:
-        out: dict[str, str] = {}
+    def _scan_stats(self) -> dict[str, tuple[int, int]]:
+        """Cheap stat-only scan: rel_path -> (mtime_ns, size_bytes).
+
+        Avoids the per-poll DoS of reading every file. Only files whose
+        (mtime, size) signature changes get hashed in `_diff_and_hash`.
+        """
+        out: dict[str, tuple[int, int]] = {}
         for path in self.root.rglob("*"):
             try:
                 rel = str(path.relative_to(self.root)).replace("\\", "/")
             except ValueError:
                 continue
-            if _should_ignore(rel) or not path.is_file():
+            if _should_ignore(rel):
                 continue
             try:
-                content = path.read_bytes()
-                out[rel] = _hash_content(content)
-            except (PermissionError, OSError):
+                st = path.stat()
+            except (PermissionError, OSError, FileNotFoundError):
                 continue
+            # Filter to regular files (skip dirs/symlinks/devices)
+            from stat import S_ISREG
+            if not S_ISREG(st.st_mode):
+                continue
+            out[rel] = (st.st_mtime_ns, st.st_size)
         return out
 
+    def _hash_one(self, rel: str) -> Optional[str]:
+        try:
+            return _hash_content((self.root / rel).read_bytes())
+        except (PermissionError, OSError, FileNotFoundError):
+            return None
+
     def _loop(self):
-        # Initial baseline — don't fire on existing files
-        self._snapshot = self._scan()
+        # Initial baseline (stat + hash for everything once) so we don't
+        # fire on existing files.
+        baseline_stats = self._scan_stats()
+        self._stat_snapshot: dict[str, tuple[int, int]] = baseline_stats
+        # Hash baseline content once so changes-without-mtime-change still
+        # get detected on first real change.
+        self._snapshot = {}
+        for rel in baseline_stats:
+            h = self._hash_one(rel)
+            if h is not None:
+                self._snapshot[rel] = h
         logger.info("fs_watcher: baseline %d files in %s", len(self._snapshot), self.root)
 
         while not self._stop.is_set():
             time.sleep(self.poll_interval_s)
-            current = self._scan()
+            current_stats = self._scan_stats()
             ts_ms = int(time.time() * 1000)
 
-            # New files
-            for path, h in current.items():
-                if path not in self._snapshot or self._snapshot[path] != h:
+            # Only hash files whose (mtime, size) changed OR are new
+            for rel, sig in current_stats.items():
+                prev_sig = self._stat_snapshot.get(rel)
+                if prev_sig == sig:
+                    continue  # cheap skip, no read
+                h = self._hash_one(rel)
+                if h is None:
+                    continue
+                if rel not in self._snapshot or self._snapshot[rel] != h:
                     self.emit_callback(
-                        str(self.root / path),
+                        str(self.root / rel),
                         h,
                         self.agent_id,
                         self.session_id,
                         ts_ms,
                     )
                     self._writes_emitted += 1
+                self._snapshot[rel] = h
 
-            # Note: we ignore deletes for now (they don't collide with writes)
-            self._snapshot = current
+            # Drop deleted files from snapshot so re-creates fire again
+            for rel in list(self._snapshot.keys()):
+                if rel not in current_stats:
+                    self._snapshot.pop(rel, None)
+            self._stat_snapshot = current_stats
 
     def start(self):
         if self._thread and self._thread.is_alive():

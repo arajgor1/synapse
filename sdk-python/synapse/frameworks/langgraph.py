@@ -81,10 +81,12 @@ def _try_make_handler():
         def __init__(self, default_session_id: Optional[str] = None) -> None:
             super().__init__()
             self._default_session_id = default_session_id
-            # Captured at install time: the loop that owns the bus + state pool
+            # Captured at install time: the loop that owns the bus + state pool.
+            # Use get_running_loop() — get_event_loop() is deprecated in 3.12+
+            # when no loop is running.
             self._loop: Optional[asyncio.AbstractEventLoop] = None
             try:
-                self._loop = asyncio.get_event_loop()
+                self._loop = asyncio.get_running_loop()
             except RuntimeError:
                 pass
             # run_id -> (intention_id, agent_id, session_id)

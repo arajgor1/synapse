@@ -123,11 +123,8 @@ def cmd_up(args: argparse.Namespace) -> int:
     deadline = time.time() + args.timeout
     healthy = False
     while time.time() < deadline:
-        ps = subprocess.run(
-            cmd + ["-f", str(compose)] if False else cmd + ["ps", "--format", "json"],
-            capture_output=True, text=True,
-        )
-        # Simple wait: just sleep a bit and check Redis/Postgres reachability via TCP
+        # Probe Redis (6379) and Postgres (5432) directly. The compose-ps output
+        # was previously captured here but never inspected, so it has been removed.
         try:
             import socket
             for port, name in [(6379, "redis"), (5432, "postgres")]:

@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Optional
 
 from synapse.audit import audit_traces
 
@@ -39,8 +40,13 @@ def main(argv: list[str] | None = None) -> int:
         metavar="OUT",
         help=(
             "Write HTML report to this path (default: ./synapse-audit-<timestamp>.html). "
-            "Pass empty string to skip."
+            "Use --no-html to suppress."
         ),
+    )
+    p.add_argument(
+        "--no-html",
+        action="store_true",
+        help="Suppress the HTML report (overrides --html).",
     )
     p.add_argument(
         "--json",
@@ -72,12 +78,15 @@ def main(argv: list[str] | None = None) -> int:
     if not args.no_summary:
         report.print_summary()
 
-    # Default HTML output if not suppressed
-    html_out = args.html
-    if html_out is None:
-        from datetime import datetime, timezone
-        ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-        html_out = f"./synapse-audit-{ts}.html"
+    # HTML output: suppressed via --no-html, otherwise default to a
+    # timestamped path or honor the user's --html argument.
+    html_out: Optional[str] = None
+    if not args.no_html:
+        html_out = args.html
+        if html_out is None:
+            from datetime import datetime, timezone
+            ts = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+            html_out = f"./synapse-audit-{ts}.html"
     if html_out:
         report.write_html(html_out)
         print(f"  HTML report -> {html_out}")

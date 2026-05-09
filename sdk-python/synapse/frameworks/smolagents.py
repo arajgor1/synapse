@@ -103,8 +103,9 @@ def _wrap_call(original_call):
 def _install_smolagents(opts: dict[str, Any]) -> None:
     global _INSTALL_LOOP
     import asyncio as _asyncio
+    # Avoid asyncio.get_event_loop() — deprecated in 3.12+ when no loop runs.
     try:
-        _INSTALL_LOOP = _asyncio.get_event_loop()
+        _INSTALL_LOOP = _asyncio.get_running_loop()
     except RuntimeError:
         _INSTALL_LOOP = None
     try:

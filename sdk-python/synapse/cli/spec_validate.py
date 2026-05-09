@@ -38,7 +38,7 @@ def _spec_dir() -> Path:
 def _load_schemas() -> tuple[dict, dict[str, dict]]:
     """Returns (envelope_schema, payload_schemas_by_type)."""
     spec = _spec_dir()
-    envelope = json.loads((spec / "envelope.schema.json").read_text())
+    envelope = json.loads((spec / "envelope.schema.json").read_text(encoding="utf-8"))
     types = {
         "THOUGHT": "thought.schema.json",
         "INTENTION": "intention.schema.json",
@@ -50,7 +50,8 @@ def _load_schemas() -> tuple[dict, dict[str, dict]]:
         "COST_REPORT": "cost_report.schema.json",
     }
     payloads = {
-        t: json.loads((spec / fname).read_text()) for t, fname in types.items()
+        t: json.loads((spec / fname).read_text(encoding="utf-8"))
+        for t, fname in types.items()
     }
     return envelope, payloads
 
@@ -70,7 +71,7 @@ def _iter_inputs(paths: list[str], json_lines: bool) -> Iterable[tuple[str, Any]
         return
     for p in paths:
         path = Path(p)
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         if json_lines:
             for i, line in enumerate(text.splitlines(), 1):
                 line = line.strip()

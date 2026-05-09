@@ -116,7 +116,8 @@ async def _run() -> int:
     saw_any = any(r["saw_conflicts"] for r in results)
     print()
     if saw_any:
-        print("  ✓ at least one agent saw a CONFLICT — Synapse working as designed.")
+        # Use ASCII-safe marker — Windows cp1252 stdout chokes on ✓.
+        print("  [OK] at least one agent saw a CONFLICT - Synapse working as designed.")
     else:
         print(
             "  no CONFLICTs surfaced this run — likely the gate window closed before the "

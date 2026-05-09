@@ -127,7 +127,7 @@ def _wrap_task_object(
                 result = await original_execute_async(*args, **kwargs)
             else:
                 # Fall back: run the sync version in executor
-                loop = asyncio.get_event_loop()
+                loop = asyncio.get_running_loop()
                 result = await loop.run_in_executor(
                     None, lambda: original_execute_sync(*args, **kwargs)
                 )
@@ -183,7 +183,7 @@ def _wrap_callable(
             if is_coro:
                 result = await func(*args, **kwargs)
             else:
-                loop = asyncio.get_event_loop()
+                loop = asyncio.get_running_loop()
                 result = await loop.run_in_executor(None, lambda: func(*args, **kwargs))
             await agent.emit_resolution(intention_id=int_id, outcome="success")
             return result

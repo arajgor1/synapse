@@ -166,7 +166,7 @@ def synapse_node(
                     result = await func(*args, **kwargs)
                 else:
                     # Run sync function in default executor so we don't block loop
-                    loop = asyncio.get_event_loop()
+                    loop = asyncio.get_running_loop()
                     result = await loop.run_in_executor(None, lambda: func(*args, **kwargs))
                 await agent.emit_resolution(intention_id=int_id, outcome="success")
                 return result

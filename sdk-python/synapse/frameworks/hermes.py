@@ -69,12 +69,12 @@ def _install_hermes(opts: dict[str, Any]) -> None:
             session_id, agent_id,
         )
 
-    # If a loop is running, schedule onto it; otherwise create one
+    # If a loop is running, schedule onto it; otherwise create one fresh.
+    # Use get_running_loop() — get_event_loop() is deprecated in 3.12+.
     try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.ensure_future(_bootstrap(), loop=loop)
-            return
+        loop = asyncio.get_running_loop()
+        asyncio.ensure_future(_bootstrap(), loop=loop)
+        return
     except RuntimeError:
         pass
     asyncio.run(_bootstrap())

@@ -50,8 +50,11 @@ def _sniff_and_import(path: str):
     sample = data[0] if isinstance(data, list) and data else data
 
     if isinstance(sample, dict):
-        # Bedrock — has agentSessionId or trace.orchestrationTrace
-        if "agentSessionId" in sample or "agentId" in sample:
+        # Bedrock — REQUIRES agentSessionId, OR a trace.orchestrationTrace /
+        # preProcessingTrace block, OR a `traces` array whose entries have
+        # one of those. Plain `agentId` alone is insufficient because some
+        # OpenInference / OTel exports also use `agentId` at the span level.
+        if "agentSessionId" in sample:
             return import_bedrock(path)
         if isinstance(sample.get("trace"), dict) and (
             "orchestrationTrace" in sample["trace"]
@@ -60,8 +63,13 @@ def _sniff_and_import(path: str):
             return import_bedrock(path)
         if "traces" in sample and isinstance(sample.get("traces"), list):
             for t in sample["traces"][:1]:
-                if isinstance(t, dict) and "orchestrationTrace" in t:
-                    return import_bedrock(path)
+                if isinstance(t, dict):
+                    inner = t.get("trace") if isinstance(t.get("trace"), dict) else t
+                    if isinstance(inner, dict) and (
+                        "orchestrationTrace" in inner
+                        or "preProcessingTrace" in inner
+                    ):
+                        return import_bedrock(path)
 
         # Azure App Insights — has customDimensions or operation_Id
         if "operation_Id" in sample or "customDimensions" in sample:

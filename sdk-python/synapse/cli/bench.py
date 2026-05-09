@@ -179,7 +179,7 @@ async def run_bench(
     # Spawn an inbox watcher per agent that records when CONFLICT arrives
     async def watch_inbox(agent: Agent) -> None:
         while True:
-            entries = await bus._sleep(0.01) or None  # noqa: F841
+            await asyncio.sleep(0.01)
             try:
                 envs = await bus.drain_inbox(agent.id, last_id=agent._inbox_cursor)  # type: ignore[attr-defined]
                 for entry_id, env in envs:

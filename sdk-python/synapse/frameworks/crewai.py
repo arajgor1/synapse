@@ -142,8 +142,11 @@ def _wrap_async(original_execute_async):
 
 def _install_crewai(opts: dict[str, Any]) -> None:
     global _INSTALL_LOOP
+    # Capture the running loop if install() is called from inside one;
+    # otherwise leave it unset (avoid asyncio.get_event_loop() —
+    # deprecated in Python 3.12+ when no loop is running).
     try:
-        _INSTALL_LOOP = asyncio.get_event_loop()
+        _INSTALL_LOOP = asyncio.get_running_loop()
     except RuntimeError:
         _INSTALL_LOOP = None
 

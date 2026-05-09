@@ -252,8 +252,9 @@ def _wrap_module_level_async(original):
 
 def _install_strands(opts: dict[str, Any]) -> None:
     global _INSTALL_LOOP
+    # Avoid asyncio.get_event_loop() — deprecated in 3.12+ when no loop runs.
     try:
-        _INSTALL_LOOP = asyncio.get_event_loop()
+        _INSTALL_LOOP = asyncio.get_running_loop()
     except RuntimeError:
         _INSTALL_LOOP = None
 
