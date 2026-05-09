@@ -68,10 +68,24 @@ def _capture_install_logs(framework_name: str) -> list[str]:
     syn_logger.setLevel(logging.INFO)
 
     # Force-reimport the adapter so module-state (_PATCHED) resets between
-    # parameterised invocations.
+    # parameterised invocations. We also have to drop the attribute on the
+    # parent package, or `from synapse.frameworks import X` will short-
+    # circuit on the existing reference and skip module reinitialisation.
     for k in list(sys.modules.keys()):
         if k.startswith(f"synapse.frameworks.{framework_name}"):
             del sys.modules[k]
+    parent = sys.modules.get("synapse.frameworks")
+    if parent is not None and hasattr(parent, framework_name):
+        try:
+            delattr(parent, framework_name)
+        except AttributeError:
+            pass
+    # Drop the stale install_fn from the registry too — otherwise we'd
+    # call the OLD module's _install_langchain (which still sees
+    # _PATCHED=True) instead of the freshly-imported one.
+    from synapse.install import _FRAMEWORK_REGISTRY as _REG
+    for alias in (framework_name, framework_name.replace("_", "-")):
+        _REG.pop(alias, None)
 
     try:
         from synapse.install import _ensure_framework_loaded, _FRAMEWORK_REGISTRY

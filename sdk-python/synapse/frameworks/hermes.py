@@ -37,8 +37,11 @@ def _install_hermes(opts: dict[str, Any]) -> None:
         logger.warning("synapse.install(framework='hermes'): hermes_integration not importable")
         return
 
+    from synapse.agent_context import current_agent_id
     session_id = opts.get("session_id") or os.environ.get("SYNAPSE_SESSION_ID", "hermes_default_session")
-    agent_id = opts.get("agent_id") or os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "hermes_main")
+    # Hermes is a single-agent integration; honour ContextVar / env vars
+    # before falling back to the legacy "hermes_main" sentinel.
+    agent_id = opts.get("agent_id") or current_agent_id(default="hermes_main")
     gate_ms = int(opts.get("gate_ms", os.environ.get("SYNAPSE_GATE_MS", "50")))
 
     async def _bootstrap() -> None:

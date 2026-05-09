@@ -150,9 +150,36 @@ def test_autodetect_picks_crewai_when_module_loaded(monkeypatch):
     import types
     from synapse.install import _autodetect_framework
 
+    # Earlier tests may have imported langgraph (which is checked first in
+    # the candidate ordering). Isolate so this test asserts about crewai.
+    for name in ("langgraph",):
+        if name in sys.modules:
+            monkeypatch.delitem(sys.modules, name, raising=False)
     fake_mod = types.ModuleType("crewai")
     monkeypatch.setitem(sys.modules, "crewai", fake_mod)
     assert _autodetect_framework() == "crewai"
+
+
+_AUTODETECT_CANDIDATES = (
+    "langgraph", "crewai",
+    "autogen", "autogen_agentchat", "autogen_core",
+    "agents", "openai_agents", "openai_swarm",
+    "smolagents", "pydantic_ai",
+)
+
+
+def _isolate_autodetect(monkeypatch, keep: str) -> None:
+    """Remove every other autodetect candidate from sys.modules so the
+    test gets a deterministic single-framework view. Earlier tests
+    elsewhere in the suite may have populated sys.modules with crewai
+    (or others), and the autodetect ordering would otherwise pick the
+    first match — not the one this test injected."""
+    import sys
+    for name in _AUTODETECT_CANDIDATES:
+        if name == keep:
+            continue
+        if name in sys.modules:
+            monkeypatch.delitem(sys.modules, name, raising=False)
 
 
 def test_autodetect_normalizes_autogen_variants(monkeypatch):
@@ -160,6 +187,7 @@ def test_autodetect_normalizes_autogen_variants(monkeypatch):
     import types
     from synapse.install import _autodetect_framework
 
+    _isolate_autodetect(monkeypatch, keep="autogen_agentchat")
     fake_mod = types.ModuleType("autogen_agentchat")
     monkeypatch.setitem(sys.modules, "autogen_agentchat", fake_mod)
     assert _autodetect_framework() == "autogen"
@@ -170,6 +198,7 @@ def test_autodetect_normalizes_swarm_to_openai_agents(monkeypatch):
     import types
     from synapse.install import _autodetect_framework
 
+    _isolate_autodetect(monkeypatch, keep="agents")
     fake_mod = types.ModuleType("agents")
     monkeypatch.setitem(sys.modules, "agents", fake_mod)
     assert _autodetect_framework() == "openai_agents"

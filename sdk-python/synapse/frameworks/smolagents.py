@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 _PATCHED = {"tool_call": False}
-_INSTALL_LOOP = None
 
 
 def _session_id() -> str:
@@ -49,12 +48,11 @@ def _is_write(tool_name: str, args: dict) -> bool:
 
 
 def _agent_id_default() -> str:
-    # Honor SYNAPSE_AGENT_ID first (per-call attribution), then fall back
-    # to SYNAPSE_DEFAULT_AGENT_ID (process-wide default).
-    return (
-        os.environ.get("SYNAPSE_AGENT_ID")
-        or os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "smolagents_agent")
-    )
+    # Per-task ContextVar first (synapse.set_agent_context / with_agent),
+    # then SYNAPSE_AGENT_ID env var, then SYNAPSE_DEFAULT_AGENT_ID,
+    # then framework-specific fallback.
+    from synapse.agent_context import current_agent_id
+    return current_agent_id(default="smolagents_agent")
 
 
 def _wrap_call(original_call):
@@ -93,26 +91,16 @@ def _wrap_call(original_call):
                     i.mark_failed(str(e))
                     raise
 
-        target_loop = _INSTALL_LOOP
-        if target_loop is None or not target_loop.is_running():
-            try:
-                target_loop = asyncio.get_running_loop()
-            except RuntimeError:
-                return asyncio.run(_run())
-        return asyncio.run_coroutine_threadsafe(_run(), target_loop).result()
+        # Bridge loop avoids deadlock if Tool.__call__ runs inside a
+        # caller's running loop.
+        from synapse.frameworks._sync_bridge import run_coro_blocking
+        return run_coro_blocking(_run())
 
     wrapper.__wrapped__ = original_call
     return wrapper
 
 
 def _install_smolagents(opts: dict[str, Any]) -> None:
-    global _INSTALL_LOOP
-    import asyncio as _asyncio
-    # Avoid asyncio.get_event_loop() — deprecated in 3.12+ when no loop runs.
-    try:
-        _INSTALL_LOOP = _asyncio.get_running_loop()
-    except RuntimeError:
-        _INSTALL_LOOP = None
     try:
         from smolagents import Tool  # type: ignore[import-not-found]
     except ImportError:

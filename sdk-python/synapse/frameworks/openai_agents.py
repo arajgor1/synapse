@@ -35,22 +35,35 @@ def _session_id() -> str:
 
 
 def _agent_id_from_context(ctx: Any) -> str:
-    if ctx is None:
-        return "openai_agent"
-    # Various paths the SDK has used across versions
-    for path in (
-        ("agent", "name"),
-        ("agent_name",),
-        ("name",),
-    ):
-        cur = ctx
-        for attr in path:
-            cur = getattr(cur, attr, None)
-            if cur is None:
-                break
-        if isinstance(cur, str) and cur:
-            return cur
-    return "openai_agent"
+    """Resolve agent identity from a ToolContext-like object.
+
+    Resolution order (race-free under asyncio.gather):
+      1. ContextVar (synapse.set_agent_context / with_agent) — per-task
+      2. ctx.agent.name (or other walked paths) — framework-supplied
+      3. SYNAPSE_AGENT_ID env var (legacy)
+      4. SYNAPSE_DEFAULT_AGENT_ID env var
+      5. "openai_agent"
+    """
+    from synapse.agent_context import current_agent_id, _AGENT_CTX
+    # ContextVar wins — race-free under concurrent asyncio.gather
+    ctx_val = _AGENT_CTX.get()
+    if ctx_val:
+        return ctx_val
+    if ctx is not None:
+        # Various paths the SDK has used across versions
+        for path in (
+            ("agent", "name"),
+            ("agent_name",),
+            ("name",),
+        ):
+            cur = ctx
+            for attr in path:
+                cur = getattr(cur, attr, None)
+                if cur is None:
+                    break
+            if isinstance(cur, str) and cur:
+                return cur
+    return current_agent_id(default="openai_agent")
 
 
 def _scope_from_call(tool_name: str, args: dict) -> list[str]:

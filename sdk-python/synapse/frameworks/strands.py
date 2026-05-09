@@ -35,7 +35,6 @@ from synapse.install import register_framework
 logger = logging.getLogger(__name__)
 
 _PATCHED = {"tool_handler": False}
-_INSTALL_LOOP: Optional[asyncio.AbstractEventLoop] = None
 
 
 def _session_id() -> str:
@@ -43,11 +42,8 @@ def _session_id() -> str:
 
 
 def _agent_id_default() -> str:
-    # Honor SYNAPSE_AGENT_ID first (per-call), then SYNAPSE_DEFAULT_AGENT_ID
-    return (
-        os.environ.get("SYNAPSE_AGENT_ID")
-        or os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "strands_agent")
-    )
+    from synapse.agent_context import current_agent_id
+    return current_agent_id(default="strands_agent")
 
 
 def _scope_from_call(tool_name: str, args: dict) -> list[str]:
@@ -96,9 +92,14 @@ def _wrap_handle_tool_call(original):
             except Exception:
                 tool_input = {"_arg0": str(tool_input)[:200]}
 
-        # Read agent identity off the run-context
+        # Read agent identity. Priority:
+        #   1. ContextVar (race-free under concurrent agents)
+        #   2. Strands-supplied agent.name / .agent_name
+        #   3. SYNAPSE_AGENT_ID / SYNAPSE_DEFAULT_AGENT_ID (legacy)
+        #   4. "strands_agent"
+        from synapse.agent_context import _AGENT_CTX
         agent_id = (
-            os.environ.get("SYNAPSE_AGENT_ID")
+            _AGENT_CTX.get()
             or getattr(agent, "name", None)
             or getattr(agent, "agent_name", None)
             or _agent_id_default()
@@ -153,8 +154,9 @@ def _wrap_sync_dispatch(original):
             return original(self, *args, **kwargs)
 
         scope = _scope_from_call(tool_name, tool_input)
+        from synapse.agent_context import _AGENT_CTX
         agent_id = (
-            os.environ.get("SYNAPSE_AGENT_ID")
+            _AGENT_CTX.get()
             or getattr(agent, "name", None)
             or _agent_id_default()
         )
@@ -174,13 +176,10 @@ def _wrap_sync_dispatch(original):
                     i.mark_failed(str(e))
                     raise
 
-        target = _INSTALL_LOOP
-        if target is None or not target.is_running():
-            try:
-                target = asyncio.get_running_loop()
-            except RuntimeError:
-                return asyncio.run(_run())
-        return asyncio.run_coroutine_threadsafe(_run(), target).result()
+        # Bridge loop avoids deadlock if dispatch is reached from a
+        # caller's running loop.
+        from synapse.frameworks._sync_bridge import run_coro_blocking
+        return run_coro_blocking(_run())
 
     wrapper.__wrapped__ = original
     return wrapper
@@ -225,7 +224,9 @@ def _wrap_module_level_async(original):
             except Exception:
                 tool_input = {"_arg0": str(tool_input)[:200]}
 
-        agent_id = os.environ.get("SYNAPSE_AGENT_ID", _agent_id_default())
+        # Module-level dispatch — no agent object available, fall back
+        # to ContextVar / env vars via the standard helper.
+        agent_id = _agent_id_default()
 
         if not _is_write_call(tool_name, tool_input):
             async for ev in original(*args, **kwargs):
@@ -255,13 +256,6 @@ def _wrap_module_level_async(original):
 
 
 def _install_strands(opts: dict[str, Any]) -> None:
-    global _INSTALL_LOOP
-    # Avoid asyncio.get_event_loop() — deprecated in 3.12+ when no loop runs.
-    try:
-        _INSTALL_LOOP = asyncio.get_running_loop()
-    except RuntimeError:
-        _INSTALL_LOOP = None
-
     if _PATCHED["tool_handler"]:
         return
 

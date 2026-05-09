@@ -64,8 +64,17 @@ from synapse.beliefs import (
     list_divergences,
     divergences_for_key,
 )
+# v0.2.2: per-task agent attribution via contextvars
+# (replaces the SYNAPSE_AGENT_ID env-var race documented in
+# bench/REAL_LIFE_TESTING.md Bug 1)
+from synapse.agent_context import (
+    set_agent_context,
+    reset_agent_context,
+    with_agent,
+    current_agent_id,
+)
 
-__version__ = "0.2.1a0"
+__version__ = "0.2.2a2"
 __all__ = [
     # v0.1 surface
     "Agent",
@@ -101,5 +110,10 @@ __all__ = [
     "emit_belief",
     "list_divergences",
     "divergences_for_key",
+    # v0.2.2: agent context (per-task ContextVar attribution)
+    "set_agent_context",
+    "reset_agent_context",
+    "with_agent",
+    "current_agent_id",
     "__version__",
 ]

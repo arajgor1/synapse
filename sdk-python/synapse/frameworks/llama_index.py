@@ -30,7 +30,6 @@ logger = logging.getLogger(__name__)
 
 
 _PATCHED = {"function_tool_call": False}
-_INSTALL_LOOP: Optional[asyncio.AbstractEventLoop] = None
 
 
 def _session_id() -> str:
@@ -38,9 +37,8 @@ def _session_id() -> str:
 
 
 def _agent_id_default() -> str:
-    return os.environ.get("SYNAPSE_AGENT_ID") or os.environ.get(
-        "SYNAPSE_DEFAULT_AGENT_ID", "llama_index_agent"
-    )
+    from synapse.agent_context import current_agent_id
+    return current_agent_id(default="llama_index_agent")
 
 
 def _scope_from_call(tool_name: str, args: dict) -> list[str]:
@@ -132,25 +130,16 @@ def _wrap_call_sync(original):
                     i.mark_failed(str(e))
                     raise
 
-        target = _INSTALL_LOOP
-        if target is None or not target.is_running():
-            try:
-                target = asyncio.get_running_loop()
-            except RuntimeError:
-                return asyncio.run(_run())
-        return asyncio.run_coroutine_threadsafe(_run(), target).result()
+        # Bridge loop avoids deadlock if call() is reached from inside a
+        # running loop (e.g. async ReActAgent → sync tool fallback).
+        from synapse.frameworks._sync_bridge import run_coro_blocking
+        return run_coro_blocking(_run())
 
     wrapper.__wrapped__ = original
     return wrapper
 
 
 def _install_llama_index(opts: dict[str, Any]) -> None:
-    global _INSTALL_LOOP
-    try:
-        _INSTALL_LOOP = asyncio.get_running_loop()
-    except RuntimeError:
-        _INSTALL_LOOP = None
-
     if _PATCHED["function_tool_call"]:
         return
 

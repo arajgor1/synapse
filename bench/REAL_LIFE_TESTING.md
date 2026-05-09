@@ -37,11 +37,12 @@
 
 ## Real bugs surfaced by these tests
 
-### Bug 1 — env-var attribution races under tight concurrency
+### Bug 1 — env-var attribution races under tight concurrency  [FIXED in v0.2.2a2]
 **Found by:** langchain + langgraph end-to-end runs.
 **Symptom:** Two `asyncio.gather`'d coroutines both write `os.environ["SYNAPSE_AGENT_ID"]` and both wrappers read it after the writes settled — last writer wins. Result: 2 INTENTIONs land, both attributed to "bob".
-**Fix scope:** Replace env-var attribution with `contextvars.ContextVar[str]` so each asyncio task has its own attribution context. Real fix is ~30 LOC + a new public `synapse.set_agent_context(name)` helper. Deferred to v0.2.3 (it's a real fix, not a workaround).
-**Workaround for now:** users running tightly-concurrent agents in the same process should set `SYNAPSE_AGENT_ID` per process / subprocess instead of per coroutine.
+**Fix shipped (v0.2.2a2):** New `synapse.agent_context` module exposes `set_agent_context(name)`, `with_agent(name)`, `current_agent_id(default=...)` backed by `contextvars.ContextVar[str | None]`. Every adapter (all 11) now resolves agent identity via `current_agent_id()` which checks the ContextVar first, then SYNAPSE_AGENT_ID env, then SYNAPSE_DEFAULT_AGENT_ID, then a per-framework fallback. ContextVars naturally propagate through `asyncio.create_task`, `asyncio.gather`, and `asyncio.to_thread` (which uses `copy_context()`).
+**Verified by:** 8 unit tests in `tests/test_agent_context.py` (incl. 50-task `gather` stress run with zero misattributions) + 3 end-to-end tests in `tests/test_adapter_attribution_e2e.py` exercising the patched LangChain `BaseTool.ainvoke` and AutoGen `FunctionTool.run` dispatch paths under `gather`. Both adapters now distinguish `alice` vs `bob` correctly across parallel calls.
+**Known limitation:** `autogen_core.FunctionTool` runs sync tools via `loop.run_in_executor(None, ...)` which does NOT propagate ContextVars to the worker thread. The wrapper's INTENTION envelope still gets the right agent_id (because the resolver runs on the caller task), but `synapse.current_agent_id()` called from inside a sync user-tool body running in autogen's executor will see the default. Workaround: declare the tool `async def`. Documented as a framework constraint, not a Synapse bug.
 
 ### Bug 2 — smolagents + strands ignore SYNAPSE_AGENT_ID env var
 **Found by:** smolagents end-to-end run (2 intentions persisted but agent_id always defaulted to `"smolagents_agent"`).
@@ -191,3 +192,48 @@ I'm updating the README to use the more precise phrasing.
 - $7.80 remaining
 
 If you approve, the next $2 buys full LLM-driven E2E for the 6 install-only-verified adapters (CrewAI, OpenAI Agents, pydantic_ai, Agno, LlamaIndex, Google ADK). After that, **every adapter has a citable real-agent run** to back the README claim.
+
+---
+
+## Post-Phase-7 quality sprint  (v0.2.2a2, 2026-05-09)
+
+> "Keep on fixing bugs and testing them properly dont slack on it." — user
+
+What this sprint added on top of the Phase 7 report above.
+
+### Bugs fixed (by ID)
+
+| Bug | Severity | Status | Coverage |
+|---|---|---|---|
+| **Bug 1** (env-var attribution race) | blocker | **FIXED** + 11 tests | ContextVar + adapter E2E |
+| **B5** (Explorer XSS via tooltip `.html()`) | blocker | **FIXED** | escHtml() across explorer/team-health/benchmark |
+| **M1** (`run_coroutine_threadsafe(...).result()` deadlock pattern) | major × 6 adapters | **FIXED** | new `_sync_bridge` + 5 tests |
+| **B2** (streaming tail missed events after rotation) | blocker | **FIXED** | 3 tests incl. truncate+rewrite |
+| **B3** (O(n²) client list mutation in `broadcast()`) | blocker | **FIXED** | snapshot-under-lock, send-outside-lock |
+| **B4** (full re-audit per streamed event) | blocker | **FIXED** | incremental scope-keyed conflict detector |
+| **B1 audit-claim** (Agno double-wrap) | claimed blocker | **DISPROVEN** | verified at `agno/models/base.py:2440-2465`, `execute`/`aexecute` are independent paths, agno picks one per call |
+| pre-existing | minor | **FIXED** | 3 test-ordering bugs in `test_v02_frameworks.py`, `test_v02_sdk.py`, `test_adapter_health.py` |
+
+### New code
+
+- `synapse/agent_context.py` — ContextVar attribution module + public API
+- `synapse/frameworks/_sync_bridge.py` — dedicated daemon-thread loop, replaces the deadlock-prone `_INSTALL_LOOP` pattern in 6 adapters
+- All 11 adapter files updated to call `current_agent_id()` (ContextVar-aware)
+- `synapse/streaming/server.py` — rotation-aware tail (size + inode + first-64-bytes content fingerprint), lock-free broadcast, incremental conflict detection
+- `synapse/__init__.py` — version bump to `0.2.2a2`, public exports for `set_agent_context`, `reset_agent_context`, `with_agent`, `current_agent_id`
+
+### New tests (all passing)
+
+| File | Tests | What it proves |
+|---|---|---|
+| `tests/test_agent_context.py` | 8 | ContextVar wins over env, propagates through `create_task`/`to_thread`, no misattribution under 50-task `gather` stress |
+| `tests/test_sync_bridge.py` | 5 | Bridge runs from worker thread, from inside a running loop without deadlock, propagates exceptions, reuses single loop across 20 concurrent calls |
+| `tests/test_streaming_tail.py` | 3 | Yields appended lines, **recovers from in-place truncate-then-rewrite**, stops promptly on `stop` event |
+| `tests/test_adapter_attribution_e2e.py` | 3 | Real LangChain `BaseTool.ainvoke` + AutoGen `FunctionTool.run` distinguish `alice`/`bob` under `asyncio.gather`; 20-task LangChain stress — zero misattributions |
+
+### Test-suite delta
+
+- Before this sprint: 280 passed (with intermittent test-ordering failures)
+- After this sprint: **298 passed** (1 pre-existing env-dependent test deselected — `test_from_litellm_lazy_imports_only_when_used` fails because litellm is transitively present via langsmith, unrelated to Synapse)
+- Adapter health gate: still **11 / 11**
+- Net new passing tests: **+19**

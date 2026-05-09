@@ -40,27 +40,36 @@ def _session_id() -> str:
 
 
 def _agent_id_from_context(ctx: Any) -> str:
-    """ADK ToolContext exposes the InvocationContext + agent identity."""
-    env_override = os.environ.get("SYNAPSE_AGENT_ID")
-    if env_override:
-        return env_override
-    if ctx is None:
-        return os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "google_adk_agent")
-    # ToolContext typically has .invocation_context.agent.name
-    for path in (
-        ("invocation_context", "agent", "name"),
-        ("agent", "name"),
-        ("name",),
-        ("invocation_context", "session_id"),
-    ):
-        cur = ctx
-        for attr in path:
-            cur = getattr(cur, attr, None)
-            if cur is None:
-                break
-        if isinstance(cur, str) and cur:
-            return cur
-    return os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "google_adk_agent")
+    """ADK ToolContext exposes the InvocationContext + agent identity.
+
+    Resolution order (race-free under asyncio.gather):
+      1. ContextVar (synapse.set_agent_context / with_agent) — per-task
+      2. ToolContext.invocation_context.agent.name (or other walked paths)
+      3. SYNAPSE_AGENT_ID env var (legacy)
+      4. SYNAPSE_DEFAULT_AGENT_ID env var
+      5. "google_adk_agent"
+    """
+    from synapse.agent_context import current_agent_id, _AGENT_CTX
+    # ContextVar wins — race-free under concurrent asyncio.gather
+    ctx_val = _AGENT_CTX.get()
+    if ctx_val:
+        return ctx_val
+    if ctx is not None:
+        # ToolContext typically has .invocation_context.agent.name
+        for path in (
+            ("invocation_context", "agent", "name"),
+            ("agent", "name"),
+            ("name",),
+            ("invocation_context", "session_id"),
+        ):
+            cur = ctx
+            for attr in path:
+                cur = getattr(cur, attr, None)
+                if cur is None:
+                    break
+            if isinstance(cur, str) and cur:
+                return cur
+    return current_agent_id(default="google_adk_agent")
 
 
 def _scope_from_call(tool_name: str, args: dict) -> list[str]:

@@ -49,29 +49,29 @@ def _is_write_tool(tool_name: str, args: dict) -> bool:
 
 
 def _resolve_agent_id_from_context(ctx: Any) -> str:
-    """Best-effort agent identity from AutoGen's CancellationToken / context.
+    """Best-effort agent identity for AutoGen tool calls.
 
-    NOTE: in AutoGen 0.4+ CancellationToken does NOT carry agent identity
-    (verified against autogen_core 0.7.5). The agent identity lives on
-    the parent ToolAgent / AssistantAgent that called the tool. We try
-    a few attribute paths but the most reliable mechanism is the
-    SYNAPSE_AGENT_ID environment variable set by the caller's wrapper
-    code, since CancellationToken is intentionally a transport-only
-    primitive.
+    Resolution order:
+      1. ContextVar (synapse.set_agent_context / with_agent) — per-task,
+         race-free under asyncio.gather
+      2. Best-effort lookup on CancellationToken (rarely populated;
+         AutoGen 0.4+ CancellationToken is intentionally transport-only)
+      3. SYNAPSE_AGENT_ID env var (legacy)
+      4. SYNAPSE_DEFAULT_AGENT_ID env var
+      5. "autogen_default"
     """
-    # Env override is the most reliable path — wrap your agent.run() call
-    # with `os.environ["SYNAPSE_AGENT_ID"] = agent.name; ...; del`
-    env_override = os.environ.get("SYNAPSE_AGENT_ID")
-    if env_override:
-        return env_override
-    if ctx is None:
-        return "autogen_default"
-    # Try a few attribute paths just in case the SDK changes
-    for attr in ("source", "agent_name", "name", "_agent_id"):
-        v = getattr(ctx, attr, None)
-        if isinstance(v, str) and v:
-            return v
-    return os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "autogen_default")
+    from synapse.agent_context import current_agent_id, _AGENT_CTX
+    # Check ContextVar first — race-free under concurrent asyncio.gather
+    ctx_val = _AGENT_CTX.get()
+    if ctx_val:
+        return ctx_val
+    # Best-effort context attribute walk before falling to env
+    if ctx is not None:
+        for attr in ("source", "agent_name", "name", "_agent_id"):
+            v = getattr(ctx, attr, None)
+            if isinstance(v, str) and v:
+                return v
+    return current_agent_id(default="autogen_default")
 
 
 def _session_id() -> str:

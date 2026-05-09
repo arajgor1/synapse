@@ -31,7 +31,6 @@ logger = logging.getLogger(__name__)
 
 
 _PATCHED = {"sync": False, "async": False}
-_INSTALL_LOOP: Optional[asyncio.AbstractEventLoop] = None
 
 
 def _scope_from_task(task: Any) -> list[str]:
@@ -56,13 +55,27 @@ def _scope_from_task(task: Any) -> list[str]:
 
 
 def _agent_id_from_task(task: Any) -> str:
+    """Resolve agent identity for a CrewAI Task.
+
+    Resolution order (race-free under asyncio.gather / kickoff_for_each):
+      1. ContextVar (synapse.set_agent_context / with_agent) — per-task
+      2. task.agent.role / .name / .id — framework-supplied
+      3. SYNAPSE_AGENT_ID env var (legacy)
+      4. SYNAPSE_DEFAULT_AGENT_ID env var
+      5. "crewai_default"
+    """
+    from synapse.agent_context import current_agent_id, _AGENT_CTX
+    # ContextVar wins — race-free under concurrent kickoff_for_each
+    ctx_val = _AGENT_CTX.get()
+    if ctx_val:
+        return ctx_val
     agent = getattr(task, "agent", None)
     if agent is not None:
         for k in ("role", "name", "id"):
             v = getattr(agent, k, None)
             if v:
                 return str(v).replace(" ", "_").lower()
-    return "crewai_default"
+    return current_agent_id(default="crewai_default")
 
 
 def _session_id() -> str:
@@ -97,17 +110,13 @@ def _wrap_sync(original_execute_sync):
                 i.set_state_diff({"output_preview": str(result)[:200]})
                 return result
 
-        # Always route through the install-time loop. CrewAI Task.execute_sync
-        # runs in worker threads (kicked off by crew.kickoff()), so each call
-        # has no running loop in its own thread — naive asyncio.run() would
-        # spawn a fresh loop per call, breaking bus/state pool isolation.
-        target_loop = _INSTALL_LOOP
-        if target_loop is None or not target_loop.is_running():
-            try:
-                target_loop = asyncio.get_running_loop()
-            except RuntimeError:
-                return asyncio.run(_run())
-        return asyncio.run_coroutine_threadsafe(_run(), target_loop).result()
+        # Route through the dedicated bridge loop. CrewAI Task.execute_sync
+        # runs in worker threads kicked off by crew.kickoff() — bridging
+        # to a single persistent loop keeps the bus/state pool warm across
+        # calls AND avoids deadlock if a caller invokes execute_sync from
+        # inside the install loop.
+        from synapse.frameworks._sync_bridge import run_coro_blocking
+        return run_coro_blocking(_run())
 
     wrapper.__wrapped__ = original_execute_sync
     return wrapper
@@ -141,15 +150,6 @@ def _wrap_async(original_execute_async):
 
 
 def _install_crewai(opts: dict[str, Any]) -> None:
-    global _INSTALL_LOOP
-    # Capture the running loop if install() is called from inside one;
-    # otherwise leave it unset (avoid asyncio.get_event_loop() —
-    # deprecated in Python 3.12+ when no loop is running).
-    try:
-        _INSTALL_LOOP = asyncio.get_running_loop()
-    except RuntimeError:
-        _INSTALL_LOOP = None
-
     try:
         from crewai import Task  # type: ignore[import-not-found]
     except ImportError:

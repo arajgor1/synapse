@@ -96,7 +96,9 @@ async function loadSample(which) {
 }
 
 function showEmpty(msg) {
-  d3.select('#viz').html(`<div class="empty"><p style="font-size:18px">📊</p><p>${msg}</p><p style="font-size:12px">Drop a synapse audit result JSON, or pick a sample above.</p></div>`);
+  // All current callers pass a literal — escape defensively in case future
+  // callers pass user-derived text (e.g. file name, parse error).
+  d3.select('#viz').html(`<div class="empty"><p style="font-size:18px">📊</p><p>${escHtml(msg)}</p><p style="font-size:12px">Drop a synapse audit result JSON, or pick a sample above.</p></div>`);
   document.getElementById('stats').innerHTML = '';
 }
 
@@ -199,9 +201,22 @@ function render(reportJson) {
   });
 }
 
+// HTML-escape any user-controlled string before interpolating into innerHTML/.html().
+// Audit JSONs come from arbitrary upstream traces (LangSmith, JSONL, OTel), so
+// agent ids and scope strings can contain attacker-controlled characters.
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function drawGraph(nodes, links, stats) {
   document.getElementById('stats').innerHTML = Object.entries(stats).map(([k,v])=>{
-    return `<div class="stat"><div class="num">${v ?? 0}</div><div class="lbl">${k.replace(/_/g,' ')}</div></div>`;
+    // k is a fixed schema key, v is a number — both come from us; still escape defensively.
+    return `<div class="stat"><div class="num">${escHtml(v ?? 0)}</div><div class="lbl">${escHtml(String(k).replace(/_/g,' '))}</div></div>`;
   }).join('');
 
   d3.select('#viz').html('');
@@ -228,7 +243,8 @@ function drawGraph(nodes, links, stats) {
       tooltip.style('display', 'block')
         .style('left', (e.pageX + 12) + 'px')
         .style('top',  (e.pageY + 12) + 'px')
-        .html(`<b>${d.id}</b><br>type: ${d.type}<br>events: ${d.n}` + (d.conflict ? '<br><span style="color:#ef4444">⚠ contended</span>' : ''));
+        // d.id and d.type come from user-supplied audit JSON; escape before injection.
+        .html(`<b>${escHtml(d.id)}</b><br>type: ${escHtml(d.type)}<br>events: ${escHtml(d.n)}` + (d.conflict ? '<br><span style="color:#ef4444">⚠ contended</span>' : ''));
     })
     .on('mouseout', () => tooltip.style('display', 'none'));
 

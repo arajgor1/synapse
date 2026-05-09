@@ -138,6 +138,7 @@ function fmtPct(x){ return (x*100).toFixed(1) + '%'; }
 function f1(tp,fp,fn){ const p = tp/(tp+fp||1); const r = tp/(tp+fn||1); return (p+r) ? 2*p*r/(p+r) : 0; }
 function precision(tp,fp){ return tp/(tp+fp||1); }
 function recall(tp,fn){ return tp/(tp+fn||1); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function render(d){
   const sg = document.getElementById('af-stats');
@@ -159,7 +160,7 @@ function render(d){
     const cls = f >= 0.95 ? 'good' : (f < 0.85 ? 'bad' : '');
     tbody.insertAdjacentHTML('beforeend', `
       <tr>
-        <td>${agent.replace(/_/g,' ')}</td>
+        <td>${esc(String(agent).replace(/_/g,' '))}</td>
         <td class="num">${s.n}</td>
         <td class="num ${cls}"><span class="bar" style="width:${(f*60).toFixed(0)}px"></span>${f.toFixed(3)}</td>
         <td class="num">${p.toFixed(3)}</td>

@@ -35,23 +35,30 @@ def _session_id() -> str:
 
 
 def _agent_name_from_runcontext(ctx: Any) -> str:
-    """Walk the RunContext object graph for an agent identity. Pydantic
-    AI's RunContext exposes `agent` (the parent Agent), `deps`, and
-    sometimes nested toolset metadata."""
-    env_override = os.environ.get("SYNAPSE_AGENT_ID")
-    if env_override:
-        return env_override
-    if ctx is None:
-        return os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "pydantic_ai_agent")
-    for path in (("agent", "name"), ("name",), ("deps", "name"), ("agent", "_name")):
-        cur = ctx
-        for attr in path:
-            cur = getattr(cur, attr, None)
-            if cur is None:
-                break
-        if isinstance(cur, str) and cur:
-            return cur
-    return os.environ.get("SYNAPSE_DEFAULT_AGENT_ID", "pydantic_ai_agent")
+    """Walk the RunContext object graph for an agent identity.
+
+    Resolution order (race-free under asyncio.gather):
+      1. ContextVar (synapse.set_agent_context / with_agent) — per-task
+      2. RunContext.agent.name (or other walked paths) — framework-supplied
+      3. SYNAPSE_AGENT_ID env var (legacy)
+      4. SYNAPSE_DEFAULT_AGENT_ID env var
+      5. "pydantic_ai_agent"
+    """
+    from synapse.agent_context import current_agent_id, _AGENT_CTX
+    # ContextVar wins — race-free under concurrent asyncio.gather
+    ctx_val = _AGENT_CTX.get()
+    if ctx_val:
+        return ctx_val
+    if ctx is not None:
+        for path in (("agent", "name"), ("name",), ("deps", "name"), ("agent", "_name")):
+            cur = ctx
+            for attr in path:
+                cur = getattr(cur, attr, None)
+                if cur is None:
+                    break
+            if isinstance(cur, str) and cur:
+                return cur
+    return current_agent_id(default="pydantic_ai_agent")
 
 
 def _scope_from_call(tool_name: str, args: dict) -> list[str]:

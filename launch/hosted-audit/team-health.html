@@ -158,7 +158,7 @@ function render() {
       <td class="num">${(p.entity_overlap||0).toFixed(2)}</td>
       <td class="num">${(p.action_consistency||0).toFixed(2)}</td>
       <td class="num">${(p.temporal_alignment||0).toFixed(2)}</td>
-      <td style="color:var(--muted);font-size:11.5px">${(p.shared_scopes||[]).join(', ').slice(0,80)}</td>
+      <td style="color:var(--muted);font-size:11.5px">${esc((p.shared_scopes||[]).join(', ').slice(0,80))}</td>
     </tr>
   `).join('');
 }
