@@ -1,0 +1,46 @@
+# Drop this in YOUR repo at .github/workflows/synapse-audit.yml.
+# It runs on every PR, audits any agent trace JSON, and posts a comment
+# with the conflict report.
+
+name: Synapse Audit
+on:
+  pull_request:
+    paths:
+      - 'traces/**/*.json'        # adjust to where your traces live
+      - '.synapse/runs/**/*.jsonl'
+      - 'agent-runs/**/*.json'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write   # needed to post the comment
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Synapse audit
+        id: audit
+        uses: arajgor1/synapse-audit-action@v1
+        with:
+          # Glob for trace files. Default: 'traces/*.json'
+          trace-path: 'traces/**/*.json .synapse/runs/**/*.jsonl'
+
+          # Post a PR comment when conflicts are found (default: true)
+          pr-comment: 'true'
+
+          # Fail the action if conflicts are found, blocking the merge
+          # (default: false — comment-only, non-blocking)
+          fail-on-conflict: 'false'
+
+      - name: Show audit summary in step
+        if: steps.audit.outputs.conflicts-detected != '0'
+        run: |
+          echo "::warning ::Synapse detected ${{ steps.audit.outputs.conflicts-detected }} conflict(s) across ${{ steps.audit.outputs.events-processed }} agent events"
+          echo "Full HTML report uploaded as artifact: synapse-audit-report"
+
+      # OPTIONAL: gate the merge queue on Synapse passing
+      # - name: Block merge on conflict
+      #   if: steps.audit.outputs.conflicts-detected != '0'
+      #   run: exit 1

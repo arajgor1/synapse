@@ -1,0 +1,28 @@
+.synapse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  margin-left: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.synapse-loading { color: #6e7781; border-color: #d0d7de; }
+.synapse-loading svg { animation: synapse-spin 1.4s linear infinite; }
+
+.synapse-ok { color: #1a7f37; border-color: #1a7f37; background: rgba(26,127,55,.08); }
+.synapse-warn { color: #9a6700; border-color: #9a6700; background: rgba(154,103,0,.08); }
+.synapse-unknown { color: #57606a; border-color: #d0d7de; }
+
+.synapse-badge:hover { filter: brightness(0.95); }
+
+@keyframes synapse-spin {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}

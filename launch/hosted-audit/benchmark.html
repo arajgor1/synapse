@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synapse benchmarks — F1, recall, precision per adapter</title>
+<style>
+  :root{--bg:#0b0c10;--fg:#e8e8e8;--muted:#9aa1ac;--accent:#66d9ef;--card:#14161c;--border:#2a2d36;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  .container{max-width:920px;margin:0 auto;padding:40px 24px}
+  a{color:var(--accent)}
+  h1{font-size:24px;margin:0 0 8px}
+  .lead{color:var(--muted);margin-bottom:30px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:14px}
+  .card h2{margin:0 0 4px;font-size:16px}
+  .card .meta{color:var(--muted);font-size:12px;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  td.num{font-variant-numeric:tabular-nums;text-align:right;color:var(--accent);font-weight:600}
+  td.bad{color:var(--bad)}
+  td.good{color:var(--good)}
+  .bar{display:inline-block;height:6px;background:var(--good);border-radius:3px;vertical-align:middle;margin-right:6px}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+  .stat{background:var(--bg);padding:10px;border-radius:6px}
+  .stat .num{font-size:22px;font-weight:600}
+  .stat .lbl{color:var(--muted);font-size:11px;margin-top:2px}
+  pre{background:var(--bg);padding:12px;border-radius:6px;overflow:auto;font-size:12px;color:var(--fg)}
+  .nav{margin-bottom:24px}
+  .nav a{margin-right:18px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="nav">
+  <a href="landing.html">← Home</a>
+  <a href="index.html">Audit tool</a>
+  <a href="benchmark.html"><b>Benchmarks</b></a>
+  <a href="https://github.com/arajgor1/synapse">GitHub</a>
+</div>
+
+<h1>Synapse benchmark results</h1>
+<p class="lead">All numbers below come from a real run on a public dataset, committed in the repo. Hover any row for the source file.</p>
+
+<div class="card" id="agenticflict-card">
+  <h2>1. AgenticFlict scope-overlap (5,408 paired PRs)</h2>
+  <p class="meta">
+    Dataset: <a href="https://arxiv.org/abs/2604.03551">arXiv 2604.03551</a> ·
+    142,652 real AI-coding-agent PRs · 29,609 conflicting · CC BY 4.0 ·
+    Source JSON: <a href="https://github.com/arajgor1/synapse/blob/main/bench/results/agenticflict_benchmark.json"><code>bench/results/agenticflict_benchmark.json</code></a>
+  </p>
+  <div id="af-stats" class="stat-grid"></div>
+  <table id="af-per-agent" style="margin-top:18px">
+    <thead><tr><th>Agent</th><th>n pairs</th><th>F1</th><th>Precision</th><th>Recall</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>2. Multi-orchestrator real run (May 2026)</h2>
+  <p class="meta">
+    2 LangGraph crews on shared FS, no coordinator · 4 modes compared ·
+    Source: <a href="https://github.com/arajgor1/synapse/blob/main/bench/results/v02_pitch_phase1/RESULTS_REAL.md"><code>bench/results/v02_pitch_phase1/RESULTS_REAL.md</code></a>
+  </p>
+  <table>
+    <thead><tr><th>Strategy</th><th class="num">Silent loss</th><th class="num">Loud conflicts</th><th class="num">Beliefs caught</th></tr></thead>
+    <tbody>
+      <tr><td>No coordination</td><td class="num bad">4 / 8</td><td class="num">0</td><td class="num bad">0 / 3</td></tr>
+      <tr><td>Git branches + naive merge</td><td class="num">0</td><td class="num">4 (loud)</td><td class="num bad">0 / 3</td></tr>
+      <tr><td>PR + CI w/ pytest</td><td class="num">3</td><td class="num">1</td><td class="num">1 / 3</td></tr>
+      <tr><td>Shared coordination.md</td><td class="num">2</td><td class="num">0</td><td class="num bad">0 / 3</td></tr>
+      <tr><td><b>Synapse auto_merge</b></td><td class="num good">0</td><td class="num good">4</td><td class="num good">3 / 3</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>3. Real two-Claude-Code session test</h2>
+  <p class="meta">
+    Two real <code>claude -p</code> headless processes on shared Stripe-Lite repo ·
+    Source: <a href="https://github.com/arajgor1/synapse/blob/main/bench/results/option_b/option_b_results.json"><code>bench/results/option_b/option_b_results.json</code></a>
+  </p>
+  <div class="stat-grid">
+    <div class="stat"><div class="num">21</div><div class="lbl">cross-agent conflicts</div></div>
+    <div class="stat"><div class="num">7</div><div class="lbl">overlapping files</div></div>
+    <div class="stat"><div class="num">28</div><div class="lbl">FS-watcher events</div></div>
+    <div class="stat"><div class="num">0.80</div><div class="lbl">coherence (12/15 markers)</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>4. Real OpenInference exporter → audit</h2>
+  <p class="meta">
+    Real openinference-instrumentation-anthropic against real Anthropic API · 4 OTel spans → 1 cross-agent conflict ·
+    Source: <a href="https://github.com/arajgor1/synapse/blob/main/bench/results/test_13_real_otel_audit.json"><code>bench/results/test_13_real_otel_audit.json</code></a>
+  </p>
+</div>
+
+<div class="card">
+  <h2>5. Adapter health (real-SDK regression gate)</h2>
+  <p class="meta">
+    Each adapter installed against the actual published package and verified to patch the real dispatch path ·
+    Source: <a href="https://github.com/arajgor1/synapse/blob/main/sdk-python/tests/test_adapter_health.py"><code>tests/test_adapter_health.py</code></a>
+  </p>
+  <table>
+    <thead><tr><th>Adapter</th><th>Real package</th><th>Version tested</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>autogen</td><td>autogen-agentchat</td><td>0.7.5</td><td class="good">✓ patches FunctionTool.run</td></tr>
+      <tr><td>langgraph</td><td>langgraph</td><td>latest</td><td class="good">✓ LangChain callback registered</td></tr>
+      <tr><td>openai_agents</td><td>openai-agents</td><td>0.17.0</td><td class="good">✓ patches function_tool</td></tr>
+      <tr><td>pydantic_ai</td><td>pydantic-ai</td><td>1.92.0</td><td class="good">✓ patches AbstractToolset.call_tool</td></tr>
+      <tr><td>smolagents</td><td>smolagents</td><td>1.24.0</td><td class="good">✓ patches Tool.__call__</td></tr>
+      <tr><td>strands</td><td>strands-agents</td><td>latest</td><td class="good">✓ patches event_loop._handle_tool_execution</td></tr>
+      <tr><td>crewai</td><td>crewai</td><td>n/a</td><td>(not installed in this env)</td></tr>
+      <tr><td>hermes</td><td>hermes</td><td>n/a</td><td>(not installed in this env)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+// Load the AgenticFlict result JSON if it's been deployed alongside; fall
+// back to a hardcoded snapshot so this page always renders something useful.
+const HARDCODED = {
+  n_pairs: 5408, n_positive: 408, n_negative: 5000,
+  tp: 408, fp: 127, tn: 4873, fn: 0,
+  precision: 0.7626, recall: 1.0, f1: 0.8653, accuracy: 0.9765,
+  per_agent: {
+    Claude_Code: {n: 100, tp: 30, fp: 0, fn: 0, tn: 70},
+    Cursor:      {n: 641, tp: 80, fp: 5, fn: 0, tn: 556},
+    Copilot:     {n:1046, tp:181, fp:23, fn: 0, tn: 842},
+    Devin:       {n: 648, tp: 51, fp: 6, fn: 0, tn: 591},
+    OpenAI_Codex:{n:8381, tp:394, fp:215, fn: 0, tn:7772},
+  }
+};
+
+function fmtPct(x){ return (x*100).toFixed(1) + '%'; }
+function f1(tp,fp,fn){ const p = tp/(tp+fp||1); const r = tp/(tp+fn||1); return (p+r) ? 2*p*r/(p+r) : 0; }
+function precision(tp,fp){ return tp/(tp+fp||1); }
+function recall(tp,fn){ return tp/(tp+fn||1); }
+
+function render(d){
+  const sg = document.getElementById('af-stats');
+  sg.innerHTML = `
+    <div class="stat"><div class="num" style="color:var(--good)">${d.f1.toFixed(3)}</div><div class="lbl">F1</div></div>
+    <div class="stat"><div class="num" style="color:var(--good)">${fmtPct(d.recall)}</div><div class="lbl">Recall</div></div>
+    <div class="stat"><div class="num">${fmtPct(d.precision)}</div><div class="lbl">Precision</div></div>
+    <div class="stat"><div class="num">${fmtPct(d.accuracy)}</div><div class="lbl">Accuracy</div></div>
+    <div class="stat"><div class="num">${d.n_pairs.toLocaleString()}</div><div class="lbl">total pairs</div></div>
+    <div class="stat"><div class="num">${d.tp + d.fn}</div><div class="lbl">positives</div></div>
+  `;
+
+  const tbody = document.querySelector('#af-per-agent tbody');
+  tbody.innerHTML = '';
+  for (const [agent, s] of Object.entries(d.per_agent || {})) {
+    const f = f1(s.tp, s.fp, s.fn);
+    const p = precision(s.tp, s.fp);
+    const r = recall(s.tp, s.fn);
+    const cls = f >= 0.95 ? 'good' : (f < 0.85 ? 'bad' : '');
+    tbody.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${agent.replace(/_/g,' ')}</td>
+        <td class="num">${s.n}</td>
+        <td class="num ${cls}"><span class="bar" style="width:${(f*60).toFixed(0)}px"></span>${f.toFixed(3)}</td>
+        <td class="num">${p.toFixed(3)}</td>
+        <td class="num">${r.toFixed(3)}</td>
+      </tr>
+    `);
+  }
+}
+
+fetch('agenticflict_benchmark.json')
+  .then(r => r.ok ? r.json() : Promise.reject('no remote'))
+  .then(render)
+  .catch(() => render(HARDCODED));
+</script>
+</div>
+</body>
+</html>

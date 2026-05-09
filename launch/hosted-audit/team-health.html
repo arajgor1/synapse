@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synapse — Team Health Dashboard</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  :root{--bg:#0b0c10;--fg:#e8e8e8;--muted:#9aa1ac;--accent:#66d9ef;--card:#14161c;--border:#2a2d36;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  .container{max-width:1200px;margin:0 auto;padding:24px}
+  .nav a{color:var(--accent);text-decoration:none;margin-right:18px}
+  h1{font-size:22px;margin:18px 0 6px}
+  .lead{color:var(--muted);margin-bottom:18px;font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:18px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px}
+  .card h3{margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .card .num{font-size:28px;font-weight:600}
+  .card .num.good{color:var(--good)} .card .num.warn{color:var(--warn)} .card .num.bad{color:var(--bad)}
+  .card .lbl{color:var(--muted);font-size:12px;margin-top:4px}
+  #sas-chart{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:18px}
+  .pair-list{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+  .sas-bar{display:inline-block;height:8px;border-radius:4px;vertical-align:middle;margin-right:6px;background:linear-gradient(90deg, var(--bad) 0%, var(--warn) 50%, var(--good) 100%)}
+  .empty{color:var(--muted);text-align:center;padding:40px}
+  .toolbar{display:flex;gap:8px;margin-bottom:14px;align-items:center}
+  .btn{background:var(--card);color:var(--fg);border:1px solid var(--border);padding:6px 12px;border-radius:6px;font-size:12.5px;cursor:pointer}
+  .btn.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+  input[type=file]{display:none}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="nav">
+  <a href="landing.html">← Home</a>
+  <a href="index.html">Audit tool</a>
+  <a href="benchmark.html">Benchmarks</a>
+  <a href="explorer.html">Explorer</a>
+  <a href="team-health.html"><b>Team Health</b></a>
+</div>
+
+<h1>Team Health Dashboard</h1>
+<p class="lead">
+  SAS (Semantic Alignment Score) per agent pair, conflict counts by tier,
+  and drift trends. Drop one or more audit JSON files to see how your
+  team's agent coordination changes over time.
+</p>
+
+<div class="toolbar">
+  <button class="btn primary" onclick="document.getElementById('files').click()">Load audit JSON(s)</button>
+  <input type="file" id="files" accept=".json" multiple onchange="loadFiles(event)">
+  <button class="btn" onclick="loadSampleSet()">Load sample data</button>
+  <span style="color:var(--muted); font-size:12px; margin-left:10px" id="loaded-count">0 files loaded</span>
+</div>
+
+<div class="grid" id="kpi-grid"></div>
+
+<div id="sas-chart">
+  <h3 style="margin:0 0 10px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em">SAS per agent pair (low = drifting, high = aligned)</h3>
+  <svg id="sas-svg" width="100%" height="240"></svg>
+</div>
+
+<div class="pair-list">
+  <h3 style="margin:0 0 12px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em">Pair details</h3>
+  <table id="pair-table">
+    <thead><tr><th>Agent A</th><th>Agent B</th><th class="num">SAS</th><th class="num">Entity</th><th class="num">Action</th><th class="num">Temporal</th><th>Shared scopes</th></tr></thead>
+    <tbody><tr><td colspan="7" class="empty">No data loaded yet</td></tr></tbody>
+  </table>
+</div>
+
+<script>
+let allReports = [];
+
+function loadFiles(e) {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  Promise.all(files.map(f => new Promise(res => {
+    const r = new FileReader();
+    r.onload = () => res({name: f.name, data: JSON.parse(r.result)});
+    r.readAsText(f);
+  }))).then(results => {
+    allReports = allReports.concat(results);
+    render();
+  });
+}
+
+async function loadSampleSet() {
+  // Use the live AgenticFlict + (placeholder for real run)
+  try {
+    const r = await fetch('agenticflict_benchmark.json');
+    const d = await r.json();
+    allReports = [
+      {name: 'multi_orch (May)', data: {sas_pairs: [
+        {agent_a: 'alpha_backend', agent_b: 'bravo_backend', sas: 0.42, entity_overlap: 0.6, action_consistency: 0.5, temporal_alignment: 0.15, shared_scopes: ['repo.fs.src/db/schema.sql', 'repo.fs.src/routes/auth.js'], session_id: 's1'},
+        {agent_a: 'alpha_orch', agent_b: 'bravo_orch', sas: 0.18, entity_overlap: 0.1, action_consistency: 0.3, temporal_alignment: 0.2, shared_scopes: [], session_id: 's1'},
+      ], conflicts: Array.from({length: 10}, (_,i)=>({kind: i<6 ? 'scope_overlap' : 'stale_base_overwrite', resolution_tier_hint: ['policy','capability','temporal'][i%3], overlapping_scopes: ['x']})), total_events: 48, sessions: {s1:['alpha_backend','bravo_backend','alpha_orch','bravo_orch']}}},
+      {name: 'option_b_claude_code', data: {sas_pairs: [
+        {agent_a: 'alice-claude-code', agent_b: 'bob-claude-code', sas: 0.85, entity_overlap: 1.0, action_consistency: 0.9, temporal_alignment: 0.5, shared_scopes: ['repo.fs.app/models.py','repo.fs.app/routes/subscriptions.py'], session_id: 'opt-b'},
+      ], conflicts: Array.from({length: 21},()=>({kind:'scope_overlap', resolution_tier_hint:'temporal', overlapping_scopes:['x']})), total_events: 28, sessions: {'opt-b':['alice-claude-code','bob-claude-code']}}},
+    ];
+    render();
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
+function render() {
+  document.getElementById('loaded-count').textContent = allReports.length + ' file' + (allReports.length===1?'':'s') + ' loaded';
+
+  // Aggregate KPIs
+  let n_events = 0, n_conflicts = 0, n_pairs = 0, n_drift = 0;
+  const tierCounts = {policy: 0, capability: 0, temporal: 0, escalation: 0};
+  const allPairs = [];
+  for (const r of allReports) {
+    const d = r.data;
+    n_events += d.total_events || 0;
+    n_conflicts += (d.conflicts || []).length;
+    for (const c of (d.conflicts || [])) {
+      const t = c.resolution_tier_hint || 'temporal';
+      tierCounts[t] = (tierCounts[t] || 0) + 1;
+    }
+    for (const p of (d.sas_pairs || [])) {
+      n_pairs++;
+      if (p.sas < 0.3 && p.entity_overlap > 0) n_drift++;
+      allPairs.push({...p, source: r.name});
+    }
+  }
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="card"><h3>Total events</h3><div class="num">${n_events}</div></div>
+    <div class="card"><h3>Conflicts</h3><div class="num ${n_conflicts > 0 ? 'warn' : 'good'}">${n_conflicts}</div></div>
+    <div class="card"><h3>Agent pairs</h3><div class="num">${n_pairs}</div></div>
+    <div class="card"><h3>Drift warnings</h3><div class="num ${n_drift > 0 ? 'bad' : 'good'}">${n_drift}</div><div class="lbl">SAS &lt; 0.3 with shared scopes</div></div>
+    <div class="card"><h3>Policy-tier</h3><div class="num bad">${tierCounts.policy || 0}</div><div class="lbl">critical scopes</div></div>
+    <div class="card"><h3>Capability-tier</h3><div class="num warn">${tierCounts.capability || 0}</div><div class="lbl">role-resolvable</div></div>
+  `;
+
+  drawSASChart(allPairs);
+
+  // Pair table
+  const tbody = document.querySelector('#pair-table tbody');
+  if (!allPairs.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">No SAS pairs yet — load some audits</td></tr>';
+    return;
+  }
+  // Sort by ascending SAS (worst-aligned first)
+  allPairs.sort((a, b) => a.sas - b.sas);
+  tbody.innerHTML = allPairs.map(p => `
+    <tr>
+      <td>${esc(p.agent_a)}</td>
+      <td>${esc(p.agent_b)}</td>
+      <td class="num"><span class="sas-bar" style="width:${(p.sas*60).toFixed(0)}px"></span>${p.sas.toFixed(2)}</td>
+      <td class="num">${(p.entity_overlap||0).toFixed(2)}</td>
+      <td class="num">${(p.action_consistency||0).toFixed(2)}</td>
+      <td class="num">${(p.temporal_alignment||0).toFixed(2)}</td>
+      <td style="color:var(--muted);font-size:11.5px">${(p.shared_scopes||[]).join(', ').slice(0,80)}</td>
+    </tr>
+  `).join('');
+}
+
+function drawSASChart(pairs) {
+  const svg = d3.select('#sas-svg');
+  svg.selectAll('*').remove();
+  const W = svg.node().clientWidth || 1100, H = 240;
+  const margin = {top: 20, right: 20, bottom: 50, left: 60};
+  const innerW = W - margin.left - margin.right;
+  const innerH = H - margin.top - margin.bottom;
+
+  if (!pairs.length) {
+    svg.append('text').attr('x', W/2).attr('y', H/2).attr('text-anchor', 'middle')
+       .attr('fill', '#9aa1ac').text('Load audits to see SAS distribution');
+    return;
+  }
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleBand().domain(pairs.map((_,i) => i)).range([0, innerW]).padding(0.2);
+  const y = d3.scaleLinear().domain([0, 1]).range([innerH, 0]);
+
+  // Color by SAS bucket
+  const color = (sas) => sas < 0.3 ? '#ef4444' : (sas < 0.6 ? '#f59e0b' : '#22c55e');
+
+  g.append('g').attr('transform', `translate(0,${innerH})`)
+    .call(d3.axisBottom(x).tickFormat(i => pairs[i] ? `${pairs[i].agent_a.slice(0,8)}↔${pairs[i].agent_b.slice(0,8)}` : ''))
+    .selectAll('text').attr('fill', '#9aa1ac').attr('transform', 'rotate(-30)').attr('text-anchor', 'end').style('font-size', '10px');
+  g.append('g').call(d3.axisLeft(y)).selectAll('text').attr('fill', '#9aa1ac');
+
+  g.append('line').attr('x1', 0).attr('x2', innerW).attr('y1', y(0.3)).attr('y2', y(0.3))
+    .attr('stroke', '#9aa1ac').attr('stroke-dasharray', '3,3').attr('opacity', 0.5);
+  g.append('text').attr('x', innerW).attr('y', y(0.3) - 4).attr('text-anchor', 'end').attr('fill', '#9aa1ac').style('font-size', '10px').text('drift threshold (0.3)');
+
+  g.selectAll('rect').data(pairs).join('rect')
+    .attr('x', (_,i) => x(i)).attr('width', x.bandwidth())
+    .attr('y', d => y(d.sas)).attr('height', d => innerH - y(d.sas))
+    .attr('fill', d => color(d.sas))
+    .append('title').text(d => `${d.agent_a} ↔ ${d.agent_b}\nSAS: ${d.sas.toFixed(3)}\nshared: ${(d.shared_scopes||[]).join(', ')}`);
+}
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+</script>
+
+</div>
+</body>
+</html>

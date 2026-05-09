@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synapse — coordination + safety for multi-agent AI codebases</title>
+<meta name="description" content="Open-source: catch silent collisions between AI agents (Cursor, Claude Code, Bedrock, Devin) editing the same codebase. F1 = 0.865 on AgenticFlict's 142K-PR benchmark.">
+<style>
+  :root{--bg:#0b0c10;--fg:#e8e8e8;--muted:#9aa1ac;--accent:#66d9ef;--card:#14161c;--border:#2a2d36;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .container{max-width:920px;margin:0 auto;padding:48px 24px}
+  .hero{text-align:center;padding:32px 0 8px}
+  .hero h1{font-size:42px;margin:0 0 12px;line-height:1.1}
+  .hero h1 .accent{color:var(--accent)}
+  .hero .lead{color:var(--muted);font-size:18px;max-width:620px;margin:0 auto 28px}
+  .hero .pill-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--card);border:1px solid var(--border);border-radius:999px;font-size:13px;color:var(--muted)}
+  .pill code{color:var(--fg);background:transparent;padding:0}
+  .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:36px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px}
+  .card h3{margin:0 0 8px;font-size:15px;color:var(--accent);font-weight:600}
+  .card p{margin:0 0 10px;color:var(--muted);font-size:13.5px;line-height:1.5}
+  .card .num{font-size:36px;font-weight:600;color:var(--fg);margin:4px 0}
+  .card .lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .cta{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;background:var(--accent);color:var(--bg);font-weight:600;border-radius:8px;font-size:14px}
+  .cta:hover{filter:brightness(1.1);text-decoration:none}
+  .cta.secondary{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .install{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;margin:24px auto 0;max-width:520px;color:var(--fg)}
+  .install .prompt{color:var(--muted)}
+  section{margin:60px 0}
+  h2{font-size:22px;margin:0 0 18px;font-weight:600}
+  .badge-row{display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .badge{display:inline-block;padding:4px 8px;background:var(--card);border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  td.num{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+  td.bad{color:var(--bad)}
+  td.good{color:var(--good)}
+  footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--border);color:var(--muted);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+  <h1>Catch silent collisions between <span class="accent">your AI agents</span></h1>
+  <p class="lead">
+    When Cursor, Claude Code, Devin, and your LangGraph crew all touch the same repo,
+    they overwrite each other and quietly disagree on the schema.
+    Synapse detects, audits, and resolves those collisions — open-source, vendor-neutral.
+  </p>
+  <div class="pill-row">
+    <span class="pill"><span class="dot"></span><code>Apache 2.0</code></span>
+    <span class="pill"><span class="dot"></span>v0.2.2-alpha</span>
+    <span class="pill"><span class="dot"></span>271 tests passing</span>
+    <span class="pill"><span class="dot"></span>F1 = 0.865 on AgenticFlict</span>
+  </div>
+  <div class="cta-row">
+    <a class="cta" href="index.html">Try the audit tool →</a>
+    <a class="cta secondary" href="https://github.com/arajgor1/synapse" target="_blank">View on GitHub</a>
+  </div>
+
+  <pre class="install">
+<span class="prompt">$</span> pip install synapse-protocol
+<span class="prompt">$</span> synapse audit ./traces.json</pre>
+</div>
+
+<section>
+  <h2>Empirically validated, not just claimed</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="lbl">AgenticFlict benchmark</div>
+      <div class="num" style="color:var(--good)">0.87</div>
+      <p>F1 score on a 5,408-pair sample of 142K real agent-coding-PR conflicts (Copilot / Cursor / Devin / Claude Code / OpenAI Codex). 100% recall.</p>
+      <p><a href="https://arxiv.org/abs/2604.03551">arXiv 2604.03551</a> · <a href="benchmark.html">full per-agent breakdown →</a></p>
+    </div>
+    <div class="card">
+      <div class="lbl">Real two-Claude-Code test</div>
+      <div class="num" style="color:var(--good)">21</div>
+      <p>cross-agent conflicts caught on 7 files when two real <code>claude -p</code> sessions ran on the same Stripe-Lite repo. Coherence 0.80.</p>
+    </div>
+    <div class="card">
+      <div class="lbl">Real-SDK adapter health</div>
+      <div class="num" style="color:var(--good)">6 / 6</div>
+      <p>installed framework adapters confirmed patching the actual published packages (autogen, langgraph, openai_agents, pydantic_ai, smolagents, strands). Regression-gated by <code>tests/test_adapter_health.py</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Compared to existing approaches</h2>
+  <p style="color:var(--muted)">Hold the agent behavior constant. Vary the coordination strategy. Measure what survives.</p>
+  <table>
+    <thead>
+      <tr><th>Strategy</th><th>Silent file loss</th><th>Loud conflicts</th><th>Belief divergences caught</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>No coordination</td><td class="bad num">4 / 8</td><td class="num">0</td><td class="bad num">0 / 3</td></tr>
+      <tr><td>Git branches + naive merge</td><td class="num">0</td><td class="num">4 (loud)</td><td class="bad num">0 / 3</td></tr>
+      <tr><td>PR + CI w/ pytest in loop</td><td class="num">3</td><td class="num">1</td><td class="num">1 / 3</td></tr>
+      <tr><td>Shared coordination.md</td><td class="num">2</td><td class="num">0</td><td class="bad num">0 / 3</td></tr>
+      <tr><td><b>Synapse <code>MergePolicy.auto_merge</code></b></td><td class="good num">0</td><td class="good num">4 auto-merged</td><td class="good num">3 / 3</td></tr>
+    </tbody>
+  </table>
+  <p style="color:var(--muted);font-size:12px;margin-top:8px">Source: <a href="https://github.com/arajgor1/synapse/blob/main/bench/results/v02_pitch_phase1/RESULTS_REAL.md">multi-orch May 2026 run</a> · honest IRL trust check on every claim: <a href="https://github.com/arajgor1/synapse/blob/main/bench/TESTING_PROTOCOL.md">TESTING_PROTOCOL.md</a></p>
+</section>
+
+<section>
+  <h2>Plug into anything</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>SDK adapters</h3>
+      <p>LangGraph · CrewAI · AutoGen · OpenAI Agents · Pydantic AI · smolagents · Hermes · AWS Strands · Vercel AI SDK · Paperclip · OpenClaw</p>
+    </div>
+    <div class="card">
+      <h3>Trace formats</h3>
+      <p>OpenInference · LangSmith · AWS Bedrock Agents · GCP Vertex Agent Builder · Azure AI Agent Service · plain JSONL — auto-detected</p>
+    </div>
+    <div class="card">
+      <h3>IDE / CLI plugins</h3>
+      <p>Cursor · Claude Code · Codex CLI · VS Code Copilot · Aider · Continue · Cline. <a href="https://github.com/arajgor1/synapse/tree/main/launch/ide-plugins">install guides →</a></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Honest about prior art</h2>
+  <p style="color:var(--muted)">
+    Synapse is an open-source production-grade implementation in the
+    <em>semantic-consensus</em> category formalized by Vivek Acharya
+    (<a href="https://arxiv.org/abs/2604.16339">arXiv 2604.16339</a>, March 2026).
+    We share the conflict taxonomy and resolution-tier model. We differ in three ways:
+  </p>
+  <ol style="color:var(--muted)">
+    <li><b>Audit on existing trace exports</b> — no middleware deployment, no agent-runtime patching, no hand-authored process model</li>
+    <li><b>FS-watcher path for IDE / CLI agents</b> — covers Cursor, Claude Code, Codex CLI, VS Code Copilot</li>
+    <li><b>Real-published-SDK regression gate</b> — 6 of 8 adapters confirmed working against current published packages, not against hand-built mocks</li>
+  </ol>
+</section>
+
+<footer>
+  <p>
+    Synapse v0.2.2-alpha · Apache 2.0 · <a href="https://github.com/arajgor1/synapse">github.com/arajgor1/synapse</a>
+    · made by <a href="https://github.com/arajgor1">@arajgor1</a>
+  </p>
+</footer>
+
+</div>
+</body>
+</html>

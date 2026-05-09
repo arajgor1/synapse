@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+         width: 320px; margin: 0; padding: 14px; color: #1f2328; }
+  h1 { font-size: 15px; margin: 0 0 8px; }
+  .row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+  label { color: #6e7781; flex: 1; }
+  input[type=text] { padding: 6px 8px; border: 1px solid #d0d7de; border-radius: 6px; font: inherit; flex: 2; }
+  input[type=checkbox] { transform: scale(1.1); }
+  button { background: #1f883d; color: white; border: 0; padding: 7px 12px; border-radius: 6px; font: inherit; font-weight: 600; cursor: pointer; }
+  .footer { margin-top: 14px; padding-top: 10px; border-top: 1px solid #d0d7de; color: #6e7781; font-size: 11px; }
+  .footer a { color: #0969da; text-decoration: none; }
+</style>
+</head>
+<body>
+<h1>Synapse PR Conflict Watcher</h1>
+
+<div class="row">
+  <input type="checkbox" id="enabled" checked>
+  <label for="enabled">Enabled (show badge on PR pages)</label>
+</div>
+
+<div class="row" style="flex-direction:column; align-items:stretch">
+  <label for="endpoint">Audit endpoint URL</label>
+  <input type="text" id="endpoint" placeholder="https://audit.synapse.dev/api/audit">
+</div>
+
+<button id="save">Save</button>
+
+<div class="footer">
+  Open-source · <a href="https://github.com/arajgor1/synapse" target="_blank">github.com/arajgor1/synapse</a>
+</div>
+
+<script>
+  // Load saved settings
+  chrome.storage.sync.get({ enabled: true, endpoint: 'https://audit.synapse.dev/api/audit' }, (cfg) => {
+    document.getElementById('enabled').checked = cfg.enabled;
+    document.getElementById('endpoint').value = cfg.endpoint;
+  });
+
+  document.getElementById('save').addEventListener('click', () => {
+    chrome.storage.sync.set({
+      enabled: document.getElementById('enabled').checked,
+      endpoint: document.getElementById('endpoint').value.trim(),
+    }, () => {
+      const btn = document.getElementById('save');
+      btn.textContent = 'Saved ✓';
+      setTimeout(() => btn.textContent = 'Save', 1500);
+    });
+  });
+</script>
+</body>
+</html>

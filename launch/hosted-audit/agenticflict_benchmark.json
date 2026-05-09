@@ -1,0 +1,54 @@
+{
+  "dataset": "AgenticFlict v1 (zenodo 19396917)",
+  "synapse_version": "0.2.2-pre",
+  "n_pairs": 5408,
+  "n_positive": 408,
+  "n_negative": 5000,
+  "tp": 408,
+  "fp": 127,
+  "tn": 4873,
+  "fn": 0,
+  "precision": 0.7626168224299066,
+  "recall": 1.0,
+  "f1": 0.8653234358430542,
+  "accuracy": 0.9765162721893491,
+  "elapsed_seconds": 5.508392333984375,
+  "per_agent": {
+    "Devin": {
+      "n": 648,
+      "tp": 51,
+      "fp": 6,
+      "fn": 0,
+      "tn": 591
+    },
+    "Copilot": {
+      "n": 1046,
+      "tp": 181,
+      "fp": 23,
+      "fn": 0,
+      "tn": 842
+    },
+    "OpenAI_Codex": {
+      "n": 8381,
+      "tp": 394,
+      "fp": 215,
+      "fn": 0,
+      "tn": 7772
+    },
+    "Claude_Code": {
+      "n": 100,
+      "tp": 30,
+      "fp": 0,
+      "fn": 0,
+      "tn": 70
+    },
+    "Cursor": {
+      "n": 641,
+      "tp": 160,
+      "fp": 10,
+      "fn": 0,
+      "tn": 471
+    }
+  },
+  "methodology": "Structural scope-overlap test. For each pair of PRs, synthesized 2 Synapse agents emitting edit_file events for the files each PR touched. Positive label = same-repo + shared file. Negative label = different repo (guaranteed no conflict). Synapse's scope-overlap detector predicts conflict iff the two agents' edit_file scopes overlap. No LLM, no Modal."
+}

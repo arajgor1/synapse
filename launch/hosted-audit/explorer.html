@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synapse Explorer — visualize agent collisions</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  :root{--bg:#0b0c10;--fg:#e8e8e8;--muted:#9aa1ac;--accent:#66d9ef;--card:#14161c;--border:#2a2d36;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;overflow-x:hidden}
+  .container{max-width:1200px;margin:0 auto;padding:24px}
+  .nav{margin-bottom:18px}
+  .nav a{color:var(--accent);text-decoration:none;margin-right:18px}
+  h1{font-size:20px;margin:0 0 6px}
+  .lead{color:var(--muted);margin-bottom:18px;font-size:13px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+  .btn{background:var(--card);color:var(--fg);border:1px solid var(--border);padding:6px 12px;border-radius:6px;font-size:12.5px;cursor:pointer}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+  input[type=file]{display:none}
+  #viz-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:540px;position:relative}
+  #viz{width:100%;height:520px}
+  .legend{position:absolute;top:18px;right:18px;background:rgba(11,12,16,.85);border:1px solid var(--border);padding:10px;border-radius:6px;font-size:11.5px;color:var(--muted)}
+  .legend .swatch{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:5px}
+  .tooltip{position:absolute;background:var(--bg);border:1px solid var(--accent);padding:8px 10px;border-radius:6px;font-size:12px;pointer-events:none;color:var(--fg);max-width:280px;z-index:10}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:14px}
+  .stat{background:var(--card);border:1px solid var(--border);padding:10px 12px;border-radius:6px}
+  .stat .num{font-size:20px;font-weight:600;color:var(--accent)}
+  .stat .lbl{color:var(--muted);font-size:11px}
+  .empty{color:var(--muted);text-align:center;padding:60px 24px}
+  .empty p{margin:6px 0}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="nav">
+  <a href="landing.html">← Home</a>
+  <a href="index.html">Audit tool</a>
+  <a href="benchmark.html">Benchmarks</a>
+  <a href="explorer.html"><b>Explorer</b></a>
+</div>
+
+<h1>Synapse Explorer</h1>
+<p class="lead">
+  Interactive visualization: each circle is an agent, each line is a shared scope (file, table, endpoint).
+  Thicker line = more conflicts on that scope. Hover for details.
+</p>
+
+<div class="toolbar">
+  <button class="btn primary" onclick="document.getElementById('file-input').click()">Load audit JSON</button>
+  <input type="file" id="file-input" accept=".json" onchange="loadFile(event)">
+  <button class="btn" onclick="loadSample('multi_orch')">Sample: multi-orch run</button>
+  <button class="btn" onclick="loadSample('bedrock')">Sample: Bedrock 2-agent</button>
+  <button class="btn" onclick="loadSample('claude_code')">Sample: 2× Claude Code</button>
+</div>
+
+<div id="viz-wrap">
+  <div id="viz"></div>
+  <div class="legend">
+    <div><span class="swatch" style="background:#66d9ef"></span> agent (size = # events)</div>
+    <div><span class="swatch" style="background:#22c55e;border-radius:0;width:14px;height:3px"></span> shared scope, no conflict</div>
+    <div><span class="swatch" style="background:#ef4444;border-radius:0;width:14px;height:3px"></span> shared scope with conflict</div>
+  </div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div id="tooltip" class="tooltip" style="display:none"></div>
+
+<script>
+const W = 1100, H = 520;
+const tooltip = d3.select('#tooltip');
+
+function loadFile(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => render(JSON.parse(r.result));
+  r.readAsText(f);
+}
+
+async function loadSample(which) {
+  const url = ({
+    multi_orch: 'samples/multi_orch_full_traces.json',
+    bedrock: 'samples/bedrock_two_agents_billing.json',
+    claude_code: 'samples/multi_orch_full_traces.json',  // reuse
+  })[which];
+  try {
+    const r = await fetch(url); const text = await r.text();
+    const data = JSON.parse(text);
+    // Run lite-audit in browser to get events + conflicts
+    renderFromTrace(data);
+  } catch (e) {
+    showEmpty('Sample not available — drop your own audit JSON above');
+  }
+}
+
+function showEmpty(msg) {
+  d3.select('#viz').html(`<div class="empty"><p style="font-size:18px">📊</p><p>${msg}</p><p style="font-size:12px">Drop a synapse audit result JSON, or pick a sample above.</p></div>`);
+  document.getElementById('stats').innerHTML = '';
+}
+
+function renderFromTrace(traceData) {
+  // Light browser-side audit: extract (agent, scope) events from spans
+  const spans = traceData.spans || (Array.isArray(traceData) ? traceData : []);
+  const events = [];
+  for (const sp of spans) {
+    const a = sp.attributes || {};
+    const flat = {};
+    if (Array.isArray(a)) {
+      for (const kv of a) flat[kv.key] = kv.value?.stringValue ?? kv.value;
+    } else if (a.attributeMap) {
+      for (const k of Object.keys(a.attributeMap)) {
+        const v = a.attributeMap[k];
+        flat[k] = v.stringValue?.value ?? v.stringValue ?? v.intValue ?? v.boolValue;
+      }
+    } else { Object.assign(flat, a); }
+    let argv = flat['tool.args'] || flat['gcp.vertex.agent.input'] || '{}';
+    if (typeof argv === 'string') { try { argv = JSON.parse(argv); } catch(_){} }
+    const path = argv?.path || argv?.file_path;
+    if (!path) continue;
+    events.push({
+      agent: flat['agent.id'] || flat['gen_ai.agent.name'] || 'agent',
+      scope: `repo.fs.${path}`,
+    });
+  }
+  // Build agent <> scope edges
+  const agents = new Map(), scopes = new Map(), edges = new Map();
+  for (const ev of events) {
+    agents.set(ev.agent, (agents.get(ev.agent) || 0) + 1);
+    scopes.set(ev.scope, (scopes.get(ev.scope) || 0) + 1);
+    const key = ev.agent + '||' + ev.scope;
+    edges.set(key, (edges.get(key) || 0) + 1);
+  }
+  // Identify conflict scopes (touched by 2+ agents)
+  const scopeAgents = new Map();
+  for (const k of edges.keys()) {
+    const [a, s] = k.split('||');
+    if (!scopeAgents.has(s)) scopeAgents.set(s, new Set());
+    scopeAgents.get(s).add(a);
+  }
+  const conflictScopes = new Set();
+  for (const [s, agentSet] of scopeAgents) if (agentSet.size >= 2) conflictScopes.add(s);
+
+  // Adapt to graph format
+  const nodes = [
+    ...Array.from(agents.entries()).map(([id, n]) => ({id, type: 'agent', n})),
+    ...Array.from(scopes.entries()).map(([id, n]) => ({id, type: 'scope', n, conflict: conflictScopes.has(id)})),
+  ];
+  const links = Array.from(edges.entries()).map(([k, n]) => {
+    const [src, tgt] = k.split('||');
+    return {source: src, target: tgt, n, conflict: conflictScopes.has(tgt)};
+  });
+  drawGraph(nodes, links, {
+    n_events: events.length, n_agents: agents.size, n_scopes: scopes.size,
+    n_conflict_scopes: conflictScopes.size,
+  });
+}
+
+function render(reportJson) {
+  // Synapse audit JSON shape
+  const conflicts = reportJson.conflicts || [];
+  const sessions = reportJson.sessions || {};
+  const agents = new Map(), scopes = new Map(), edges = new Map();
+  for (const sid of Object.keys(sessions)) {
+    for (const a of sessions[sid]) {
+      agents.set(a, (agents.get(a) || 0) + 1);
+    }
+  }
+  for (const c of conflicts) {
+    const a = c.intention?.agent_id; const ss = c.intention?.scope || [];
+    for (const s of ss) {
+      scopes.set(s, (scopes.get(s) || 0) + 1);
+      const k = a + '||' + s; edges.set(k, (edges.get(k) || 0) + 1);
+    }
+    for (const x of (c.conflicting || [])) {
+      for (const s of (x.scope || [])) {
+        scopes.set(s, (scopes.get(s) || 0) + 1);
+        const k = x.agent_id + '||' + s; edges.set(k, (edges.get(k) || 0) + 1);
+      }
+    }
+  }
+  // ALL scopes in conflicts ARE conflict scopes
+  const conflictScopes = new Set(scopes.keys());
+  const nodes = [
+    ...Array.from(agents.entries()).map(([id,n]) => ({id, type: 'agent', n})),
+    ...Array.from(scopes.entries()).map(([id,n]) => ({id, type: 'scope', n, conflict: conflictScopes.has(id)})),
+  ];
+  const links = Array.from(edges.entries()).map(([k, n]) => {
+    const [src, tgt] = k.split('||');
+    return {source: src, target: tgt, n, conflict: conflictScopes.has(tgt)};
+  });
+  drawGraph(nodes, links, {
+    n_events: reportJson.total_events,
+    n_agents: agents.size,
+    n_scopes: scopes.size,
+    n_conflict_scopes: conflictScopes.size,
+    n_conflicts: conflicts.length,
+  });
+}
+
+function drawGraph(nodes, links, stats) {
+  document.getElementById('stats').innerHTML = Object.entries(stats).map(([k,v])=>{
+    return `<div class="stat"><div class="num">${v ?? 0}</div><div class="lbl">${k.replace(/_/g,' ')}</div></div>`;
+  }).join('');
+
+  d3.select('#viz').html('');
+  if (!nodes.length) { showEmpty('No events found'); return; }
+  const svg = d3.select('#viz').append('svg').attr('width', W).attr('height', H);
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(d => 70 + (d.n*5)))
+    .force('charge', d3.forceManyBody().strength(-180))
+    .force('center', d3.forceCenter(W/2, H/2))
+    .force('collide', d3.forceCollide(d => 8 + Math.sqrt(d.n)*3));
+
+  const link = svg.append('g').selectAll('line').data(links).join('line')
+    .attr('stroke', d => d.conflict ? '#ef4444' : '#22c55e')
+    .attr('stroke-width', d => Math.min(6, 1 + Math.log(d.n + 1) * 1.5))
+    .attr('stroke-opacity', 0.7);
+
+  const node = svg.append('g').selectAll('circle').data(nodes).join('circle')
+    .attr('r', d => d.type === 'agent' ? 10 + Math.sqrt(d.n) * 2 : 5 + Math.sqrt(d.n))
+    .attr('fill', d => d.type === 'agent' ? '#66d9ef' : (d.conflict ? '#ef4444' : '#22c55e'))
+    .attr('stroke', '#0b0c10').attr('stroke-width', 2)
+    .call(drag(sim))
+    .on('mouseover', (e, d) => {
+      tooltip.style('display', 'block')
+        .style('left', (e.pageX + 12) + 'px')
+        .style('top',  (e.pageY + 12) + 'px')
+        .html(`<b>${d.id}</b><br>type: ${d.type}<br>events: ${d.n}` + (d.conflict ? '<br><span style="color:#ef4444">⚠ contended</span>' : ''));
+    })
+    .on('mouseout', () => tooltip.style('display', 'none'));
+
+  const label = svg.append('g').selectAll('text').data(nodes).join('text')
+    .text(d => d.type === 'agent' ? d.id : (d.id.length > 28 ? d.id.slice(0, 25) + '…' : d.id))
+    .attr('font-size', d => d.type === 'agent' ? 11 : 9)
+    .attr('fill', d => d.type === 'agent' ? '#e8e8e8' : '#9aa1ac')
+    .attr('text-anchor', 'middle').attr('dy', d => d.type === 'agent' ? -14 : -8);
+
+  sim.on('tick', () => {
+    link.attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    node.attr('cx', d => d.x).attr('cy', d => d.y);
+    label.attr('x', d => d.x).attr('y', d => d.y);
+  });
+}
+
+function drag(sim) {
+  return d3.drag()
+    .on('start', (event,d)=>{ if(!event.active)sim.alphaTarget(.3).restart(); d.fx=d.x; d.fy=d.y; })
+    .on('drag', (event,d)=>{ d.fx=event.x; d.fy=event.y; })
+    .on('end',  (event,d)=>{ if(!event.active)sim.alphaTarget(0); d.fx=null; d.fy=null; });
+}
+
+// Empty initial state
+showEmpty('Drop a synapse audit JSON, or pick a sample above');
+</script>
+</div>
+</body>
+</html>
