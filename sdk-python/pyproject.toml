@@ -29,6 +29,7 @@ dependencies = [
 
 [project.scripts]
 synapse = "synapse.cli.main:main"
+synapse-mcp = "synapse.mcp.server:main"
 
 [project.optional-dependencies]
 # Live coordination runtime: Redis bus + Postgres state graph + envelope IDs.

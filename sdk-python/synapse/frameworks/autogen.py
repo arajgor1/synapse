@@ -49,10 +49,25 @@ def _is_write_tool(tool_name: str, args: dict) -> bool:
 
 
 def _resolve_agent_id_from_context(ctx: Any) -> str:
-    """Best-effort agent identity from AutoGen's CancellationToken / context."""
+    """Best-effort agent identity from AutoGen's CancellationToken / context.
+
+    NOTE: in AutoGen 0.4+ CancellationToken does NOT carry agent identity
+    (verified against autogen_core 0.7.5). The agent identity lives on
+    the parent ToolAgent / AssistantAgent that called the tool. We try
+    a few attribute paths but the most reliable mechanism is the
+    SYNAPSE_AGENT_ID environment variable set by the caller's wrapper
+    code, since CancellationToken is intentionally a transport-only
+    primitive.
+    """
+    # Env override is the most reliable path — wrap your agent.run() call
+    # with `os.environ["SYNAPSE_AGENT_ID"] = agent.name; ...; del`
+    env_override = os.environ.get("SYNAPSE_AGENT_ID")
+    if env_override:
+        return env_override
     if ctx is None:
         return "autogen_default"
-    for attr in ("source", "agent_name", "name"):
+    # Try a few attribute paths just in case the SDK changes
+    for attr in ("source", "agent_name", "name", "_agent_id"):
         v = getattr(ctx, attr, None)
         if isinstance(v, str) and v:
             return v
@@ -64,21 +79,37 @@ def _session_id() -> str:
 
 
 def _wrap_functiontool_run(original):
-    """Wrap ``FunctionTool.run`` in AutoGen 0.4+."""
-    async def wrapper(self, args, cancellation_token=None, *more, **kwargs):
-        # args in 0.4+ is a pydantic model; coerce to dict
+    """Wrap ``FunctionTool.run`` in AutoGen 0.4+.
+
+    Real signature (verified against autogen-core 0.7.5):
+        async def run(self, args: BaseModel, cancellation_token: CancellationToken) -> Any
+
+    We accept *args/**kwargs to be forward-compatible with future SDK
+    versions adding optional kwargs (e.g., call_id), then forward
+    everything verbatim to the original. Forwarding via *args/**kwargs
+    eliminates the double-binding risk from positional/keyword conflict.
+    """
+    async def wrapper(self, *args, **kwargs):
+        # First positional is `args` (pydantic BaseModel); second is
+        # `cancellation_token`. Use safe extraction to support either
+        # positional OR kwarg call style.
+        bm_args = args[0] if len(args) >= 1 else kwargs.get("args")
+        cancel_tok = (
+            args[1] if len(args) >= 2 else kwargs.get("cancellation_token")
+        )
+
         try:
-            tool_args = args.model_dump() if hasattr(args, "model_dump") else dict(args or {})
+            tool_args = bm_args.model_dump() if hasattr(bm_args, "model_dump") else dict(bm_args or {})
         except Exception:
             tool_args = {}
 
         tool_name = getattr(self, "name", None) or type(self).__name__
 
         if not _is_write_tool(tool_name, tool_args):
-            return await original(self, args, cancellation_token, *more, **kwargs)
+            return await original(self, *args, **kwargs)
 
         scope = _scope_from_call(tool_name, tool_args)
-        agent_id = _resolve_agent_id_from_context(cancellation_token)
+        agent_id = _resolve_agent_id_from_context(cancel_tok)
 
         async with intend(
             scope=scope,
@@ -94,8 +125,13 @@ def _wrap_functiontool_run(original):
                     tool_name, agent_id, scope,
                 )
             try:
-                result = await original(self, args, cancellation_token, *more, **kwargs)
-                i.set_state_diff({"output_preview": str(result)[:200]})
+                # Forward args + kwargs verbatim — no double-binding risk.
+                result = await original(self, *args, **kwargs)
+                try:
+                    preview = str(result)[:200]
+                except Exception:
+                    preview = "<unprintable>"
+                i.set_state_diff({"output_preview": preview})
                 return result
             except Exception as e:
                 i.mark_failed(str(e))

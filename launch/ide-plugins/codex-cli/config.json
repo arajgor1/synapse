@@ -1,0 +1,8 @@
+{
+  "_doc": "Add this to your ~/.codex/config.json (merge with existing mcpServers).",
+  "mcpServers": {
+    "synapse": {
+      "command": "synapse-mcp"
+    }
+  }
+}

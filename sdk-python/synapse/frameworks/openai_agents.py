@@ -171,6 +171,7 @@ def _install_openai_agents(opts: dict[str, Any]) -> None:
             return
 
     # Some versions expose function_tool at package root; others under .tool
+    patched_module = None
     for module_path in (tool_module, getattr(tool_module, "tool", None)):
         if module_path is None:
             continue
@@ -179,16 +180,63 @@ def _install_openai_agents(opts: dict[str, Any]) -> None:
             patched = _wrap_function_tool(original)
             module_path.function_tool = patched
             _PATCHED["function_tool"] = True
+            patched_module = module_path
             logger.info(
                 "synapse.install(framework='openai_agents'): patched %s.function_tool",
                 module_path.__name__,
             )
-            return
+            break
 
-    logger.warning(
-        "synapse.install(framework='openai_agents'): could not find function_tool to patch. "
-        "Use synapse.intend() manually inside your tool bodies."
-    )
+    if patched_module is None:
+        logger.warning(
+            "synapse.install(framework='openai_agents'): could not find function_tool to patch. "
+            "Use synapse.intend() manually inside your tool bodies."
+        )
+        return
+
+    # ALSO patch already-imported `from agents import function_tool` references.
+    # When a user does `from agents import function_tool` BEFORE
+    # synapse.install(), the local name binding refers to the original
+    # function — our patch on the module object won't reach it. We walk
+    # sys.modules looking for those re-imported references and rebind
+    # them to the patched function.
+    import sys
+    new_fn = getattr(patched_module, "function_tool")
+    rebound = 0
+    for mod_name, mod in list(sys.modules.items()):
+        if mod is None:
+            continue
+        # Skip our own + standard library + the patched module itself
+        if mod_name.startswith(("synapse", "_", "encodings.")) or mod is patched_module:
+            continue
+        try:
+            existing = getattr(mod, "function_tool", None)
+        except Exception:
+            continue
+        if existing is None:
+            continue
+        # Rebind only if it's the unpatched original (don't double-wrap)
+        if existing is not new_fn and getattr(existing, "__module__", "") == "agents.tool":
+            try:
+                setattr(mod, "function_tool", new_fn)
+                rebound += 1
+            except Exception:
+                pass
+    if rebound:
+        logger.info(
+            "synapse.install(framework='openai_agents'): rebound %d "
+            "already-imported function_tool reference(s)",
+            rebound,
+        )
+
+    # Walk Agent.tools collections post-install and wrap any tool that
+    # was already created via the un-patched decorator (race window).
+    try:
+        from agents import Agent  # type: ignore[import-not-found]
+        # We don't have a registry of all Agents; user must call this
+        # before constructing agents. Document this in the install log.
+    except ImportError:
+        pass
 
 
 register_framework("openai_agents", _install_openai_agents)

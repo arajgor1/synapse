@@ -1,0 +1,73 @@
+{
+  "name": "synapse-coordination",
+  "displayName": "Synapse — Multi-Agent Coordination",
+  "description": "Catch silent collisions between AI agents (Copilot agent mode, Claude Code, Cursor) editing the same files. Open-source, BYO-LLM.",
+  "version": "0.2.2",
+  "publisher": "synapse-protocol",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arajgor1/synapse"
+  },
+  "license": "Apache-2.0",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["AI", "Programming Languages", "Other"],
+  "keywords": ["agents", "coordination", "multi-agent", "audit", "conflicts", "copilot", "claude-code", "cursor"],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "synapse.auditCurrentRepo",
+        "title": "Synapse: Audit current repo trace"
+      },
+      {
+        "command": "synapse.startWatcher",
+        "title": "Synapse: Start FS watcher (this session)"
+      },
+      {
+        "command": "synapse.stopWatcher",
+        "title": "Synapse: Stop FS watcher"
+      },
+      {
+        "command": "synapse.showLastReport",
+        "title": "Synapse: Open last audit report"
+      }
+    ],
+    "configuration": {
+      "title": "Synapse",
+      "properties": {
+        "synapse.agentId": {
+          "type": "string",
+          "default": "vscode-${env:USER}",
+          "description": "Identifier for THIS VS Code session in Synapse audit logs."
+        },
+        "synapse.sessionId": {
+          "type": "string",
+          "default": "vscode-default",
+          "description": "Shared session id across all agents collaborating on this repo."
+        },
+        "synapse.synapseCmd": {
+          "type": "string",
+          "default": "synapse",
+          "description": "Path to the `synapse` CLI (default assumes it's on PATH after `pip install synapse-protocol`)."
+        },
+        "synapse.autoStartWatcherOnLaunch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-start the FS watcher when VS Code opens a workspace."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}

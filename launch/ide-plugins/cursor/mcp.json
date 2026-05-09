@@ -1,0 +1,9 @@
+{
+  "_doc": "Drop this into Cursor → Settings → MCP → import file.",
+  "mcpServers": {
+    "synapse": {
+      "command": "synapse-mcp",
+      "description": "Synapse audit + coordination layer for multi-agent codebases. Exposes audit_trace_file, find_conflicts_in_session, get_drift_score, list_supported_trace_formats, explain_conflict."
+    }
+  }
+}
