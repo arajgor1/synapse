@@ -1,0 +1,5 @@
+AgenticFlict/
+*.tar.gz
+*.csv
+__pycache__/
+._*

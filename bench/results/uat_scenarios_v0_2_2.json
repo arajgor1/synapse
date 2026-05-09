@@ -1,0 +1,43 @@
+[
+  {
+    "scenario": 1,
+    "trace": "C:\\C3\\synapse\\bench\\results\\test_13_real_otel_trace.json",
+    "events": 2,
+    "conflicts": 1,
+    "tiers": {
+      "temporal": 1
+    },
+    "sas_pairs": 1
+  },
+  {
+    "scenario": 2,
+    "events": 5,
+    "conflicts": 2,
+    "tiers": {
+      "temporal": 2
+    },
+    "sas_drift_warning": true
+  },
+  {
+    "scenario": 3,
+    "conflicts": 1,
+    "tier": "policy",
+    "expected_tier": "policy",
+    "pass": true
+  },
+  {
+    "scenario": 4,
+    "pairs": 1,
+    "alice_bob_sas": 0.325,
+    "shared_scopes": [
+      "db.users"
+    ]
+  },
+  {
+    "scenario": 5,
+    "watcher_a_writes": 4,
+    "watcher_b_writes": 4,
+    "audit_conflicts": 5,
+    "unique_cross_agent_paths": 3
+  }
+]

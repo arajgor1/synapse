@@ -4,9 +4,10 @@
 > Audit existing trace exports for silent collisions, prevent them live, resolve them with your own LLM.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Version: v0.2.1-alpha](https://img.shields.io/badge/Version-v0.2.1--alpha-blue.svg)](#status)
+[![Version: v0.2.2-alpha](https://img.shields.io/badge/Version-v0.2.2--alpha-blue.svg)](#status)
 [![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
-[![Tests](https://img.shields.io/badge/tests-482%20passing-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-261%20passing-brightgreen.svg)](#tests)
+[![AgenticFlict F1](https://img.shields.io/badge/AgenticFlict_F1-0.865-brightgreen.svg)](bench/results/agenticflict_benchmark.json)
 
 ---
 
@@ -24,7 +25,26 @@ No trace? Try the [hosted audit tool](launch/hosted-audit/) (drag-drop a trace J
 
 ---
 
-## The empirical case (1-pager)
+## Prior art and how Synapse differs
+
+**Synapse is an open-source production-grade implementation in the *semantic-consensus* category recently formalized by Vivek Acharya** (["Semantic Consensus: Process-Aware Conflict Detection and Resolution for Enterprise Multi-Agent LLM Systems"](https://arxiv.org/abs/2604.16339), arXiv 2604.16339, March 2026).
+
+We share the conflict taxonomy and SCF-aligned metrics:
+- **Resource Contention** ↔ `scope_overlap`
+- **Causal Violation** ↔ `stale_base_overwrite`
+- **Contradictory Intent** ↔ BELIEF divergence path
+- Plus the SCF resolution-tier hint (policy / capability / temporal) and the SAS drift score on every audit.
+
+We differ in three ways:
+1. **Audit-on-existing-trace-exports** with no middleware deployment, no agent-runtime patching, no hand-authored process model. SCF requires inline blocking; Synapse runs post-hoc on what your agents already emit.
+2. **FS-watcher path for IDE/CLI agents** (Claude Code, Cursor, Codex CLI, Aider) that don't expose live coordination hooks.
+3. **Real-world evidence on real published SDKs** (5 of 8 framework adapters confirmed patching against real packages — see `tests/test_adapter_health.py`); SCF's evaluation uses simulated agents.
+
+We also benchmark on the **AgenticFlict** dataset (Allamanis et al., arXiv 2604.03551 — 142,652 real AI-coding-agent PRs, 29,609 conflicting). On 5,408 paired PRs Synapse hits **F1 = 0.865, recall = 1.000, precision = 0.763** on the structural scope-overlap subtask. Per-agent: Claude Code F1 = 1.000, Cursor 0.970, Copilot 0.940, Devin 0.944, OpenAI Codex 0.786. Full results: [`bench/results/agenticflict_benchmark.json`](bench/results/agenticflict_benchmark.json).
+
+---
+
+## The empirical case (multi-orchestrator)
 
 Two engineers, each running their own AI agent on the same repo, will silently overwrite each other and quietly disagree on the schema. **None of the alternatives catch it. Synapse does.**
 
@@ -38,7 +58,7 @@ Hold the agent behavior constant (real LangGraph multi-orchestrator run, May 8 2
 | Shared coordination.md | 2 | 0 | 0 of 3 |
 | **Synapse `MergePolicy.auto_merge`** | **0** | **4 auto-merged** | **3 of 3** |
 
-Source data + scoring oracle: [`bench/results/v02_pitch_phase1/`](bench/results/v02_pitch_phase1/RESULTS.md). Full 1-pager with caveats: [`docs/launch/PITCH_1PAGER.md`](docs/launch/PITCH_1PAGER.md).
+Source data + scoring oracle: [`bench/results/v02_pitch_phase1/`](bench/results/v02_pitch_phase1/RESULTS_REAL.md). Full 1-pager with caveats: [`docs/launch/PITCH_1PAGER.md`](docs/launch/PITCH_1PAGER.md). Honest IRL trust check on every claim: [`bench/TESTING_PROTOCOL.md`](bench/TESTING_PROTOCOL.md).
 
 ---
 
