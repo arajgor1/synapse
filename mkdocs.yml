@@ -1,0 +1,71 @@
+site_name: Synapse
+site_description: Open-source coordination + safety layer for multi-agent AI on shared codebases
+site_url: https://docs.synapse.dev
+repo_url: https://github.com/arajgor1/synapse
+repo_name: arajgor1/synapse
+edit_uri: edit/main/docs/site/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: cyan
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.footer
+    - content.code.copy
+    - content.code.annotate
+
+docs_dir: docs/site
+
+nav:
+  - Home: index.md
+  - Why Synapse:
+    - For solo devs (Cursor + Claude Code in tmux): for-solo-devs.md
+    - For small teams (PR-based workflow): for-small-teams.md
+    - For enterprises (cloud agent stacks): for-enterprises.md
+  - Guide:
+    - Install: guide/install.md
+    - Quickstart \— audit a trace: guide/audit-quickstart.md
+    - Live mode (LangGraph / CrewAI / etc.): guide/live-mode.md
+    - IDE plugins: guide/ide-plugins.md
+    - MCP server: guide/mcp.md
+    - GitHub Action: guide/gh-action.md
+    - Streaming dashboard: guide/streaming.md
+  - Benchmarks:
+    - AgenticFlict: benchmarks/agenticflict.md
+    - Multi-orchestrator: benchmarks/multi-orchestrator.md
+    - Adapter health: benchmarks/adapter-health.md
+  - Prior art:
+    - SCF (Acharya 2026): prior-art/scf.md
+    - AgenticFlict (Allamanis et al.): prior-art/agenticflict.md
+    - Comparison table: prior-art/comparison.md
+  - Reference:
+    - synapse audit CLI: reference/cli-audit.md
+    - synapse-mcp: reference/cli-mcp.md
+    - Conflict taxonomy: reference/taxonomy.md
+    - SAS drift score: reference/sas.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
