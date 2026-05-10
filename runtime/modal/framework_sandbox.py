@@ -1578,7 +1578,7 @@ def v022_real_llm_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
         "'crewai>=1.0' anthropic openai-agents "
         "'pydantic-ai-slim[anthropic]>=1.0' "
         "agno llama-index-core llama-index-llms-anthropic "
-        "google-adk litellm "
+        "google-adk litellm opentelemetry-sdk "
         ">/dev/null 2>&1 || true\n"
     )
     script = setup + extra + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v022_real_llm_e2e.py 2>&1\n"

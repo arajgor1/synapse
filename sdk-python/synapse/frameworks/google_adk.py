@@ -131,6 +131,19 @@ def _wrap_run_async(original):
     return wrapper
 
 
+def _walk_subclasses(cls):
+    """Yield every concrete subclass of ``cls`` (recursive)."""
+    seen: set = set()
+    pending = list(cls.__subclasses__())
+    while pending:
+        sub = pending.pop()
+        if sub in seen:
+            continue
+        seen.add(sub)
+        yield sub
+        pending.extend(sub.__subclasses__())
+
+
 def _install_google_adk(opts: dict[str, Any]) -> None:
     if _PATCHED["basetool_run_async"]:
         return
@@ -144,15 +157,57 @@ def _install_google_adk(opts: dict[str, Any]) -> None:
         )
         return
 
+    # Patching only BaseTool.run_async is insufficient — ADK's concrete
+    # Tool subclasses (FunctionTool, AgentTool, BashTool, GoogleApiTool,
+    # ComputerUseTool, AuthenticatedFunctionTool, ...) all OVERRIDE
+    # run_async with their own implementations. The override means the
+    # base-class patch never fires for them. We import every shipped
+    # tool module so its subclass shows up in BaseTool.__subclasses__,
+    # then patch each subclass that defines its own run_async.
+    _force_import_tool_modules()
+
+    patched_classes: list[str] = []
     BaseTool.run_async = _wrap_run_async(BaseTool.run_async)
+    patched_classes.append("BaseTool")
+    for sub in _walk_subclasses(BaseTool):
+        # Only patch classes that DEFINE run_async themselves (not just
+        # inherited from BaseTool — those already use our wrapped base).
+        own = sub.__dict__.get("run_async")
+        if own is None:
+            continue
+        sub.run_async = _wrap_run_async(own)
+        patched_classes.append(sub.__name__)
+
     _PATCHED["basetool_run_async"] = True
     logger.info(
-        "synapse.install(framework='google_adk'): patched "
-        "google.adk.tools.BaseTool.run_async — every tool call across every "
-        "ADK Agent (Llm, Loop, Parallel, Sequential) and every concrete tool "
-        "subclass (FunctionTool, AgentTool, MCPToolset, APIHubToolset, ...) "
-        "now participates in Synapse coordination."
+        "synapse.install(framework='google_adk'): patched run_async on "
+        "%d Tool class(es): %s",
+        len(patched_classes), ", ".join(patched_classes),
     )
+
+
+def _force_import_tool_modules() -> None:
+    """Import every shipped ADK tool module so its concrete Tool subclass
+    is registered as a subclass of BaseTool BEFORE we walk subclasses."""
+    candidates = (
+        "google.adk.tools.function_tool",
+        "google.adk.tools.agent_tool",
+        "google.adk.tools.bash_tool",
+        "google.adk.tools.authenticated_function_tool",
+        "google.adk.tools.base_authenticated_tool",
+        "google.adk.tools.google_tool",
+        "google.adk.tools.load_artifacts_tool",
+        "google.adk.tools.computer_use.computer_use_tool",
+        "google.adk.tools.google_api_tool.google_api_tool",
+        "google.adk.tools.application_integration_tool.integration_connector_tool",
+        "google.adk.tools.environment._tools",
+    )
+    for mod in candidates:
+        try:
+            __import__(mod)
+        except Exception:
+            # Not all modules ship in every install variant — silent skip.
+            pass
 
 
 register_framework("google_adk", _install_google_adk)

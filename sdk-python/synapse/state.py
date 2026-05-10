@@ -118,7 +118,19 @@ class StateGraph:
 
     async def connect(self) -> None:
         _require_asyncpg()
-        self._pool = await asyncpg.create_pool(self._dsn, min_size=1, max_size=8)
+        # min_size=4 + max_size=16 so frameworks that fan out into many
+        # parallel tool calls (openai-agents Runner, pydantic-ai, llama-
+        # index Workflow) don't exhaust the pool before our locks
+        # serialise the cache-miss path. statement_cache_size=0 disables
+        # asyncpg's per-connection prepared-statement cache, which has
+        # documented race conditions when multiple coros share a
+        # connection's lifecycle (the "cannot perform operation: another
+        # operation is in progress" error users hit under fan-out).
+        self._pool = await asyncpg.create_pool(
+            self._dsn,
+            min_size=4, max_size=16,
+            statement_cache_size=0,
+        )
         logger.info("StateGraph connected")
 
     async def close(self) -> None:

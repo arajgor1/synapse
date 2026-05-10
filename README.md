@@ -4,7 +4,7 @@
 > Audit existing trace exports for silent collisions, prevent them live, resolve them with your own LLM.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Version: v0.2.2](https://img.shields.io/badge/Version-v0.2.2-blue.svg)](#status)
+[![Version: v0.2.3](https://img.shields.io/badge/Version-v0.2.3-blue.svg)](#status)
 [![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
 [![Tests](https://img.shields.io/badge/tests-324%20passing-brightgreen.svg)](#tests)
 [![Adapters](https://img.shields.io/badge/adapters-12%20frameworks%20%2B%20OTel%20live-brightgreen.svg)](sdk-python/tests/test_adapter_health.py)
@@ -68,7 +68,7 @@ We share the conflict taxonomy and SCF-aligned metrics:
 We differ in three ways:
 1. **Audit-on-existing-trace-exports** with no middleware deployment, no agent-runtime patching, no hand-authored process model. SCF requires inline blocking; Synapse runs post-hoc on what your agents already emit.
 2. **FS-watcher path for IDE/CLI agents** (Claude Code, Cursor, Codex CLI, Aider) that don't expose live coordination hooks.
-3. **Real-world evidence on real published SDKs.** All 12 framework adapters confirmed patching the real published SDK at install time (see `tests/test_adapter_health.py`). 6 of those (autogen, langchain, langgraph, smolagents, crewai, agno) additionally verified through real LLM-driven dispatch with INTENTIONs persisted end-to-end in a Modal sandbox (see `bench/REAL_LIFE_TESTING.md` + `bench/results/v022_real_llm_e2e_*.json`). The other 4 (openai_agents, pydantic_ai, llama_index, google_adk) hit framework-specific internal-scheduler cross-loop bugs in their own code paths — install-only verified, follow-up fixes filed. SCF's evaluation uses simulated agents.
+3. **Real-world evidence on real published SDKs.** All 12 framework adapters confirmed patching the real published SDK at install time (see `tests/test_adapter_health.py`). **All 12 additionally verified through real LLM-driven dispatch with INTENTIONs persisted end-to-end in a Modal sandbox** — autogen, langchain, langgraph, smolagents, crewai, agno, openai_agents, pydantic_ai, llama_index, google_adk, otel_live, hermes (see `bench/REAL_LIFE_TESTING.md` + `bench/results/v022_real_llm_e2e_*.json`). v0.2.3 closed the remaining 4 framework-specific internal-scheduler cross-loop bugs via per-loop state pools. SCF's evaluation uses simulated agents.
 
 ### Framework coverage (vs. Semantica's "Coming Soon" list)
 

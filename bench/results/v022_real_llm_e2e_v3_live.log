@@ -1,0 +1,212 @@
+✓ Initialized. View run at 
+https://modal.com/apps/aadityarajgor27/main/ap-vtUMm1m0RH8GVcW5JrIdJr
+Building image im-p5zubpoVJdtkLylRQNR6LL
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 1.87s
+
+Built image im-p5zubpoVJdtkLylRQNR6LL in 3.11s
+
+
+Building image im-Q7URbmKl6omKslIRuMM9WK
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 770.12ms
+
+Built image im-Q7URbmKl6omKslIRuMM9WK in 2.11s
+
+
+Building image im-y62MlIJKWM58i1DLHSOEPE
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 12.38s
+
+Built image im-y62MlIJKWM58i1DLHSOEPE in 38.11s
+
+
+Building image im-TyF3M4eb3kPBFBiCPonTJy
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 1.87s
+
+Built image im-TyF3M4eb3kPBFBiCPonTJy in 5.50s
+
+
+Building image im-lTMW03l6wSaNNXsTXQtNpk
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 721.34ms
+
+Built image im-lTMW03l6wSaNNXsTXQtNpk in 2.38s
+
+
+✓ Created objects.
+├── 🔨 Created mount C:\C3\synapse\runtime\modal\framework_sandbox.py
+├── 🔨 Created mount C:\C3\synapse\sdk-python
+├── 🔨 Created mount C:\C3\synapse\runtime
+├── 🔨 Created mount C:\C3\synapse\runtime\modal\_payloads
+├── 🔨 Created mount C:\C3\synapse\sdk-typescript
+├── 🔨 Created mount C:\C3\synapse\bench\scenarios\stripe_lite_v2\starter
+├── 🔨 Created function run_hermes.
+├── 🔨 Created function run_paperclip.
+├── 🔨 Created function run_openclaw.
+├── 🔨 Created function fetch_integration_docs.
+├── 🔨 Created function real_product_dev_hermes.
+├── 🔨 Created function real_product_dev_paperclip.
+├── 🔨 Created function real_product_dev_openclaw.
+├── 🔨 Created function real_app_instagram.
+├── 🔨 Created function real_app_data_analysis.
+├── 🔨 Created function v02_langgraph_live.
+├── 🔨 Created function v02_crewai_live.
+├── 🔨 Created function v02_week3_full.
+├── 🔨 Created function v02_w4_auto_merge.
+├── 🔨 Created function v02_w5_belief_divergence.
+├── 🔨 Created function v02_autonomous_observer_run.
+├── 🔨 Created function v02_multi_orchestrator_run.
+├── 🔨 Created function v02_ci_loop_run.
+├── 🔨 Created function v02_strands_real_run.
+├── 🔨 Created function v022_framework_races_run.
+├── 🔨 Created function v022_adapter_e2e_run.
+├── 🔨 Created function v022_adapter_e2e_v4_run.
+├── 🔨 Created function v022_real_llm_e2e_run.
+├── 🔨 Created function smoke_integrations.
+└── 🔨 Created function v02_sdlc_billing_run.
+>>> W2.1 real-LLM E2E for 6 install-only adapters...
+=== Sandbox setup ===
+Python 3.11.12
+v20.20.2
+10.8.2
+Installing Synapse SDK...
+Installing collected packages: synapse-protocol
+Successfully installed synapse-protocol-0.2.2
+
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: pip install --upgrade pip
+  synapse v0.2.2 importable
+PONG
+  redis ready
+
+    /usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start.... done
+server started
+ALTER ROLE
+  postgres ready
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+=== W2.1 — real-LLM E2E for 6 install-only adapters ===
+  synapse v0.2.2
+  model   : claude-haiku-4-5-20251001
+
+/usr/local/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
+  from google.cloud.aiplatform.utils import gcs_utils
+=== crewai ===
+
+
+╭────────────────────────── Tracing Preference Saved ──────────────────────────╮
+│                                                                              │
+│  Info: Tracing has been disabled.                                            │
+│                                                                              │
+│  Your preference has been saved. Future Crew/Flow executions will not        │
+│  collect traces.                                                             │
+│                                                                              │
+│  To enable tracing later, do any one of these:                               │
+│  • Set tracing=True in your Crew/Flow code                                   │
+│  • Set CREWAI_TRACING_ENABLED=true in your project's .env file               │
+│  • Run: crewai traces enable                                                 │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  intents=1 agents=['crewai_summarizer']
+  scopes=['crewai.task.c04d8ff5-8e5e-4d12-8508-c0cba8707858:w']
+  ctx_attribution_landed=True
+  result=wrote 34 bytes
+
+=== openai_agents ===
+WARNING:synapse.intend:synapse.intend: failed to set up agent (cannot perform operation: another operation is in progress); offline mode
+  intents=0 agents=[]
+  scopes=[]
+  ctx_attribution_landed=False
+  result=Done! I've saved the message "hello from openai-agents" to disk.
+
+=== pydantic_ai ===
+WARNING:synapse.intend:synapse.intend: failed to set up agent (Task <Task pending name='save_fact' coro=<_call_tool() running at /usr/local/lib/python3.11/site-packages/pydantic_ai/_agent_graph.py:1922> cb=[_wait.<locals>._on_completion() at /usr/local/lib/python3.11/asyncio/tasks.py:519]> got Future <Future pending cb=[_chain_future.<locals>._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]> attached to a different loop); offline mode
+ERROR:asyncio:Future exception was never retrieved
+future: <Future finished exception=ConnectionDoesNotExistError('connection was closed in the middle of operation')>
+asyncpg.exceptions.ConnectionDoesNotExistError: connection was closed in the middle of operation
+WARNING:synapse.intend:synapse.intend: failed to set up agent (Task <Task pending name='save_fact' coro=<_call_tool() running at /usr/local/lib/python3.11/site-packages/pydantic_ai/_agent_graph.py:1922> cb=[_wait.<locals>._on_completion() at /usr/local/lib/python3.11/asyncio/tasks.py:519]> got Future <Future pending cb=[_chain_future.<locals>._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]> attached to a different loop); offline mode
+WARNING:synapse.intend:synapse.intend: failed to set up agent (Task <Task pending name='save_fact' coro=<_call_tool() running at /usr/local/lib/python3.11/site-packages/pydantic_ai/_agent_graph.py:1922> cb=[_wait.<locals>._on_completion() at /usr/local/lib/python3.11/asyncio/tasks.py:519]> got Future <Future pending cb=[_chain_future.<locals>._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]> attached to a different loop); offline mode
+WARNING:synapse.intend:synapse.intend: failed to set up agent (Task <Task pending name='save_fact' coro=<_call_tool() running at /usr/local/lib/python3.11/site-packages/pydantic_ai/_agent_graph.py:1922> cb=[_wait.<locals>._on_completion() at /usr/local/lib/python3.11/asyncio/tasks.py:519]> got Future <Future pending cb=[_chain_future.<locals>._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]> attached to a different loop); offline mode
+  intents=0 agents=[]
+  scopes=[]
+  ctx_attribution_landed=False
+  result=Done! I've saved 'pydantic_ai e2e proof' as a fact.
+
+=== agno ===
+WARNING:openai.agents:OPENAI_API_KEY is not set, skipping trace export
+  intents=1 agents=['agno_logger']
+  scopes=['tool.write_log:w']
+  ctx_attribution_landed=True
+  result=Done! I've logged the text 'agno e2e proof'.
+
+=== llama_index ===
+WARNING:synapse.intend:synapse.intend: failed to set up agent (cannot perform operation: another operation is in progress); offline mode
+WARNING:synapse.intend:synapse.intend: failed to set up agent (Task <Task pending name='Task-147' coro=<_ControlLoopRunner.run_worker.<locals>._run_worker() running at /usr/local/lib/python3.11/site-packages/workflows/runtime/control_loop.py:215> cb=[_wait.<locals>._on_completion() at /usr/local/lib/python3.11/asyncio/tasks.py:519]> got Future <Future pending cb=[_chain_future.<locals>._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]> attached to a different loop); offline mode
+ERROR:asyncio:Future exception was never retrieved
+future: <Future finished exception=ConnectionDoesNotExistError('connection was closed in the middle of operation')>
+asyncpg.exceptions.ConnectionDoesNotExistError: connection was closed in the middle of operation
+  intents=0 agents=[]
+  scopes=[]
+  ctx_attribution_landed=False
+  result=I'm encountering a technical issue with the write_doc function. The system is reporting a missing 'self' argument, which
+
+=== google_adk ===
+WARNING:synapse.intend:synapse.intend: failed to set up agent (Task <Task pending name='Task-167' coro=<_execute_single_function_call_async() running at /usr/local/lib/python3.11/site-packages/google/adk/flows/llm_flows/functions.py:318> cb=[gather.<locals>._done_callback() at /usr/local/lib/python3.11/asyncio/tasks.py:764]> got Future <Future pending cb=[_chain_future.<locals>._call_check_cancel() at /usr/local/lib/python3.11/asyncio/futures.py:387]> attached to a different loop); offline mode
+  intents=1 agents=['adk_saver']
+  scopes=['otel.tool.save_msg:w']
+  ctx_attribution_landed=True
+  result=Done! I've saved the message 'google_adk e2e proof' (20 bytes).
+
+=== otel_live ===
+  intents=1 agents=['otel_user_agent']
+  scopes=['tool.write_doc.otel_demo.md:w']
+  ctx_attribution_landed=True
+  result=tool span emitted via OTel SpanProcessor
+
+
+======================================================================
+  W2.1 SUMMARY
+======================================================================
+  framework       intents agents                       attribution
+  crewai                1  crewai_summarizer            OK
+  openai_agents         0                               FAIL
+  pydantic_ai           0                               FAIL
+  agno                  1  agno_logger                  OK
+  llama_index           0                               FAIL
+  google_adk            1  adk_saver                    OK
+  otel_live             1  otel_user_agent              OK
+
+Wrote /tmp/v022_real_llm_e2e_1778379961.json
+
+=== exit=0 elapsed=104.8s ===
+
+saved -> bench/results/v022_real_llm_e2e_20260509-222602.json
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/aadityarajgor27/main/ap-vtUMm1m0RH8GVcW5JrIdJr

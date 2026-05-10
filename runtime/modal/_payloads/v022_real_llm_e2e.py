@@ -329,6 +329,52 @@ async def test_google_adk(session_id: str) -> dict:
 # Driver
 # ---------------------------------------------------------------------------
 
+async def test_otel_live(session_id: str) -> dict:
+    """OTel-live adapter test: emit an OpenInference-shaped tool span
+    and verify the SpanProcessor (registered at synapse.install time)
+    catches it and emits a Synapse INTENTION.
+
+    Important: don't rebuild the TracerProvider here -- synapse.install
+    already registered our SpanProcessor on the existing global
+    provider during main()'s install loop. Replacing the provider would
+    silently drop the processor.
+    """
+    import synapse
+    from opentelemetry import trace as otel_trace
+
+    os.environ["SYNAPSE_SESSION_ID"] = session_id
+    tracer = otel_trace.get_tracer("e2e")
+
+    with synapse.with_agent("otel_user_agent"):
+        # Simulate what an OpenInference-instrumented framework would emit
+        # when a tool fires — our SpanProcessor sees it on close.
+        with tracer.start_as_current_span("write_doc") as span:
+            span.set_attribute("openinference.span.kind", "TOOL")
+            span.set_attribute("tool.name", "write_doc")
+            span.set_attribute(
+                "tool.parameters",
+                '{"path": "otel_demo.md", "content": "otel-live e2e proof"}',
+            )
+            # Real LLM round-trip alongside the span so the test mirrors a
+            # real workload (also confirms our SpanProcessor doesn't
+            # interfere with concurrent LLM calls).
+            try:
+                from anthropic import AsyncAnthropic
+                client = AsyncAnthropic()
+                msg = await client.messages.create(
+                    model=MODEL, max_tokens=20,
+                    messages=[{"role": "user", "content": "Reply with 'ok'"}],
+                )
+                txt = msg.content[0].text if msg.content else ""
+                span.set_attribute("output.value", txt[:80])
+            except Exception as e:
+                span.set_attribute("output.value", f"err: {e}")
+
+    # Allow the bridge thread to drain its scheduled emit coroutine.
+    await asyncio.sleep(0.5)
+    return {"result": "tool span emitted via OTel SpanProcessor"}
+
+
 ADAPTERS = [
     ("crewai",        test_crewai,        "crewai_summarizer"),
     ("openai_agents", test_openai_agents, "openai_note_writer"),
@@ -336,6 +382,7 @@ ADAPTERS = [
     ("agno",          test_agno,          "agno_logger"),
     ("llama_index",   test_llama_index,   "llama_doc_writer"),
     ("google_adk",    test_google_adk,    "adk_saver"),
+    ("otel_live",     test_otel_live,     "otel_user_agent"),
 ]
 
 
@@ -348,8 +395,10 @@ async def main() -> None:
     await apply_migrations()
 
     # Install all adapters once. Order matters only insofar as each needs
-    # its SDK present — we install conditionally.
-    for fw, _, _ in ADAPTERS:
+    # its SDK present — we install conditionally. otel-live needs to come
+    # AFTER the other adapters so it doesn't replace their TracerProvider.
+    install_order = [a for a, _, _ in ADAPTERS if a != "otel_live"] + ["otel"]
+    for fw in install_order:
         try:
             synapse.install(framework=fw, bus_url=REDIS_URL, state_dsn=PG_DSN)
         except Exception as e:

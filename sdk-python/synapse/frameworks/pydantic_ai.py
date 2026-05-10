@@ -135,6 +135,18 @@ def _wrap_call_tool(original):
     return wrapper
 
 
+def _walk_subclasses(cls):
+    seen: set = set()
+    pending = list(cls.__subclasses__())
+    while pending:
+        sub = pending.pop()
+        if sub in seen:
+            continue
+        seen.add(sub)
+        yield sub
+        pending.extend(sub.__subclasses__())
+
+
 def _install_pydantic_ai(opts: dict[str, Any]) -> None:
     if _PATCHED["call_tool"]:
         return
@@ -165,13 +177,47 @@ def _install_pydantic_ai(opts: dict[str, Any]) -> None:
         )
         return
 
-    # Patch the abstract base — every concrete subclass inherits this.
+    # Patching only the abstract base is insufficient — concrete toolsets
+    # (FunctionToolset, CombinedToolset, PrefixedToolset, ...) override
+    # call_tool with their own implementations and shadow the base patch.
+    # Force-import shipped toolset modules so subclasses register, then
+    # patch every subclass that defines call_tool itself.
+    _force_import_toolset_modules()
+
+    patched: list[str] = []
     AbstractToolset.call_tool = _wrap_call_tool(AbstractToolset.call_tool)
+    patched.append("AbstractToolset")
+    for sub in _walk_subclasses(AbstractToolset):
+        own = sub.__dict__.get("call_tool")
+        if own is None:
+            continue
+        sub.call_tool = _wrap_call_tool(own)
+        patched.append(sub.__name__)
+
     _PATCHED["call_tool"] = True
     logger.info(
-        "synapse.install(framework='pydantic_ai'): patched "
-        "pydantic_ai.toolsets.AbstractToolset.call_tool"
+        "synapse.install(framework='pydantic_ai'): patched call_tool on "
+        "%d Toolset class(es): %s",
+        len(patched), ", ".join(patched),
     )
+
+
+def _force_import_toolset_modules() -> None:
+    candidates = (
+        "pydantic_ai.toolsets.function",
+        "pydantic_ai.toolsets.combined",
+        "pydantic_ai.toolsets.deferred",
+        "pydantic_ai.toolsets.filtered",
+        "pydantic_ai.toolsets.prefixed",
+        "pydantic_ai.toolsets.prepared",
+        "pydantic_ai.toolsets.renamed",
+        "pydantic_ai.toolsets.wrapper",
+    )
+    for mod in candidates:
+        try:
+            __import__(mod)
+        except Exception:
+            pass
 
 
 register_framework("pydantic_ai", _install_pydantic_ai)

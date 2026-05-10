@@ -1,0 +1,201 @@
+✓ Initialized. View run at 
+https://modal.com/apps/aadityarajgor27/main/ap-2PAaDlo3FgeSimdTD0vD7r
+Building image im-SNRThZKxVIzA6ifa34cqoC
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 2.12s
+
+Built image im-SNRThZKxVIzA6ifa34cqoC in 3.40s
+
+
+Building image im-1u72LjmIm16XqQyJnxz0o6
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 3.16s
+
+Built image im-1u72LjmIm16XqQyJnxz0o6 in 5.40s
+
+
+Building image im-ClPuxfgjfI0nnXYy1XGoRv
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 1.27s
+
+Built image im-ClPuxfgjfI0nnXYy1XGoRv in 4.72s
+
+
+Building image im-WdjEZm5OUZV2CDxcdPekh7
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 834.52ms
+
+Built image im-WdjEZm5OUZV2CDxcdPekh7 in 3.80s
+
+
+Building image im-zN4WyuNp8JuogohI8Q1rwc
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 770.89ms
+
+Built image im-zN4WyuNp8JuogohI8Q1rwc in 2.03s
+
+
+✓ Created objects.
+├── 🔨 Created mount C:\C3\synapse\runtime\modal\framework_sandbox.py
+├── 🔨 Created mount C:\C3\synapse\sdk-python
+├── 🔨 Created mount C:\C3\synapse\runtime
+├── 🔨 Created mount C:\C3\synapse\runtime\modal\_payloads
+├── 🔨 Created mount C:\C3\synapse\sdk-typescript
+├── 🔨 Created mount C:\C3\synapse\bench\scenarios\stripe_lite_v2\starter
+├── 🔨 Created function run_hermes.
+├── 🔨 Created function run_paperclip.
+├── 🔨 Created function run_openclaw.
+├── 🔨 Created function fetch_integration_docs.
+├── 🔨 Created function real_product_dev_hermes.
+├── 🔨 Created function real_product_dev_paperclip.
+├── 🔨 Created function real_product_dev_openclaw.
+├── 🔨 Created function real_app_instagram.
+├── 🔨 Created function real_app_data_analysis.
+├── 🔨 Created function v02_langgraph_live.
+├── 🔨 Created function v02_crewai_live.
+├── 🔨 Created function v02_week3_full.
+├── 🔨 Created function v02_w4_auto_merge.
+├── 🔨 Created function v02_w5_belief_divergence.
+├── 🔨 Created function v02_autonomous_observer_run.
+├── 🔨 Created function v02_multi_orchestrator_run.
+├── 🔨 Created function v02_ci_loop_run.
+├── 🔨 Created function v02_strands_real_run.
+├── 🔨 Created function v022_framework_races_run.
+├── 🔨 Created function v022_adapter_e2e_run.
+├── 🔨 Created function v022_adapter_e2e_v4_run.
+├── 🔨 Created function v022_real_llm_e2e_run.
+├── 🔨 Created function smoke_integrations.
+└── 🔨 Created function v02_sdlc_billing_run.
+>>> W2.1 real-LLM E2E for 6 install-only adapters...
+=== Sandbox setup ===
+Python 3.11.12
+v20.20.2
+10.8.2
+Installing Synapse SDK...
+Installing collected packages: synapse-protocol
+Successfully installed synapse-protocol-0.2.2
+
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: pip install --upgrade pip
+  synapse v0.2.2 importable
+PONG
+  redis ready
+
+    /usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start.... done
+server started
+ALTER ROLE
+  postgres ready
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+=== W2.1 — real-LLM E2E for 6 install-only adapters ===
+  synapse v0.2.2
+  model   : claude-haiku-4-5-20251001
+
+/usr/local/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
+  from google.cloud.aiplatform.utils import gcs_utils
+=== crewai ===
+
+
+╭────────────────────────── Tracing Preference Saved ──────────────────────────╮
+│                                                                              │
+│  Info: Tracing has been disabled.                                            │
+│                                                                              │
+│  Your preference has been saved. Future Crew/Flow executions will not        │
+│  collect traces.                                                             │
+│                                                                              │
+│  To enable tracing later, do any one of these:                               │
+│  • Set tracing=True in your Crew/Flow code                                   │
+│  • Set CREWAI_TRACING_ENABLED=true in your project's .env file               │
+│  • Run: crewai traces enable                                                 │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+  intents=1 agents=['crewai_summarizer']
+  scopes=['crewai.task.f73697e0-ab99-4064-ad97-33c6a9274a1c:w']
+  ctx_attribution_landed=True
+  result=wrote 34 bytes
+
+=== openai_agents ===
+WARNING:synapse.intend:synapse.intend: emit_intention failed (Task <Task pending name='Task-52' coro=<_FunctionToolBatchExecutor._invoke_tool_and_run_post_invoke() running at /usr/local/lib/python3.11/site-packages/agents/run_internal/tool_execution.py:1751> cb=[shield.<locals>._inner_done_callback() at /usr/local/lib/python3.11/asyncio/tasks.py:891]> got Future <Future pending> attached to a different loop); proceeding anyway
+  intents=1 agents=['openai_note_writer']
+  scopes=['tool.write_note:w']
+  ctx_attribution_landed=True
+  result=Done! I've saved the message 'hello from openai-agents' to disk.
+
+=== pydantic_ai ===
+  intents=4 agents=['pydantic_save_fact']
+  scopes=['pydantic_ai.tool.save_fact:w']
+  ctx_attribution_landed=True
+  result=Done! I've saved 'pydantic_ai e2e proof' as a fact.
+
+=== agno ===
+WARNING:openai.agents:OPENAI_API_KEY is not set, skipping trace export
+WARNING:synapse.intend:synapse.intend: emit_intention failed (Task <Task pending name='Task-116' coro=<_wrap_execute_sync.<locals>.wrapper.<locals>._run() running at /opt/synapse-sdk/synapse/frameworks/agno.py:125> cb=[_chain_future.<locals>._call_set_state() at /usr/local/lib/python3.11/asyncio/futures.py:394]> got Future <Future pending> attached to a different loop); proceeding anyway
+  intents=1 agents=['agno_logger']
+  scopes=['tool.write_log:w']
+  ctx_attribution_landed=True
+  result=Done! I've logged the message 'agno e2e proof'.
+
+=== llama_index ===
+  intents=2 agents=['llama_doc_writer']
+  scopes=['tool.write_doc:w']
+  ctx_attribution_landed=True
+  result=I'm encountering a technical issue with the document writing function. The system is reporting a missing 'self' argument
+
+=== google_adk ===
+WARNING:synapse.intend:synapse.intend: emit_intention failed (Task <Task pending name='Task-196' coro=<_make_processor.<locals>.SynapseOTelSpanProcessor.on_end.<locals>._emit() running at /opt/synapse-sdk/synapse/frameworks/otel_live.py:179> cb=[_chain_future.<locals>._call_set_state() at /usr/local/lib/python3.11/asyncio/futures.py:394]> got Future <Future pending> attached to a different loop); proceeding anyway
+  intents=2 agents=['adk_saver']
+  scopes=['google_adk.tool.save_msg:w', 'otel.tool.save_msg:w']
+  ctx_attribution_landed=True
+  result=Done! I've saved the message "google_adk e2e proof" (20 bytes).
+
+=== otel_live ===
+  intents=1 agents=['otel_user_agent']
+  scopes=['tool.write_doc.otel_demo.md:w']
+  ctx_attribution_landed=True
+  result=tool span emitted via OTel SpanProcessor
+
+
+======================================================================
+  W2.1 SUMMARY
+======================================================================
+  framework       intents agents                       attribution
+  crewai                1  crewai_summarizer            OK
+  openai_agents         1  openai_note_writer           OK
+  pydantic_ai           4  pydantic_save_fact           OK
+  agno                  1  agno_logger                  OK
+  llama_index           2  llama_doc_writer             OK
+  google_adk            2  adk_saver                    OK
+  otel_live             1  otel_user_agent              OK
+
+Wrote /tmp/v022_real_llm_e2e_1778380508.json
+
+=== exit=0 elapsed=106.5s ===
+
+saved -> bench/results/v022_real_llm_e2e_20260509-223510.json
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/aadityarajgor27/main/ap-2PAaDlo3FgeSimdTD0vD7r

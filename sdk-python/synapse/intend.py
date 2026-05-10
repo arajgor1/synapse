@@ -159,6 +159,71 @@ def _get_or_init_runtime(
     return _runtime
 
 
+_connect_lock: Optional[asyncio.Lock] = None
+
+
+async def _ensure_state_for_current_loop(rt: dict[str, Any]) -> Any:
+    """Return a StateGraph bound to the CURRENT running loop.
+
+    Asyncpg connection pools are loop-bound — using a pool created on
+    loop A from loop B raises ``Future ... attached to a different
+    loop``. Some frameworks (pydantic-ai's _call_tool inside its agent
+    graph TaskGroup, llama-index's WorkflowControlLoop, openai-agents
+    Runner internals) do dispatch tool calls from task contexts that
+    are technically on a different loop than the one ``synapse.install()``
+    ran on.
+
+    To survive that, we maintain a per-loop StateGraph cache. The
+    install-time StateGraph stays the canonical one; additional pools
+    are spun up lazily on first cross-loop access. They all point at
+    the same backend (Postgres / SQLite), so coordination still works
+    end-to-end at the storage layer.
+    """
+    install_state = rt.get("state")
+    state_backend = rt.get("state_backend")
+    state_dsn = rt.get("state_dsn")
+    if install_state is None or state_backend is None:
+        return install_state
+
+    try:
+        running = asyncio.get_running_loop()
+    except RuntimeError:
+        return install_state
+
+    install_loop = rt.get("install_loop")
+    if running is install_loop:
+        return install_state
+
+    pools = rt.setdefault("_state_per_loop", {})
+    loop_key = id(running)
+    if loop_key in pools:
+        return pools[loop_key]
+
+    locks = rt.setdefault("_state_per_loop_locks", {})
+    lk = locks.get(loop_key)
+    if lk is None:
+        lk = asyncio.Lock()
+        locks[loop_key] = lk
+    async with lk:
+        if loop_key in pools:
+            return pools[loop_key]
+        if state_backend == "sqlite":
+            from synapse.state_sqlite import SqliteStateGraph
+            extra = SqliteStateGraph(state_dsn)
+        else:
+            from synapse.state import StateGraph
+            extra = StateGraph(state_dsn)
+        await extra.connect()
+        pools[loop_key] = extra
+        logger.info(
+            "synapse: spawned per-loop state pool (loop_key=%s) — caller is "
+            "on a different loop than install_loop, common with pydantic-ai "
+            "/ llama-index / openai-agents internal task schedulers.",
+            loop_key,
+        )
+        return extra
+
+
 async def _ensure_connected() -> dict[str, Any]:
     rt = _get_or_init_runtime()
     if rt.get("mode") == "offline":
@@ -166,38 +231,57 @@ async def _ensure_connected() -> dict[str, Any]:
     if rt.get("connected"):
         return rt
 
-    # Record the loop owning the bus + state pools so sync-bridge wrappers
-    # can route back to it instead of running on the bridge loop (which
-    # produces 'attached to a different loop' errors with asyncpg).
-    try:
-        rt["install_loop"] = asyncio.get_running_loop()
-    except RuntimeError:
-        rt["install_loop"] = None
-    bus = rt["bus"]
-    await bus.connect()
+    # Serialise concurrent first-callers. Frameworks that fan out into
+    # parallel tool calls (openai-agents Runner, llama-index Workflow)
+    # hit _ensure_connected from multiple coroutines simultaneously
+    # before the bus/state pools exist. Without serialisation, each
+    # winner overwrites rt["bus"] and rt["state"], orphaning the loser's
+    # half-connected pool — surfaces as ``cannot perform operation:
+    # another operation is in progress`` from asyncpg.
+    global _connect_lock
+    if _connect_lock is None:
+        _connect_lock = asyncio.Lock()
+    async with _connect_lock:
+        # Re-check inside the lock — a peer task may have finished while
+        # we were waiting.
+        if rt.get("connected"):
+            return rt
 
-    state_backend = rt.get("state_backend")
-    state_dsn = rt.get("state_dsn")
-    if state_backend == "sqlite":
-        # Zero-infra: SQLite is mandatory — that's where intentions live.
-        from synapse.state_sqlite import SqliteStateGraph
-        state = SqliteStateGraph(state_dsn)
-        await state.connect()
-        rt["state"] = state
-    elif state_dsn:
-        from synapse.state import StateGraph
-        state = StateGraph(state_dsn)
-        await state.connect()
-        rt["state"] = state
+        # Record the loop owning the bus + state pools so sync-bridge wrappers
+        # can route back to it instead of running on the bridge loop (which
+        # produces 'attached to a different loop' errors with asyncpg).
+        try:
+            rt["install_loop"] = asyncio.get_running_loop()
+        except RuntimeError:
+            rt["install_loop"] = None
+        bus = rt["bus"]
+        await bus.connect()
 
-    # Auto-spawn an in-process Router for zero-infra mode so CONFLICTs
-    # actually flow back to agent inboxes. In live mode the user runs the
-    # router as a separate process (`python -m synapse.runtime.router.worker`).
-    if rt.get("mode") == "zero-infra" and rt.get("state") is not None:
-        await _start_inprocess_router(rt)
+        state_backend = rt.get("state_backend")
+        state_dsn = rt.get("state_dsn")
+        if state_backend == "sqlite":
+            # Zero-infra: SQLite is mandatory — that's where intentions live.
+            from synapse.state_sqlite import SqliteStateGraph
+            state = SqliteStateGraph(state_dsn)
+            await state.connect()
+            rt["state"] = state
+        elif state_dsn:
+            from synapse.state import StateGraph
+            state = StateGraph(state_dsn)
+            await state.connect()
+            rt["state"] = state
 
-    rt["connected"] = True
-    return rt
+        # Auto-spawn an in-process Router for zero-infra mode so CONFLICTs
+        # actually flow back to agent inboxes. In live mode the user runs the
+        # router as a separate process (`python -m synapse.runtime.router.worker`).
+        if rt.get("mode") == "zero-infra" and rt.get("state") is not None:
+            await _start_inprocess_router(rt)
+
+        # Set connected LAST so other waiting coroutines see a fully-built
+        # runtime. Setting it earlier (before state.connect) would let
+        # peers proceed against a half-built state.
+        rt["connected"] = True
+        return rt
 
 
 async def _start_inprocess_router(rt: dict[str, Any]) -> None:
@@ -240,36 +324,75 @@ async def _get_agent(agent_id: str, session_id: str) -> Optional[Agent]:
 
     In offline mode (no bus configured), returns None — the caller treats
     intend() as a recording no-op.
+
+    Cache-miss synchronisation: frameworks that fire parallel tool calls
+    (OpenAI Agents Runner, LlamaIndex Workflow) can race two concurrent
+    ``_get_agent`` calls for the same (session, agent) before the first
+    finishes ``agent._register()``. Both would then try to use the
+    asyncpg pool concurrently for the same registration, surfacing as
+    ``cannot perform operation: another operation is in progress``.
+    A per-cache-key asyncio.Lock serialises the miss path so only one
+    creation+registration runs at a time. Hits stay lock-free.
     """
     rt = await _ensure_connected()
     if rt.get("mode") == "offline":
         return None
 
-    cache_key = f"{session_id}::{agent_id}"
+    # Cache key includes the running loop so frameworks that dispatch
+    # tool calls from off-loop tasks get a separate Agent instance bound
+    # to a per-loop state pool. Without this, a cache hit could return
+    # an Agent whose state is bound to the wrong loop, re-surfacing the
+    # very ``Future attached to a different loop`` bug we're trying to
+    # work around.
+    try:
+        loop_id = id(asyncio.get_running_loop())
+    except RuntimeError:
+        loop_id = 0
+    cache_key = f"{session_id}::{agent_id}::loop{loop_id}"
     agents = rt.setdefault("agents", {})
     if cache_key in agents:
         return agents[cache_key]
 
-    from synapse.adapters.mock import MockAdapter
+    locks = rt.setdefault("_agent_locks", {})
+    lock = locks.get(cache_key)
+    if lock is None:
+        lock = asyncio.Lock()
+        locks[cache_key] = lock
 
-    agent = Agent(
-        id=agent_id,
-        session=session_id,
-        backend=MockAdapter(),
-        bus=rt["bus"],
-        state=rt.get("state"),
-        subscribes=[],
-    )
-    await agent._connect()
-    if rt.get("state") is not None:
-        await agent._register()
-    agents[cache_key] = agent
+    async with lock:
+        # Re-check inside the lock — a peer task may have finished while
+        # we were waiting.
+        if cache_key in agents:
+            return agents[cache_key]
 
-    # Zero-infra mode: ensure the in-process L2 router is running for
-    # this session so CONFLICTs flow back to inboxes. No-op in live mode.
-    await _ensure_router_for_session(rt, session_id)
+        from synapse.adapters.mock import MockAdapter
 
-    return agent
+        # Use a state graph bound to the CURRENT loop. For most callers
+        # this returns the install-time state. For frameworks whose
+        # internal schedulers run on a different loop (pydantic-ai's
+        # agent-graph TaskGroup, llama-index Workflow, openai-agents
+        # Runner), this lazily creates a per-loop pool to avoid
+        # ``Future ... attached to a different loop`` from asyncpg.
+        loop_state = await _ensure_state_for_current_loop(rt)
+
+        agent = Agent(
+            id=agent_id,
+            session=session_id,
+            backend=MockAdapter(),
+            bus=rt["bus"],
+            state=loop_state,
+            subscribes=[],
+        )
+        await agent._connect()
+        if loop_state is not None:
+            await agent._register()
+        agents[cache_key] = agent
+
+        # Zero-infra mode: ensure the in-process L2 router is running for
+        # this session so CONFLICTs flow back to inboxes. No-op in live mode.
+        await _ensure_router_for_session(rt, session_id)
+
+        return agent
 
 
 # ---------------------------------------------------------------------------
@@ -629,6 +752,13 @@ async def shutdown() -> None:
         if state is not None:
             try:
                 await state.close()
+            except Exception:
+                pass
+        # Close any per-loop state pools (created lazily for off-loop
+        # frameworks like pydantic-ai / llama-index / openai-agents).
+        for extra_state in (rt.get("_state_per_loop") or {}).values():
+            try:
+                await extra_state.close()
             except Exception:
                 pass
     _runtime.clear()
