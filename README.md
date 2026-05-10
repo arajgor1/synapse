@@ -4,18 +4,36 @@
 > Audit existing trace exports for silent collisions, prevent them live, resolve them with your own LLM.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Version: v0.2.2-alpha](https://img.shields.io/badge/Version-v0.2.2--alpha-blue.svg)](#status)
+[![Version: v0.2.2](https://img.shields.io/badge/Version-v0.2.2-blue.svg)](#status)
 [![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
-[![Tests](https://img.shields.io/badge/tests-276%20passing-brightgreen.svg)](#tests)
-[![Adapters](https://img.shields.io/badge/adapters-11%2F11%20real--SDK%20pass-brightgreen.svg)](sdk-python/tests/test_adapter_health.py)
+[![Tests](https://img.shields.io/badge/tests-324%20passing-brightgreen.svg)](#tests)
+[![Adapters](https://img.shields.io/badge/adapters-12%20frameworks%20%2B%20OTel%20live-brightgreen.svg)](sdk-python/tests/test_adapter_health.py)
+[![Latency](https://img.shields.io/badge/no--conflict%20latency-1.59ms%20median-brightgreen.svg)](bench/LATENCY.md)
 [![AgenticFlict F1](https://img.shields.io/badge/AgenticFlict_F1-0.865-brightgreen.svg)](bench/results/agenticflict_benchmark.json)
 
 ---
 
-## Try it in 60 seconds
+## Try it in 60 seconds — no infra, no env vars
 
 ```bash
-# Have a trace export from any agent run? Audit it.
+pip install synapse-protocol
+
+# Terminal 1: live coordination dashboard, browser auto-opens
+synapse watch --session demo
+
+# Terminal 2: run any agent code in the same project tree
+SYNAPSE_SESSION_ID=demo python your_agent_script.py
+```
+
+That's it. **No Redis, no Postgres, no env vars.** v0.2.2 ships zero-infra mode (in-memory bus + auto-SQLite at `~/.synapse/state.db` + auto-spawned in-process L2 router) so a fresh user sees real coordination value in two terminal commands.
+
+The dashboard ticks live: every `synapse.intend()` call shows up; every cross-agent collision the in-process router catches surfaces with full attribution + scope info.
+
+For multi-process coordination set `SYNAPSE_REDIS_URL` and `SYNAPSE_POSTGRES_DSN` and you get the live mode. Same code.
+
+### Or: audit existing trace exports
+
+```bash
 pip install synapse-protocol
 synapse audit ./traces.json
 ```
@@ -23,6 +41,17 @@ synapse audit ./traces.json
 Supports OpenInference / OTel · LangSmith · AWS Bedrock Agents · GCP Vertex Agent Builder · Azure AI Agent Service · plain JSONL — auto-detected.
 
 No trace? Try the [hosted audit tool](launch/hosted-audit/) (drag-drop a trace JSON in your browser, zero install).
+
+### Catch a real collision in your own code (60-second demo)
+
+```bash
+git clone https://github.com/arajgor1/synapse
+cd synapse/examples/crewai-marketing
+python crew_no_synapse.py    # control: silently loses one writer's text
+python crew.py               # with synapse: BOTH writers' work survives
+```
+
+`crew.py` runs three agents (Researcher → Writer → Editor) on a shared `drafts/` directory. Without Synapse, the Editor silently overwrites the Writer. With Synapse, the in-process router catches the file collision, the second writer's `IntentionHandle.has_conflicts` is True, and the demo pivots to a per-agent variant via `MergePolicy.work_on_different_scope`.
 
 ---
 
@@ -39,7 +68,7 @@ We share the conflict taxonomy and SCF-aligned metrics:
 We differ in three ways:
 1. **Audit-on-existing-trace-exports** with no middleware deployment, no agent-runtime patching, no hand-authored process model. SCF requires inline blocking; Synapse runs post-hoc on what your agents already emit.
 2. **FS-watcher path for IDE/CLI agents** (Claude Code, Cursor, Codex CLI, Aider) that don't expose live coordination hooks.
-3. **Real-world evidence on real published SDKs.** All 11 framework adapters confirmed patching the real published SDK at install time (see `tests/test_adapter_health.py`). 4 of those (autogen, langchain, langgraph, smolagents) additionally verified through real two-agent dispatch with INTENTIONs persisted end-to-end (see `bench/REAL_LIFE_TESTING.md`). SCF's evaluation uses simulated agents.
+3. **Real-world evidence on real published SDKs.** All 12 framework adapters confirmed patching the real published SDK at install time (see `tests/test_adapter_health.py`). 6 of those (autogen, langchain, langgraph, smolagents, crewai, agno) additionally verified through real LLM-driven dispatch with INTENTIONs persisted end-to-end in a Modal sandbox (see `bench/REAL_LIFE_TESTING.md` + `bench/results/v022_real_llm_e2e_*.json`). The other 4 (openai_agents, pydantic_ai, llama_index, google_adk) hit framework-specific internal-scheduler cross-loop bugs in their own code paths — install-only verified, follow-up fixes filed. SCF's evaluation uses simulated agents.
 
 ### Framework coverage (vs. Semantica's "Coming Soon" list)
 

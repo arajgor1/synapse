@@ -142,13 +142,13 @@ _DASHBOARD_HTML = """<!doctype html>
 """
 
 
-def _free_port(start: int = 8765) -> int:
-    """Find a free TCP port at or after ``start``."""
+def _free_port(start: int = 8765, *, bind_host: str = "127.0.0.1") -> int:
+    """Find a free TCP port at or after ``start``, probing on bind_host."""
     port = start
     while port < start + 50:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            s.bind(("0.0.0.0", port))
+            s.bind((bind_host, port))
             s.close()
             return port
         except OSError:
@@ -200,11 +200,13 @@ def cmd_watch(args: argparse.Namespace) -> int:
     os.environ.setdefault("SYNAPSE_AUDIT_LOG", str(log_path))
     os.environ.setdefault("SYNAPSE_SESSION_ID", args.session)
 
-    ws_port = _free_port(args.port)
-    http_port = _free_port(args.http_port)
+    bind_host = args.bind
+    ws_port = _free_port(args.port, bind_host=bind_host)
+    http_port = _free_port(args.http_port, bind_host=bind_host)
 
-    # Streaming server (background thread)
-    streaming = StreamingServer(ws_port, log_path)
+    # Streaming server (background thread). bind_host=127.0.0.1 by default
+    # so anyone on the same LAN can't read your live agent activity.
+    streaming = StreamingServer(ws_port, log_path, bind_host=bind_host)
     ws_thread = threading.Thread(
         target=streaming.serve_forever, daemon=True, name="synapse-watch-ws"
     )
@@ -212,7 +214,7 @@ def cmd_watch(args: argparse.Namespace) -> int:
 
     # Static HTML dashboard server (background thread)
     html_bytes = _DASHBOARD_HTML.replace("__WS_PORT__", str(ws_port)).encode("utf-8")
-    httpd = HTTPServer(("0.0.0.0", http_port), _make_dashboard_handler(html_bytes))
+    httpd = HTTPServer((bind_host, http_port), _make_dashboard_handler(html_bytes))
     http_thread = threading.Thread(
         target=httpd.serve_forever, daemon=True, name="synapse-watch-http"
     )
@@ -233,6 +235,11 @@ def cmd_watch(args: argparse.Namespace) -> int:
         else "zero-infra (in-memory bus + SQLite)"
     )
     print(f"  mode        : {mode_str}", flush=True)
+    if bind_host == "0.0.0.0":
+        print(f"  bind        : 0.0.0.0 (LAN-accessible -- WARNING: anyone on", flush=True)
+        print(f"                this network can read your agents' activity)", flush=True)
+    else:
+        print(f"  bind        : {bind_host} (localhost only)", flush=True)
     print("", flush=True)
     print("  In this terminal OR a second terminal in the same project tree:", flush=True)
     print(f"      SYNAPSE_SESSION_ID={args.session} python your_agent_script.py", flush=True)
@@ -289,6 +296,15 @@ def add_subparser(sub: argparse._SubParsersAction) -> None:
     p.add_argument(
         "--runs-dir", default=".synapse/runs",
         help="Directory holding the JSONL audit log (default: .synapse/runs)",
+    )
+    p.add_argument(
+        "--bind", default="127.0.0.1",
+        help=(
+            "Host to bind the WebSocket + dashboard to (default: 127.0.0.1, "
+            "localhost only). Use --bind 0.0.0.0 to expose on the LAN -- "
+            "anyone on the network will be able to read your agents' "
+            "activity, so only do this for trusted demos."
+        ),
     )
     p.add_argument(
         "--no-browser", action="store_true",

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "synapse-protocol"
-version = "0.2.2a4"
+version = "0.2.2"
 description = "The safety layer for multi-agent AI systems — audit existing traces for silent collisions, prevent them live, BYO-LLM"
 readme = "README.md"
 license = { text = "Apache-2.0" }

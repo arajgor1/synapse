@@ -173,9 +173,12 @@ class Agent:
 
         conflicts: list[Conflict] = []
 
-        # 3a. Fast path: immediate self-check for active conflicts.
-        #     Authoritative because our row is already in the state graph,
-        #     so any concurrent writer that committed before us is visible.
+        # 3a. Fast path: immediate self-check for active + recently-resolved
+        #     conflicts. Authoritative because our row is already in the
+        #     state graph, so any concurrent writer that committed before
+        #     us is visible. Uses the same default lookback as the router
+        #     so stale-base-overwrite scenarios surface here too — the
+        #     fast path is a strict superset of the gate window's coverage.
         if blocking:
             try:
                 rows = await self._state.find_conflicts(
@@ -183,16 +186,17 @@ class Agent:
                     agent_id=self.id,
                     session_id=self.session,
                     scope=scope,
-                    resolved_lookback_ms=0,  # active only
+                    resolved_lookback_ms=60_000,
                 )
             except Exception as e:
                 logger.warning("emit_intention: find_conflicts failed (%s); falling back to gate", e)
                 rows = None
 
             if rows is not None and not rows:
-                # No active conflicts → skip the gate window entirely.
-                # The router still consumes our INTENTION on the bus and
-                # may emit CONFLICTs to FUTURE arrivers, but we're done.
+                # No active or recent conflicts → skip the gate window
+                # entirely. The router still consumes our INTENTION on the
+                # bus and may emit CONFLICTs to FUTURE arrivers, but we're
+                # done.
                 return envelope.msg_id, []
 
             if rows:
@@ -200,8 +204,15 @@ class Agent:
                 # caller (intend()) can apply MergePolicy without waiting
                 # for the router's inbox delivery. Same shape as router
                 # output (see runtime/router/worker._emit_conflict).
+                #
+                # Match the router's kind-selection logic exactly so
+                # downstream MergePolicies that switch on kind (e.g.
+                # queue_behind for active vs. retry for stale-base) get
+                # the right branch in fast-path mode.
                 cis: list[ConflictingIntention] = []
                 overlapping_all: set[str] = set()
+                active_count = 0
+                recent_count = 0
                 for r in rows:
                     cis.append(ConflictingIntention(
                         intention_id=r["intention_id"],
@@ -210,17 +221,39 @@ class Agent:
                         started_at_ms=r["started_at_ms"],
                     ))
                     overlapping_all.update(r["overlapping_scopes"])
+                    if r.get("kind") == "active":
+                        active_count += 1
+                    elif r.get("kind") == "recent_resolution":
+                        recent_count += 1
+
+                kind_str = (
+                    "scope_overlap" if active_count > 0
+                    else "stale_base_overwrite"
+                )
+                if active_count and recent_count:
+                    rationale = (
+                        f"Your intention's scope {scope} overlaps with "
+                        f"{active_count} active and {recent_count} "
+                        f"recently-resolved intention(s) by other agent(s)."
+                    )
+                elif active_count:
+                    rationale = (
+                        f"Your intention's scope {scope} overlaps with "
+                        f"{active_count} active intention(s) by other agent(s)."
+                    )
+                else:
+                    rationale = (
+                        f"Your intention's scope {scope} was just modified "
+                        f"by {recent_count} other agent(s) — your write "
+                        f"would clobber their changes unless you pull first."
+                    )
                 conflicts.append(Conflict(
                     intention_id=envelope.msg_id,
                     conflicting_intentions=cis,
-                    kind="scope_overlap",
+                    kind=kind_str,
                     overlapping_scopes=sorted(overlapping_all),
                     suggested_resolution="pivot",
-                    rationale=(
-                        f"Your intention's scope {scope} overlaps with "
-                        f"{len(cis)} active intention(s) by other agent(s) "
-                        f"(immediate self-check)."
-                    ),
+                    rationale=rationale,
                 ))
                 # Also briefly check the inbox in case the router has
                 # already enriched a CONFLICT with tier/rationale.

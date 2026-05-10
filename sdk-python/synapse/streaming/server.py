@@ -197,8 +197,15 @@ def _tail_jsonl(path: Path, from_offset: int = 0, *, stop: threading.Event | Non
 # ---------------------------------------------------------------------------
 
 class StreamingServer:
-    def __init__(self, port: int, watch_path: Path):
+    def __init__(
+        self,
+        port: int,
+        watch_path: Path,
+        *,
+        bind_host: str = "127.0.0.1",
+    ):
         self.port = port
+        self.bind_host = bind_host
         self.watch_path = watch_path
         self.clients: list[socket.socket] = []
         self._lock = threading.Lock()
@@ -226,10 +233,13 @@ class StreamingServer:
     def _accept_loop(self) -> None:
         srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        srv.bind(("0.0.0.0", self.port))
+        srv.bind((self.bind_host, self.port))
         srv.listen(8)
         srv.settimeout(0.5)
-        print(f"[streaming] listening on ws://localhost:{self.port}/", flush=True)
+        print(
+            f"[streaming] listening on ws://{self.bind_host}:{self.port}/",
+            flush=True,
+        )
         while not self._stop.is_set():
             try:
                 client, addr = srv.accept()
