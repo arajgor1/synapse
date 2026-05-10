@@ -48,6 +48,13 @@ from .builtin import (
     AutoMergePolicy,
     NoOpPolicy,
 )
+from .templates import (
+    QueueBehindPolicy,
+    WaitForOtherPolicy,
+    WorkOnDifferentScopePolicy,
+    EscalateToHumanPolicy,
+    RetryWithBackoffPolicy,
+)
 from .registry import resolve_policy, PolicyLike  # noqa: F401 (also wires .redirect etc. onto MergePolicy)
 from .critical import critical_scope_match, normalize_critical_scopes
 
@@ -61,6 +68,12 @@ __all__ = [
     "AbortPolicy",
     "AutoMergePolicy",
     "NoOpPolicy",
+    # v0.2.2a4 policy templates
+    "QueueBehindPolicy",
+    "WaitForOtherPolicy",
+    "WorkOnDifferentScopePolicy",
+    "EscalateToHumanPolicy",
+    "RetryWithBackoffPolicy",
     "critical_scope_match",
     "normalize_critical_scopes",
 ]

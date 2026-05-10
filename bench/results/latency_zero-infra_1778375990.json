@@ -1,0 +1,29 @@
+{
+  "synapse_version": "0.2.2a3",
+  "mode": "zero-infra",
+  "iterations": 30,
+  "no_conflict": {
+    "n": 30,
+    "min_ms": 62.882,
+    "median_ms": 79.779,
+    "p95_ms": 86.68,
+    "p99_ms": 88.342,
+    "max_ms": 88.342
+  },
+  "gate_pass": {
+    "n": 30,
+    "min_ms": 13.073,
+    "median_ms": 16.239,
+    "p95_ms": 20.09,
+    "p99_ms": 27.261,
+    "max_ms": 27.261
+  },
+  "gate_then_conflict": {
+    "n": 30,
+    "min_ms": 14.384,
+    "median_ms": 17.481,
+    "p95_ms": 22.398,
+    "p99_ms": 34.429,
+    "max_ms": 34.429
+  }
+}

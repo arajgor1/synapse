@@ -59,6 +59,17 @@ def _resolve_agent_id_from_context(ctx: Any) -> str:
       3. SYNAPSE_AGENT_ID env var (legacy)
       4. SYNAPSE_DEFAULT_AGENT_ID env var
       5. "autogen_default"
+
+    Known limitation
+    ----------------
+    autogen-core's ``FunctionTool.run`` invokes sync user-tool bodies via
+    ``loop.run_in_executor(None, partial)`` which does NOT propagate
+    contextvars to the worker thread. The wrapper's INTENTION envelope
+    is correctly attributed (resolver runs on the caller task), but
+    ``synapse.current_agent_id()`` called from inside a sync user-tool
+    body running in autogen's executor will see the default. Workaround:
+    declare the tool ``async def`` — that path uses ``await self._func()``
+    on the caller task and ContextVars propagate naturally.
     """
     from synapse.agent_context import current_agent_id, _AGENT_CTX
     # Check ContextVar first — race-free under concurrent asyncio.gather

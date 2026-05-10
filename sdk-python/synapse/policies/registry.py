@@ -26,6 +26,13 @@ from .builtin import (
     RedirectPolicy,
     WaitPolicy,
 )
+from .templates import (
+    EscalateToHumanPolicy,
+    QueueBehindPolicy,
+    RetryWithBackoffPolicy,
+    WaitForOtherPolicy,
+    WorkOnDifferentScopePolicy,
+)
 
 
 # Singleton instances — the canonical values for ``synapse.MergePolicy.*``
@@ -34,6 +41,11 @@ _WAIT = WaitPolicy()
 _ABORT = AbortPolicy()
 _AUTO_MERGE = AutoMergePolicy()
 _NO_OP = NoOpPolicy()
+_QUEUE_BEHIND = QueueBehindPolicy()
+_WAIT_FOR_OTHER = WaitForOtherPolicy()
+_WORK_ON_DIFFERENT_SCOPE = WorkOnDifferentScopePolicy()
+_ESCALATE_TO_HUMAN = EscalateToHumanPolicy()
+_RETRY_WITH_BACKOFF = RetryWithBackoffPolicy()
 
 
 # Attach singletons as class-level attributes on the ABC. After this
@@ -46,6 +58,12 @@ MergePolicy.wait = _WAIT                  # type: ignore[attr-defined]
 MergePolicy.abort = _ABORT                # type: ignore[attr-defined]
 MergePolicy.auto_merge = _AUTO_MERGE      # type: ignore[attr-defined]
 MergePolicy.no_op = _NO_OP                # type: ignore[attr-defined]
+# v0.2.2a4 templates
+MergePolicy.queue_behind = _QUEUE_BEHIND                          # type: ignore[attr-defined]
+MergePolicy.wait_for_other = _WAIT_FOR_OTHER                      # type: ignore[attr-defined]
+MergePolicy.work_on_different_scope = _WORK_ON_DIFFERENT_SCOPE    # type: ignore[attr-defined]
+MergePolicy.escalate_to_human = _ESCALATE_TO_HUMAN                # type: ignore[attr-defined]
+MergePolicy.retry_with_backoff = _RETRY_WITH_BACKOFF              # type: ignore[attr-defined]
 
 
 PolicyLike = Union[MergePolicy, str, None]
@@ -75,6 +93,16 @@ def resolve_policy(spec: PolicyLike) -> Optional[MergePolicy]:
             "merge": _AUTO_MERGE,
             "no_op": _NO_OP,
             "noop": _NO_OP,
+            # v0.2.2a4 templates
+            "queue_behind": _QUEUE_BEHIND,
+            "wait_for_other": _WAIT_FOR_OTHER,
+            "work_on_different_scope": _WORK_ON_DIFFERENT_SCOPE,
+            "different_scope": _WORK_ON_DIFFERENT_SCOPE,
+            "pivot_scope": _WORK_ON_DIFFERENT_SCOPE,
+            "escalate_to_human": _ESCALATE_TO_HUMAN,
+            "escalate": _ESCALATE_TO_HUMAN,
+            "retry_with_backoff": _RETRY_WITH_BACKOFF,
+            "retry": _RETRY_WITH_BACKOFF,
         }.get(s)
     raise TypeError(
         f"merge_policy must be None | str | MergePolicy, got {type(spec).__name__}"

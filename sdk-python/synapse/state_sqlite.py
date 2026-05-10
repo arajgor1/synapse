@@ -253,6 +253,23 @@ class SqliteStateGraph:
         )
 
     # -----------------------------------------------------------------
+    # Intention status (used by queue_behind / retry_with_backoff policies)
+    # -----------------------------------------------------------------
+    async def intentions_active_in(
+        self, intention_ids: list[str], session_id: str
+    ) -> set[str]:
+        if not intention_ids:
+            return set()
+        placeholders = ",".join("?" for _ in intention_ids)
+        rows = await self._fetchall(
+            f"SELECT id FROM intentions "
+            f"WHERE session_id = ? AND status = 'active' "
+            f"AND id IN ({placeholders})",
+            (session_id, *intention_ids),
+        )
+        return {r[0] for r in rows}
+
+    # -----------------------------------------------------------------
     # Beliefs (backend-agnostic API mirroring synapse.state.StateGraph)
     # -----------------------------------------------------------------
     async def belief_upsert(

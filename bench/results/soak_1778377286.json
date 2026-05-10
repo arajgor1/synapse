@@ -1,0 +1,45 @@
+{
+  "synapse_version": "0.2.2a3",
+  "duration_s": 60.0,
+  "agents": 3,
+  "scopes": 20,
+  "target_rps": 50,
+  "actual_rps": 47.3,
+  "n_calls": 2840,
+  "n_failures": 0,
+  "failure_rate": 0.0,
+  "rss_baseline_mb": 69.8,
+  "rss_final_mb": 116.2,
+  "rss_growth_mb": 46.4,
+  "sqlite_size_mb": 0.7,
+  "latency_median_ms": 12.958,
+  "latency_p95_ms": 28.282,
+  "latency_p99_ms": 33.26,
+  "latency_max_ms": 59.323,
+  "rss_over_time": [
+    [
+      0.0,
+      69.80859375
+    ],
+    [
+      10.0,
+      73.5
+    ],
+    [
+      20.0,
+      78.6
+    ],
+    [
+      30.0,
+      85.9
+    ],
+    [
+      40.0,
+      95.2
+    ],
+    [
+      50.0,
+      105.7
+    ]
+  ]
+}

@@ -186,6 +186,8 @@ def _ensure_framework_loaded(name: str) -> None:
             from synapse.frameworks import llama_index  # noqa: F401
         elif name in ("google_adk", "google-adk", "adk"):
             from synapse.frameworks import google_adk  # noqa: F401
+        elif name in ("otel", "opentelemetry", "otel_live"):
+            from synapse.frameworks import otel_live  # noqa: F401
         elif name == "langchain":
             from synapse.frameworks import langchain  # noqa: F401
     except ImportError as e:

@@ -205,6 +205,26 @@ class StateGraph:
             )
 
     # -----------------------------------------------------------------
+    # Intention status (used by queue_behind / retry_with_backoff policies)
+    # -----------------------------------------------------------------
+    async def intentions_active_in(
+        self, intention_ids: list[str], session_id: str
+    ) -> set[str]:
+        """Of the given intention IDs in this session, which are still
+        ``status='active'``? Returns the set of active IDs (possibly
+        empty). Both backends implement this with the same surface."""
+        if not intention_ids:
+            return set()
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT id FROM intentions "
+                "WHERE session_id = $1 AND status = 'active' "
+                "AND id = ANY($2::text[])",
+                session_id, intention_ids,
+            )
+        return {r["id"] for r in rows}
+
+    # -----------------------------------------------------------------
     # Beliefs (backend-agnostic API used by synapse.beliefs)
     # -----------------------------------------------------------------
     async def belief_upsert(

@@ -74,5 +74,5 @@ nosetests.xml
 coverage.xml
 *.log
 
-# mkdocs build output
-site/
+# mkdocs build output (only the top-level ./site/, not docs/site/ which is source)
+/site/

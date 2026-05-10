@@ -74,7 +74,7 @@ from synapse.agent_context import (
     current_agent_id,
 )
 
-__version__ = "0.2.2a3"
+__version__ = "0.2.2a4"
 __all__ = [
     # v0.1 surface
     "Agent",

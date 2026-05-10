@@ -1560,6 +1560,77 @@ def v022_adapter_e2e_v4() -> None:
     print(f"\nsaved -> {out}")
 
 
+@app.function(
+    cpu=4.0, memory=8192, timeout=2400, scaledown_window=10,
+)
+def v022_real_llm_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """W2.1: real-LLM E2E for the 6 install-only adapters.
+
+    Drives crewai/openai_agents/pydantic_ai/agno/llama_index/google_adk
+    with real Anthropic Haiku 4.5 calls through their respective
+    framework-native APIs, then queries Postgres to confirm INTENTIONs
+    were persisted with correct attribution."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    extra = (
+        "\npython3 -m pip install -q "
+        "'crewai>=1.0' anthropic openai-agents "
+        "'pydantic-ai-slim[anthropic]>=1.0' "
+        "agno llama-index-core llama-index-llms-anthropic "
+        "google-adk litellm "
+        ">/dev/null 2>&1 || true\n"
+    )
+    script = setup + extra + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/v022_real_llm_e2e.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None: break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 2400:
+                proc.terminate()
+                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                        "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
+        proc.wait()
+    except Exception as e:
+        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+                "stderr": f"streaming exception: {e}",
+                "elapsed_seconds": round(time.time() - started, 1)}
+
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+            "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
+
+
+@app.local_entrypoint()
+def v022_real_llm_e2e() -> None:
+    """Drive the W2.1 real-LLM E2E suite (6 install-only adapters)."""
+    import json, os, time
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set"); return
+    print(">>> W2.1 real-LLM E2E for 6 install-only adapters...")
+    r = v022_real_llm_e2e_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    if r.get("stderr"): print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/v022_real_llm_e2e_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f: json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
+
+
 @app.local_entrypoint()
 def v022_framework_races() -> None:
     """Drive the v0.2.2 real-life framework race test."""
