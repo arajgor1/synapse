@@ -22,13 +22,27 @@ Search "Synapse Coordination" in VS Code's Extensions panel.
 ## Usage
 
 1. Install Synapse: `pip install synapse-protocol`
-2. Open Settings → search "synapse" → set:
+2. **Recommended (v0.2.3+):** start the live coordination dashboard from
+   a terminal — `synapse watch --session my_demo`. The extension then
+   tails `.synapse/runs/<session>.jsonl` automatically.
+3. Or use the offline path: open Settings → search "synapse" → set:
    - `synapse.agentId` (e.g., `alice-vscode`)
    - `synapse.sessionId` (shared with collaborators)
-3. Run command **Synapse: Start FS watcher** (or set
+4. Run command **Synapse: Start FS watcher** (or set
    `synapse.autoStartWatcherOnLaunch`)
-4. While you and your colleagues edit, Synapse logs every file write
-5. Run command **Synapse: Audit current repo trace** to see conflicts
+5. While you and your colleagues edit, Synapse logs every file write
+6. Run command **Synapse: Audit current repo trace** to see conflicts —
+   or `synapse audit ./trace.jsonl` from the integrated terminal.
+
+## Underlying integration
+
+The extension shells out to the `synapse-mcp` binary (installed by
+`pip install synapse-protocol`) for tool calls and the `synapse audit`
+CLI for offline trace analysis. Same surface as Cursor / Continue / Cline
+under the hood — VS Code just adds the GUI commands and status bar.
+
+For non-Python tools or other IDEs, point them at the REST API:
+`synapse api --port 8000`.
 
 ## Commands
 

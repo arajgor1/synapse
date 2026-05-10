@@ -187,8 +187,40 @@ def main(argv: list[str] | None = None) -> int:
     from synapse.cli.watch import add_subparser as add_watch_subparser
     add_watch_subparser(sub)
 
+    # api — REST API surface for non-Python agents
+    p_api = sub.add_parser(
+        "api",
+        help=(
+            "Start the Synapse REST API on FastAPI. Lets non-Python agents "
+            "(Aider, Goose, Zed, GitHub Copilot extensions, ...) participate "
+            "in cross-agent coordination over HTTP."
+        ),
+    )
+    p_api.add_argument(
+        "--bind", default="127.0.0.1",
+        help=(
+            "Host to bind to (default 127.0.0.1, localhost only). "
+            "--bind 0.0.0.0 exposes on the LAN -- anyone on the network can "
+            "read or claim coordination state, only do this for trusted demos."
+        ),
+    )
+    p_api.add_argument("--port", type=int, default=8000)
+    p_api.add_argument("--log-level", default="info")
+    p_api.set_defaults(func=lambda args: _cmd_api(args))
+
     ns = parser.parse_args(argv)
     return int(ns.func(ns))
+
+
+def _cmd_api(args) -> int:
+    try:
+        from synapse.api.server import serve
+    except ImportError as e:
+        print(f"synapse api: missing dependency -- {e}", file=sys.stderr)
+        print("Install with: pip install 'synapse-protocol[gateway]'", file=sys.stderr)
+        return 2
+    serve(host=args.bind, port=args.port, log_level=args.log_level)
+    return 0
 
 
 if __name__ == "__main__":
