@@ -204,6 +204,59 @@ class StateGraph:
                 status,
             )
 
+    # -----------------------------------------------------------------
+    # Beliefs (backend-agnostic API used by synapse.beliefs)
+    # -----------------------------------------------------------------
+    async def belief_upsert(
+        self,
+        *,
+        agent_id: str,
+        session_id: str,
+        tenant_id: Optional[str],
+        key: str,
+        value: Any,
+        confidence: float,
+        source: str,
+        evidence: Optional[str],
+    ) -> None:
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                """
+                INSERT INTO beliefs (agent_id, session_id, tenant_id, key, value,
+                                     confidence, source, evidence, updated_at)
+                VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7, $8, now())
+                ON CONFLICT (agent_id, key) DO UPDATE SET
+                  value = EXCLUDED.value,
+                  confidence = EXCLUDED.confidence,
+                  source = EXCLUDED.source,
+                  evidence = EXCLUDED.evidence,
+                  updated_at = now(),
+                  session_id = EXCLUDED.session_id
+                """,
+                agent_id, session_id, tenant_id, key, json.dumps(value),
+                confidence, source, evidence,
+            )
+
+    async def beliefs_for_session(self, session_id: str) -> list[dict[str, Any]]:
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT agent_id, key, value, confidence, source "
+                "FROM beliefs WHERE session_id = $1",
+                session_id,
+            )
+        return [dict(r) for r in rows]
+
+    async def beliefs_for_key(
+        self, session_id: str, key: str
+    ) -> list[dict[str, Any]]:
+        async with self.pool.acquire() as conn:
+            rows = await conn.fetch(
+                "SELECT agent_id, key, value, confidence, source "
+                "FROM beliefs WHERE session_id = $1 AND key = $2",
+                session_id, key,
+            )
+        return [dict(r) for r in rows]
+
     async def find_conflicts(
         self,
         *,

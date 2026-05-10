@@ -183,6 +183,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_demo.set_defaults(func=cmd_demo)
 
+    # watch — one-shot live dashboard, no infra needed
+    from synapse.cli.watch import add_subparser as add_watch_subparser
+    add_watch_subparser(sub)
+
     ns = parser.parse_args(argv)
     return int(ns.func(ns))
 

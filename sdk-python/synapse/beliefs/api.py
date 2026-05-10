@@ -109,21 +109,12 @@ async def _persist_belief_to_state(
         return
 
     try:
-        await state.pool.execute(
-            """
-            INSERT INTO beliefs (agent_id, session_id, tenant_id, key, value,
-                                  confidence, source, evidence, updated_at)
-            VALUES ($1, $2, NULL, $3, $4::jsonb, $5, $6, $7, now())
-            ON CONFLICT (agent_id, key) DO UPDATE SET
-              value = EXCLUDED.value,
-              confidence = EXCLUDED.confidence,
-              source = EXCLUDED.source,
-              evidence = EXCLUDED.evidence,
-              updated_at = now(),
-              session_id = EXCLUDED.session_id
-            """,
-            agent, session_id, key, json.dumps(value),
-            confidence, source, evidence,
+        # Backend-agnostic: both StateGraph (Postgres) and SqliteStateGraph
+        # implement belief_upsert with the same signature.
+        await state.belief_upsert(
+            agent_id=agent, session_id=session_id, tenant_id=None,
+            key=key, value=value,
+            confidence=confidence, source=source, evidence=evidence,
         )
     except Exception as e:
         logger.warning("synapse.emit_belief: state upsert failed (%s)", e)
@@ -148,11 +139,9 @@ async def list_divergences(session_id: Optional[str] = None) -> list[LiveDiverge
     if not sid:
         return []
 
-    rows = await state.pool.fetch(
-        "SELECT agent_id, key, value, confidence, source FROM beliefs WHERE session_id = $1",
-        sid,
-    )
-    beliefs = beliefs_from_db_rows([dict(r) for r in rows])
+    # Backend-agnostic — works against Postgres or SQLite state graphs.
+    rows = await state.beliefs_for_session(sid)
+    beliefs = beliefs_from_db_rows(rows)
     divs = detect_divergences(beliefs)
     out: list[LiveDivergenceResult] = []
     for d in divs:

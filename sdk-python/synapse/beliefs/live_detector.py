@@ -53,14 +53,8 @@ async def detect_live_divergence(
     if state is None:
         return None
 
-    rows = await state.pool.fetch(
-        """
-        SELECT agent_id, key, value, confidence, source
-        FROM beliefs
-        WHERE session_id = $1 AND key = $2
-        """,
-        session_id, just_emitted_key,
-    )
+    # Backend-agnostic — works against Postgres or SQLite state graphs.
+    rows = await state.beliefs_for_key(session_id, just_emitted_key)
     if len(rows) < 2:
         return None
 

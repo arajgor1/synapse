@@ -99,16 +99,52 @@ def _get_or_init_runtime(
     state_dsn: Optional[str] = None,
 ) -> dict[str, Any]:
     """Idempotent runtime setup. ``synapse.install()`` configures this
-    explicitly; ``intend()`` falls back to env vars if not."""
+    explicitly; ``intend()`` falls back to env vars if not.
+
+    Three modes:
+      * **live** — Redis + Postgres (or just Redis); user provided
+        ``SYNAPSE_REDIS_URL`` or passed ``bus_url=``. Multi-process
+        coordination via Redis Streams.
+      * **zero-infra** — no Redis URL, no Postgres DSN. Single-process
+        coordination via in-memory bus + SQLite state file at
+        ``~/.synapse/state.db``. An in-process Router is auto-spawned
+        on first connect so CONFLICTs flow back to agent inboxes
+        without the user starting a separate worker.
+      * **offline** — explicitly disabled via ``SYNAPSE_OFFLINE=1`` or by
+        passing ``zero_infra=False`` and providing no infra. ``intend()``
+        becomes a recording no-op.
+    """
     if _runtime.get("bus") is not None:
         return _runtime
 
     bus_url = bus_url or os.environ.get("SYNAPSE_REDIS_URL")
     state_dsn = state_dsn or os.environ.get("SYNAPSE_POSTGRES_DSN")
 
-    if not bus_url:
-        # Fully offline mode — intend() becomes a no-op recorder.
+    # Explicit opt-out preserves the historical "no infra → no coordination"
+    # behaviour for users who want it.
+    if os.environ.get("SYNAPSE_OFFLINE") in ("1", "true", "True"):
         _runtime["mode"] = "offline"
+        return _runtime
+
+    if not bus_url:
+        # Zero-infra path — auto-spin in-memory bus + SQLite. Default sqlite
+        # path ~/.synapse/state.db can be overridden via SYNAPSE_SQLITE_PATH.
+        from synapse.bus_inmemory import InMemoryBus
+
+        _runtime["bus"] = InMemoryBus()
+        _runtime["bus_url"] = "inmemory://"
+        _runtime["state_dsn"] = (
+            state_dsn or os.environ.get("SYNAPSE_SQLITE_PATH") or None
+        )
+        _runtime["state_backend"] = "sqlite"
+        _runtime["agents"] = {}
+        _runtime["mode"] = "zero-infra"
+        _runtime["connected"] = False
+        logger.info(
+            "synapse: zero-infra mode (in-memory bus + SQLite state). "
+            "Single-process only — set SYNAPSE_REDIS_URL for multi-process "
+            "coordination."
+        )
         return _runtime
 
     from synapse.bus import Bus
@@ -116,6 +152,7 @@ def _get_or_init_runtime(
     _runtime["bus"] = Bus(bus_url)
     _runtime["bus_url"] = bus_url
     _runtime["state_dsn"] = state_dsn
+    _runtime["state_backend"] = "postgres"
     _runtime["agents"] = {}
     _runtime["mode"] = "live"
     _runtime["connected"] = False
@@ -129,18 +166,73 @@ async def _ensure_connected() -> dict[str, Any]:
     if rt.get("connected"):
         return rt
 
+    # Record the loop owning the bus + state pools so sync-bridge wrappers
+    # can route back to it instead of running on the bridge loop (which
+    # produces 'attached to a different loop' errors with asyncpg).
+    try:
+        rt["install_loop"] = asyncio.get_running_loop()
+    except RuntimeError:
+        rt["install_loop"] = None
     bus = rt["bus"]
     await bus.connect()
 
+    state_backend = rt.get("state_backend")
     state_dsn = rt.get("state_dsn")
-    if state_dsn:
+    if state_backend == "sqlite":
+        # Zero-infra: SQLite is mandatory — that's where intentions live.
+        from synapse.state_sqlite import SqliteStateGraph
+        state = SqliteStateGraph(state_dsn)
+        await state.connect()
+        rt["state"] = state
+    elif state_dsn:
         from synapse.state import StateGraph
         state = StateGraph(state_dsn)
         await state.connect()
         rt["state"] = state
 
+    # Auto-spawn an in-process Router for zero-infra mode so CONFLICTs
+    # actually flow back to agent inboxes. In live mode the user runs the
+    # router as a separate process (`python -m synapse.runtime.router.worker`).
+    if rt.get("mode") == "zero-infra" and rt.get("state") is not None:
+        await _start_inprocess_router(rt)
+
     rt["connected"] = True
     return rt
+
+
+async def _start_inprocess_router(rt: dict[str, Any]) -> None:
+    """Initialise the per-session router registry for zero-infra mode.
+
+    Routers themselves are spawned lazily in ``_get_agent`` once we know
+    which session(s) to watch. This call just installs the registry slot.
+    """
+    rt.setdefault("_routers", {})  # session_id -> InProcessRouter
+
+
+async def _ensure_router_for_session(rt: dict[str, Any], session_id: str) -> None:
+    """Spawn the in-process L2 router for ``session_id`` if not already running.
+
+    Only meaningful in zero-infra mode; in live mode the router runs as a
+    separate process that the user starts (`python -m synapse.router_inprocess
+    is NOT what they invoke — they run runtime/router/worker.py).
+    """
+    if rt.get("mode") != "zero-infra":
+        return
+    routers = rt.setdefault("_routers", {})
+    if session_id in routers:
+        return
+    bus = rt.get("bus")
+    state = rt.get("state")
+    if bus is None or state is None:
+        return
+    from synapse.router_inprocess import InProcessRouter
+    r = InProcessRouter(bus=bus, state=state, session_id=session_id)
+    r.start()
+    routers[session_id] = r
+    logger.info(
+        "synapse.router: in-process router started for session=%s "
+        "(zero-infra mode)", session_id,
+    )
 
 
 async def _get_agent(agent_id: str, session_id: str) -> Optional[Agent]:
@@ -172,6 +264,11 @@ async def _get_agent(agent_id: str, session_id: str) -> Optional[Agent]:
     if rt.get("state") is not None:
         await agent._register()
     agents[cache_key] = agent
+
+    # Zero-infra mode: ensure the in-process L2 router is running for
+    # this session so CONFLICTs flow back to inboxes. No-op in live mode.
+    await _ensure_router_for_session(rt, session_id)
+
     return agent
 
 
@@ -273,6 +370,40 @@ async def intend(
             handle.conflicts = conflicts or []
         except Exception as e:
             logger.warning("synapse.intend: emit_intention failed (%s); proceeding anyway", e)
+
+    # JSONL audit append — used by `synapse watch` to power the live
+    # dashboard. Cheap append; no-op when SYNAPSE_AUDIT_LOG is unset.
+    if _jsonl_audit_path():
+        ts_now_ms = int(time.time() * 1000)
+        _append_audit_jsonl({
+            "type": "intention",
+            "intention_id": handle.intention_id,
+            "agent_id": agent,
+            "session_id": session_id,
+            "tool_name": expected_outcome or "intend",
+            "tool_args": proposed_action or {},
+            "scope": list(scope),
+            "ts_start_ms": ts_now_ms,
+            "ts_end_ms": ts_now_ms,
+            "blocking": blocking,
+            "n_conflicts_at_emit": len(handle.conflicts),
+        })
+        # If the gate window saw conflicts, surface them as separate
+        # records so the streaming server's incremental detector and the
+        # dashboard pick them up.
+        for c in handle.conflicts:
+            _append_audit_jsonl({
+                "type": "conflict",
+                "intention_id": handle.intention_id,
+                "intention_agent": agent,
+                "kind": getattr(c, "kind", "scope_overlap"),
+                "scopes": list(getattr(c, "overlapping_scopes", scope)),
+                "conflicting_agents": [
+                    ci.agent_id for ci in getattr(c, "conflicting_intentions", [])
+                ],
+                "ts_ms": ts_now_ms,
+                "rationale": getattr(c, "rationale", "")[:200],
+            })
 
     # Apply MergePolicy if conflicts surfaced
     if handle.has_conflicts:
@@ -422,12 +553,71 @@ async def _auto_emit_and_detect(
 # ---------------------------------------------------------------------------
 # Cleanup helpers — used by tests and by ``synapse.install`` shutdown
 # ---------------------------------------------------------------------------
+def _jsonl_audit_path() -> Optional[str]:
+    """Return the path that ``intend()`` should append intent records to,
+    or None if not configured.
+
+    Resolution order:
+      1. ``SYNAPSE_AUDIT_LOG`` env var (explicit override).
+      2. Auto-discovery: if a ``.synapse/runs/<session>.jsonl`` file
+         exists in the cwd OR any parent directory (think git root),
+         use it. This makes ``synapse watch`` work without the user
+         having to export an env var in their second terminal — just
+         run the agent script from the same project tree.
+
+    The auto-discovery half is what the W1.4 audit (finding A4) flagged:
+    the README's two-terminal flow was broken because the watch process
+    set the env var but the agent's process couldn't see it.
+    """
+    explicit = os.environ.get("SYNAPSE_AUDIT_LOG")
+    if explicit:
+        return explicit
+    session = os.environ.get("SYNAPSE_SESSION_ID") or "default"
+    # Walk up from cwd looking for .synapse/runs/<session>.jsonl
+    try:
+        from pathlib import Path
+        cur = Path.cwd().resolve()
+        for parent in [cur, *cur.parents]:
+            cand = parent / ".synapse" / "runs" / f"{session}.jsonl"
+            if cand.exists():
+                return str(cand)
+            # Stop at git root or filesystem root
+            if (parent / ".git").exists():
+                break
+    except Exception:
+        pass
+    return None
+
+
+def _append_audit_jsonl(record: dict) -> None:
+    """Best-effort JSONL append. Non-fatal: never lets I/O failure
+    disrupt the user's tool dispatch."""
+    path = _jsonl_audit_path()
+    if not path:
+        return
+    try:
+        import json as _json
+        line = _json.dumps(record, default=str)
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+    except Exception as e:  # pragma: no cover — defensive
+        logger.debug("synapse: audit JSONL append failed (%s)", e)
+
+
 async def shutdown() -> None:
     """Close bus + state graph connections, drop the agent cache.
 
     Safe to call multiple times; safe to call when nothing was set up.
+    Also stops any in-process routers spawned for zero-infra mode so
+    background tasks don't leak between test cases.
     """
     rt = _runtime
+    routers = rt.get("_routers") or {}
+    for sess, r in list(routers.items()):
+        try:
+            await r.stop()
+        except Exception:
+            pass
     if rt.get("connected"):
         bus = rt.get("bus")
         if bus is not None:

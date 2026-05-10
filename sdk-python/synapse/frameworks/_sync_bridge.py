@@ -84,29 +84,68 @@ def _ensure_bridge_loop() -> asyncio.AbstractEventLoop:
         return _BRIDGE_LOOP
 
 
+def _resolve_target_loop() -> asyncio.AbstractEventLoop:
+    """Pick the right loop to schedule a sync-wrapper coroutine onto.
+
+    Decision tree:
+      1. If the synapse runtime has an ``install_loop`` (the loop that
+         created the bus + state pools) AND we are NOT currently running
+         on it, prefer the install loop — that's where the connection
+         pools live, so coros that talk to bus/state work natively. This
+         is the common case for sync framework adapters invoked from a
+         thread-pool worker (LangChain ``BaseTool.invoke`` from an
+         ``asyncio.to_thread``-backed ainvoke fallback, CrewAI
+         ``execute_sync`` from ``crew.kickoff()``).
+      2. Otherwise fall back to the dedicated bridge loop. This handles:
+         * No install loop yet (pure offline / early call before install).
+         * We ARE on the install loop (scheduling there + blocking would
+           deadlock — the M1 bug the bridge originally fixed).
+    """
+    # Lazy import — avoid cycle since intend.py imports from this module.
+    try:
+        from synapse.intend import _runtime as _rt
+        install_loop = _rt.get("install_loop") if _rt.get("connected") else None
+    except Exception:
+        install_loop = None
+
+    try:
+        running = asyncio.get_running_loop()
+    except RuntimeError:
+        running = None
+
+    if (
+        install_loop is not None
+        and install_loop.is_running()
+        and running is not install_loop
+    ):
+        return install_loop
+    return _ensure_bridge_loop()
+
+
 def run_coro_blocking(coro: Coroutine[Any, Any, T]) -> T:
     """Run an async coroutine to completion from a sync context.
 
     Safe to call from:
       - the main thread with no running loop (most adapter sync paths)
       - a worker thread with no running loop (CrewAI execute_sync, agno
-        execute via to_thread)
+        execute via to_thread, LangChain invoke fallback)
       - inside a coroutine on some OTHER event loop (the dangerous
         case the naive bridge breaks on)
 
-    The coroutine always executes on a private daemon-thread event loop
-    that is not shared with any caller loop, so blocking on the result
-    cannot deadlock.
+    The coroutine runs on the install loop when possible (so bus + state
+    pools work natively), falling back to the dedicated bridge loop when
+    the install loop would deadlock or doesn't exist yet.
 
-    The previous implementation special-cased "no running loop" with
-    ``asyncio.run()``, which spawns and tears down a fresh loop per call.
-    That broke connection pools and bus subscriptions held by the install
-    loop. Routing every call through the bridge keeps a single persistent
-    loop, so the runtime (Postgres pool, Redis pubsub) is reused across
-    invocations.
+    Routing through the install loop fixes the asyncpg-cross-loop bug
+    surfaced by Modal v4: the previous implementation always scheduled
+    onto the bridge loop, which doesn't share connection pools with the
+    install loop, producing ``ConnectionDoesNotExistError`` and
+    ``Future ... attached to a different loop`` errors. The bridge is
+    still used for the deadlock-avoidance case (sync wrapper invoked
+    from inside the install loop's running coroutine).
     """
-    loop = _ensure_bridge_loop()
-    fut = asyncio.run_coroutine_threadsafe(coro, loop)
+    target = _resolve_target_loop()
+    fut = asyncio.run_coroutine_threadsafe(coro, target)
     return fut.result()
 
 

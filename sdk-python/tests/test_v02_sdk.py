@@ -173,8 +173,21 @@ async def test_intend_session_id_falls_back_to_env(monkeypatch):
 # synapse.install()
 # ---------------------------------------------------------------------------
 
-def test_install_offline_mode_when_no_bus_url(monkeypatch):
+def test_install_zero_infra_mode_when_no_bus_url(monkeypatch):
+    """v0.2.2a3+: with no Redis URL, install() picks zero-infra mode
+    (in-memory bus + SQLite) instead of degrading to offline. Users can
+    still opt in to the legacy offline path via SYNAPSE_OFFLINE=1."""
     monkeypatch.delenv("SYNAPSE_REDIS_URL", raising=False)
+    monkeypatch.delenv("SYNAPSE_OFFLINE", raising=False)
+    result = synapse.install()
+    assert result["mode"] == "zero-infra"
+
+
+def test_install_explicit_offline_via_env(monkeypatch):
+    """SYNAPSE_OFFLINE=1 preserves the historical no-coordination
+    behaviour for callers that explicitly want it."""
+    monkeypatch.delenv("SYNAPSE_REDIS_URL", raising=False)
+    monkeypatch.setenv("SYNAPSE_OFFLINE", "1")
     result = synapse.install()
     assert result["mode"] == "offline"
 

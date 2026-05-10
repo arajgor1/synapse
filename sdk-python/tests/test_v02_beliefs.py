@@ -191,12 +191,13 @@ async def test_detect_live_divergence_returns_result_when_disagreement_exists():
          "value": "qty*price*(1-discount)", "confidence": 0.85, "source": "observed"},
     ]
 
-    class FakePool:
-        async def fetch(self, query, *args):
-            return fake_rows
-
     class FakeState:
-        pool = FakePool()
+        # v0.2.2a3: backend-agnostic belief API. Both real state graphs
+        # (Postgres, SQLite) implement these; the fake mirrors them.
+        async def beliefs_for_key(self, session_id, key):
+            return fake_rows
+        async def beliefs_for_session(self, session_id):
+            return fake_rows
 
     _runtime["state"] = FakeState()
     _runtime["mode"] = "live"
@@ -217,15 +218,16 @@ async def test_detect_live_divergence_returns_none_when_one_agent():
     """Single agent on a key -> not a divergence."""
     from synapse.intend import _runtime
 
-    class FakePool:
-        async def fetch(self, query, *args):
-            return [{
-                "agent_id": "solo", "key": "k",
-                "value": "v", "confidence": 0.9, "source": "observed",
-            }]
+    one_row = [{
+        "agent_id": "solo", "key": "k",
+        "value": "v", "confidence": 0.9, "source": "observed",
+    }]
 
     class FakeState:
-        pool = FakePool()
+        async def beliefs_for_key(self, session_id, key):
+            return one_row
+        async def beliefs_for_session(self, session_id):
+            return one_row
 
     _runtime["state"] = FakeState()
     _runtime["mode"] = "live"
@@ -239,15 +241,16 @@ async def test_detect_live_divergence_returns_none_when_agents_agree():
     """Multiple agents, same value -> not a divergence."""
     from synapse.intend import _runtime
 
-    class FakePool:
-        async def fetch(self, query, *args):
-            return [
-                {"agent_id": "a", "key": "k", "value": "v", "confidence": 0.9, "source": "observed"},
-                {"agent_id": "b", "key": "k", "value": "v", "confidence": 0.9, "source": "observed"},
-            ]
+    agree_rows = [
+        {"agent_id": "a", "key": "k", "value": "v", "confidence": 0.9, "source": "observed"},
+        {"agent_id": "b", "key": "k", "value": "v", "confidence": 0.9, "source": "observed"},
+    ]
 
     class FakeState:
-        pool = FakePool()
+        async def beliefs_for_key(self, session_id, key):
+            return agree_rows
+        async def beliefs_for_session(self, session_id):
+            return agree_rows
 
     _runtime["state"] = FakeState()
     _runtime["mode"] = "live"
@@ -309,17 +312,36 @@ async def test_intend_skips_belief_extraction_when_flag_off(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_emit_belief_offline_returns_none(monkeypatch):
-    """No bus -> emit_belief is a logging no-op, returns None."""
+    """SYNAPSE_OFFLINE=1 -> emit_belief is a logging no-op, returns None.
+
+    Pre-v0.2.2a3 this test asserted the same behaviour just via
+    'SYNAPSE_REDIS_URL unset'. v0.2.2a3 introduced zero-infra mode
+    (in-memory bus + SQLite) so 'no Redis URL' now means 'real
+    coordination via SQLite'. The historical no-coordination behaviour
+    is preserved behind the explicit SYNAPSE_OFFLINE opt-out.
+    """
     monkeypatch.delenv("SYNAPSE_REDIS_URL", raising=False)
-    result = await synapse.emit_belief(
-        agent="a", session="s1",
-        key="k", value="v",
-    )
-    assert result is None
+    monkeypatch.setenv("SYNAPSE_OFFLINE", "1")
+    from synapse.intend import shutdown as _sd
+    await _sd()
+    try:
+        result = await synapse.emit_belief(
+            agent="a", session="s1",
+            key="k", value="v",
+        )
+        assert result is None
+    finally:
+        await _sd()
 
 
 @pytest.mark.asyncio
 async def test_list_divergences_offline_returns_empty(monkeypatch):
     monkeypatch.delenv("SYNAPSE_REDIS_URL", raising=False)
-    result = await synapse.list_divergences(session_id="s1")
-    assert result == []
+    monkeypatch.setenv("SYNAPSE_OFFLINE", "1")
+    from synapse.intend import shutdown as _sd
+    await _sd()
+    try:
+        result = await synapse.list_divergences(session_id="s1")
+        assert result == []
+    finally:
+        await _sd()

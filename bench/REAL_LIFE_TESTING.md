@@ -237,3 +237,99 @@ What this sprint added on top of the Phase 7 report above.
 - After this sprint: **298 passed** (1 pre-existing env-dependent test deselected — `test_from_litellm_lazy_imports_only_when_used` fails because litellm is transitively present via langsmith, unrelated to Synapse)
 - Adapter health gate: still **11 / 11**
 - Net new passing tests: **+19**
+
+---
+
+## Wave 1 — zero-infra UX sprint  (v0.2.2a3, 2026-05-09)
+
+> "We keep going until we materially don't find any gaps." — user
+
+### Headline
+
+**Synapse now works autonomously end-to-end for a fresh user with zero infrastructure.** `pip install synapse-protocol` + `synapse watch` + run any agent code → live coordination dashboard, real CONFLICTs caught, both writers' work preserved. Modal v4 sandbox-confirms the v0.2.2a2 ContextVar fix landed cleanly: `agents=['alice','bob']` for langchain/langgraph/smolagents/autogen vs the v3 collapse to `['bob']`.
+
+### What landed in Wave 1
+
+| Phase | Deliverable | Closes gap |
+|---|---|---|
+| W1.1 | `synapse/bus_inmemory.py`, `synapse/state_sqlite.py`, `synapse/router_inprocess.py`, backend-agnostic `belief_upsert/beliefs_for_session/beliefs_for_key` API on both state graphs, auto-detect in `intend._get_or_init_runtime` | Zero-infra cliff (G1) |
+| W1.2 | `synapse/cli/watch.py` — one-shot CLI: WS streaming server + dashboard HTTP + browser auto-open + JSONL audit log appender | Install-to-value UX (G2) |
+| W1.3 | `examples/crewai-marketing/{crew.py,crew_no_synapse.py,tools.py,README.md}` — Researcher/Writer/Editor demo proving silent overwrite vs Synapse-caught collision | Demo-able value (G3) |
+| W1.4 | Modal v4 (`runtime/modal/_payloads/v022_adapter_e2e_v4.py`) — `synapse-protocol-0.2.2a3` in sandbox, real Redis + Postgres + Router, validates ContextVar fix | Citable sandbox proof (G4) |
+
+### Bugs surfaced and fixed in this sprint
+
+#### Real-world bug surfaced by Modal v4 (production conditions)
+**N1 — asyncpg cross-loop with sync_bridge.** The v0.2.2a2 `_sync_bridge` always routed sync wrappers to its own daemon-thread loop, but the asyncpg pool was loop-bound to the install loop. langchain/langgraph/smolagents Modal runs surfaced `ConnectionDoesNotExistError` and `Future attached to a different loop`. **Fix:** `_resolve_target_loop()` now prefers the install loop when the caller is NOT on it; the bridge loop is reserved for the original deadlock case (caller is ON the install loop). Modal v4 re-run with this fix is clean (no errors).
+
+#### Found by the Wave 1 gap audit agent
+- **A1 (BLOCKER)**: `bus_inmemory.consume_group` and `consume_inbox` shared one `asyncio.Event` per stream — multiple consumers (Router + Agent inbox listener) on the same stream lost wakeups, silent 500ms latency cliff. **Fix:** per-stream `asyncio.Condition` with `notify_all`, replacing Event/clear race.
+- **A2 (BLOCKER)**: `consume_inbox(last_id="$")` initialised `last_seq` from the global counter `self._seq` instead of the per-stream high-water mark — semantics drifted from Redis. **Fix:** snapshot from `_streams[stream]` only.
+- **A3 (BLOCKER)**: `InProcessRouter.stop()` cancelled the task but never awaited cancellation — leaked tasks could mutate the next test's runtime. **Fix:** `await self._task` after `cancel()` so cancellation actually propagates.
+- **A4 (MAJOR)**: `synapse watch` told users to run agent code in a second terminal but `SYNAPSE_AUDIT_LOG` only got set in the watch process → dashboard silently empty. **Fix:** `_jsonl_audit_path()` now auto-discovers `.synapse/runs/<session>.jsonl` by walking up from cwd to git root; second-terminal flow works without env-var export.
+
+#### Surfaced by demo dogfooding
+**W1.3-bug**: re-running the demo without clearing `~/.synapse/state.db` surfaced prior runs as `stale_base_overwrite` conflicts (resolved-lookback window picks them up). **Fix:** demo uses `SESSION = f"crew_demo_{int(time.time())}"` per run; documented `SYNAPSE_SESSION_ID` override.
+
+#### Disproven (audit miss)
+- A7 — "SQLite belief PK should include session_id." Postgres schema uses the same `(agent_id, key)` PK; this is a pre-existing cross-session belief-overwrite design, not a Wave 1 regression. Deferred.
+
+### Test scoreboard
+
+- Before Wave 1: 280 passing
+- After Wave 1: **309 passing** (+29 net)
+  - 4 zero-infra tests (`tests/test_zero_infra.py`)
+  - 4 synapse-watch tests (`tests/test_cli_watch.py`)
+  - 2 demo smoke tests (`tests/test_examples_crewai_marketing.py`)
+  - 1 explicit-offline test (`tests/test_v02_sdk.py`)
+  - 8 ContextVar tests + 5 sync-bridge tests + 3 streaming-tail tests + 3 adapter-attribution tests carried over from v0.2.2a2
+  - 3 pre-existing test-ordering bugs fixed
+- Adapter health gate: still 11/11
+- 1 pre-existing env-dependent test deselected (litellm transitive)
+
+### Modal v4 evidence (citable)
+
+Saved to `bench/results/v022_adapter_e2e_v4_20260509-211232.json`. Headlines:
+
+| framework | intents | distinct agents | fix_validated |
+|---|---|---|---|
+| autogen | 2 | alice, bob | True |
+| langchain | 4 (cumulative across single shared session) | alice, bob | True |
+| langgraph | 6 (cumulative) | alice, bob | True |
+| smolagents | 8 (cumulative) | alice, bob | True |
+
+All running against `synapse-protocol-0.2.2a3` in the Modal sandbox, real Redis bus, real Postgres state, real Router worker process. **The v3 `langchain agents=['bob']` symptom is gone.**
+
+### Demo proof (autonomous, no infra)
+
+```
+$ python crew.py
+=== running CrewAI-style flow WITH Synapse ===
+  session = crew_demo_1778368...
+  mode    = zero-infra (in-memory bus + SQLite, no infra needed)
+
+synapse.router: CONFLICT (scope_overlap) routed to editor:
+    intention=01KR7NS8QPZE7JMN402MRXRG7N
+    overlaps with 1 intention(s) on scopes ['repo.fs.drafts/post.md:w']
+
+  EDITOR: SYNAPSE CONFLICT on post.md -- pivoting to post.editor.md
+
+Researcher: wrote notes.md (143 bytes)
+Writer    : wrote post.md   (134 bytes)
+Editor    : wrote post.editor.md (72 bytes)
+
+Synapse caught the collision — second writer pivoted to a fresh filename.
+BOTH agents' work survived. Compare to crew_no_synapse.py.
+```
+
+vs the `crew_no_synapse.py` control: produces only `post.md` containing one writer's text — the other was silently overwritten.
+
+### Remaining honest gaps (queued for Wave 2)
+
+1. **7 of 11 adapters are install-only verified** — patches bound, but no real `Agent.run()` with LLM has exercised them E2E in sandbox (crewai, openai_agents, pydantic_ai, agno, llama_index, google_adk, hermes). W2.1 closes this for ~$2 LLM.
+2. **Latency overhead is unmeasured.** Default `gate_ms=200` on writes adds latency; no published numbers. W2.2 measures + adds active-scope fast path.
+3. **`MergePolicy.WAIT_FOR_OTHER` / `.QUEUE_BEHIND` / `.WORK_ON_DIFFERENT_SCOPE` / `.ESCALATE_TO_HUMAN` / `.RETRY_WITH_BACKOFF`** templates don't exist yet. W2.3 adds them.
+4. **24-hour soak** not done (W3.1).
+5. **Generic OTel-live adapter** for the long tail of non-supported frameworks (W3.2).
+6. **autogen sync-tool body ContextVar** through `run_in_executor` (W3.3).
+7. **Comparison matrix vs Semantica + commercial alternatives** (W3.4).
