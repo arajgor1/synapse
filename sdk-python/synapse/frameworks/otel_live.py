@@ -143,11 +143,35 @@ def _make_processor():
             return None
 
         def on_end(self, span) -> None:
+            # Diagnostic: log every span we see (one line per span).
+            # SYNAPSE_OTEL_DEBUG=1 enables; off by default to avoid noise.
+            debug = os.environ.get("SYNAPSE_OTEL_DEBUG") == "1"
+            if debug:
+                # Unconditional first line — proves on_end is being
+                # invoked at all (separates "processor not registered"
+                # from "processor registered but conditional skipped").
+                print(
+                    f"[synapse.otel] >> on_end ENTERED span_name={span.name} "
+                    f"context={getattr(span, 'context', None)}",
+                    flush=True,
+                )
             try:
                 attrs = dict(span.attributes or {})
             except Exception:
+                if debug:
+                    print(f"[synapse.otel] on_end: bad attrs on span={span.name}", flush=True)
                 return
+            if debug:
+                print(
+                    f"[synapse.otel] on_end span_name={span.name} "
+                    f"attr_count={len(attrs)} "
+                    f"tool_name_attr={_first_attr(attrs, TOOL_NAME_ATTRS)} "
+                    f"kind_attr={attrs.get('openinference.span.kind') or attrs.get('gen_ai.operation.name')}",
+                    flush=True,
+                )
             if not _is_tool_span(attrs):
+                if debug:
+                    print(f"[synapse.otel]   -> skipped (not_tool_span)", flush=True)
                 return
 
             tool_name = str(_first_attr(attrs, TOOL_NAME_ATTRS) or span.name or "otel_tool")
@@ -162,6 +186,8 @@ def _make_processor():
                 ts_start_ms=0, ts_end_ms=0,
             )
             if not is_write(ev):
+                if debug:
+                    print(f"[synapse.otel]   -> skipped (not_write tool={tool_name})", flush=True)
                 return
 
             scope = infer_scope(ev) or [f"otel.tool.{tool_name}:w"]
@@ -200,8 +226,14 @@ def _make_processor():
             # sync_bridge to route.
             try:
                 from synapse.frameworks._sync_bridge import run_coro_blocking
+                if debug:
+                    print(f"[synapse.otel]   -> emitting intent scope={scope} agent={agent_id} session={session_id}", flush=True)
                 run_coro_blocking(_emit())
+                if debug:
+                    print(f"[synapse.otel]   -> emit returned ok", flush=True)
             except Exception as e:
+                if debug:
+                    print(f"[synapse.otel]   -> emit FAILED: {type(e).__name__}: {e}", flush=True)
                 logger.warning("synapse.otel: emit failed for %s (%s)", tool_name, e)
 
         def shutdown(self) -> None:
@@ -214,8 +246,17 @@ def _make_processor():
 
 
 def _install_otel(opts: dict[str, Any]) -> None:
-    if _PATCHED["otel"]:
-        return
+    """Register the SynapseOTelSpanProcessor on the current global
+    TracerProvider.
+
+    Idempotent in the sense that it's safe to call multiple times — but
+    NOT short-circuiting on _PATCHED, because libraries imported later
+    (autogen-ext, openai-agents, google-adk) sometimes replace the
+    global TracerProvider after our install. Calling install() again
+    re-attaches the SpanProcessor to whatever provider is current.
+    Each registration is tracked by id(provider) so we don't double-add
+    to the same provider.
+    """
     try:
         from opentelemetry import trace as otel_trace
         from opentelemetry.sdk.trace import TracerProvider
@@ -233,14 +274,25 @@ def _install_otel(opts: dict[str, Any]) -> None:
         otel_trace.set_tracer_provider(provider)
         logger.info("synapse.install(framework='otel'): installed default TracerProvider")
 
+    seen = _PATCHED.setdefault("otel_provider_ids", set())
+    pid = id(provider)
+    if pid in seen:
+        logger.debug(
+            "synapse.install(framework='otel'): SpanProcessor already on this "
+            "TracerProvider (id=%s); skipping duplicate registration.", pid,
+        )
+        return
+
     proc_cls = _make_processor()
     processor = proc_cls(session_id=opts.get("session_id"))
     provider.add_span_processor(processor)
+    seen.add(pid)
     _PATCHED["otel"] = True
     logger.info(
         "synapse.install(framework='otel'): registered SynapseOTelSpanProcessor "
-        "on the global TracerProvider — every closed tool span (OpenInference / "
-        "OTel GenAI / MCP) will now emit a Synapse INTENTION post-hoc."
+        "on TracerProvider id=%s (n_attached=%d). Every closed tool span "
+        "(OpenInference / OTel GenAI / MCP) now emits a Synapse INTENTION post-hoc.",
+        pid, len(seen),
     )
 
 

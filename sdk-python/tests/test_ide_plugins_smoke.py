@@ -36,9 +36,12 @@ def _has_plugins() -> bool:
 
 
 @pytest.mark.skipif(not _has_plugins(), reason="ide-plugins dir missing")
-def test_all_six_advertised_plugin_dirs_exist():
-    """If we claim '6 IDE plugins shipped' the directories must be real."""
-    expected = {"aider", "cline", "codex-cli", "continue", "cursor", "vscode"}
+def test_all_seven_advertised_plugin_dirs_exist():
+    """If we claim '7 IDE/agent plugins shipped' the directories must be real.
+    OpenClaw was added in v0.2.5 to recognise it as a major
+    multi-channel agent gateway (100K+ stars, OpenAI/GitHub/NVIDIA/Vercel
+    sponsored)."""
+    expected = {"aider", "cline", "codex-cli", "continue", "cursor", "vscode", "openclaw"}
     actual = {p.name for p in IDE_PLUGINS_DIR.iterdir() if p.is_dir()}
     missing = expected - actual
     assert not missing, f"missing plugin dirs: {missing}"
@@ -112,7 +115,7 @@ def test_every_plugin_dir_has_a_readme():
 
 @pytest.mark.skipif(not _has_plugins(), reason="ide-plugins dir missing")
 @pytest.mark.parametrize("plugin_name", [
-    "aider", "cline", "codex-cli", "continue", "cursor", "vscode",
+    "aider", "cline", "codex-cli", "continue", "cursor", "vscode", "openclaw",
 ])
 def test_plugin_readme_mentions_synapse_mcp_or_recent_cli(plugin_name: str):
     """README must reference an actual Synapse v0.2.3 entry point so users
@@ -131,6 +134,9 @@ def test_plugin_readme_mentions_synapse_mcp_or_recent_cli(plugin_name: str):
     keywords = (
         "synapse-mcp", "synapse watch", "synapse api", "synapse audit",
         "synapse.install", "python -m synapse.mcp", "synapse.mcp.server",
+        # OpenClaw uses the TypeScript SDK surface
+        "wrapextensionwithsynapse", "@synapse-protocol/sdk",
+        "makesynapseextension",
     )
     assert any(k in text for k in keywords), (
         f"{plugin_name}/README.md doesn't mention any current Synapse "

@@ -1631,6 +1631,87 @@ def v022_real_llm_e2e() -> None:
     print(f"\nsaved -> {out}")
 
 
+@app.function(
+    cpu=4.0, memory=8192, timeout=2400, scaledown_window=10,
+)
+def organic_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Each integration's CANONICAL example, run unmodified except for
+    synapse.install(). NO induced collisions — the harness mirrors what
+    a real user would write per each framework's docs."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    # Split installs into 3 commands so a dep conflict in one batch
+    # doesn't block the others. v6 surfaced this: a single mega-install
+    # with `|| true` silently failed because crewai 0.x pin conflicted
+    # with pydantic-ai-slim's pydantic requirement, and EVERY framework
+    # was missing. Each batch now reports failure loudly so we know.
+    extra = (
+        "\necho '=== install batch 1: core LLM + tracing ==='\n"
+        "python3 -m pip install -q anthropic litellm opentelemetry-sdk "
+        "|| echo 'BATCH1 FAILED'\n"
+        "echo '=== install batch 2: langchain ecosystem ==='\n"
+        "python3 -m pip install -q langgraph langchain langchain-anthropic langchain-core "
+        "llama-index-core llama-index-llms-anthropic "
+        "|| echo 'BATCH2 FAILED'\n"
+        "echo '=== install batch 3: agent frameworks ==='\n"
+        "python3 -m pip install -q "
+        "'crewai>=1.0' 'autogen-agentchat>=0.4' 'autogen-ext[anthropic]>=0.4' "
+        "openai-agents 'pydantic-ai-slim[anthropic]>=1.0' "
+        "agno smolagents google-adk "
+        "|| echo 'BATCH3 FAILED'\n"
+        "python3 -c \"import autogen_agentchat, smolagents, agents, pydantic_ai, agno, llama_index, google.adk, crewai; print('all framework imports OK')\" "
+        "|| echo 'IMPORT CHECK FAILED'\n"
+    )
+    script = setup + extra + "\n\nstdbuf -oL python3 -u /opt/synapse-payloads/organic_e2e.py 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None: break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 2400:
+                proc.terminate()
+                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                        "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
+        proc.wait()
+    except Exception as e:
+        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+                "stderr": f"streaming exception: {e}",
+                "elapsed_seconds": round(time.time() - started, 1)}
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+            "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
+
+
+@app.local_entrypoint()
+def organic_e2e() -> None:
+    """Run the organic E2E suite — each framework's canonical example."""
+    import json, os, time
+    api_keys = {"ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", "")}
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("ERROR: ANTHROPIC_API_KEY not set"); return
+    print(">>> Organic E2E (canonical-example-per-framework)...")
+    r = organic_e2e_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    if r.get("stderr"): print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/organic_e2e_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f: json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
+
+
 @app.local_entrypoint()
 def v022_framework_races() -> None:
     """Drive the v0.2.2 real-life framework race test."""

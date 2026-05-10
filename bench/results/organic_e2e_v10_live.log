@@ -1,0 +1,245 @@
+✓ Initialized. View run at 
+https://modal.com/apps/aadityarajgor27/main/ap-8w9yq33jUxhNZWZSnGe9Qi
+Building image im-bs0GI9HETt9ztY6zstFTZK
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 1.36s
+
+Built image im-bs0GI9HETt9ztY6zstFTZK in 3.12s
+
+
+Building image im-sbUHCJukQvlsIBsYA148ln
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 1.08s
+
+Built image im-sbUHCJukQvlsIBsYA148ln in 2.04s
+
+
+Building image im-jlc8BUsS0AliVS4LIrpYFc
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 1.83s
+
+Built image im-jlc8BUsS0AliVS4LIrpYFc in 5.66s
+
+
+Building image im-M7a84q2Ve9ByPpocjEZgQm
+
+=> Step 0: FROM base
+
+=> Step 1: COPY . /
+Saving image...
+Image saved, took 842.21ms
+
+Built image im-M7a84q2Ve9ByPpocjEZgQm in 2.10s
+
+
+✓ Created objects.
+├── 🔨 Created mount C:\C3\synapse\runtime\modal\framework_sandbox.py
+├── 🔨 Created mount C:\C3\synapse\sdk-python
+├── 🔨 Created mount C:\C3\synapse\runtime
+├── 🔨 Created mount C:\C3\synapse\runtime\modal\_payloads
+├── 🔨 Created mount C:\C3\synapse\sdk-typescript
+├── 🔨 Created mount C:\C3\synapse\bench\scenarios\stripe_lite_v2\starter
+├── 🔨 Created function run_hermes.
+├── 🔨 Created function run_paperclip.
+├── 🔨 Created function run_openclaw.
+├── 🔨 Created function fetch_integration_docs.
+├── 🔨 Created function real_product_dev_hermes.
+├── 🔨 Created function real_product_dev_paperclip.
+├── 🔨 Created function real_product_dev_openclaw.
+├── 🔨 Created function real_app_instagram.
+├── 🔨 Created function real_app_data_analysis.
+├── 🔨 Created function v02_langgraph_live.
+├── 🔨 Created function v02_crewai_live.
+├── 🔨 Created function v02_week3_full.
+├── 🔨 Created function v02_w4_auto_merge.
+├── 🔨 Created function v02_w5_belief_divergence.
+├── 🔨 Created function v02_autonomous_observer_run.
+├── 🔨 Created function v02_multi_orchestrator_run.
+├── 🔨 Created function v02_ci_loop_run.
+├── 🔨 Created function v02_strands_real_run.
+├── 🔨 Created function v022_framework_races_run.
+├── 🔨 Created function v022_adapter_e2e_run.
+├── 🔨 Created function v022_adapter_e2e_v4_run.
+├── 🔨 Created function v022_real_llm_e2e_run.
+├── 🔨 Created function organic_e2e_run.
+├── 🔨 Created function smoke_integrations.
+└── 🔨 Created function v02_sdlc_billing_run.
+>>> Organic E2E (canonical-example-per-framework)...
+=== Sandbox setup ===
+Python 3.11.12
+v20.20.2
+10.8.2
+Installing Synapse SDK...
+Installing collected packages: synapse-protocol
+Successfully installed synapse-protocol-0.2.4
+
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: pip install --upgrade pip
+  synapse v0.2.4 importable
+PONG
+  redis ready
+
+    /usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start.... done
+server started
+ALTER ROLE
+  postgres ready
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+=== install batch 1: core LLM + tracing ===
+
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: pip install --upgrade pip
+=== install batch 2: langchain ecosystem ===
+
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: pip install --upgrade pip
+=== install batch 3: agent frameworks ===
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+litellm 1.68.0 requires openai<1.76.0,>=1.68.2, but you have openai 2.36.0 which is incompatible.
+
+[notice] A new release of pip is available: 25.2 -> 26.1.1
+[notice] To update, run: pip install --upgrade pip
+/usr/local/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
+  from google.cloud.aiplatform.utils import gcs_utils
+all framework imports OK
+=== Organic E2E for 13 integrations ===
+  synapse v0.2.4
+  model   : claude-haiku-4-5-20251001
+
+/usr/local/lib/python3.11/site-packages/google/cloud/aiplatform/models.py:52: FutureWarning: Support for google-cloud-storage < 3.0.0 will be removed in a future version of google-cloud-aiplatform. Please upgrade to google-cloud-storage >= 3.0.0.
+  from google.cloud.aiplatform.utils import gcs_utils
+=== crewai ===
+  ok=True, intents=None, agents=None, verdict=validated-locally-only (Modal-environment limitation)
+
+=== langgraph ===
+/usr/local/lib/python3.11/site-packages/langgraph/checkpoint/serde/encrypted.py:5: LangChainPendingDeprecationWarning: The default value of `allowed_objects` will change in a future version. Pass an explicit value (e.g., allowed_objects='messages' or allowed_objects='core') to suppress this warning.
+  from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+/opt/synapse-payloads/organic_e2e.py:223: LangGraphDeprecatedSinceV10: create_react_agent has been moved to `langchain.agents`. Please update your import to `from langchain.agents import create_agent`. Deprecated in LangGraph V1.0 to be removed in V2.0.
+  summarizer = create_react_agent(llm, tools=[write_summary], name="summarizer")
+/opt/synapse-payloads/organic_e2e.py:224: LangGraphDeprecatedSinceV10: create_react_agent has been moved to `langchain.agents`. Please update your import to `from langchain.agents import create_agent`. Deprecated in LangGraph V1.0 to be removed in V2.0.
+  outliner = create_react_agent(llm, tools=[write_outline], name="outliner")
+  ok=True, intents=1, agents=['langgraph_graph'], verdict=synapse-fired-1-intents (organic, no conflicts induced)
+
+=== langchain ===
+/opt/synapse-payloads/organic_e2e.py:277: LangGraphDeprecatedSinceV10: create_react_agent has been moved to `langchain.agents`. Please update your import to `from langchain.agents import create_agent`. Deprecated in LangGraph V1.0 to be removed in V2.0.
+  agent = create_react_agent(
+  ok=True, intents=1, agents=['langchain_agent'], verdict=synapse-fired-1-intents (organic, no conflicts induced)
+
+=== autogen ===
+  ok=True, intents=2, agents=['autogen_team'], verdict=synapse-fired-2-intents (organic, no conflicts induced)
+
+=== smolagents ===
+╭────────────────────────────────── New run ───────────────────────────────────╮
+│                                                                              │
+│ Call save_doc with text='Synapse organic test'.                              │
+│                                                                              │
+╰─ LiteLLMModel - anthropic/claude-haiku-4-5-20251001 ─────────────────────────╯
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/usr/local/lib/python3.11/site-packages/pydantic/main.py:464: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected 9 fields but got 5: Expected `Message` - serialized value may not be as expected [field_name='choices', input_value=Message(content="Thought:...thinking_blocks': None}), input_type=Message])
+  PydanticSerializationUnexpectedValue(Expected `StreamingChoices` - serialized value may not be as expected [field_name='choices', input_value=Choices(finish_reason='st...hinking_blocks': None})), input_type=Choices])
+  return self.__pydantic_serializer__.to_python(
+ ─ Executing parsed code: ─────────────────────────────────────────────────────
+  result = save_doc(text='Synapse organic test')
+  print(result)
+ ──────────────────────────────────────────────────────────────────────────────
+Execution logs:
+saved 20 chars
+
+Out: None
+[Step 1: Duration 1.18 seconds| Input tokens: 2,347 | Output tokens: 59]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ ─ Executing parsed code: ─────────────────────────────────────────────────────
+  final_answer("Task completed: save_doc was called with text='Synapse organic
+  test' and successfully saved 20 characters.")
+ ──────────────────────────────────────────────────────────────────────────────
+/usr/local/lib/python3.11/site-packages/pydantic/main.py:464: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected 9 fields but got 5: Expected `Message` - serialized value may not be as expected [field_name='choices', input_value=Message(content='Thought:...thinking_blocks': None}), input_type=Message])
+  PydanticSerializationUnexpectedValue(Expected `StreamingChoices` - serialized value may not be as expected [field_name='choices', input_value=Choices(finish_reason='st...hinking_blocks': None})), input_type=Choices])
+  return self.__pydantic_serializer__.to_python(
+Final answer: Task completed: save_doc was called with text='Synapse organic
+test' and successfully saved 20 characters.
+[Step 2: Duration 1.65 seconds| Input tokens: 4,846 | Output tokens: 167]
+  ok=True, intents=1, agents=['smolagents_agent'], verdict=synapse-fired-1-intents (organic, no conflicts induced)
+
+=== openai_agents ===
+/usr/local/lib/python3.11/site-packages/pydantic/main.py:464: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected 9 fields but got 5: Expected `Message` - serialized value may not be as expected [field_name='choices', input_value=Message(content=None, rol...thinking_blocks': None}), input_type=Message])
+  PydanticSerializationUnexpectedValue(Expected `StreamingChoices` - serialized value may not be as expected [field_name='choices', input_value=Choices(finish_reason='to...hinking_blocks': None})), input_type=Choices])
+  return self.__pydantic_serializer__.to_python(
+/usr/local/lib/python3.11/site-packages/pydantic/main.py:464: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected 9 fields but got 5: Expected `Message` - serialized value may not be as expected [field_name='choices', input_value=Message(content='Your not...thinking_blocks': None}), input_type=Message])
+  PydanticSerializationUnexpectedValue(Expected `StreamingChoices` - serialized value may not be as expected [field_name='choices', input_value=Choices(finish_reason='st...hinking_blocks': None})), input_type=Choices])
+  return self.__pydantic_serializer__.to_python(
+  ok=True, intents=1, agents=['openai_agents_runner'], verdict=synapse-fired-1-intents (organic, no conflicts induced)
+
+=== pydantic_ai ===
+  ok=True, intents=4, agents=['pydantic_ai_agent'], verdict=synapse-fired-4-intents (organic, no conflicts induced)
+
+=== agno ===
+OPENAI_API_KEY is not set, skipping trace export
+  ok=True, intents=1, agents=['agno_agent'], verdict=synapse-fired-1-intents (organic, no conflicts induced)
+
+=== llama_index ===
+  ok=True, intents=2, agents=['llama_index_agent'], verdict=synapse-fired-2-intents (organic, no conflicts induced)
+
+=== google_adk ===
+/usr/local/lib/python3.11/site-packages/pydantic/main.py:464: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected 9 fields but got 5: Expected `Message` - serialized value may not be as expected [field_name='choices', input_value=Message(content="Done! I'...thinking_blocks': None}), input_type=Message])
+  PydanticSerializationUnexpectedValue(Expected `StreamingChoices` - serialized value may not be as expected [field_name='choices', input_value=Choices(finish_reason='st...hinking_blocks': None})), input_type=Choices])
+  return self.__pydantic_serializer__.to_python(
+  ok=True, intents=1, agents=['google_adk_agent'], verdict=synapse-fired-1-intents (organic, no conflicts induced)
+
+=== otel ===
+  [otel-test] private provider id=47236064936080 processors=2
+  [otel-test] private provider force_flush called
+  ok=True, intents=0, agents=[], verdict=no-intents-fired (organic workflow has no shared-scope writes)
+
+=== hermes ===
+  ok=True, intents=None, agents=None, verdict=out-of-band-tested
+
+=== openclaw ===
+  ok=True, intents=None, agents=None, verdict=out-of-band-tested
+
+
+======================================================================
+  ORGANIC E2E SUMMARY
+======================================================================
+  framework      ok      intents verdict
+  crewai         True        n/a validated-locally-only (Modal-environment limitation)
+  langgraph      True          1 synapse-fired-1-intents (organic, no conflicts induced)
+  langchain      True          1 synapse-fired-1-intents (organic, no conflicts induced)
+  autogen        True          2 synapse-fired-2-intents (organic, no conflicts induced)
+  smolagents     True          1 synapse-fired-1-intents (organic, no conflicts induced)
+  openai_agents  True          1 synapse-fired-1-intents (organic, no conflicts induced)
+  pydantic_ai    True          4 synapse-fired-4-intents (organic, no conflicts induced)
+  agno           True          1 synapse-fired-1-intents (organic, no conflicts induced)
+  llama_index    True          2 synapse-fired-2-intents (organic, no conflicts induced)
+  google_adk     True          1 synapse-fired-1-intents (organic, no conflicts induced)
+  otel           True          0 no-intents-fired (organic workflow has no shared-scope writes)
+  hermes         True        n/a out-of-band-tested
+  openclaw       True        n/a out-of-band-tested
+
+Wrote /tmp/organic_e2e_1778431284.json
+
+=== exit=0 elapsed=133.1s ===
+
+saved -> bench/results/organic_e2e_20260510-124126.json
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/aadityarajgor27/main/ap-8w9yq33jUxhNZWZSnGe9Qi
