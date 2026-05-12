@@ -117,21 +117,35 @@ V1_ASSERTIONS = [
 def execute_and_verify(code: str) -> tuple[bool, str]:
     """Execute code as a Python module, call fizzbuzz, assert outputs.
     Returns (passed, reason)."""
-    # Strip common LLM-output artifacts
     code = code.strip()
     if code.startswith("```"):
-        # Strip code fence
         lines = code.splitlines()
-        if lines[0].startswith("```"):
-            lines = lines[1:]
-        if lines and lines[-1].startswith("```"):
-            lines = lines[:-1]
+        if lines[0].startswith("```"): lines = lines[1:]
+        if lines and lines[-1].startswith("```"): lines = lines[:-1]
         code = "\n".join(lines)
-    # Extract function definition if there's prose before it
-    m = re.search(r"(def\s+fizzbuzz\s*\([^)]*\)\s*(?:->[^:]+)?\s*:.*?)(?=\n(?:def |class |\Z))",
-                  code, re.DOTALL)
+    # Extract function definition. v19.1: handle trailing prose (LLMs often
+    # say "DONE" / "I have written..." after the function). Match from
+    # `def fizzbuzz(...)` through the LAST indented line, then stop at the
+    # first dedented line that ISN'T a continuation.
+    m = re.search(r"(def\s+fizzbuzz\s*\([^)]*\)\s*(?:->[^:]+)?\s*:[\s\S]+?)(?=\n[^\s#)\]]|\Z)",
+                  code)
     if m:
         code = m.group(1)
+    else:
+        # Fallback: keep only lines from the def onward + indented lines
+        lines = code.splitlines()
+        out = []
+        in_fn = False
+        for ln in lines:
+            if not in_fn and re.match(r"def\s+fizzbuzz", ln):
+                in_fn = True
+            if in_fn:
+                if ln.strip() == "" or ln.startswith((" ", "\t", "def ", "@")):
+                    out.append(ln)
+                else:
+                    break  # dedented prose, stop
+        if out:
+            code = "\n".join(out)
 
     # Try to exec it
     try:
@@ -368,7 +382,14 @@ async def build_llama_index(session: str) -> dict:
         llm = Anthropic(model=ANTHROPIC_MODEL,
                        api_key=os.environ.get("ANTHROPIC_API_KEY"))
         agent = ReActAgent(tools=[tool], llm=llm, max_iterations=3, verbose=False)
-        await asyncio.wait_for(asyncio.to_thread(agent.chat, FIZZBUZZ_PROMPT), timeout=120)
+        # v19.1: llama-index-core>=0.11 removed ReActAgent.chat(); use .run()
+        # which is the new async-first API
+        try:
+            await asyncio.wait_for(agent.run(FIZZBUZZ_PROMPT), timeout=120)
+        except (AttributeError, TypeError):
+            # Older version still has .chat
+            await asyncio.wait_for(asyncio.to_thread(agent.chat, FIZZBUZZ_PROMPT),
+                                  timeout=120)
         return _verdict_from_code(captured["code"])
     except Exception as e:
         return {"verdict": "EXAMPLE_FAILED", "error": f"{type(e).__name__}: {str(e)[:300]}"}

@@ -157,14 +157,30 @@ async def _emit_thought(
     parent_intention_id: Optional[str],
     block_info: dict,
 ) -> None:
-    """Emit a single THOUGHT envelope onto the bus + state graph."""
-    try:
-        rt = await _ensure_connected()
-    except Exception as e:
-        logger.debug("synapse._emit_thought: runtime not connected (%s)", e)
-        return
-    bus = rt.get("bus")
+    """Emit a single THOUGHT envelope onto the bus + state graph.
+
+    v0.2.7 fix: retry briefly if bus is not yet connected. The runtime is
+    connected lazily on the first intend() call; if we fire a THOUGHT
+    BEFORE any intend has run (which is the common case for "wrap LLM
+    client, then use it"), bus may be None for the first ~500ms.
+    """
+    rt = None
+    bus = None
+    # Retry up to 5x with 100ms backoff (total 500ms) for bus to come up
+    for attempt in range(5):
+        try:
+            rt = await _ensure_connected()
+        except Exception as e:
+            logger.debug("synapse._emit_thought: runtime not connected (%s)", e)
+            await asyncio.sleep(0.1)
+            continue
+        bus = rt.get("bus")
+        if bus is not None:
+            break
+        await asyncio.sleep(0.1)
     if bus is None:
+        logger.debug("synapse._emit_thought: bus still None after retries; "
+                    "dropping THOUGHT (session=%s agent=%s)", session_id, agent_id)
         return
 
     text = block_info.get("text", "")
