@@ -80,6 +80,13 @@ from synapse.llm_thoughts import (
     subscribe_jsonl_events,
 )
 
+
+def wrap_hf_model_for_nla(*args, **kwargs):  # lazy import — torch is optional
+    """v0.2.8: self-hosted LLM NLA capture (HuggingFace transformers).
+    Lazy-imported so the base SDK install doesn't pull torch."""
+    from synapse.llm_nla_hf import wrap_hf_model_for_nla as _impl
+    return _impl(*args, **kwargs)
+
 __version__ = "0.2.5"
 __all__ = [
     # v0.1 surface
@@ -125,5 +132,7 @@ __all__ = [
     "wrap_anthropic_for_thoughts",
     "wrap_openai_for_thoughts",
     "subscribe_jsonl_events",
+    # v0.2.8: self-hosted LLM deep NLA capture (HuggingFace)
+    "wrap_hf_model_for_nla",
     "__version__",
 ]

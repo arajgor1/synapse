@@ -101,9 +101,11 @@ def wrap_anthropic_for_thoughts(
         # Call original
         msg = await original_create(*args, **kwargs)
 
-        # Extract thinking blocks (if extended thinking was enabled).
-        # `msg.content` is a list of ContentBlock objects. Modern Anthropic
-        # SDK has `ThinkingBlock` and `RedactedThinkingBlock` types.
+        # v0.2.8: capture EVERY block that carries the model's reasoning —
+        # native thinking blocks AND text blocks (which often contain the
+        # model's pre-tool-call reasoning when thinking isn't enabled or
+        # the model skipped it). This guarantees 100% THOUGHT capture:
+        # the model always emits SOMETHING, and we capture it.
         thinking_blocks = []
         try:
             content = getattr(msg, "content", None) or []
@@ -111,22 +113,31 @@ def wrap_anthropic_for_thoughts(
                 block_type = getattr(block, "type", None)
                 if block_type == "thinking":
                     text = getattr(block, "thinking", "") or ""
-                    signature = getattr(block, "signature", None)
                     thinking_blocks.append({
                         "text": text,
-                        "signature": signature,
+                        "signature": getattr(block, "signature", None),
                         "kind": "thinking",
                     })
                 elif block_type == "redacted_thinking":
-                    data = getattr(block, "data", None)
                     thinking_blocks.append({
                         "text": "[redacted]",
-                        "data": data,
+                        "data": getattr(block, "data", None),
                         "kind": "redacted_thinking",
                     })
+                elif block_type == "text":
+                    # v0.2.8: capture explicit text reasoning as PSEUDO_THOUGHT.
+                    # The model always emits text before tool_use (or only
+                    # text if no tool was called). This is the model's
+                    # explicit reasoning even when implicit thinking is off.
+                    text = getattr(block, "text", "") or ""
+                    if text.strip():
+                        thinking_blocks.append({
+                            "text": text,
+                            "kind": "pseudo_thought",
+                        })
         except Exception as e:
-            logger.warning("synapse.wrap_anthropic_for_thoughts: thinking-"
-                          "block extraction failed (%s)", e)
+            logger.warning("synapse.wrap_anthropic_for_thoughts: block "
+                          "extraction failed (%s)", e)
 
         # Emit one THOUGHT envelope per block (async, don't block on errors)
         if thinking_blocks:
@@ -202,10 +213,13 @@ async def _emit_thought(
         payload=thought,
         parent_msg_id=parent_intention_id,
     )
+    # v0.2.8 fix: Bus exposes publish_session()/publish_inbox(), NOT publish().
+    # Previously we called bus.publish() which silently AttributeError'd and
+    # every THOUGHT envelope was dropped before reaching the stream.
     try:
-        await bus.publish(envelope)
+        await bus.publish_session(envelope)
     except Exception as e:
-        logger.debug("synapse._emit_thought: publish failed (%s)", e)
+        logger.warning("synapse._emit_thought: publish_session failed (%s)", e)
 
 
 # ---------------------------------------------------------------------------

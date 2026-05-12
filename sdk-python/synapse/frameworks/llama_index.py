@@ -139,6 +139,57 @@ def _wrap_call_sync(original):
     return wrapper
 
 
+def _wrap_call_tool_workflow(original):
+    """v0.2.8 fix: patch the Workflow-architecture _call_tool method.
+
+    In llama-index-core>=0.11, ReActAgent.run() / FunctionAgent.run() /
+    CodeActAgent.run() / AgentWorkflow.run() all dispatch tools through
+    `BaseWorkflowAgent._call_tool(self, ctx, tool, tool_input)`. The old
+    `FunctionTool.acall` patch fires too but the workflow path is the
+    canonical hook.
+
+    Signature: `async def _call_tool(self, ctx, tool, tool_input) -> ToolOutput`
+    """
+    async def patched(self, ctx, tool, tool_input):
+        tool_name = "unknown_tool"
+        try:
+            tool_name = tool.metadata.get_name() or "unknown_tool"
+        except Exception:
+            pass
+        # Drop the workflow ctx from the args we hash for scope
+        args_for_scope = {k: v for k, v in (tool_input or {}).items()
+                         if k not in ("ctx", "context")}
+        ev = AuditEvent(
+            trace_id="li", span_id="li",
+            agent_id=getattr(self, "name", "llama_index_agent"),
+            session_id=os.environ.get("SYNAPSE_SESSION_ID", "llama_index_default"),
+            tool_name=tool_name, tool_args=args_for_scope or {},
+            ts_start_ms=0, ts_end_ms=0,
+        )
+        if not is_write(ev):
+            return await original(self, ctx, tool, tool_input)
+        scope = infer_scope(ev) or [f"llama_index.tool.{tool_name}:w"]
+        async with intend(
+            scope=scope,
+            agent=getattr(self, "name", "llama_index_agent"),
+            session=os.environ.get("SYNAPSE_SESSION_ID", "llama_index_default"),
+            expected_outcome=f"llama_index:{tool_name}",
+            blocking=True,
+            gate_ms=int(os.environ.get("SYNAPSE_GATE_MS", "200")),
+        ) as i:
+            try:
+                result = await original(self, ctx, tool, tool_input)
+                if getattr(result, "is_error", False):
+                    i.mark_failed(str(result))
+                else:
+                    i.set_state_diff({"output_preview": str(result)[:200]})
+                return result
+            except Exception as e:
+                i.mark_failed(str(e))
+                raise
+    return patched
+
+
 def _install_llama_index(opts: dict[str, Any]) -> None:
     if _PATCHED["function_tool_call"]:
         return
@@ -161,12 +212,36 @@ def _install_llama_index(opts: dict[str, Any]) -> None:
     if hasattr(FunctionTool, "call"):
         FunctionTool.call = _wrap_call_sync(FunctionTool.call)
 
+    # v0.2.8: patch the Workflow-architecture _call_tool hook so ReActAgent.run()
+    # in llama-index-core>=0.11 also routes through Synapse.
+    try:
+        from llama_index.core.agent.workflow.base_agent import BaseWorkflowAgent
+        if not getattr(BaseWorkflowAgent._call_tool, "_synapse_wrapped", False):
+            BaseWorkflowAgent._call_tool = _wrap_call_tool_workflow(BaseWorkflowAgent._call_tool)
+            BaseWorkflowAgent._call_tool._synapse_wrapped = True
+            logger.info("synapse.install(framework='llama_index'): patched "
+                        "BaseWorkflowAgent._call_tool (covers ReActAgent.run, "
+                        "FunctionAgent.run, CodeActAgent.run)")
+    except ImportError:
+        pass
+
+    try:
+        from llama_index.core.agent.workflow.multi_agent_workflow import AgentWorkflow
+        if not getattr(AgentWorkflow._call_tool, "_synapse_wrapped", False):
+            AgentWorkflow._call_tool = _wrap_call_tool_workflow(AgentWorkflow._call_tool)
+            AgentWorkflow._call_tool._synapse_wrapped = True
+            logger.info("synapse.install(framework='llama_index'): patched "
+                        "AgentWorkflow._call_tool (covers AgentWorkflow.run)")
+    except ImportError:
+        pass
+
     _PATCHED["function_tool_call"] = True
     logger.info(
         "synapse.install(framework='llama_index'): patched "
-        "llama_index.core.tools.FunctionTool.{call,acall} — every tool call "
-        "across every Agent (ReActAgent, OpenAIAgent, FunctionCallingAgent, etc.) "
-        "now participates in Synapse coordination."
+        "FunctionTool.{call,acall} + Workflow._call_tool — every tool call "
+        "across every Agent (ReActAgent, FunctionAgent, AgentWorkflow, "
+        "legacy OpenAIAgent, FunctionCallingAgent) now participates in "
+        "Synapse coordination."
     )
 
 
