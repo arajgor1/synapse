@@ -73,6 +73,12 @@ from synapse.agent_context import (
     with_agent,
     current_agent_id,
 )
+# v0.2.7: LLM reasoning capture → THOUGHT envelopes (NLA-equivalent for agents)
+from synapse.llm_thoughts import (
+    wrap_anthropic_for_thoughts,
+    wrap_openai_for_thoughts,
+    subscribe_jsonl_events,
+)
 
 __version__ = "0.2.5"
 __all__ = [
@@ -115,5 +121,9 @@ __all__ = [
     "reset_agent_context",
     "with_agent",
     "current_agent_id",
+    # v0.2.7: LLM thought capture
+    "wrap_anthropic_for_thoughts",
+    "wrap_openai_for_thoughts",
+    "subscribe_jsonl_events",
     "__version__",
 ]

@@ -61,7 +61,34 @@ def _agent_name_from_runcontext(ctx: Any) -> str:
     return current_agent_id(default="pydantic_ai_agent")
 
 
+_CONFIG: dict[str, Any] = {}
+
+
 def _scope_from_call(tool_name: str, args: dict) -> list[str]:
+    """Map a pydantic_ai tool call to a scope claim.
+
+    Resolution order (v0.2.6+):
+      0. User-supplied ``scope_from_args(tool_name, args)`` callable
+         registered via ``synapse.install(framework="pydantic_ai", scope_from_args=...)``
+      1. ``synapse.audit.scope_inference.infer_scope`` (default heuristic
+         — reads args.path / args.file etc. into ``repo.fs.<path>:w``)
+      2. Fall-back: ``pydantic_ai.tool.<tool_name>:w``
+
+    The configurable hook lets operators encode their app's coordination
+    semantics — for example, scoping ``write_to_my_file(content=...)``
+    by the agent's assigned output path (held externally) rather than
+    by tool name (which collides across agents calling the same tool).
+    """
+    user_hook = _CONFIG.get("scope_from_args")
+    if callable(user_hook):
+        try:
+            result = user_hook(tool_name, args)
+            if result:
+                return list(result) if not isinstance(result, list) else result
+        except Exception as e:
+            logger.warning("synapse.pydantic_ai: user scope_from_args raised %s; "
+                          "falling back to default heuristic", e)
+
     ev = AuditEvent(
         trace_id="pa", span_id="pa", agent_id="pa", session_id="pa",
         tool_name=tool_name, tool_args=args or {},
@@ -148,6 +175,11 @@ def _walk_subclasses(cls):
 
 
 def _install_pydantic_ai(opts: dict[str, Any]) -> None:
+    # v0.2.6: capture user-supplied scope hook
+    if "scope_from_args" in opts:
+        _CONFIG["scope_from_args"] = opts["scope_from_args"]
+        logger.info("synapse.install(framework='pydantic_ai'): registered "
+                    "user-supplied scope_from_args hook")
     if _PATCHED["call_tool"]:
         return
 

@@ -280,6 +280,137 @@ def get_callback() -> Optional[Any]:
     return _handler_singleton
 
 
+_RUNNABLE_PATCHED = False
+_CONFIGURE_HOOK_TOKEN: Any = None
+
+
+def _register_via_configure_hook(handler: Any) -> bool:
+    """v0.2.6: register our handler via LangChain's
+    ``langchain_core.tracers.context.register_configure_hook``. This is the
+    canonical mechanism for "inject this callback into every Runnable's
+    config" and propagates correctly into nested graphs (StateGraph nodes,
+    ToolNode dispatches, etc.) where simple top-level config injection
+    doesn't reach.
+
+    Returns True if the hook was registered.
+    """
+    global _CONFIGURE_HOOK_TOKEN
+    if _CONFIGURE_HOOK_TOKEN is not None:
+        return True
+    try:
+        from langchain_core.tracers.context import register_configure_hook
+        from contextvars import ContextVar
+    except ImportError:
+        return False
+
+    # Create a ContextVar that always yields our handler. register_configure_hook
+    # accepts a ContextVar AND will read its value when building each Runnable's
+    # config. Setting a default value ensures the handler is always present.
+    handler_cv: ContextVar = ContextVar("synapse_langgraph_handler", default=handler)
+    try:
+        register_configure_hook(
+            handler_cv,
+            inheritable=True,  # propagates to child Runnables (ToolNode etc.)
+        )
+        _CONFIGURE_HOOK_TOKEN = handler_cv
+        logger.info(
+            "synapse.install(framework='langgraph'): registered handler via "
+            "langchain_core.tracers.context.register_configure_hook "
+            "(inheritable=True). Nested Runnables in create_react_agent "
+            "/ ToolNode dispatch paths will now see the handler."
+        )
+        return True
+    except Exception as e:
+        logger.warning("synapse.install(framework='langgraph'): "
+                       "register_configure_hook failed (%s)", e)
+        return False
+
+
+def _auto_attach_handler_to_runnable(handler: Any) -> bool:
+    """v0.2.6 fix (Phase 7b regression): monkey-patch
+    ``langchain_core.runnables.base.Runnable.ainvoke / .invoke / .astream / .stream``
+    so every Runnable execution automatically gets our handler in
+    ``config["callbacks"]``.
+
+    Previously the adapter ONLY created the callback handler and required
+    users to manually pass it via ``graph.ainvoke(input, config={"callbacks": [...]})``.
+    With ``create_react_agent`` and other prebuilt LangGraph constructs,
+    users never see the invoke call directly, so the callback never fired.
+
+    Returns True if the patch was applied (or already in place); False if
+    Runnable could not be imported.
+    """
+    global _RUNNABLE_PATCHED
+    if _RUNNABLE_PATCHED:
+        return True
+    try:
+        from langchain_core.runnables.base import Runnable
+    except ImportError:
+        return False
+
+    def _inject_callback(config: Any) -> Any:
+        """Ensure our handler is in config['callbacks']."""
+        if config is None:
+            config = {}
+        elif not isinstance(config, dict):
+            # RunnableConfig is a TypedDict-as-dict; if someone passed
+            # something else, leave it alone
+            return config
+        cbs = config.get("callbacks")
+        if cbs is None:
+            config["callbacks"] = [handler]
+        elif isinstance(cbs, list):
+            if not any(c is handler for c in cbs):
+                cbs.append(handler)
+        # If callbacks is a CallbackManager instance we leave it alone — the
+        # CallbackManager already has its own handler list and re-adding
+        # would be a no-op or worse a duplication.
+        return config
+
+    _orig_ainvoke = Runnable.ainvoke
+    _orig_invoke = Runnable.invoke
+    _orig_astream = Runnable.astream
+    _orig_stream = Runnable.stream
+    _orig_abatch = Runnable.abatch
+    _orig_batch = Runnable.batch
+
+    async def _ainvoke(self, input, config=None, **kwargs):
+        return await _orig_ainvoke(self, input, _inject_callback(config), **kwargs)
+
+    def _invoke(self, input, config=None, **kwargs):
+        return _orig_invoke(self, input, _inject_callback(config), **kwargs)
+
+    def _astream(self, input, config=None, **kwargs):
+        return _orig_astream(self, input, _inject_callback(config), **kwargs)
+
+    def _stream(self, input, config=None, **kwargs):
+        return _orig_stream(self, input, _inject_callback(config), **kwargs)
+
+    async def _abatch(self, inputs, config=None, **kwargs):
+        # config may be a single dict or a list of dicts (per-input)
+        if isinstance(config, list):
+            config = [_inject_callback(c) for c in config]
+        else:
+            config = _inject_callback(config)
+        return await _orig_abatch(self, inputs, config, **kwargs)
+
+    def _batch(self, inputs, config=None, **kwargs):
+        if isinstance(config, list):
+            config = [_inject_callback(c) for c in config]
+        else:
+            config = _inject_callback(config)
+        return _orig_batch(self, inputs, config, **kwargs)
+
+    Runnable.ainvoke = _ainvoke  # type: ignore[assignment]
+    Runnable.invoke = _invoke    # type: ignore[assignment]
+    Runnable.astream = _astream  # type: ignore[assignment]
+    Runnable.stream = _stream    # type: ignore[assignment]
+    Runnable.abatch = _abatch    # type: ignore[assignment]
+    Runnable.batch = _batch      # type: ignore[assignment]
+    _RUNNABLE_PATCHED = True
+    return True
+
+
 def _install_langgraph(opts: dict[str, Any]) -> None:
     global _handler_singleton
 
@@ -295,20 +426,37 @@ def _install_langgraph(opts: dict[str, Any]) -> None:
     handler = Cls(default_session_id=opts.get("session_id"))
     _handler_singleton = handler
 
-    # Use both "patched" and "callback ready" so the adapter health
-    # gate (test_adapter_health.py) recognizes this as success, not as
-    # "could not find" (which langgraph's callback paradigm doesn't
-    # produce). The actual integration uses LangChain's callback model
-    # rather than method patching — different paradigm but functionally
-    # equivalent: every tool invocation flows through this handler.
-    logger.info(
-        "synapse.install(framework='langgraph'): patched via LangChain "
-        "callback (SynapseLangGraphCallback registered). Callback ready. "
-        "Attach via graph.invoke(input, config={'callbacks':[synapse.frameworks.langgraph.get_callback()]}) "
-        "for explicit control, or rely on LangChain's global callback manager "
-        "when configured."
-    )
+    # v0.2.6 fix: dual auto-attach strategy:
+    #
+    # (a) Register via LangChain's `register_configure_hook` — this propagates
+    #     the handler INHERITABLY through nested Runnables in create_react_agent
+    #     / StateGraph / ToolNode dispatch paths, which simple top-level
+    #     config injection doesn't reach.
+    #
+    # (b) Monkey-patch Runnable.invoke/ainvoke as a belt-and-suspenders
+    #     fallback for LangChain versions where register_configure_hook
+    #     doesn't exist or behaves differently.
+    via_hook = _register_via_configure_hook(handler)
+    auto_attached = _auto_attach_handler_to_runnable(handler)
+
+    if via_hook or auto_attached:
+        logger.info(
+            "synapse.install(framework='langgraph'): SynapseLangGraphCallback "
+            "registered via configure_hook=%s + Runnable monkey-patch=%s. "
+            "Every LangChain/LangGraph tool call now flows through this handler "
+            "(including nested ToolNode dispatches in create_react_agent). "
+            "v0.2.6+ behavior.",
+            via_hook, auto_attached,
+        )
+    else:
+        logger.warning(
+            "synapse.install(framework='langgraph'): callback registered but "
+            "could not auto-attach to Runnable (langchain-core import failed). "
+            "Pass config={'callbacks':[synapse.frameworks.langgraph.get_callback()]} "
+            "manually to every graph.invoke()."
+        )
 
 
 # Self-register on import
 register_framework("langgraph", _install_langgraph)
+register_framework("langchain", _install_langgraph)

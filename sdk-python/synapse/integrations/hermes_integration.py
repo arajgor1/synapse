@@ -114,13 +114,26 @@ async def install_hermes_synapse_hooks(
     agent_id: str = "hermes_main",
     gate_ms: int = 50,
     fail_on_conflict: bool = False,
+    force_reset: bool = False,
 ) -> dict[str, Any]:
     """Install runtime hooks into Hermes' tool dispatch path.
+
+    Args:
+        force_reset: v0.2.6+ — if True, clear ``_hermes_runtime`` before
+            registering this session's bus/state/agents. Use this when
+            calling install_hermes_synapse_hooks() multiple times in the
+            same Python process (e.g., test reps, sequential sessions in a
+            long-running orchestrator). Without this flag, stale agents
+            from the previous install retain references to the disposed
+            bus/state and silently no-op.
 
     Returns a status dict with which hooks were installed and which couldn't
     find their target (e.g., when a Hermes version doesn't have the expected
     function signature).
     """
+    if force_reset:
+        clear_runtime()
+
     from synapse.adapters import MockAdapter
     from synapse.agent import Agent
 
@@ -215,6 +228,28 @@ async def register_synapse_agent(
 
 # Module-level holder for the active hooks
 _hermes_runtime: dict[str, Any] = {}
+
+
+def clear_runtime() -> None:
+    """v0.2.6+: clear the module-level _hermes_runtime so the next
+    ``install_hermes_synapse_hooks()`` call starts from a clean slate.
+
+    Use this when:
+      - running multiple sequential sessions in the same Python process
+      - test suites that reuse the same interpreter across reps
+      - tearing down + recreating bus/state between runs
+
+    Without this, stale Agent objects from a previous install retain
+    references to disposed bus/state objects, and subsequent
+    wrap_tool_call_for_synapse calls silently fall through to pass-through
+    mode (no INTENTION fired).
+
+    Phase 5 root-caused this as the source of the [3, 1, 1] flakiness
+    in the rock-solid benchmark — see PUBLIC_BENCHMARK.md "v15.1 fix"
+    section. v0.2.6 exposes this as a public helper + a force_reset
+    parameter on install_hermes_synapse_hooks for cleaner ergonomics.
+    """
+    _hermes_runtime.clear()
 
 
 class HermesSynapseConflict(RuntimeError):

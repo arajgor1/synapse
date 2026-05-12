@@ -41,6 +41,10 @@ image = (
         "postgresql-15", "postgresql-client-15",
         # Node 20 for Paperclip
         "ca-certificates", "gnupg",
+        # v4: system libs for ChatDev's pycairo + AutoGPT classic + venv tooling
+        "libcairo2-dev", "pkg-config", "libpango1.0-dev",
+        "libgirepository1.0-dev", "libffi-dev", "libssl-dev",
+        "python3-venv",
     )
     .run_commands(
         # Install Node 20.x
@@ -1693,6 +1697,351 @@ def organic_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
                 "elapsed_seconds": round(time.time() - started, 1)}
     return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
             "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
+
+
+@app.function(
+    # v3 budget: ~10min installs (batches 1+2+3) + ~5min clones + ~3min
+    # ChatDev/AutoGPT deps + 12 tests × 180s = ~54min worst case. Bump to 60.
+    cpu=4.0, memory=8192, timeout=3600, scaledown_window=10,
+)
+def public_benchmark_run(api_keys: dict[str, str]) -> dict[str, Any]:
+    """Public benchmark — 10 OSS multi-agent projects + Synapse, organic."""
+    import subprocess
+    started = time.time()
+    setup = _common_setup_script()
+    extra = (
+        "\necho '=== install batch 1: core + tracing + gemini ==='\n"
+        "python3 -m pip install -q anthropic litellm opentelemetry-sdk "
+        "google-genai google-generativeai langchain-google-genai "
+        "|| echo 'BATCH1 FAILED'\n"
+        "echo '=== install batch 2: langchain ecosystem ==='\n"
+        "python3 -m pip install -q langgraph langchain langchain-anthropic langchain-core "
+        "|| echo 'BATCH2 FAILED'\n"
+        "echo '=== install batch 2b: llama_index + opentelemetry (v0.2.6) ==='\n"
+        "python3 -m pip install -q "
+        "'llama-index-core>=0.11' 'llama-index-llms-anthropic>=0.3' "
+        "'opentelemetry-sdk>=1.20' "
+        "|| echo 'BATCH2B FAILED'\n"
+        "echo '=== install batch 3: agent frameworks (per-pkg, constrained) ==='\n"
+        # CRITICAL: pin pydantic v2 + modern stack BEFORE per-pkg loop to
+        # prevent agentverse/BMTools/legacy-deps from downgrading underneath
+        # us (v2 root-caused: agentverse pulled pydantic 1.10.7, which broke
+        # synapse itself and 0 project verdicts were collected over 31min).
+        "cat > /tmp/constraints.txt <<'EOF'\n"
+        "pydantic>=2.8\n"
+        "pydantic-core>=2.20\n"
+        "langchain-core>=0.3\n"
+        "typing-extensions>=4.12\n"
+        "httpx>=0.27\n"
+        "openai>=1.50\n"
+        "EOF\n"
+        # Drop agentverse (pydantic-v1 poisoner via BMTools), drop metagpt + openhands
+        # (PKG_FAILED in v2 — dep res impossible). They get honest INSTALL_FAILED
+        # in their bench, no need to retry. Document in PUBLIC_BENCHMARK.md.
+        "for pkg in "
+        "'crewai>=0.86,<1.0' 'autogen-agentchat>=0.4' 'autogen-ext[openai]>=0.4' "
+        "openai-agents 'pydantic-ai-slim[google]>=1.0' "
+        "agno smolagents google-adk "
+        "'camel-ai>=0.2' 'agentscope>=0.1' "
+        "; do echo \"--- pip install (constrained) $pkg ---\"; "
+        "python3 -m pip install -q --upgrade-strategy only-if-needed "
+        "-c /tmp/constraints.txt \"$pkg\" || echo \"PKG_FAILED $pkg\"; done\n"
+        # REPAIR step: even with constraints, transitives sometimes leak.
+        # Force-restore pydantic v2 to make sure synapse itself imports.
+        "echo '=== install batch 3 repair: re-pin pydantic v2 + langchain-core ==='\n"
+        "python3 -m pip install -q --upgrade 'pydantic>=2.8' 'langchain-core>=0.3' "
+        "'typing-extensions>=4.12' 'httpx>=0.27' || echo 'REPAIR FAILED'\n"
+        # Critical-path import probe: if synapse itself can't import, abort
+        # before wasting 30min of LLM calls.
+        "echo '=== synapse self-test ==='\n"
+        "python3 -c \"import synapse; print('  synapse', synapse.__version__, 'imports OK')\" "
+        "|| { echo '  FATAL: synapse cannot import after install carnage'; exit 2; }\n"
+        "echo '=== batch 3 import probe ==='\n"
+        # openai-agents PyPI ships the module as `agents` (not `openai_agents`).
+        # google-adk ships as `google.adk` (the dotted form is correct).
+        "for mod in crewai autogen_agentchat camel agentscope agents pydantic_ai agno smolagents google.adk; do "
+        "python3 -c \"import $mod; print('  ok  $mod')\" 2>/dev/null "
+        "|| echo \"  MISS $mod\"; done\n"
+        # v3 — clone heavy projects (ChatDev needs full repo, AutoGPT classic CLI)
+        "echo '=== v3 clones: ChatDev + AutoGPT ==='\n"
+        "mkdir -p /opt/clones && cd /opt/clones && "
+        # v8: shallow clone (fast/small) but with depth=400 to span past
+        # the 2024-09 rewrite. Avoids the v7 hang/crash on full clone.
+        # Add `|| true` so set -e doesn't kill the shell on git non-zero.
+        "(git clone --depth 400 https://github.com/OpenBMB/ChatDev.git 2>&1 | tail -3) "
+        "|| echo 'CLONE_FAILED ChatDev'\n"
+        "if [ -d /opt/clones/ChatDev ]; then "
+        "cd /opt/clones/ChatDev && "
+        # v8: rev-list --before is fine on shallow clone (works on whatever
+        # history we got). Fall back to HEAD~200 if the date filter returns
+        # empty. Wrap in `|| true` so set -e doesn't propagate.
+        "_PIN=$(git rev-list --max-count=1 --before=2024-09-01 HEAD 2>/dev/null || true); "
+        "if [ -z \"$_PIN\" ]; then _PIN=$(git rev-parse HEAD~200 2>/dev/null || true); fi; "
+        "if [ -n \"$_PIN\" ]; then "
+        "  (git -c advice.detachedHead=false checkout \"$_PIN\" 2>&1 | tail -2) || true; "
+        "  echo \"  ChatDev pinned to $_PIN\"; "
+        "else echo '  ChatDev pin LOOKUP FAILED — leaving HEAD'; fi; "
+        "fi\n"
+        "cd /opt/clones && "
+        "git clone --depth 1 https://github.com/Significant-Gravitas/AutoGPT.git 2>&1 | tail -3 "
+        "|| echo 'CLONE_FAILED AutoGPT'\n"
+        # CRITICAL: ChatDev/AutoGPT requirements pull legacy pydantic-v1 pins
+        # that re-poison the env (same root cause as v2). Apply the same
+        # constraint file. If the project's deps are mathematically
+        # incompatible with the modern stack, the install fails CLEANLY
+        # (CHATDEV_DEPS_FAILED) and the bench reports INSTALL_FAILED honestly,
+        # rather than silently breaking synapse.
+        "if [ -d /opt/clones/ChatDev ]; then "
+        "echo '--- pip install (constrained) ChatDev/requirements.txt ---'; "
+        "python3 -m pip install -q --upgrade-strategy only-if-needed "
+        "-c /tmp/constraints.txt -r /opt/clones/ChatDev/requirements.txt "
+        "|| echo 'CHATDEV_DEPS_FAILED (legacy pin conflicts modern stack)'; fi\n"
+        "if [ -d /opt/clones/AutoGPT/classic/original_autogpt ]; then "
+        "echo '--- pip install (constrained) AutoGPT classic ---'; "
+        "python3 -m pip install -q --upgrade-strategy only-if-needed "
+        "-c /tmp/constraints.txt -e /opt/clones/AutoGPT/classic/original_autogpt "
+        "|| echo 'AUTOGPT_DEPS_FAILED (legacy pin conflicts modern stack)'; "
+        "elif [ -d /opt/clones/AutoGPT/autogpts/autogpt ]; then "
+        "echo '--- pip install (constrained) AutoGPT autogpts/autogpt ---'; "
+        "python3 -m pip install -q --upgrade-strategy only-if-needed "
+        "-c /tmp/constraints.txt -e /opt/clones/AutoGPT/autogpts/autogpt "
+        "|| echo 'AUTOGPT_DEPS_FAILED (legacy pin conflicts modern stack)'; "
+        "else echo 'AUTOGPT_NO_CLASSIC_DIR (modern monorepo has no programmatic agent)'; fi\n"
+        # FINAL PRE-FLIGHT before the actual benchmark runs: synapse must
+        # import AND langchain_google_genai must be functional. If either is
+        # broken after the clone installs, abort with exit=2 — saves 30min.
+        "echo '=== final pre-flight ==='\n"
+        "python3 -c \"import synapse; print('  synapse', synapse.__version__, 'OK')\" "
+        "|| { echo '  FATAL: synapse broken after clone installs'; exit 2; }\n"
+        "python3 -c \"from langchain_google_genai import ChatGoogleGenerativeAI; "
+        "print('  langchain_google_genai OK')\" "
+        "|| { echo '  FATAL: langchain_google_genai broken (Gemini test path dead)'; exit 2; }\n"
+        "python3 -c \"import pydantic; print('  pydantic', pydantic.VERSION, '(must be 2.x)')\" "
+        "|| { echo '  FATAL: pydantic broken'; exit 2; }\n"
+        # Start localhost OpenAI→Gemini proxy in background. ChatDev / AutoGPT
+        # send `model=gpt-4o-mini` (their hardcoded enum); proxy rewrites to
+        # gemini-2.5-flash so the call actually completes against our Gemini key.
+        "echo '=== starting OpenAI→Gemini proxy on :8765 ==='\n"
+        "python3 /opt/synapse-payloads/openai_to_gemini_proxy.py "
+        "> /tmp/oai_proxy.log 2>&1 &\n"
+        "PROXY_PID=$!\n"
+        "for i in 1 2 3 4 5; do "
+        "if curl -fs http://127.0.0.1:8765/ > /dev/null; then echo '  proxy up'; break; fi; "
+        "sleep 0.5; done\n"
+        "if ! kill -0 $PROXY_PID 2>/dev/null; then "
+        "echo '  PROXY FAILED to start; tail:'; tail -20 /tmp/oai_proxy.log; fi\n"
+        "export OPENAI_PROXY_URL='http://127.0.0.1:8765/v1'\n"
+        # =====================================================================
+        # v4: per-project isolated venvs for the 4 projects whose deps cannot
+        # coexist with the modern stack. Each venv is created with --copies so
+        # /opt/v/<proj>/bin/python is a real interpreter independent of the
+        # main env. The bench function spawns subprocesses with these pythons
+        # and wraps the spawn in a Synapse intent (claim before / resolve after).
+        # =====================================================================
+        "echo '=== v4 per-project venvs ==='\n"
+        # 1) agentverse — needs pydantic v1 via BMTools
+        "python3 -m venv --copies /opt/v/agentverse 2>&1 | tail -2\n"
+        "/opt/v/agentverse/bin/pip install -q --upgrade pip 2>&1 | tail -1\n"
+        "/opt/v/agentverse/bin/pip install -q agentverse 'pydantic<2' "
+        "google-generativeai "
+        "2>&1 | tail -3 || echo 'V_AGENTVERSE_FAILED'\n"
+        "/opt/v/agentverse/bin/python -c 'import agentverse; print(\"  v/agentverse ok\")' "
+        "|| echo '  v/agentverse import MISS'\n"
+        # 2) metagpt — v12: drop --no-deps and let pip resolve metagpt's full
+        # transitive graph in the CLEAN venv. The original --no-deps was
+        # needed only because the MAIN env had conflicting pins; a fresh
+        # venv has none, so full resolution should succeed and stop the
+        # whack-a-mole missing-dep cycle (chardet→aiofiles→PIL→pandas→...).
+        "python3 -m venv --copies /opt/v/metagpt 2>&1 | tail -2\n"
+        "/opt/v/metagpt/bin/pip install -q --upgrade pip setuptools wheel 2>&1 | tail -1\n"
+        "/opt/v/metagpt/bin/pip install -q metagpt google-generativeai "
+        "2>&1 | tail -3 || echo 'V_METAGPT_FULL_FAILED'\n"
+        # If full install fails, fall back to v11's --no-deps + best-effort
+        # transitives so at least SOMETHING is in the venv.
+        "if ! /opt/v/metagpt/bin/python -c 'from metagpt.team import Team' 2>/dev/null; then "
+        "  echo '  metagpt full install incomplete, attempting --no-deps fallback'; "
+        "  /opt/v/metagpt/bin/pip install -q --no-deps metagpt 2>&1 | tail -2 || true; "
+        "  /opt/v/metagpt/bin/pip install -q "
+        "    pydantic openai anthropic 'tenacity>=8' loguru pyyaml typer aiohttp "
+        "    tiktoken jinja2 networkx google-generativeai python-docx "
+        "    beautifulsoup4 numpy pandas scipy scikit-learn Pillow aiofiles "
+        "    rich nltk gitpython chardet aiohttp-cors websockets "
+        "    pydantic-settings "
+        "    2>&1 | tail -3 || echo 'V_METAGPT_TRANSITIVES_FAILED'; "
+        "fi\n"
+        "/opt/v/metagpt/bin/python -c 'import metagpt; print(\"  v/metagpt ok\")' "
+        "|| echo '  v/metagpt import MISS'\n"
+        # 3) openhands-ai — v5: same --no-deps strategy. The published deps
+        # are mathematically impossible (ResolutionImpossible across all
+        # versions). Install package shell, then manually install the small
+        # set of imports the canonical sdk path needs.
+        "python3 -m venv --copies /opt/v/openhands 2>&1 | tail -2\n"
+        "/opt/v/openhands/bin/pip install -q --upgrade pip 2>&1 | tail -1\n"
+        "/opt/v/openhands/bin/pip install -q --no-deps 'openhands-ai==0.9.8' "
+        "2>&1 | tail -3 || echo 'V_OPENHANDS_NODEPS_FAILED'\n"
+        "/opt/v/openhands/bin/pip install -q "
+        "litellm pydantic httpx openai anthropic tenacity loguru "
+        "google-generativeai "
+        "2>&1 | tail -3 || echo 'V_OPENHANDS_TRANSITIVES_FAILED'\n"
+        "/opt/v/openhands/bin/python -c 'import openhands; print(\"  v/openhands ok\")' "
+        "|| echo '  v/openhands import MISS'\n"
+        # 4) AutoGPT classic from working tag (v0.4.7 was last classic)
+        "python3 -m venv --copies /opt/v/autogpt 2>&1 | tail -2\n"
+        "/opt/v/autogpt/bin/pip install -q --upgrade pip 2>&1 | tail -1\n"
+        "if [ -d /opt/clones/AutoGPT ]; then "
+        "cd /opt/clones/AutoGPT && git fetch --depth 1 origin tag v0.4.7 2>/dev/null && "
+        "git checkout v0.4.7 2>&1 | tail -2 || echo 'AUTOGPT_TAG_CHECKOUT_FAILED'; "
+        "/opt/v/autogpt/bin/pip install -q -r /opt/clones/AutoGPT/requirements.txt "
+        "2>&1 | tail -3 || echo 'V_AUTOGPT_FAILED'; fi\n"
+        "/opt/v/autogpt/bin/python -c 'import autogpt; print(\"  v/autogpt ok\")' 2>/dev/null "
+        "|| echo '  v/autogpt import MISS'\n"
+        # =====================================================================
+        # Start synapse REST API server so venv subprocesses can claim/resolve
+        # intents via HTTP without needing synapse installed in their venv.
+        # Uses zero-infra mode pointed at the SAME Postgres the bench reads.
+        # =====================================================================
+        "echo '=== starting synapse api server on :8770 ==='\n"
+        "SYNAPSE_REDIS_URL=redis://localhost:6379/0 "
+        "SYNAPSE_POSTGRES_DSN=postgresql://synapse:synapse_dev@localhost:5432/synapse "
+        "python3 -m synapse.cli.main api --bind 127.0.0.1 --port 8770 "
+        "> /tmp/synapse_api.log 2>&1 &\n"
+        "API_PID=$!\n"
+        "for i in 1 2 3 4 5 6 7 8 9 10; do "
+        "if curl -fs http://127.0.0.1:8770/version > /dev/null; then echo '  api up'; break; fi; "
+        "sleep 0.5; done\n"
+        "if ! kill -0 $API_PID 2>/dev/null; then "
+        "echo '  API FAILED to start; tail:'; tail -20 /tmp/synapse_api.log; fi\n"
+        "export SYNAPSE_API_URL='http://127.0.0.1:8770'\n"
+    )
+    # Bench-version switch via api_keys (Modal workers don't see local env
+    # vars at function-eval time):
+    #   SYNAPSE_BENCH_V16=1 → v16 rock-solid for 6 adapter paths
+    #   SYNAPSE_BENCH_V15=1 → v15 rock-solid (autogen + hermes)
+    #   SYNAPSE_BENCH_V14=1 → v14 real multi-round workflows
+    #   default              → v1-v13 minimal probes
+    if api_keys.get("SYNAPSE_BENCH_V19") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v19.py"
+    elif api_keys.get("SYNAPSE_BENCH_V18") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v18.py"
+    elif api_keys.get("SYNAPSE_BENCH_V17") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v17.py"
+    elif api_keys.get("SYNAPSE_BENCH_V16") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v16.py"
+    elif api_keys.get("SYNAPSE_BENCH_V15") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v15.py"
+    elif api_keys.get("SYNAPSE_BENCH_V14") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v14.py"
+    else:
+        bench_payload = "/opt/synapse-payloads/public_benchmark.py"
+    script = setup + extra + f"\n\nstdbuf -oL python3 -u {bench_payload} 2>&1\n"
+
+    env = dict(os.environ)
+    env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
+    env["GOOGLE_API_KEY"] = api_keys.get("GOOGLE_API_KEY", "")
+    env["GEMINI_API_KEY"] = api_keys.get("GOOGLE_API_KEY", "")  # alias
+    env["PYTHONUNBUFFERED"] = "1"
+    captured: list[str] = []
+    try:
+        proc = subprocess.Popen(
+            ["bash", "-c", script],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1, env=env,
+        )
+        while True:
+            line = proc.stdout.readline() if proc.stdout else ""
+            if not line:
+                if proc.poll() is not None: break
+                continue
+            print(line.rstrip(), flush=True)
+            captured.append(line)
+            if time.time() - started > 3500:
+                proc.terminate()
+                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                        "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
+        proc.wait()
+    except Exception as e:
+        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+                "stderr": f"streaming exception: {e}",
+                "elapsed_seconds": round(time.time() - started, 1)}
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+            "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
+
+
+@app.local_entrypoint()
+def public_benchmark() -> None:
+    """Drive the public benchmark suite (10 OSS projects + Synapse, organic)."""
+    import json, os, time
+    api_keys = {
+        "ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", ""),
+        "GOOGLE_API_KEY":    os.environ.get("GOOGLE_API_KEY", ""),
+        "SYNAPSE_BENCH_V14": os.environ.get("SYNAPSE_BENCH_V14", ""),
+        "SYNAPSE_BENCH_V15": os.environ.get("SYNAPSE_BENCH_V15", ""),
+        "SYNAPSE_BENCH_V16": os.environ.get("SYNAPSE_BENCH_V16", ""),
+        "SYNAPSE_BENCH_V17": os.environ.get("SYNAPSE_BENCH_V17", ""),
+        "SYNAPSE_BENCH_V18": os.environ.get("SYNAPSE_BENCH_V18", ""),
+        "SYNAPSE_BENCH_V19": os.environ.get("SYNAPSE_BENCH_V19", ""),
+    }
+    if not api_keys["GOOGLE_API_KEY"]:
+        print("WARN: GOOGLE_API_KEY not set — Gemini-based projects will fail")
+    print(">>> Public benchmark — 10 OSS multi-agent projects + Synapse...")
+    r = public_benchmark_run.remote(api_keys)
+    print(f"\n=== exit={r['exit_code']} elapsed={r['elapsed_seconds']}s ===")
+    if r.get("stderr"): print("\n--- stderr ---"); print(r["stderr"][:2000])
+    out = f"bench/results/public_benchmark_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f: json.dump(r, f, indent=2)
+    print(f"\nsaved -> {out}")
+
+
+@app.local_entrypoint()
+def public_benchmark_full() -> None:
+    """v3: Python suite (12 projects incl. hermes + chatdev_real + autogpt_real)
+    PLUS the Node OpenClaw real-product-dev test, merged into one report.
+
+    Use this entrypoint for the 13/13 framework-coverage proof.
+
+    To run v14 (full multi-round canonical workflows + concurrent multi-agent
+    write contention), set env: SYNAPSE_BENCH_V14=1 before launching.
+    """
+    import json, os, time
+    api_keys = {
+        "ANTHROPIC_API_KEY": os.environ.get("ANTHROPIC_API_KEY", ""),
+        "GOOGLE_API_KEY":    os.environ.get("GOOGLE_API_KEY", ""),
+        # Pass bench-version switches via api_keys so the Modal worker reads them
+        "SYNAPSE_BENCH_V14": os.environ.get("SYNAPSE_BENCH_V14", ""),
+        "SYNAPSE_BENCH_V15": os.environ.get("SYNAPSE_BENCH_V15", ""),
+        "SYNAPSE_BENCH_V16": os.environ.get("SYNAPSE_BENCH_V16", ""),
+        "SYNAPSE_BENCH_V17": os.environ.get("SYNAPSE_BENCH_V17", ""),
+        "SYNAPSE_BENCH_V18": os.environ.get("SYNAPSE_BENCH_V18", ""),
+        "SYNAPSE_BENCH_V19": os.environ.get("SYNAPSE_BENCH_V19", ""),
+    }
+    if not api_keys["GOOGLE_API_KEY"]:
+        print("WARN: GOOGLE_API_KEY not set — Gemini-based projects will fail")
+    if not api_keys["ANTHROPIC_API_KEY"]:
+        print("WARN: ANTHROPIC_API_KEY not set — OpenClaw test will fail")
+
+    print(">>> [1/2] Python suite (incl. hermes + chatdev_real + autogpt_real)...")
+    py_r = public_benchmark_run.remote(api_keys)
+    print(f"  py exit={py_r['exit_code']} elapsed={py_r['elapsed_seconds']}s")
+
+    print("\n>>> [2/2] OpenClaw real product-dev (Node, TS SDK)...")
+    oc_r = real_product_dev_openclaw.remote(api_keys)
+    print(f"  openclaw exit={oc_r['exit_code']} elapsed={oc_r['elapsed_seconds']}s")
+
+    merged = {
+        "python_suite": py_r,
+        "openclaw_node_suite": oc_r,
+        "summary": {
+            "python_exit": py_r.get("exit_code"),
+            "openclaw_exit": oc_r.get("exit_code"),
+            "total_elapsed_s": (py_r.get("elapsed_seconds", 0) or 0)
+                              + (oc_r.get("elapsed_seconds", 0) or 0),
+        },
+    }
+    out = f"bench/results/public_benchmark_full_{time.strftime('%Y%m%d-%H%M%S')}.json"
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w", encoding="utf-8") as f: json.dump(merged, f, indent=2)
+    print(f"\nsaved -> {out}")
 
 
 @app.local_entrypoint()

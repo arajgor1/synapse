@@ -48,17 +48,29 @@ logger = logging.getLogger(__name__)
 
 
 def _resolve_path(dsn: Optional[str]) -> Path:
+    """Resolve a SQLite DSN to an absolute Path.
+
+    v0.2.6 fix (dogfood bug #1): always returns an absolute, expanded path
+    so operators on Windows don't get surprised by `/tmp/state.db` resolving
+    to `C:\\tmp\\state.db` silently. The actual resolved path is logged on
+    connect() and surfaced via the API's /version endpoint.
+
+    Accepts:
+      * None → ``~/.synapse/state.db``
+      * ``"sqlite:///abs/path.db"`` → ``/abs/path.db``
+      * ``"sqlite://rel/path.db"`` → ``rel/path.db`` (relative)
+      * any other string → treated as a filesystem path
+    """
     if not dsn:
-        # Default — mirrors "config home" conventions on Linux + a sensible
-        # equivalent on Windows.
         home = Path.home()
-        return home / ".synapse" / "state.db"
+        return (home / ".synapse" / "state.db").expanduser().resolve()
     if dsn.startswith("sqlite:///"):
-        return Path(dsn[len("sqlite:///"):])
-    if dsn.startswith("sqlite://"):
-        # sqlite:// (two slashes) is a relative path on some libraries
-        return Path(dsn[len("sqlite://"):])
-    return Path(dsn)
+        p = Path(dsn[len("sqlite:///"):])
+    elif dsn.startswith("sqlite://"):
+        p = Path(dsn[len("sqlite://"):])
+    else:
+        p = Path(dsn)
+    return p.expanduser().resolve()
 
 
 _SCHEMA = [

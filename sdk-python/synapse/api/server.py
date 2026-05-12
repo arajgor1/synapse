@@ -114,6 +114,15 @@ class IntentRequest(BaseModel):
             "escalate_to_human / retry_with_backoff"
         ),
     )
+    parent_intention_id: Optional[str] = Field(
+        None,
+        description=(
+            "Optional parent intent id. Used to express umbrella→child "
+            "relationships in orchestration (e.g., a benchmark umbrella "
+            "intent with one child per project). Stored as action.parent "
+            "on the envelope for audit reconstruction."
+        ),
+    )
 
 
 class IntentResponse(BaseModel):
@@ -213,13 +222,39 @@ async def health() -> dict[str, Any]:
 
 @app.get("/version")
 async def version() -> dict[str, Any]:
-    from synapse.intend import _runtime
+    """Return version + runtime mode + loaded frameworks.
+
+    v0.2.6 fix (dogfood bug #2): eagerly initialize the runtime so the
+    very first call to /version sees `mode = inproc | zero_infra | live`
+    instead of "unknown". Previously, _runtime was lazy-populated only
+    when intend()/install() fired, which made operators think the API
+    server was broken right after `synapse api` boot.
+    """
+    from synapse.intend import _runtime, _ensure_connected
     from synapse.install import _FRAMEWORK_REGISTRY
+    # Eagerly populate _runtime — including state-graph instance — so the
+    # very first /version call after `synapse api` boot surfaces the
+    # actual mode + state_backend + db path. Previously _runtime was
+    # populated lazily by the first intend()/install() call, which made
+    # `synapse api` look broken to operators just running curl /version.
+    try:
+        await _ensure_connected()
+    except Exception:
+        # If init genuinely fails (e.g., Postgres down), fall through
+        # so /version still answers with whatever state we have.
+        pass
+    # Surface the resolved SQLite path if zero-infra mode (dogfood bug #1).
+    db_path = None
+    state = _runtime.get("state")
+    if state is not None:
+        # SqliteStateGraph stores _path; Postgres StateGraph stores _dsn
+        db_path = str(getattr(state, "_path", None) or getattr(state, "_dsn", None) or "")
     return {
         "synapse_version": synapse.__version__,
         "api_uptime_s": round(time.time() - _app_started_at, 1),
         "mode": _runtime.get("mode", "unknown"),
         "state_backend": _runtime.get("state_backend"),
+        "state_db_path": db_path,
         "frameworks_supported": list(_KNOWN_FRAMEWORKS),
         "frameworks_loaded": sorted(_FRAMEWORK_REGISTRY.keys()),
     }
@@ -266,6 +301,14 @@ async def claim_intent(req: IntentRequest) -> IntentResponse:
         """Enter the intend() context, stash the handle, wait for release."""
         from synapse.policies.registry import resolve_policy
         policy = resolve_policy(req.merge_policy) if req.merge_policy else None
+        # v0.2.6 fix (dogfood bug #4): stash parent_intention_id on the
+        # proposed_action so the envelope's audit trail preserves the
+        # umbrella→child relationship. The state graph already supports
+        # `parent_msg_id` on envelopes; this just surfaces it at the
+        # REST boundary.
+        proposed = dict(req.proposed_action or {})
+        if req.parent_intention_id:
+            proposed["parent_intention_id"] = req.parent_intention_id
         with synapse.with_agent(req.agent):
             async with synapse.intend(
                 scope=req.scope,
@@ -274,7 +317,7 @@ async def claim_intent(req: IntentRequest) -> IntentResponse:
                 expected_outcome=req.expected_outcome,
                 blocking=req.blocking,
                 gate_ms=req.gate_ms,
-                proposed_action=req.proposed_action,
+                proposed_action=proposed,
                 merge_policy=policy,
             ) as i:
                 handle_state["intention_id"] = i.intention_id
@@ -338,6 +381,115 @@ async def claim_intent(req: IntentRequest) -> IntentResponse:
         rationale=handle_state.get("policy_rationale"),
         merged_action=handle_state.get("merged_action"),
     )
+
+
+@app.get("/v1/intent/{intention_id}")
+async def get_intent(intention_id: str) -> dict[str, Any]:
+    """Return the current state of a single intent by id.
+
+    v0.2.6 fix (dogfood bug #3): no way previously to inspect a single
+    intent — operators had to GET /v1/sessions/<id>/intentions and grep.
+
+    Looks up first in the pending-intent table (active intents holding
+    the REST claim), then falls through to the state graph for resolved
+    intents persisted to Postgres/SQLite.
+    """
+    # Check in-memory pending first
+    async with _pending_lock:
+        slot = _pending_intents.get(intention_id)
+    if slot is not None:
+        state = slot["state"]
+        conflicts = [
+            c.model_dump() if hasattr(c, "model_dump") else dict(c)
+            for c in (state.get("conflicts") or [])
+        ]
+        return {
+            "intention_id": intention_id,
+            "status": "active",
+            "agent": slot["agent"],
+            "session": slot["session"],
+            "conflicts": conflicts,
+            "has_conflicts": bool(conflicts),
+        }
+    # Fall through to state graph for resolved intents
+    from synapse.intend import _ensure_connected
+    rt = await _ensure_connected()
+    state = rt.get("state")
+    if state is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(f"intention {intention_id} not in pending table; "
+                    "no state backend configured to look up resolved intents"),
+        )
+    try:
+        # Cross-backend lookup: Postgres uses asyncpg pool, SQLite uses raw conn
+        row = None
+        if hasattr(state, "pool") and state.pool is not None:
+            # Postgres path
+            async with state.pool.acquire() as conn:
+                row = await conn.fetchrow(
+                    "SELECT id, agent_id, session_id, scope, expected_outcome, "
+                    "       status, action, created_at, resolved_at "
+                    "FROM intentions WHERE id = $1", intention_id,
+                )
+            if row is None:
+                raise HTTPException(status_code=404,
+                    detail=f"intention {intention_id} not found")
+            action = row[6]
+            if isinstance(action, str):
+                try: action = json.loads(action)
+                except Exception: action = {}
+            parent_id = (action or {}).get("parent_intention_id")
+            return {
+                "intention_id": row[0],
+                "agent": row[1],
+                "session": row[2],
+                "scope": list(row[3]) if row[3] else [],
+                "expected_outcome": row[4],
+                "status": row[5],
+                "parent_intention_id": parent_id,
+                "action": action,
+                "created_ts_ms": int((row[7].timestamp() if row[7] else 0) * 1000),
+                "resolved_ts_ms": int((row[8].timestamp() if row[8] else 0) * 1000),
+            }
+        elif hasattr(state, "_conn") and state._conn is not None:
+            # SQLite path
+            def _read():
+                cur = state._conn.execute(
+                    "SELECT id, agent_id, session_id, scope, expected_outcome, "
+                    "       status, action, created_at, resolved_at "
+                    "FROM intentions WHERE id = ?", (intention_id,),
+                )
+                return cur.fetchone()
+            r = await asyncio.to_thread(_read)
+            if r is None:
+                raise HTTPException(status_code=404,
+                    detail=f"intention {intention_id} not found")
+            # SQLite schema stores scope/action as TEXT json strings
+            try: scope_list = json.loads(r[3]) if isinstance(r[3], str) else list(r[3] or [])
+            except Exception: scope_list = []
+            try: action = json.loads(r[6]) if isinstance(r[6], str) else (r[6] or {})
+            except Exception: action = {}
+            parent_id = (action or {}).get("parent_intention_id")
+            return {
+                "intention_id": r[0],
+                "agent": r[1],
+                "session": r[2],
+                "scope": scope_list,
+                "expected_outcome": r[4],
+                "status": r[5],
+                "parent_intention_id": parent_id,
+                "action": action,
+                "created_ts_ms": int((float(r[7]) if r[7] else 0) * 1000),
+                "resolved_ts_ms": int((float(r[8]) if r[8] else 0) * 1000),
+            }
+        else:
+            raise HTTPException(status_code=404,
+                detail=f"intention {intention_id} not in pending; state backend not ready")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"state lookup failed: {e}")
 
 
 @app.post("/v1/intent/{intention_id}/resolve")

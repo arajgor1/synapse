@@ -193,10 +193,26 @@ class Agent:
                 rows = None
 
             if rows is not None and not rows:
-                # No active or recent conflicts → skip the gate window
-                # entirely. The router still consumes our INTENTION on the
-                # bus and may emit CONFLICTs to FUTURE arrivers, but we're
-                # done.
+                # v0.2.7 fix (Phase 7b/8 finding): in concurrent multi-agent
+                # scenarios (3+ agents claiming the same scope within ~ms),
+                # agent A's find_conflicts() may run BEFORE agents B and C
+                # have committed their rows — so we'd miss their concurrent
+                # claims and the fast-path would return [] for everyone, but
+                # the router (which sees the bus stream globally) would
+                # emit CONFLICTs to the contenders.
+                #
+                # To make 3-agent CONFLICT routing deterministic, still drain
+                # the inbox briefly for router-emitted CONFLICTs even when our
+                # local fast-path query returns []. Latency cost: up to
+                # gate_ms (default 50ms) per concurrent claim, only when
+                # blocking=True. Callers who want zero latency can pass
+                # blocking=False or gate_ms=0.
+                if blocking and gate_ms > 0:
+                    router_conflicts = await self._wait_for_signals(
+                        envelope.msg_id, window_ms=gate_ms,
+                    )
+                    if router_conflicts:
+                        return envelope.msg_id, router_conflicts
                 return envelope.msg_id, []
 
             if rows:

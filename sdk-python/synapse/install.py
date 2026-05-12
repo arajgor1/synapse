@@ -90,6 +90,7 @@ def install(
     merge_policy: Any = None,                    # v0.2-w4
     critical_scopes: Optional[list[str]] = None,
     emit_beliefs_from_tool_results: bool = False,  # v0.2-w5
+    auto_router: bool = False,                     # v0.2.6
     **framework_opts: Any,
 ) -> dict[str, Any]:
     """Configure Synapse and (optionally) hook into a known framework.
@@ -134,6 +135,15 @@ def install(
     if framework is None and auto:
         framework = _autodetect_framework()
 
+    # v0.2.6: optionally auto-spawn an L2 Router worker. Without a Router,
+    # INTENTIONs are persisted to the state graph but CONFLICT envelopes
+    # never get routed to agent inboxes — Phase 7b finding. The Router
+    # normally runs as a separate `synapse up` process; for library users
+    # who don't want to manage that, this spawns it as a sibling asyncio
+    # task on the current loop.
+    if auto_router:
+        _try_spawn_router(rt, session_id=session_id)
+
     hooks: list[str] = []
     if framework:
         # Lazy-import the adapter and register if not already
@@ -159,6 +169,59 @@ def install(
         "critical_scopes": policy_defaults.get("critical_scopes") or [],
         "emit_beliefs_from_tool_results": bool(policy_defaults.get("emit_beliefs_from_tool_results")),
     }
+
+
+def _try_spawn_router(rt: dict[str, Any], *, session_id: Optional[str]) -> None:
+    """v0.2.6: spawn an L2 Router task on the current asyncio loop so
+    CONFLICT envelopes route to agent inboxes without requiring an
+    external ``synapse up`` process.
+
+    No-op if:
+      - no asyncio loop is currently running (we're in a sync context;
+        the Router needs a loop to drive its consumer group)
+      - bus or state isn't connected (offline mode)
+      - a Router is already running for this session
+    """
+    bus = rt.get("bus")
+    state = rt.get("state")
+    if bus is None or state is None:
+        logger.info("synapse.install(auto_router=True): no bus/state — "
+                    "Router not started (offline mode)")
+        return
+
+    sid = session_id or os.environ.get("SYNAPSE_SESSION_ID") or "default_session"
+
+    routers = rt.setdefault("routers", {})
+    if sid in routers and routers[sid].get("task") is not None:
+        # Already running for this session
+        return
+
+    try:
+        import asyncio as _asyncio
+        loop = _asyncio.get_running_loop()
+    except RuntimeError:
+        logger.warning("synapse.install(auto_router=True): no running asyncio "
+                       "loop — cannot spawn Router. Call install() from "
+                       "inside an async function, or run `synapse up` as a "
+                       "separate process.")
+        return
+
+    try:
+        from runtime.router.worker import Router
+    except ImportError as e:
+        logger.warning("synapse.install(auto_router=True): cannot import "
+                       "runtime.router.worker.Router (%s). Skipping spawn.", e)
+        return
+
+    try:
+        router = Router(bus, state, sid, consumer=f"auto_router_{sid}")
+        task = loop.create_task(router.run(), name=f"synapse-router-{sid}")
+        routers[sid] = {"router": router, "task": task}
+        logger.info("synapse.install(auto_router=True): spawned Router for "
+                    "session=%s on current loop", sid)
+    except Exception as e:
+        logger.warning("synapse.install(auto_router=True): Router spawn "
+                       "failed (%s)", e)
 
 
 def _ensure_framework_loaded(name: str) -> None:

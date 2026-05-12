@@ -479,8 +479,16 @@ async def intend(
 
     if syn_agent is not None:
         try:
+            # v0.2.6 fix (dogfood bug #4): if proposed_action carries
+            # `parent_intention_id`, preserve it on the persisted action so
+            # the audit trail of umbrella→child orchestration is intact.
+            action_dict: dict[str, Any] = {
+                "description": expected_outcome or f"intend:{agent}",
+            }
+            if proposed_action and "parent_intention_id" in proposed_action:
+                action_dict["parent_intention_id"] = proposed_action["parent_intention_id"]
             intention_id, conflicts = await syn_agent.emit_intention(
-                action={"description": expected_outcome or f"intend:{agent}"},
+                action=action_dict,
                 scope=list(scope),
                 expected_outcome=expected_outcome or "tool dispatch",
                 blocking=blocking,

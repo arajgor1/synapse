@@ -36,10 +36,30 @@ _PATCHED = {"sync": False, "async": False}
 def _scope_from_task(task: Any) -> list[str]:
     """Map a CrewAI Task to a scope claim.
 
-    Heuristics:
-      - If task.expected_output mentions a file path, use repo.fs.<path>:w
-      - Else use crewai.task.<id>:w as a generic scope
+    Resolution order (v0.2.6+):
+      0. User-supplied ``scope_from_task`` callable (if registered via
+         ``synapse.install(framework="crewai", scope_from_task=...)``).
+         Receives the Task object, returns ``list[str]`` of scope strings.
+      1. If task.expected_output mentions a file path, use repo.fs.<path>:w
+      2. Else use crewai.task.<id>:w as a generic scope
+
+    The configurable hook lets operators encode their team's coordination
+    semantics — for example, scoping by output-file path even when the
+    file path isn't in the description, by reading task.context, the
+    agent's tools, or external metadata.
     """
+    # 0. user-supplied hook
+    user_hook = _CONFIG.get("scope_from_task")
+    if callable(user_hook):
+        try:
+            result = user_hook(task)
+            if result:
+                return list(result) if not isinstance(result, list) else result
+        except Exception as e:
+            logger.warning("synapse.crewai: user scope_from_task raised %s; "
+                          "falling back to default heuristic", e)
+
+    # 1. file-path detection in description / expected_output
     desc = (getattr(task, "description", "") or "").lower()
     expected = (getattr(task, "expected_output", "") or "").lower()
     text = f"{desc} {expected}"
@@ -50,8 +70,13 @@ def _scope_from_task(task: Any) -> list[str]:
         path = m.group(1)
         return [f"repo.fs.{path}:w"]
 
+    # 2. fall-back generic scope
     task_id = getattr(task, "id", None) or hex(id(task))[2:]
     return [f"crewai.task.{task_id}:w"]
+
+
+# Module-level config (mutated by _install_crewai if user passed kwargs)
+_CONFIG: dict[str, Any] = {}
 
 
 def _agent_id_from_task(task: Any) -> str:
@@ -158,6 +183,17 @@ def _install_crewai(opts: dict[str, Any]) -> None:
             "`pip install crewai`. Falling back to manual synapse.intend()."
         )
         return
+
+    # v0.2.6: accept user-supplied scope_from_task hook so operators can
+    # override the per-task UUID scoping default. Example:
+    #   def _scope_by_output_file(task):
+    #       p = task.context.get("output_path")
+    #       return [f"repo.fs.{p}:w"] if p else None
+    #   synapse.install(framework="crewai", scope_from_task=_scope_by_output_file)
+    if "scope_from_task" in opts:
+        _CONFIG["scope_from_task"] = opts["scope_from_task"]
+        logger.info("synapse.install(framework='crewai'): registered "
+                    "user-supplied scope_from_task hook")
 
     if not _PATCHED["sync"] and hasattr(Task, "execute_sync"):
         Task.execute_sync = _wrap_sync(Task.execute_sync)
