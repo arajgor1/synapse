@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="synapse-logo.svg" alt="Synapse" width="420"/>
+<img src="synapse-logo.svg" alt="Synapse" width="520"/>
 
-**The audit + coordination layer for agentic teams that span vendors.**
+**Audit · Observability · Conflict · Intent · Reasoning — for agentic teams that span vendors.**
 One Synapse session, ten different framework SDKs, one unified envelope log.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -18,7 +18,7 @@ One Synapse session, ten different framework SDKs, one unified envelope log.
 
 ### ⭐ Star · 🍴 Fork · 💬 [Discussions](https://github.com/arajgor1/synapse/discussions) · 📖 [Benchmark](bench/PUBLIC_BENCHMARK.md) · 🧪 [v32 bundle](bench/results/v32_app_bundle/)
 
-> **Coordinate, audit, and prove what your agents did — across any vendor SDK.** Synapse sits above AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, and Hermes — and emits one unified envelope log no matter which one your agents ran on.
+> **Audit what they did. Observe them live. Catch their conflicts. Persist every intent. Capture their reasoning. Across any vendor SDK.** Synapse sits above AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, and Hermes — and emits one unified envelope log no matter which one your agents ran on.
 
 🌍 [🇺🇸 English](README.md) · [🇩🇪 DE](https://readme-i18n.com/arajgor1/synapse?lang=de) · [🇫🇷 FR](https://readme-i18n.com/arajgor1/synapse?lang=fr) · [🇪🇸 ES](https://readme-i18n.com/arajgor1/synapse?lang=es) · [🇨🇳 ZH](https://readme-i18n.com/arajgor1/synapse?lang=zh) · [🇯🇵 JA](https://readme-i18n.com/arajgor1/synapse?lang=ja) · [🇰🇷 KO](https://readme-i18n.com/arajgor1/synapse?lang=ko) · [🇮🇳 HI](https://readme-i18n.com/arajgor1/synapse?lang=hi) · [🇸🇦 AR](https://readme-i18n.com/arajgor1/synapse?lang=ar) · [🇷🇺 RU](https://readme-i18n.com/arajgor1/synapse?lang=ru) · [🇧🇷 PT](https://readme-i18n.com/arajgor1/synapse?lang=pt) · [🇮🇹 IT](https://readme-i18n.com/arajgor1/synapse?lang=it)
 

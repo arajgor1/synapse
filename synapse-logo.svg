@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 140" width="420" height="140">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="520" height="160">
   <defs>
     <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%"  stop-color="#5b8fff"/>
@@ -14,29 +14,45 @@
     </filter>
   </defs>
 
-  <!-- Node graph: 4 nodes joined like envelope flow between agents -->
+  <!-- Node graph: 5 pillar nodes joined as envelope flow -->
   <g filter="url(#glow)">
-    <line x1="35"  y1="70" x2="80"  y2="40" stroke="url(#g)" stroke-width="2"/>
-    <line x1="35"  y1="70" x2="80"  y2="100" stroke="url(#g)" stroke-width="2"/>
-    <line x1="80"  y1="40" x2="125" y2="70" stroke="url(#g)" stroke-width="2"/>
-    <line x1="80"  y1="100" x2="125" y2="70" stroke="url(#g)" stroke-width="2"/>
+    <!-- Spokes from center to each pillar -->
+    <line x1="80" y1="80" x2="35"  y2="55"  stroke="url(#g)" stroke-width="2"/>
+    <line x1="80" y1="80" x2="35"  y2="105" stroke="url(#g)" stroke-width="2"/>
+    <line x1="80" y1="80" x2="125" y2="40"  stroke="url(#g)" stroke-width="2"/>
+    <line x1="80" y1="80" x2="125" y2="80"  stroke="url(#g)" stroke-width="2"/>
+    <line x1="80" y1="80" x2="125" y2="120" stroke="url(#g)" stroke-width="2"/>
 
-    <circle cx="35"  cy="70"  r="8" fill="#5b8fff"/>
-    <circle cx="80"  cy="40"  r="8" fill="#a78bfa"/>
-    <circle cx="80"  cy="100" r="8" fill="#4ade80"/>
-    <circle cx="125" cy="70"  r="8" fill="#f59e0b"/>
+    <!-- Center hub: the Synapse session -->
+    <circle cx="80"  cy="80"  r="10" fill="#e6e8ec" opacity="0.95"/>
+
+    <!-- 5 pillar nodes -->
+    <circle cx="35"  cy="55"  r="7" fill="#5b8fff"/> <!-- Audit          -->
+    <circle cx="35"  cy="105" r="7" fill="#a78bfa"/> <!-- Observability  -->
+    <circle cx="125" cy="40"  r="7" fill="#4ade80"/> <!-- Conflict       -->
+    <circle cx="125" cy="80"  r="7" fill="#f59e0b"/> <!-- Intent         -->
+    <circle cx="125" cy="120" r="7" fill="#ef4444"/> <!-- NLA / reasoning-->
   </g>
 
   <!-- Wordmark -->
-  <text x="160" y="78"
+  <text x="170" y="80"
         font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
-        font-size="44" font-weight="700"
+        font-size="46" font-weight="700"
         fill="#e6e8ec" letter-spacing="-0.02em">
     Synapse
   </text>
-  <text x="162" y="105"
+
+  <!-- Tagline line 1: the five pillars -->
+  <text x="172" y="108"
         font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-        font-size="13" fill="#a1a8b3" letter-spacing="0.02em">
-    audit + coordination for agentic teams
+        font-size="12" fill="#a1a8b3" letter-spacing="0.04em">
+    audit · observability · conflict · intent · reasoning
+  </text>
+
+  <!-- Tagline line 2: who it's for -->
+  <text x="172" y="128"
+        font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="12" fill="#6a7280" font-style="italic">
+    one envelope log across vendor SDKs
   </text>
 </svg>
