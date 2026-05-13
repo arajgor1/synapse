@@ -1,0 +1,16 @@
+# Funding configuration for Synapse.
+# Uncomment and fill in once accounts exist; until then this file documents intent.
+
+# github: [arajgor1]
+# patreon:
+# open_collective:
+# ko_fi:
+# tidelift: pypi/synapse-protocol
+# liberapay:
+# issuehunt:
+# otechie:
+# lfx_crowdfunding:
+# polar:
+# buy_me_a_coffee:
+# thanks_dev:
+# custom: ["https://example.com/sponsor"]

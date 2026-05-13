@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/arajgor1/synapse/discussions
+    about: Ask a question, share ideas, or discuss with the community
+  - name: 🛡️ Security advisory
+    url: https://github.com/arajgor1/synapse/security/advisories/new
+    about: Report a security vulnerability (do not open a public issue)
+  - name: 📧 Email the maintainer
+    url: mailto:aadityarajgor27@gmail.com
+    about: For enterprise / commercial inquiries

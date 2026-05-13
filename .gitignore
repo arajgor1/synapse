@@ -77,3 +77,12 @@ coverage.xml
 
 # mkdocs build output (only the top-level ./site/, not docs/site/ which is source)
 /site/
+
+# Private working dir — launch drafts, internal planning, cost/budget notes,
+# AI-assistance disclosure docs that aren't ready for public consumption.
+# Keep locally for the maintainer's reference; never publish.
+.internal/
+
+# Graphify build outputs (all of them, not just specific files)
+graphify-out/
+

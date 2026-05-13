@@ -29,7 +29,7 @@
 modal run runtime/modal/framework_sandbox.py::organic_e2e
 ```
 
-Each Modal run costs ~$0.30-0.50 (13 frameworks × 1 LLM call × Anthropic Haiku 4.5).
+Each Modal run exercises 13 frameworks × 1 LLM call (Anthropic Haiku 4.5).
 
 Result JSON is saved to `bench/results/organic_e2e_*.json`; live logs to
 `bench/results/organic_e2e_v*_live.log`.

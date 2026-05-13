@@ -1,21 +1,52 @@
 <div align="center">
 
-# 🧬 Synapse
+<img src="synapse-logo.svg" alt="Synapse" width="420"/>
 
 **The audit + coordination layer for agentic teams that span vendors.**
 One Synapse session, ten different framework SDKs, one unified envelope log.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Version: v0.2.8](https://img.shields.io/badge/Version-v0.2.8-brightgreen.svg)](#status)
-[![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
-[![Tests](https://img.shields.io/badge/tests-374%20passing-brightgreen.svg)](#tests)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+[![Version: v0.2.8](https://img.shields.io/badge/version-v0.2.8-brightgreen.svg)](https://github.com/arajgor1/synapse/releases/tag/v0.2.8)
+[![Spec: v1.0](https://img.shields.io/badge/spec-v1.0-green.svg)](spec/protocol-v1.0/)
+[![Tests](https://img.shields.io/badge/tests-374%20passing-brightgreen.svg)](sdk-python/tests/)
 [![Adapters](https://img.shields.io/badge/adapters-10%20Python%20%2B%201%20Node-brightgreen.svg)](sdk-python/synapse/frameworks/)
 [![Cooperative build](https://img.shields.io/badge/cross--vendor%20build-10%2F10%20%E2%9C%93-brightgreen.svg)](bench/results/v32_app_bundle/)
 [![App runs](https://img.shields.io/badge/Flask%20app-GET%20%2Ftodos%20%E2%86%92%20200-brightgreen.svg)](bench/results/v32_app_bundle/main.py)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?logo=discord&logoColor=white)](https://github.com/arajgor1/synapse/discussions)
+[![X](https://img.shields.io/badge/X-Follow-black?logo=x&logoColor=white)](https://github.com/arajgor1/synapse)
 
-### ⭐ Star · 🍴 Fork · 📖 [Public benchmark](bench/PUBLIC_BENCHMARK.md) · 🧪 [v32 build bundle](bench/results/v32_app_bundle/)
+### ⭐ Star · 🍴 Fork · 💬 [Discussions](https://github.com/arajgor1/synapse/discussions) · 📖 [Benchmark](bench/PUBLIC_BENCHMARK.md) · 🧪 [v32 bundle](bench/results/v32_app_bundle/)
+
+> **Coordinate, audit, and prove what your agents did — across any vendor SDK.** Synapse sits above AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, and Hermes — and emits one unified envelope log no matter which one your agents ran on.
+
+🌍 [🇺🇸 English](README.md) · [🇩🇪 DE](https://readme-i18n.com/arajgor1/synapse?lang=de) · [🇫🇷 FR](https://readme-i18n.com/arajgor1/synapse?lang=fr) · [🇪🇸 ES](https://readme-i18n.com/arajgor1/synapse?lang=es) · [🇨🇳 ZH](https://readme-i18n.com/arajgor1/synapse?lang=zh) · [🇯🇵 JA](https://readme-i18n.com/arajgor1/synapse?lang=ja) · [🇰🇷 KO](https://readme-i18n.com/arajgor1/synapse?lang=ko) · [🇮🇳 HI](https://readme-i18n.com/arajgor1/synapse?lang=hi) · [🇸🇦 AR](https://readme-i18n.com/arajgor1/synapse?lang=ar) · [🇷🇺 RU](https://readme-i18n.com/arajgor1/synapse?lang=ru) · [🇧🇷 PT](https://readme-i18n.com/arajgor1/synapse?lang=pt) · [🇮🇹 IT](https://readme-i18n.com/arajgor1/synapse?lang=it)
 
 </div>
+
+---
+
+## The Problem
+
+AI agentic teams today span multiple vendor SDKs. There's no audit layer that crosses them.
+
+- ❌ **Vendor-specific traces** — LangSmith logs LangChain; Phoenix logs OpenInference; Helicone logs OpenAI. None of them spans ten SDKs in one session.
+- ❌ **No unified `who did what`** — when an AutoGen agent and a CrewAI agent collaborate on the same task, no tool gives you both in one log.
+- ❌ **Silent collisions** — two agents write to the same scope; the last writer wins; nobody notices until production breaks.
+- ❌ **No compliance artifact** — when a regulator asks "what did the agentic team do?", you can't hand them a single source of truth.
+- ❌ **No reasoning capture** — even when models emit thinking blocks (Anthropic extended thinking, o-series reasoning), most pipelines drop them.
+
+## The Solution
+
+Synapse is a thin coordination + audit protocol you add **above** your existing framework SDKs.
+
+- ✅ **One envelope log across vendors** — INTENTION, THOUGHT, RESOLUTION, CONFLICT, PIVOT, BELIEF, COST_REPORT envelopes from every adapter land in one Postgres + Redis pair.
+- ✅ **10 vendor SDKs proven cooperating** — see the [v32 cooperative-build bundle](bench/results/v32_app_bundle/) where 10 framework agents collaboratively built a Flask app that actually runs.
+- ✅ **LLM reasoning captured natively** — Anthropic extended thinking + o-series reasoning + PSEUDO_THOUGHT fallback for plain text models. HuggingFace logits/attention/hidden-states for self-hosted.
+- ✅ **Conflict detection + auto-merge** — the L2 router catches collisions before they corrupt your output. `MergePolicy.auto_merge` uses your LLM to reconcile.
+- ✅ **Audit existing traces too** — `synapse audit ./traces.json` reads OpenInference / LangSmith / Bedrock / Vertex / Azure / JSONL.
+
+> Sits next to — not against — the observability tools you already use. We're the audit + coordination layer; they're the call-level trace layer. They're complementary.
 
 ---
 

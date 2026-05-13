@@ -240,7 +240,7 @@ anything special to get it.** That's the value.
 ## Phase 2 — REAL ORGANIC RUN ON MODAL (v3, 2026-05-10)
 
 **Result file:** `bench/results/public_benchmark_full_20260510-143811.json`
-**Total cost:** ~$0.40 Modal CPU + ~$0.05 Gemini-flash + ~$0.20 Anthropic Haiku ≈ **$0.65**.
+
 
 ### Method (no induction, organic only)
 
@@ -359,7 +359,7 @@ iterations (v4–v13) closing each of those, **without modifying any project's
 canonical example or inducing any Synapse-favorable behavior**. The result:
 
 **Result file:** `bench/results/public_benchmark_full_20260510-165855.json`
-**Total cost across all 13 iterations:** ~$5.50 Modal CPU + ~$1.20 Anthropic Haiku + ~$0.30 Gemini-flash ≈ **$7**.
+
 
 ### Final 13/13 verdict table
 
@@ -1119,7 +1119,7 @@ as v0.2.8 backlog.
 | E | v19 end-to-end V1 product builds across 10 adapters | 7/10 V1_PASS first pass (8/10 incl. SMOKE) |
 | F | v20 NLA-extended thinking — same V1 build with reasoning capture | Pending Modal completion |
 
-**Cumulative spend across all 20 iterations: ~$30 Modal+LLM.** PUBLIC_BENCHMARK.md is now ~1100 lines, every claim mapped to a specific test result.
+
 
 ### v19.1 — verifier-fix re-run (8/10 V1_PASS + 1 V1_SMOKE)
 
@@ -1196,7 +1196,7 @@ capture rate depends on the LLM choosing to think.
 4. **Self-hosted LLM NLA capture** — the deep version (logits, attention, residual stream) for vLLM/Ollama/HuggingFace is documented as a separate adapter that needs the inference-loop hook.
 5. **google_adk full end-to-end** — needs Runner + SessionService wrapper.
 
-### Cumulative spend across all 22 iterations: ~$35 Modal+LLM.
+
 
 ---
 
@@ -1435,4 +1435,4 @@ persist across runs). v32 is the **release** payload.
 4. **Self-hosted NLA module exercised under torch** — shipped but not run in
    Modal yet (image lacks torch by design — opt-in).
 
-### Cumulative spend across all 32 iterations: ~$48 Modal+LLM.
+
