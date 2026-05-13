@@ -282,17 +282,30 @@ That's the entire surface. **Bring your own LLM**, self-hosted by design, never 
 
 ## Where Synapse helps (and where it doesn't)
 
-Honest scope from real benchmark runs:
+Five capabilities, one framework-agnostic substrate. Honest scope from the v0.2.8 benchmarks:
+
+### What Synapse delivers
+
+| Capability | What it gives you | Proof in this repo |
+|---|---|---|
+| 🔎 **Audit** | Read existing OTel / OpenInference / LangSmith / Bedrock / Vertex / Azure / JSONL traces and surface silent collisions. Zero infra. | `synapse audit ./traces.json` — see [bench/results/agenticflict_benchmark.json](bench/results/agenticflict_benchmark.json) (F1 = 0.865 on 5,408 paired PRs) |
+| 📡 **Observability** | One unified envelope log across every vendor SDK. Live dashboard + REST + WebSocket + MCP. | [`/builds/v32`](ui/src/app/builds/v32/) page renders the 10-vendor cooperative build from a static envelope log |
+| ⚠️ **Conflict detection** | L1 (rules) + L2 (router) + L3 (semantic) catches scope overlaps, stale-base overwrites, and BELIEF divergences before they corrupt output. | Deterministic 10/10 V1_PASS across 10 framework adapters (v26 ↔ v27 byte-for-byte reproducible — 23 intents, 9 THOUGHTs) |
+| 🎯 **Intent capture** | Every agent's INTENTION envelope persists with scope, action, expected outcome — vendor-tagged. | [v32 cooperative-build envelopes.jsonl](bench/results/v32_app_bundle/envelopes.jsonl) — 8 INTENTIONs from 4 distinct vendor SDKs in one session |
+| 🧠 **NLA / reasoning capture** | Anthropic extended thinking + o-series reasoning + PSEUDO_THOUGHT fallback for plain models + HuggingFace logits/attention/hidden-states for self-hosted. | `synapse.wrap_anthropic_for_thoughts` + `wrap_openai_for_thoughts` + `wrap_hf_model_for_nla` |
+
+### Where it fits in your stack
 
 | Pattern | Synapse value |
 |---|---|
-| **Multi-team / multi-orchestrator** sharing a codebase | ✅ **Real safety.** SDLC benchmark: coherence 0.33 → 0.93 with auto_merge. |
-| **Sub-agent spawning** (Hermes-style, swarm patterns) | ✅ **Real safety.** Children don't know about each other. |
+| **Cross-vendor agentic teams** (10 different SDKs in one session) | ✅ **The headline use case.** The [v32 bundle](bench/results/v32_app_bundle/) is the existence proof. |
+| **Multi-team / multi-orchestrator** sharing a codebase | ✅ **Real safety.** SDLC benchmark: coherence 0.33 → 0.93 with `auto_merge`. |
+| **Sub-agent spawning** (Hermes-style, swarm patterns) | ✅ **Real safety + audit.** Children don't know about each other; Synapse gives the parent + each child one log. |
 | **Audit existing trace data** for past collisions | ✅ **Real audit.** No false positives, runs without infra. |
-| **Hierarchical orchestrator + workers** (LangGraph supervisor, CrewAI hierarchy) | ⚠️ **Mostly observability.** A competent orchestrator pre-deconflicts; Synapse runs cleanly but adds little detection value. |
-| **Single agent** | ❌ **Pure overhead.** Synapse correctly does nothing. Don't install it. |
+| **Hierarchical orchestrator + workers** (LangGraph supervisor, CrewAI hierarchy) | ✅ **Observability + intent + NLA.** A competent orchestrator handles most de-confliction; Synapse adds the unified envelope log, intent persistence, and reasoning capture across however many vendor SDKs the workers run on. |
+| **Single agent** | ❌ **Don't install it.** Synapse correctly does nothing for single-agent flows. Use it when ≥2 agents share state. |
 
-We had to learn this empirically — see [`bench/results/v02_autonomous_*/FINDINGS.md`](bench/results/) for the autonomous-test write-up that disconfirmed the early "any multi-agent system" pitch.
+Full benchmark history — including every iteration that didn't work and the fix that made it work — is in [`bench/PUBLIC_BENCHMARK.md`](bench/PUBLIC_BENCHMARK.md).
 
 ## Installs
 
