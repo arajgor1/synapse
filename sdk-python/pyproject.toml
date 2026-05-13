@@ -57,7 +57,7 @@ local = [
 ]
 gateway = [
     "fastapi>=0.115",
-    "uvicorn[standard]>=0.30",
+    "uvicorn[standard]>=0.46.0",
 ]
 all = [
     "synapse-protocol[live,hosted,local]",
