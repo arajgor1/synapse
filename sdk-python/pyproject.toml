@@ -23,7 +23,7 @@ classifiers = [
 dependencies = [
     # Core deps for `synapse audit` (the wedge) — keep this list tiny.
     # Audit reads existing trace exports; it has zero infrastructure needs.
-    "pydantic>=2.6,<3",
+    "pydantic>=2.13.4,<3",
     "jsonschema>=4.20",
 ]
 
