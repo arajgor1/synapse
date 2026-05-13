@@ -6,7 +6,7 @@ agents (Cursor, Claude Code, Aider, etc.).
 ## What it does
 
 - **MCP server**: gives Codex CLI's agent direct access to Synapse's
-  audit + coordination tools.
+  audit, conflict-detection, and intent-capture tools.
 - **FS watcher sidecar**: captures every file write Codex makes and
   attributes them to the right agent identity, so audit can detect
   collisions with other concurrent sessions.

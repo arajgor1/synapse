@@ -3,7 +3,7 @@
   "mcpServers": {
     "synapse": {
       "command": "synapse-mcp",
-      "description": "Synapse audit + coordination layer for multi-agent codebases. Exposes audit_trace_file, find_conflicts_in_session, get_drift_score, list_supported_trace_formats, explain_conflict."
+      "description": "Synapse — audit, observability, conflict, intent, and reasoning capture for multi-agent codebases across vendor SDKs. Exposes audit_trace_file, find_conflicts_in_session, get_drift_score, list_supported_trace_formats, explain_conflict."
     }
   }
 }

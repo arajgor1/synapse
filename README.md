@@ -46,7 +46,7 @@ Synapse is a thin coordination + audit protocol you add **above** your existing 
 - ✅ **Conflict detection + auto-merge** — the L2 router catches collisions before they corrupt your output. `MergePolicy.auto_merge` uses your LLM to reconcile.
 - ✅ **Audit existing traces too** — `synapse audit ./traces.json` reads OpenInference / LangSmith / Bedrock / Vertex / Azure / JSONL.
 
-> Sits next to — not against — the observability tools you already use. We're the audit + coordination layer; they're the call-level trace layer. They're complementary.
+> Sits next to — not against — the observability tools you already use. They're the call-level trace layer; we're the cross-vendor envelope layer (audit · observability · conflict · intent · reasoning). They're complementary.
 
 ---
 

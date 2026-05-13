@@ -10,10 +10,10 @@ FunctionCall path.
 
 Verified against agno 2.6.5.
 
-We deliberately ship this BEFORE Semantica's "coming soon" Agno
-integration, since Synapse's audit + coordination is purpose-built
-for the multi-agent collision case and Agno's workflow primitives
-(Parallel, Loop, Router) make multi-agent state-sharing very common.
+Synapse's envelope substrate (audit, observability, conflict, intent,
+reasoning capture) is purpose-built for the multi-agent collision case
+and Agno's workflow primitives (Parallel, Loop, Router) make
+multi-agent state-sharing very common.
 """
 from __future__ import annotations
 
