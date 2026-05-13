@@ -1710,16 +1710,17 @@ def public_benchmark_run(api_keys: dict[str, str]) -> dict[str, Any]:
     started = time.time()
     setup = _common_setup_script()
     extra = (
-        "\necho '=== install batch 1: core + tracing + gemini ==='\n"
+        "\necho '=== install batch 1: core + tracing + gemini + flask (for v28+ app verifier) ==='\n"
         "python3 -m pip install -q anthropic litellm opentelemetry-sdk "
         "google-genai google-generativeai langchain-google-genai "
+        "flask "
         "|| echo 'BATCH1 FAILED'\n"
         "echo '=== install batch 2: langchain ecosystem ==='\n"
-        "python3 -m pip install -q langgraph langchain langchain-anthropic langchain-core "
+        "python3 -m pip install -q langgraph langchain langchain-anthropic langchain-openai langchain-core "
         "|| echo 'BATCH2 FAILED'\n"
         "echo '=== install batch 2b: llama_index + opentelemetry (v0.2.6) ==='\n"
         "python3 -m pip install -q "
-        "'llama-index-core>=0.11' 'llama-index-llms-anthropic>=0.3' "
+        "'llama-index-core>=0.11' 'llama-index-llms-anthropic>=0.3' 'llama-index-llms-openai>=0.3' "
         "'opentelemetry-sdk>=1.20' "
         "|| echo 'BATCH2B FAILED'\n"
         "echo '=== install batch 3: agent frameworks (per-pkg, constrained) ==='\n"
@@ -1919,7 +1920,17 @@ def public_benchmark_run(api_keys: dict[str, str]) -> dict[str, Any]:
     #   SYNAPSE_BENCH_V15=1 → v15 rock-solid (autogen + hermes)
     #   SYNAPSE_BENCH_V14=1 → v14 real multi-round workflows
     #   default              → v1-v13 minimal probes
-    if api_keys.get("SYNAPSE_BENCH_V21") == "1":
+    if api_keys.get("SYNAPSE_BENCH_V32") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v32.py"
+    elif api_keys.get("SYNAPSE_BENCH_V31") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v31.py"
+    elif api_keys.get("SYNAPSE_BENCH_V30") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v30.py"
+    elif api_keys.get("SYNAPSE_BENCH_V29") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v29.py"
+    elif api_keys.get("SYNAPSE_BENCH_V28") == "1":
+        bench_payload = "/opt/synapse-payloads/public_benchmark_v28.py"
+    elif api_keys.get("SYNAPSE_BENCH_V21") == "1":
         bench_payload = "/opt/synapse-payloads/public_benchmark_v21.py"
     elif api_keys.get("SYNAPSE_BENCH_V20") == "1":
         bench_payload = "/opt/synapse-payloads/public_benchmark_v20.py"
@@ -1943,6 +1954,7 @@ def public_benchmark_run(api_keys: dict[str, str]) -> dict[str, Any]:
     env["ANTHROPIC_API_KEY"] = api_keys.get("ANTHROPIC_API_KEY", "")
     env["GOOGLE_API_KEY"] = api_keys.get("GOOGLE_API_KEY", "")
     env["GEMINI_API_KEY"] = api_keys.get("GOOGLE_API_KEY", "")  # alias
+    env["OPENAI_API_KEY"] = api_keys.get("OPENAI_API_KEY", "")
     env["PYTHONUNBUFFERED"] = "1"
     captured: list[str] = []
     try:
@@ -1986,6 +1998,12 @@ def public_benchmark() -> None:
         "SYNAPSE_BENCH_V19": os.environ.get("SYNAPSE_BENCH_V19", ""),
         "SYNAPSE_BENCH_V20": os.environ.get("SYNAPSE_BENCH_V20", ""),
         "SYNAPSE_BENCH_V21": os.environ.get("SYNAPSE_BENCH_V21", ""),
+        "SYNAPSE_BENCH_V28": os.environ.get("SYNAPSE_BENCH_V28", ""),
+        "SYNAPSE_BENCH_V29": os.environ.get("SYNAPSE_BENCH_V29", ""),
+        "SYNAPSE_BENCH_V30": os.environ.get("SYNAPSE_BENCH_V30", ""),
+        "SYNAPSE_BENCH_V31": os.environ.get("SYNAPSE_BENCH_V31", ""),
+        "SYNAPSE_BENCH_V32": os.environ.get("SYNAPSE_BENCH_V32", ""),
+        "OPENAI_API_KEY":    os.environ.get("OPENAI_API_KEY", ""),
     }
     if not api_keys["GOOGLE_API_KEY"]:
         print("WARN: GOOGLE_API_KEY not set — Gemini-based projects will fail")
@@ -2022,6 +2040,12 @@ def public_benchmark_full() -> None:
         "SYNAPSE_BENCH_V19": os.environ.get("SYNAPSE_BENCH_V19", ""),
         "SYNAPSE_BENCH_V20": os.environ.get("SYNAPSE_BENCH_V20", ""),
         "SYNAPSE_BENCH_V21": os.environ.get("SYNAPSE_BENCH_V21", ""),
+        "SYNAPSE_BENCH_V28": os.environ.get("SYNAPSE_BENCH_V28", ""),
+        "SYNAPSE_BENCH_V29": os.environ.get("SYNAPSE_BENCH_V29", ""),
+        "SYNAPSE_BENCH_V30": os.environ.get("SYNAPSE_BENCH_V30", ""),
+        "SYNAPSE_BENCH_V31": os.environ.get("SYNAPSE_BENCH_V31", ""),
+        "SYNAPSE_BENCH_V32": os.environ.get("SYNAPSE_BENCH_V32", ""),
+        "OPENAI_API_KEY":    os.environ.get("OPENAI_API_KEY", ""),
     }
     if not api_keys["GOOGLE_API_KEY"]:
         print("WARN: GOOGLE_API_KEY not set — Gemini-based projects will fail")
