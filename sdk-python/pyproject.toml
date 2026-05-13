@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "synapse-protocol"
-version = "0.2.5"
-description = "The safety layer for multi-agent AI systems — audit existing traces for silent collisions, prevent them live, BYO-LLM"
+version = "0.2.8"
+description = "Audit + coordination layer for agentic teams that span vendors — one envelope log across AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, and Hermes"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Aadit Rajgor", email = "aadityarajgor27@gmail.com" }]

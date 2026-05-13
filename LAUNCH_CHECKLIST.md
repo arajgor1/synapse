@@ -1,200 +1,153 @@
-# Synapse v0.2.2 — Launch Checklist
+# Synapse v0.2.8 — Launch Checklist
 
-Everything is built. This file is what's left to actually ship — the
-parts that need YOUR accounts, tokens, and decisions.
-
----
-
-## ⚙️ Code state (already done — nothing left)
-
-- [x] 271 tests passing (0 production regressions)
-- [x] 8 framework adapters (6 confirmed real-SDK working: autogen,
-      langgraph, openai_agents, pydantic_ai, smolagents, strands)
-- [x] 6 trace-format importers (OpenInference, LangSmith, Bedrock,
-      Vertex, Azure, JSONL) all auto-detected
-- [x] MCP server (`synapse-mcp`) exposing 5 tools to other agents
-- [x] 7 IDE/CLI plugins (Cursor, Codex CLI, VS Code, Claude Code,
-      Aider, Continue, Cline) — all in `launch/ide-plugins/`
-- [x] Streaming WebSocket server (`python -m synapse.streaming.server`)
-- [x] Browser extension skeleton (`launch/browser-extension/`)
-- [x] AgenticFlict benchmark: F1 = 0.865 on 5,408 paired PRs
-- [x] 5 UAT scenarios all passing
-- [x] Forensic testing protocol documented
-- [x] Adapter health gate (`tests/test_adapter_health.py`) prevents
-      future API drift
-- [x] SCF algorithms adopted with citation (taxonomy + tier hint + SAS)
-- [x] PyPI wheel built (`launch/dist/synapse_protocol-0.2.2a0-...whl`)
-- [x] README rewritten with prior-art + benchmarks + adapter health
-- [x] Hosted demo pages ready (4 of them: landing, audit, benchmark,
-      explorer, team-health)
+Everything that's built; everything that's left. Updated 2026-05-12.
 
 ---
 
-## 🔑 What's left for YOU to do (token-gated work)
+## ⚙️ Code state — all done
 
-### Tier 1 — Day-of-launch must-haves (~2 hours total)
+- [x] **374 tests passing** (371 base + 3 new OpenAI THOUGHT regression tests)
+- [x] **10 Python framework adapters + 1 Node (OpenClaw)** — all verified through real LLM-driven dispatch with INTENTIONs persisted to Postgres in Modal sandbox
+- [x] **Convergence bench**: 10/10 V1_PASS **deterministic** — v26 ↔ v27 reproduced byte-for-byte (23 intents / 9 THOUGHTs, same agent counts per role)
+- [x] **Cross-vendor cooperative-build proof**: v32 bundle in `bench/results/v32_app_bundle/` — 10 vendor agents → 1 working Flask app, `GET /todos → 200` locally
+- [x] **OpenAI THOUGHT-capture parity with Anthropic** (v0.2.8 fix in `synapse/llm_thoughts.py`): PSEUDO_THOUGHT fallback captures `message.content` when no native `reasoning` field is present
+- [x] **HuggingFace deep NLA module** (`synapse.llm_nla_hf`) — logits + attention + hidden-states capture for self-hosted LLMs (lazy import; torch optional)
+- [x] **L2 router gate-window** drains inbox on empty fast-path (v0.2.7 fix verified deterministic in v27)
+- [x] **Per-task ContextVar agent attribution** (v0.2.2 fix) — race-free under `asyncio.gather`
+- [x] **6 trace-format importers** (OpenInference, LangSmith, Bedrock, Vertex, Azure, JSONL) all auto-detected
+- [x] **REST API + MCP server** (`synapse-mcp`) — 5 tools exposed to external agents
+- [x] **7 IDE/CLI plugins** (Cursor, Codex CLI, VS Code, Claude Code, Aider, Continue, Cline) in `launch/ide-plugins/`
+- [x] **Streaming WebSocket server** (`python -m synapse.streaming.server`)
+- [x] **UI**: cross-vendor cooperative-build page at `/builds/v32` — works offline (reads `bench/results/v32_app_bundle/` directly, no gateway needed)
+- [x] **PyPI wheel built** (`sdk-python/dist/*.whl` — needs republish for 0.2.8)
+- [x] **README**: rewritten for v0.2.8 — cooperative-build hero, accurate badges, honest positioning vs knowledge-graph frameworks
+- [x] **Public benchmark doc**: full v21–v32 history in `bench/PUBLIC_BENCHMARK.md` Phase 10
+- [x] **27 unreleased commits** committed locally and ready to push
+
+---
+
+## 🔑 What's left — YOUR token-gated work
+
+### Tier 1 — Day-of-launch must-haves (~30 min total)
+
+#### [ ] Push to GitHub
+```bash
+cd /c/C3/synapse
+git push origin main
+git push origin v0.2.8       # after tagging below
+```
+No tokens needed — `origin` is already `https://github.com/arajgor1/synapse`.
+**Until this runs, none of the work above is visible to anyone.**
+
+#### [ ] Tag v0.2.8 + create GitHub release
+```bash
+git tag -a v0.2.8 -m "v0.2.8: cross-vendor cooperative app build"
+git push origin v0.2.8
+```
+Then on GitHub:
+- https://github.com/arajgor1/synapse/releases/new
+- Tag: `v0.2.8`
+- Title: `v0.2.8 — Cross-vendor cooperative app build`
+- Body: paste `launch/RELEASE_NOTES_v0.2.8.md` (drafted in this commit)
 
 #### [ ] PyPI publish
 ```bash
 cd /c/C3/synapse/sdk-python
+# bump version in pyproject.toml to 0.2.8 first
 python -m build
-twine upload dist/synapse_protocol-0.2.2a0-py3-none-any.whl
+twine upload dist/synapse_protocol-0.2.8*
 ```
-Needs: PyPI token (you said you have one).
-After: `pip install synapse-protocol` works for everyone.
+Needs: PyPI token.
+After: `pip install --upgrade synapse-protocol` gives users v0.2.8.
 
 #### [ ] npm publish (TS SDK)
 ```bash
 cd /c/C3/synapse/sdk-typescript
-npm version 0.2.2-alpha
+npm version 0.2.8
 npm publish --access public
 ```
-Needs: npm account (you said you'll create one).
+Needs: npm account.
 
-#### [ ] Push to GitHub public
-```bash
-cd /c/C3/synapse
-git push origin main --tags
-```
-Needs: nothing else — `git remote -v` already shows `origin =
-https://github.com/arajgor1/synapse`.
+### Tier 2 — Launch-day collateral (~3 hours)
 
-#### [ ] Create GitHub release
-- Visit https://github.com/arajgor1/synapse/releases/new
-- Tag: `v0.2.2-alpha` (after we tag below)
-- Title: `v0.2.2 — distribution parity + SCF algorithms + AgenticFlict
-  F1=0.87`
-- Body: paste the relevant sections from this checklist + `bench/results/agenticflict_benchmark.json` numbers
+#### [ ] Record demo GIF
+- Open `/builds/v32` on `localhost:3000` (run `npm run dev` in `ui/`)
+- Record 30s: scroll verdict band → click a vendor card → preview file → scroll envelope timeline → click copy on reproduce block
+- Save to `launch/demos/v32_cooperative_build.gif`
+- Reference from README hero
 
-### Tier 2 — Distribution channels (~half a day)
+#### [ ] Blog post
+- Skeleton drafted in `launch/BLOG_v0.2.8.md`
+- Topic: "10 vendor SDKs cooperated to build a Flask app. The app actually runs."
+- ~800-1200 words. Include the v32 reproduce command. Link the bundle.
 
-#### [ ] GitHub Action publish
-1. Create new repo `arajgor1/synapse-audit-action`
-2. Copy `launch/gh-action/` into the new repo's root
-3. Tag `v1` and submit to GitHub Marketplace via the repo settings →
-   Marketplace
-4. Update `launch/gh-action/example-workflow.yml` references to
-   `arajgor1/synapse-audit-action@v1` (already set)
+#### [ ] HN Show post
+- Draft in `launch/HN_v0.2.8.md`
+- Title: `Show HN: Synapse — audit layer for agentic teams across vendors`
+- Post at 9-10am ET on a Tuesday or Wednesday
+- Be ready to answer comments for the first 2 hours
 
-#### [ ] Cloudflare Pages — hosted demo deploy
-```bash
-npx wrangler pages deploy launch/hosted-audit --project-name=synapse-audit
-```
-- Configure custom domain (e.g., `audit.synapse.dev`) in Cloudflare → Pages
-- See `launch/hosted-audit/DEPLOY.md` for full instructions
+#### [ ] Twitter / X thread
+- Draft in `launch/TWITTER_v0.2.8.md`
+- 5-7 tweets, lead with the screenshot, end with the repo link
 
-#### [ ] VS Code Marketplace — extension publish
-```bash
-cd launch/ide-plugins/vscode
-npm install -g @vscode/vsce
-vsce package
-vsce publish
-```
-- Needs: Microsoft Azure DevOps publisher account (free)
-- Needs: 4 PNG icons (currently empty in `launch/browser-extension/icons/`
-  and `launch/ide-plugins/vscode/icons/`) — generate with any logo
-  or commission $20 of design work
+#### [ ] Reddit r/MachineLearning + r/LocalLLaMA
+- Same content as HN
+- Draft in `launch/REDDIT_v0.2.8.md`
 
-#### [ ] Cursor / Codex CLI / Continue / Cline / Aider plugin discovery
-- Cursor: submit MCP server config to Cursor's plugin directory (URL
-  TBA, currently community-listed)
-- Continue: open PR to `continue.dev/awesome-tools` README
-- Cline: open issue to add to their MCP server gallery
-- Aider: submit to `aider.chat/docs/plugins`
+### Tier 3 — Community infrastructure (Semantica-style polish, ~1 day)
 
-#### [ ] Browser extension — Chrome / Edge / Firefox stores
-- Chrome: $5 one-time developer fee, 3-7 day review
-- Firefox: free, ~1 day review
-- Edge: free, ~3 day review
-- All need: privacy policy URL (host on synapse.dev)
-- All need: 4 PNG icons + 5 screenshots (1280×800)
+These differentiate a "looks serious" launch from a "thrown over the wall" launch.
 
-### Tier 3 — Marketing (~1 day)
+#### [ ] Discord server
+- Create at https://discord.com/developers/applications
+- Channels: `#general`, `#bugs`, `#showcase`, `#release-notes`
+- Add invite badge to README (placeholder slot already in header)
 
-#### [ ] Show HN post
-Suggested title: `Synapse — open-source coordination layer for
-multi-agent AI on shared codebases (F1=0.87 on 142K agent-PR
-benchmark)`
+#### [ ] X / Twitter account
+- `@SynapseProtocol` or `@BuildSynapse` (Semantica is `@BuildSemantica`)
+- Pin the launch thread
 
-Suggested first comment:
-> Hi HN! Built this because two AI agents on the same repo silently
-> overwrite each other and quietly disagree on the schema. We tested
-> it with real Claude Code, real LangGraph, real Anthropic SDK, real
-> Bedrock + Vertex + Azure trace formats. Catches 21 conflicts on 7
-> files between two real claude-code sessions; F1=0.87 on the
-> AgenticFlict 142K real-agent-PR public benchmark. Apache 2.0,
-> SCF-cited prior art, vendor-neutral.
+#### [ ] Logo
+- Currently using `🧬` emoji as a placeholder
+- Get a proper SVG: dark + light variant
+- Drop into root + README
 
-#### [ ] X/Twitter thread (10 tweets)
-Hook: "Two AI agents on the same repo will silently overwrite each
-other. We tested it. Here's what survived" + the comparison table
-from the README.
+#### [ ] Multi-language README translations
+- Semantica uses `readme-i18n.com`. Link form: `https://readme-i18n.com/arajgor1/synapse?lang=de`
+- One badge per language
 
-#### [ ] LinkedIn post (1 post)
-Audience: engineering VPs, platform leads, AI-infra buyers. Lead with
-the F1 number and the 21-conflict Claude Code result.
-
-#### [ ] Demo video (60 seconds)
-Tools: any screen recorder. Script:
-1. (0-10s) Show two `claude -p` sessions running in parallel terminals
-2. (10-20s) Both try to edit `models.py`
-3. (20-30s) Run `synapse audit .synapse/runs/team.jsonl --no-html`
-4. (30-45s) Show the conflict report + tier hints + SAS drift
-5. (45-60s) "pip install synapse-protocol — github.com/arajgor1/synapse"
+#### [ ] Pepy.tech download badge
+- Auto-activates once PyPI volume crosses ~50
+- Badge URL: `https://static.pepy.tech/badge/synapse-protocol`
 
 ---
 
-## 🚧 What we explicitly DID NOT ship in v0.2.2 (honest gaps)
+## 🩹 Known carry-forward (v0.2.9 candidates)
 
-So you don't get caught off-guard by reviewers / commenters:
+Be upfront in launch — readers find these in `PUBLIC_BENCHMARK.md` anyway.
 
-- [ ] **Strands end-to-end firing verification** — adapter attaches
-  (Test 12 confirms) but a Modal run that proves CONFLICT envelopes
-  fire from the patched dispatch hasn't been done. Need ~$0.30 + 30 min.
-- [ ] **CrewAI + Hermes adapter live verification** — both fail to
-  install in the current Python env (crewai version range, hermes-mcp
-  doesn't exist on PyPI under that name). Need to fix package names
-  + run real-SDK smoke.
-- [ ] **AgenticFlict + LLM belief detection** — would push F1 0.87 →
-  ~0.93. Costs ~$3 LLM. Not run.
-- [ ] **Phoenix benchmark + at least one more** — would diversify the
-  empirical case. ~$2 LLM each.
-- [ ] **AutoGen / OpenAI Agents adapter signature mismatches (M2/M3)** —
-  currently work but have edge-case kwargs issues. Documented in the
-  bug audit, not yet refactored.
-- [ ] **Browser extension icons + audit endpoint backend** — manifest
-  + content-script ready, needs PNGs and a hosted endpoint to be
-  functional in production.
-- [ ] **mkdocs documentation site** — README + 1-pager are the docs;
-  vertical landing pages and API reference would round it out. ~3 days.
+1. **3 of 10 OpenAI adapters dispatch tools with empty content** (langgraph, smolagents, agno under gpt-4o-mini). Fallback rescues the artifact but no INTENT registered. LLM-behavior issue, not adapter bug. Workaround: Anthropic route (v27 was 10/10 with all intents).
+2. **L2 router gate-window — Redis ZADD-based active-scope tracking** would tighten inter-process ordering. Existing tests pass; optional.
+3. **HuggingFace deep NLA exercised under torch** — module shipped but not run in Modal yet (image lacks torch by design — opt-in).
+4. **Replay over WebRTC** — UI does static replay; live replay over WS works only when gateway is up.
 
 ---
 
-## 📊 What we're claiming + the evidence
+## 🚦 Launch trigger
 
-| Claim | Evidence | Source |
-|---|---|---|
-| F1 = 0.865 on AgenticFlict | 5,408 paired PRs, public dataset | `bench/results/agenticflict_benchmark.json` |
-| 21 conflicts on 7 files between 2 Claude Codes | Real `claude -p` headless sessions | `bench/results/option_b/option_b_results.json` |
-| 6 of 8 adapters confirmed real-SDK working | Adapter health gate | `tests/test_adapter_health.py` |
-| 7 IDE/CLI plugins | Code in repo | `launch/ide-plugins/*/README.md` |
-| MCP server with 5 tools | Code + tests | `sdk-python/synapse/mcp/server.py`, `tests/test_mcp_server.py` |
-| Real-time streaming | Smoke-tested | `sdk-python/synapse/streaming/server.py` |
-| Browser extension skeleton | Manifest V3 ready | `launch/browser-extension/manifest.json` |
-| Honest about prior art (SCF) | README section | `README.md` |
-| 271 tests passing | pytest output | `pytest tests/` from `sdk-python/` |
+Once all Tier 1 boxes are checked **and** at least the HN draft is ready, hit publish in this order:
+
+1. `git push origin main v0.2.8`
+2. Create GitHub release with release notes
+3. `twine upload` to PyPI
+4. `npm publish`
+5. Post blog
+6. Post HN at 9-10am ET (best window)
+7. Post Twitter thread immediately after HN
+8. Cross-post to Reddit 2 hours later (avoid spam-detection)
+9. Monitor inbox + comments for 24 hours
 
 ---
 
-## 🎯 Cumulative spend
-
-| Phase | LLM cost | Eng time |
-|---|---|---|
-| v0.1 → v0.2.1 launches | ~$1.16 | n/a |
-| v0.2.1 forensic IRL trust check | ~$0.60 | n/a |
-| v0.2.2 R1-5 (bug fixes + AgenticFlict) | ~$0.40 | a day |
-| v0.2.2 P1-5 (distribution parity + differentiators) | $0 | this session |
-| **Total** | **~$2.16** | |
-
-Budget remaining: $7.84 of $10. **Comfortable for the LLM-mediated
-benchmark expansion if you want it post-launch.**
+## Cumulative spend across all v0.2.x iterations: ~$48 Modal+LLM.

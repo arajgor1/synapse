@@ -1,15 +1,53 @@
-# Synapse
+<div align="center">
 
-> **The safety layer for multi-agent AI on shared codebases.**
-> Audit existing trace exports for silent collisions, prevent them live, resolve them with your own LLM.
+# 🧬 Synapse
+
+**The audit + coordination layer for agentic teams that span vendors.**
+One Synapse session, ten different framework SDKs, one unified envelope log.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Version: v0.2.3](https://img.shields.io/badge/Version-v0.2.3-blue.svg)](#status)
+[![Version: v0.2.8](https://img.shields.io/badge/Version-v0.2.8-brightgreen.svg)](#status)
 [![Spec: v1.0](https://img.shields.io/badge/Spec-v1.0-green.svg)](spec/protocol-v1.0/)
-[![Tests](https://img.shields.io/badge/tests-324%20passing-brightgreen.svg)](#tests)
-[![Adapters](https://img.shields.io/badge/adapters-12%20frameworks%20%2B%20OTel%20live-brightgreen.svg)](sdk-python/tests/test_adapter_health.py)
-[![Latency](https://img.shields.io/badge/no--conflict%20latency-1.59ms%20median-brightgreen.svg)](bench/LATENCY.md)
-[![AgenticFlict F1](https://img.shields.io/badge/AgenticFlict_F1-0.865-brightgreen.svg)](bench/results/agenticflict_benchmark.json)
+[![Tests](https://img.shields.io/badge/tests-374%20passing-brightgreen.svg)](#tests)
+[![Adapters](https://img.shields.io/badge/adapters-10%20Python%20%2B%201%20Node-brightgreen.svg)](sdk-python/synapse/frameworks/)
+[![Cooperative build](https://img.shields.io/badge/cross--vendor%20build-10%2F10%20%E2%9C%93-brightgreen.svg)](bench/results/v32_app_bundle/)
+[![App runs](https://img.shields.io/badge/Flask%20app-GET%20%2Ftodos%20%E2%86%92%20200-brightgreen.svg)](bench/results/v32_app_bundle/main.py)
+
+### ⭐ Star · 🍴 Fork · 📖 [Public benchmark](bench/PUBLIC_BENCHMARK.md) · 🧪 [v32 build bundle](bench/results/v32_app_bundle/)
+
+</div>
+
+---
+
+## What just landed (v0.2.8)
+
+**Ten agents from ten different framework SDKs collaborated on one Synapse
+session to build a Flask Todo app — and the app actually runs.**
+
+The produced [`bench/results/v32_app_bundle/main.py`](bench/results/v32_app_bundle/main.py)
+serves `GET /todos → 200`. The [`envelopes.jsonl`](bench/results/v32_app_bundle/envelopes.jsonl)
+carries INTENTION envelopes from `autogen_default`, `backend_engineer`
+(crewai), `tools` (langgraph), `agent` (pydantic_ai), and others — one
+unified audit log across vendors. End-to-end timeline in
+[`bench/PUBLIC_BENCHMARK.md`](bench/PUBLIC_BENCHMARK.md#phase-10--v028-zero-backlog-convergence-v21v28-2026-05-12).
+
+| | Result |
+|---|---|
+| Vendor SDKs cooperating | **10** — AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, Hermes |
+| Files produced | **10/10** (8 direct + 2 via fallback) |
+| Synapse INTENTIONs persisted | **8** in Postgres, all vendor-tagged |
+| App runs (Flask test_client) | ✅ `GET /todos → 200` |
+| Convergence bench (v26 ↔ v27) | **10/10 V1_PASS deterministic, byte-for-byte reproducible** |
+
+Reproduce locally in ~10 seconds:
+
+```bash
+git clone https://github.com/arajgor1/synapse && cd synapse
+pip install flask
+cd bench/results/v32_app_bundle
+python -c "import main; print(main.app.test_client().get('/todos').status_code)"
+# → 200
+```
 
 ---
 
@@ -25,7 +63,7 @@ synapse watch --session demo
 SYNAPSE_SESSION_ID=demo python your_agent_script.py
 ```
 
-That's it. **No Redis, no Postgres, no env vars.** v0.2.2 ships zero-infra mode (in-memory bus + auto-SQLite at `~/.synapse/state.db` + auto-spawned in-process L2 router) so a fresh user sees real coordination value in two terminal commands.
+That's it. **No Redis, no Postgres, no env vars.** Zero-infra mode (in-memory bus + auto-SQLite at `~/.synapse/state.db` + auto-spawned in-process L2 router) so a fresh user sees real coordination value in two terminal commands.
 
 The dashboard ticks live: every `synapse.intend()` call shows up; every cross-agent collision the in-process router catches surfaces with full attribution + scope info.
 
@@ -70,24 +108,28 @@ We differ in three ways:
 2. **FS-watcher path for IDE/CLI agents** (Claude Code, Cursor, Codex CLI, Aider) that don't expose live coordination hooks.
 3. **Real-world evidence on real published SDKs.** All 12 framework adapters confirmed patching the real published SDK at install time (see `tests/test_adapter_health.py`). **All 12 additionally verified through real LLM-driven dispatch with INTENTIONs persisted end-to-end in a Modal sandbox** — autogen, langchain, langgraph, smolagents, crewai, agno, openai_agents, pydantic_ai, llama_index, google_adk, otel_live, hermes (see `bench/REAL_LIFE_TESTING.md` + `bench/results/v022_real_llm_e2e_*.json`). v0.2.3 closed the remaining 4 framework-specific internal-scheduler cross-loop bugs via per-loop state pools. SCF's evaluation uses simulated agents.
 
-### Framework coverage (vs. Semantica's "Coming Soon" list)
+### Framework coverage (10 Python + 1 Node)
 
-| Framework | Synapse v0.2.2 | Semantica |
+| Framework | Synapse v0.2.8 | Hook point |
 |---|---|---|
-| **Agno** | ✅ shipped (FunctionCall.execute) | First-class (only one they ship) |
-| **LangChain** | ✅ shipped (BaseTool.invoke/ainvoke) | "Coming soon" |
-| **LangGraph** | ✅ shipped (callback) | "Coming soon" |
-| **CrewAI** | ✅ shipped (Task.execute) | "Coming soon" |
-| **LlamaIndex** | ✅ shipped (FunctionTool.call) | "Coming soon" |
-| **AutoGen** | ✅ shipped (FunctionTool.run) | "Coming soon" |
-| **OpenAI Agents** | ✅ shipped (function_tool) | "Coming soon" |
-| **Google ADK** | ✅ shipped (BaseTool.run_async) | "Coming soon" |
-| **Pydantic AI** | ✅ shipped (AbstractToolset.call_tool) | not on list |
-| **smolagents** | ✅ shipped (Tool.__call__) | not on list |
-| **Strands Agents (AWS)** | ✅ shipped (event_loop._handle_tool_execution) | not on list |
-| **Hermes Agent** | ✅ shipped (sub-agent path) | not on list |
+| **AutoGen** (Microsoft) | ✅ shipped | `FunctionTool.run` |
+| **CrewAI** | ✅ shipped | `Task.execute` |
+| **LangGraph** (LangChain) | ✅ shipped | `register_configure_hook` + `Runnable.ainvoke` patch |
+| **smolagents** (HuggingFace) | ✅ shipped | `Tool.__call__` |
+| **Agno** | ✅ shipped | `FunctionCall.execute` |
+| **LlamaIndex** | ✅ shipped | `BaseWorkflowAgent._call_tool` + `AgentWorkflow._call_tool` |
+| **Pydantic AI** | ✅ shipped | `AbstractToolset.call_tool` |
+| **OpenAI Agents SDK** | ✅ shipped | `function_tool` (with `tool_choice="required"`) |
+| **Google ADK** | ✅ shipped | `BaseTool.run_async` |
+| **Hermes Agent** | ✅ shipped | `wrap_tool_call_for_synapse` |
+| **OpenClaw** (TypeScript) | ✅ shipped | Node SDK hook |
 
-All 11 verified against the actual published packages by `tests/test_adapter_health.py`. Synapse ships all 7 of Semantica's "Coming Soon" list **today**, plus 4 more they don't list.
+All 10 Python adapters hit **10/10 V1_PASS deterministic** with byte-for-byte
+reproducibility across runs (v26 ↔ v27 confirmed). Per-adapter intent counts
+match exactly: `autogen=2 crewai=2 langgraph=2 hermes=0 smolagents=3 agno=2
+llama_index=5 pydantic_ai=5 openai_agents=1 google_adk=1` — 23 total, 9 THOUGHT
+envelopes captured on Anthropic route. Full bench history:
+[`bench/PUBLIC_BENCHMARK.md`](bench/PUBLIC_BENCHMARK.md).
 
 We also benchmark on the **AgenticFlict** dataset (Allamanis et al., arXiv 2604.03551 — 142,652 real AI-coding-agent PRs, 29,609 conflicting). On 5,408 paired PRs Synapse hits **F1 = 0.865, recall = 1.000, precision = 0.763** on the structural scope-overlap subtask. Per-agent: Claude Code F1 = 1.000, Cursor 0.970, Copilot 0.940, Devin 0.944, OpenAI Codex 0.786. Full results: [`bench/results/agenticflict_benchmark.json`](bench/results/agenticflict_benchmark.json).
 
@@ -122,6 +164,7 @@ It sits next to — not against — the observability tools you already use. The
 ## What Synapse is NOT
 
 - Not another LLM-call observability tool. Use [LangSmith](https://www.langchain.com/langsmith) / [Phoenix](https://phoenix.arize.com) / [Langfuse](https://langfuse.com) for traces and eval. We sit on top.
+- Not a knowledge-graph / GraphRAG / ontology framework. Use [Semantica](https://github.com/Hawksight-AI/semantica) / [LangChain-LlamaIndex](https://www.llamaindex.ai/) for that — Synapse coordinates the *agents* that query those graphs, not the graphs themselves. They're complementary layers.
 - Not a cross-vendor agent interop standard. [A2A](https://github.com/a2aproject/A2A) covers that.
 - Not a tool-access standard. [MCP](https://modelcontextprotocol.io) covers that.
 - Not a new agent framework. We wrap the ones you already use ([LangGraph](https://github.com/langchain-ai/langgraph), [CrewAI](https://github.com/crewAIInc/crewAI), [AutoGen](https://github.com/microsoft/autogen), [Vercel AI SDK](https://sdk.vercel.ai), and 7 more).

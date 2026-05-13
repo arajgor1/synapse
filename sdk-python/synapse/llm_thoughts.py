@@ -258,14 +258,18 @@ def wrap_openai_for_thoughts(
 
         # o-series responses have `choices[0].message.reasoning` (extracted
         # before content). Sometimes nested under `.reasoning_summary` or
-        # `.reasoning_details`.
-        reasoning_text = None
+        # `.reasoning_details`. For non-o-series (gpt-4o, gpt-4o-mini, gpt-4
+        # etc.) there is no `reasoning` field — we capture the message
+        # content as a PSEUDO_THOUGHT so the audit trail is never silent.
+        thought_blocks: list[dict] = []
         try:
             choices = getattr(msg, "choices", None) or []
             for choice in choices:
                 m = getattr(choice, "message", None)
                 if m is None:
                     continue
+                # 1. Native reasoning fields (o-series).
+                reasoning_text = None
                 for attr in ("reasoning", "reasoning_summary",
                             "reasoning_content", "reasoning_details"):
                     val = getattr(m, attr, None)
@@ -273,18 +277,30 @@ def wrap_openai_for_thoughts(
                         reasoning_text = val if isinstance(val, str) else str(val)
                         break
                 if reasoning_text:
-                    break
+                    thought_blocks.append({
+                        "text": reasoning_text, "kind": "reasoning",
+                    })
+                    continue  # one block per choice
+                # 2. Fallback: message content as PSEUDO_THOUGHT (parity with
+                #    the Anthropic wrapper's text-block fallback). Captures
+                #    the model's explicit reasoning prose even when no native
+                #    reasoning field exists.
+                content = getattr(m, "content", None)
+                if isinstance(content, str) and content.strip():
+                    thought_blocks.append({
+                        "text": content, "kind": "pseudo_thought",
+                    })
         except Exception as e:
             logger.warning("synapse.wrap_openai_for_thoughts: reasoning "
                           "extraction failed (%s)", e)
 
-        if reasoning_text:
+        for block_info in thought_blocks:
             asyncio.create_task(
                 _emit_thought(
                     session_id=eff_session,
                     agent_id=eff_agent,
                     parent_intention_id=parent_intention_id,
-                    block_info={"text": reasoning_text, "kind": "reasoning"},
+                    block_info=block_info,
                 )
             )
 
