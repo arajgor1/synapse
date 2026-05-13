@@ -50,7 +50,7 @@ def test_all_seven_advertised_plugin_dirs_exist():
 @pytest.mark.skipif(not _has_plugins(), reason="ide-plugins dir missing")
 def test_synapse_mcp_binary_is_callable():
     """Every IDE plugin config that references `synapse-mcp` assumes it's
-    on the user's PATH after `pip install synapse-protocol`. Verify the
+    on the user's PATH after `pip install synapse-protocol-py`. Verify the
     underlying module IS launchable as a stdio MCP server."""
     proc = subprocess.run(
         [sys.executable, "-m", "synapse.mcp.server"],
@@ -135,7 +135,7 @@ def test_plugin_readme_mentions_synapse_mcp_or_recent_cli(plugin_name: str):
         "synapse-mcp", "synapse watch", "synapse api", "synapse audit",
         "synapse.install", "python -m synapse.mcp", "synapse.mcp.server",
         # OpenClaw uses the TypeScript SDK surface
-        "wrapextensionwithsynapse", "@synapse-protocol/sdk",
+        "wrapextensionwithsynapse", "synapse-protocol",
         "makesynapseextension",
     )
     assert any(k in text for k in keywords), (

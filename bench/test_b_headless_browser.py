@@ -83,7 +83,7 @@ def main() -> int:
             if page_name == "landing.html":
                 checks.append(("title", page.locator("h1").first.is_visible()))
                 checks.append(("hero text", "AI agents" in page.locator("body").text_content()))
-                checks.append(("install snippet", "pip install synapse-protocol" in page.content()))
+                checks.append(("install snippet", "pip install synapse-protocol-py" in page.content()))
             elif page_name == "index.html":
                 checks.append(("dropzone", page.locator("#drop").is_visible()))
                 checks.append(("sample buttons", page.locator("[data-sample]").count() >= 3))

@@ -123,7 +123,7 @@ The three results that would have killed the pitch:
 
 | Artifact | Lives in | Day-1 install path |
 |---|---|---|
-| `synapse-protocol==0.2.1a0` PyPI wheel | `launch/dist/` | `pip install synapse-protocol` |
+| `synapse-protocol==0.2.1a0` PyPI wheel | `launch/dist/` | `pip install synapse-protocol-py` |
 | `synapse audit` CLI | bundled with above | `synapse audit ./traces.json` |
 | Bedrock + Vertex + Azure cloud trace importers | `sdk-python/synapse/audit/importers/` | auto-detected by `synapse audit` |
 | Hosted audit tool | `launch/hosted-audit/` | drag-drop in browser, zero install |

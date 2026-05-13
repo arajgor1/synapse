@@ -8,8 +8,8 @@
  *
  * Usage:
  *
- *   import synapse from "@synapse-protocol/sdk";
- *   import "@synapse-protocol/sdk/frameworks/paperclip"; // self-registers
+ *   import synapse from "synapse-protocol";
+ *   import "synapse-protocol/frameworks/paperclip"; // self-registers
  *   synapse.install({
  *     framework: "paperclip",
  *     bus: myBus,                // optional default bus

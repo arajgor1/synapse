@@ -46,7 +46,7 @@ runs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        pip install synapse-protocol
+        pip install synapse-protocol-py
 
     - name: Run synapse audit
       id: audit
@@ -105,7 +105,7 @@ runs:
           echo "" >> "$SUMMARY_MD"
           echo "Download the full HTML report from this run's artifacts." >> "$SUMMARY_MD"
           echo "" >> "$SUMMARY_MD"
-          echo "_Live coordination prevents these collisions: \`pip install synapse-protocol[live]\` + \`synapse.install(framework=...)\`._" >> "$SUMMARY_MD"
+          echo "_Live coordination prevents these collisions: \`pip install synapse-protocol-py[live]\` + \`synapse.install(framework=...)\`._" >> "$SUMMARY_MD"
         fi
 
         echo "conflicts-detected=$TOTAL_CONFLICTS" >> "$GITHUB_OUTPUT"

@@ -24,7 +24,7 @@ Do NOT invoke for post-hoc analysis of an existing trace file — use
 ## How to run
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse watch --session demo
 ```
 

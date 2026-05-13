@@ -25,7 +25,7 @@ Do NOT invoke for live coordination — use `/synapse-watch` for that.
 ## How to run
 
 ```bash
-pip install synapse-protocol  # if not already
+pip install synapse-protocol-py  # if not already
 synapse audit <path-to-trace>
 ```
 

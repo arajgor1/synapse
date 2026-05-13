@@ -71,7 +71,7 @@ function openclawInstallFn(opts: Record<string, unknown>): void {
 
 // ---------------------------------------------------------------------------
 // Wrapper helpers — re-exported through the framework module so users have
-// a single import path: `from "@synapse-protocol/sdk/frameworks/openclaw"`.
+// a single import path: `from "synapse-protocol/frameworks/openclaw"`.
 // ---------------------------------------------------------------------------
 export {
   wrapExtensionWithSynapse,

@@ -6,7 +6,7 @@
  * attached on the user's graph (or chain) via:
  *
  * ```ts
- *   import * as synapse from "@synapse-protocol/sdk";
+ *   import * as synapse from "synapse-protocol";
  *   synapse.install({ framework: "langgraph", sessionId: "demo" });
  *
  *   await graph.invoke(input, {

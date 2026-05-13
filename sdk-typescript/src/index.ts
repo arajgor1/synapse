@@ -107,14 +107,14 @@ import "./frameworks/index.js";
 export * as frameworks from "./frameworks/index.js";
 
 // Direct re-exports of the LangGraph.js / LangChain.js adapter for users
-// who want `import { SynapseLangGraphCallback } from "@synapse-protocol/sdk"`.
+// who want `import { SynapseLangGraphCallback } from "synapse-protocol"`.
 export {
   SynapseLangGraphCallback,
   getCallback as getLangGraphCallback,
 } from "./frameworks/langgraph.js";
 
 // Direct re-exports of the Vercel AI SDK adapter so users can do
-// `import { synapseTool, wrapVercelTools } from "@synapse-protocol/sdk"`.
+// `import { synapseTool, wrapVercelTools } from "synapse-protocol"`.
 export {
   synapseTool,
   synapseToolAsync,

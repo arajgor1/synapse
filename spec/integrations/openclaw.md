@@ -8,7 +8,7 @@ OpenClaw ([github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)) 
 ## Mode 1: Wrap an existing extension
 
 ```ts
-import { wrapExtensionWithSynapse, Bus } from "@synapse-protocol/sdk";
+import { wrapExtensionWithSynapse, Bus } from "synapse-protocol";
 import { browserExtension } from "openclaw/extensions/browser";
 
 const bus = new Bus({ url: process.env.SYNAPSE_REDIS_URL! });
@@ -29,7 +29,7 @@ Tools that look like writes (`fs.write`, `fs.delete`, `terminal.run`, etc.) are 
 ## Mode 2: Standalone Synapse extension
 
 ```ts
-import { makeSynapseExtension, Bus } from "@synapse-protocol/sdk";
+import { makeSynapseExtension, Bus } from "synapse-protocol";
 
 const synapseExt = makeSynapseExtension({
   bus,

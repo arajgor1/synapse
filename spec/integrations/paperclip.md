@@ -6,8 +6,8 @@ Paperclip ([github.com/paperclipai/paperclip](https://github.com/paperclipai/pap
 
 ```ts
 import { registerServerAdapter } from "paperclip/server/adapters/registry";
-import { wrapAdapterWithSynapse } from "@synapse-protocol/sdk/integrations/paperclip";
-import { Bus } from "@synapse-protocol/sdk";
+import { wrapAdapterWithSynapse } from "synapse-protocol/integrations/paperclip";
+import { Bus } from "synapse-protocol";
 import { anthropicAdapter } from "paperclip/server/adapters/anthropic";
 
 const bus = new Bus({ url: process.env.SYNAPSE_REDIS_URL! });

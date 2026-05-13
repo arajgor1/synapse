@@ -15,7 +15,7 @@ agents (Cursor, Claude Code, Aider, etc.).
 
 ### Step 1 — Install Synapse
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 ```
 
 ### Step 2 — Add MCP to Codex CLI

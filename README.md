@@ -7,7 +7,9 @@ One Synapse session, ten different framework SDKs, one unified envelope log.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
-[![Version: v0.2.8](https://img.shields.io/badge/version-v0.2.8-brightgreen.svg)](https://github.com/arajgor1/synapse/releases/tag/v0.2.8)
+[![PyPI](https://img.shields.io/pypi/v/synapse-protocol-py.svg?label=PyPI)](https://pypi.org/project/synapse-protocol-py/)
+[![npm](https://img.shields.io/npm/v/synapse-protocol.svg?label=npm)](https://www.npmjs.com/package/synapse-protocol)
+[![Downloads](https://static.pepy.tech/badge/synapse-protocol-py)](https://pepy.tech/project/synapse-protocol-py)
 [![Spec: v1.0](https://img.shields.io/badge/spec-v1.0-green.svg)](spec/protocol-v1.0/)
 [![Tests](https://img.shields.io/badge/tests-374%20passing-brightgreen.svg)](sdk-python/tests/)
 [![Adapters](https://img.shields.io/badge/adapters-10%20Python%20%2B%201%20Node-brightgreen.svg)](sdk-python/synapse/frameworks/)
@@ -85,7 +87,7 @@ python -c "import main; print(main.app.test_client().get('/todos').status_code)"
 ## Try it in 60 seconds — no infra, no env vars
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 
 # Terminal 1: live coordination dashboard, browser auto-opens
 synapse watch --session demo
@@ -103,7 +105,7 @@ For multi-process coordination set `SYNAPSE_REDIS_URL` and `SYNAPSE_POSTGRES_DSN
 ### Or: audit existing trace exports
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse audit ./traces.json
 ```
 
@@ -234,7 +236,7 @@ It sits next to — not against — the observability tools you already use. The
 ### 1. Audit your existing logs (no infrastructure needed)
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse audit ./your-langsmith-export.json
 ```
 
@@ -251,7 +253,7 @@ The audit CLI reads OpenInference OTel JSON, LangSmith export JSON, or generic J
 Once you see the problem, install the live runtime and add 3 lines to your existing agent code:
 
 ```bash
-pip install 'synapse-protocol[live]'   # adds Redis + Postgres clients
+pip install 'synapse-protocol-py[live]'   # adds Redis + Postgres clients
 synapse up                              # starts local stack via Docker Compose
 ```
 
@@ -311,14 +313,14 @@ Full benchmark history — including every iteration that didn't work and the fi
 
 | Install | What you get | Heavy deps |
 |---|---|---|
-| `pip install synapse-protocol` | `synapse audit` CLI + read-only audit pipeline | none (pydantic + jsonschema only) |
-| `pip install 'synapse-protocol[live]'` | Above + Bus + StateGraph + framework adapters + dashboard | Redis client, asyncpg, python-ulid |
-| `pip install 'synapse-protocol[live,hosted]'` | Above + Anthropic / OpenAI / Gemini bridges | + provider SDKs |
-| `pip install 'synapse-protocol[all]'` | Everything | all of the above |
+| `pip install synapse-protocol-py` | `synapse audit` CLI + read-only audit pipeline | none (pydantic + jsonschema only) |
+| `pip install 'synapse-protocol-py[live]'` | Above + Bus + StateGraph + framework adapters + dashboard | Redis client, asyncpg, python-ulid |
+| `pip install 'synapse-protocol-py[live,hosted]'` | Above + Anthropic / OpenAI / Gemini bridges | + provider SDKs |
+| `pip install 'synapse-protocol-py[all]'` | Everything | all of the above |
 
 ```bash
 # JavaScript / TypeScript ecosystem
-npm install @synapse-protocol/sdk
+npm install synapse-protocol
 ```
 
 ## Frameworks supported (11 adapters across Python + TypeScript)

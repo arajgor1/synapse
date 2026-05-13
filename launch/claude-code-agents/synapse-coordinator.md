@@ -58,7 +58,7 @@ When the user asks a question:
 ### "I'm new — show me Synapse working"
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse watch --session demo                       # terminal 1
 git clone https://github.com/arajgor1/synapse
 cd synapse/examples/crewai-marketing

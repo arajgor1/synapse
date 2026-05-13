@@ -1,7 +1,7 @@
 # MCP server (`synapse-mcp`)
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse-mcp
 ```
 

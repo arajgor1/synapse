@@ -670,7 +670,7 @@ async def organic_hermes(session: str) -> dict:
 # --- openclaw ---
 # Pattern: TypeScript SDK; full E2E in real_product_dev_openclaw.mjs
 async def organic_openclaw(session: str) -> dict:
-    """OpenClaw integration is in @synapse-protocol/sdk (TypeScript). The
+    """OpenClaw integration is in synapse-protocol (TypeScript). The
     Python organic suite verifies that the integration docs + recipe
     point at a working TS surface; full multi-agent OpenClaw E2E is in
     runtime/modal/_payloads/real_product_dev_openclaw.mjs."""

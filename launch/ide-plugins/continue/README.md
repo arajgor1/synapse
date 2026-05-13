@@ -7,7 +7,7 @@ for VS Code and JetBrains. Synapse plugs in via Continue's MCP support.
 
 ### Step 1 — Install Synapse
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 ```
 
 ### Step 2 — Add Synapse to Continue's config

@@ -21,7 +21,7 @@
  * Usage in a Paperclip server bootstrap:
  *
  *   import { registerServerAdapter } from "paperclip/server/adapters/registry";
- *   import { wrapAdapterWithSynapse } from "@synapse-protocol/sdk/integrations/paperclip";
+ *   import { wrapAdapterWithSynapse } from "synapse-protocol/integrations/paperclip";
  *   import { anthropicAdapter } from "paperclip/server/adapters/anthropic";
  *
  *   const synapseBus = await Bus.connect(process.env.SYNAPSE_REDIS_URL!);
@@ -35,8 +35,8 @@
  *
  * For the v0.2 install() pattern, see `frameworks/paperclip.ts`:
  *
- *   import synapse from "@synapse-protocol/sdk";
- *   import "@synapse-protocol/sdk/frameworks/paperclip";
+ *   import synapse from "synapse-protocol";
+ *   import "synapse-protocol/frameworks/paperclip";
  *   synapse.install({
  *     framework: "paperclip",
  *     bus: myBus,

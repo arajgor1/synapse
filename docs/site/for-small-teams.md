@@ -17,7 +17,7 @@ Git, CI, and OpenAPI codegen don't catch this because the files don't overlap. S
 ### 1. Each dev installs and tags their session
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 export SYNAPSE_AGENT_ID="alice-cursor"
 export SYNAPSE_SESSION_ID="our-team"
 ```

@@ -7,7 +7,7 @@ Discord / Signal / iMessage / Teams / Matrix / Feishu / WeChat / 24+ channels.
 
 Synapse plugs in at the **extension** layer — the same layer where every
 OpenClaw tool/skill lives. Two integration paths, both shipped in
-`@synapse-protocol/sdk` (the TypeScript SDK).
+`synapse-protocol` (the TypeScript SDK).
 
 ## Why this matters for OpenClaw
 
@@ -23,8 +23,8 @@ Modify your OpenClaw extension's `plugin-registration.ts` to wrap the tool
 registry through `wrapExtensionWithSynapse`:
 
 ```typescript
-import { Bus } from "@synapse-protocol/sdk";
-import { wrapExtensionWithSynapse } from "@synapse-protocol/sdk";
+import { Bus } from "synapse-protocol";
+import { wrapExtensionWithSynapse } from "synapse-protocol";
 
 import { yourExistingExtension } from "./my-extension";
 
@@ -53,7 +53,7 @@ If you don't want to wrap your own extensions, register Synapse as its own
 extension that exposes coordination as tools to OpenClaw skills:
 
 ```typescript
-import { makeSynapseExtension } from "@synapse-protocol/sdk";
+import { makeSynapseExtension } from "synapse-protocol";
 
 openClawGateway.registerExtension(
   makeSynapseExtension({
@@ -116,9 +116,7 @@ the [`bench/PUBLIC_BENCHMARK.md`](../../../bench/PUBLIC_BENCHMARK.md) Phase 7 se
 - ✅ TypeScript SDK adapter: `sdk-typescript/src/integrations/openclaw.ts`
 - ✅ Unit tests: `sdk-typescript/src/frameworks/openclaw.test.ts`
 - ✅ Real product-dev sandbox test (Modal, May 2026)
-- ⚠️  No npm-published bridge package YET — install via
-  `"@synapse-protocol/sdk": "file:/path/to/synapse/sdk-typescript"` until
-  v0.3 ships the published bridge.
+- ✅ Published to npm: `npm install synapse-protocol` (v0.2.8+)
 
 ## Reporting
 

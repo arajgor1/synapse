@@ -43,13 +43,13 @@ export function activate(context: vscode.ExtensionContext) {
     cp.exec(getSynapseCmd() + " --help", (err) => {
         if (err) {
             vscode.window.showWarningMessage(
-                "Synapse CLI not found on PATH. Install with: pip install synapse-protocol",
+                "Synapse CLI not found on PATH. Install with: pip install synapse-protocol-py",
                 "Install Now",
             ).then(action => {
                 if (action === "Install Now") {
                     const term = vscode.window.createTerminal("Synapse Install");
                     term.show();
-                    term.sendText("pip install synapse-protocol");
+                    term.sendText("pip install synapse-protocol-py");
                 }
             });
         }

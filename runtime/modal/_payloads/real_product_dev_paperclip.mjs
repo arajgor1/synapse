@@ -20,7 +20,7 @@ import IORedis from "ioredis";
 import {
   Bus,
   wrapAdapterWithSynapse,
-} from "@synapse-protocol/sdk";
+} from "synapse-protocol";
 
 const REDIS_URL = process.env.SYNAPSE_REDIS_URL || "redis://localhost:6379/0";
 const SHARED_SCOPE = "paperclip.shared:todo_api:w";

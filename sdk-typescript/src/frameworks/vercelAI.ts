@@ -13,7 +13,7 @@
  * `synapse.intendWith(...)`. The user changes one import line:
  *
  * ```ts
- * import { synapseTool as tool } from "@synapse-protocol/sdk/frameworks/vercel-ai";
+ * import { synapseTool as tool } from "synapse-protocol/frameworks/vercel-ai";
  * import { z } from "zod";
  *
  * const writeFile = tool({
@@ -402,7 +402,7 @@ function _instrumentExecute<TArgs, TResult>(
  *
  * @example
  * ```ts
- * import { synapseTool as tool } from "@synapse-protocol/sdk/frameworks/vercel-ai";
+ * import { synapseTool as tool } from "synapse-protocol/frameworks/vercel-ai";
  * const writeFile = tool({
  *   name: "write_file",
  *   description: "Write a file",
@@ -485,7 +485,7 @@ export interface WrapVercelToolsOptions {
  *
  * @example
  * ```ts
- * import { wrapVercelTools } from "@synapse-protocol/sdk/frameworks/vercel-ai";
+ * import { wrapVercelTools } from "synapse-protocol/frameworks/vercel-ai";
  * const tools = wrapVercelTools({ writeFile, readFile, runShell });
  * await generateText({ model, tools });
  * ```
@@ -569,7 +569,7 @@ function _installVercelAI(opts: Record<string, unknown>): void {
   // eslint-disable-next-line no-console
   console.info(
     "synapse.install(framework='vercel-ai'): use `synapseTool` from " +
-      "@synapse-protocol/sdk/frameworks/vercel-ai in place of `tool` from " +
+      "synapse-protocol/frameworks/vercel-ai in place of `tool` from " +
       "`ai`, or call `wrapVercelTools(myTools)` to bulk-instrument an " +
       "existing tool map.",
   );

@@ -161,7 +161,7 @@ No CLA. Apache 2.0. Anyone can fork, anyone can implement. The reference impleme
 ## Validate against the schemas
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse spec validate ./my-envelope.json
 ```
 

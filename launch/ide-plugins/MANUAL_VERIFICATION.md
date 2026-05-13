@@ -23,7 +23,7 @@ What the suite **cannot** automatically verify:
 ## Cursor
 
 ```
-1. pip install synapse-protocol
+1. pip install synapse-protocol-py
 2. Copy launch/ide-plugins/cursor/mcp.json into your Cursor MCP settings
    (Settings → Cursor Settings → MCP → Import file)
 3. Restart Cursor
@@ -37,7 +37,7 @@ If step 4 shows "synapse" with the right tool count, the integration works.
 ## Claude Desktop
 
 ```
-1. pip install synapse-protocol
+1. pip install synapse-protocol-py
 2. Edit ~/.../claude_desktop_config.json:
      { "mcpServers": { "synapse": { "command": "synapse-mcp" } } }
 3. Restart Claude Desktop
@@ -49,7 +49,7 @@ If step 4 shows "synapse" with the right tool count, the integration works.
 ## Continue
 
 ```
-1. pip install synapse-protocol continue-dev
+1. pip install synapse-protocol-py continue-dev
 2. Edit ~/.continue/config.json — add the same mcpServers block as
    Cursor (synapse-mcp command, no args)
 3. Restart Continue
@@ -71,7 +71,7 @@ If step 4 shows "synapse" with the right tool count, the integration works.
 ## Codex CLI (OpenAI)
 
 ```
-1. pip install synapse-protocol openai-codex
+1. pip install synapse-protocol-py openai-codex
 2. Merge launch/ide-plugins/codex-cli/config.json into ~/.codex/config.json
 3. Run `codex` in a repo
 4. Ask: "Run the synapse audit_trace_file tool on ./trace.jsonl"

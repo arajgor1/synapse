@@ -64,7 +64,7 @@ This blocks the PR from merging if two of your agents stepped on each other's wo
 This action does **post-hoc** auditing — it tells you what already collided. To **prevent** collisions in real time, install the live mode:
 
 ```bash
-pip install synapse-protocol[live]
+pip install synapse-protocol-py[live]
 ```
 
 ```python

@@ -6,7 +6,7 @@ v0.2: audit + universal SDK + BYO-LLM + framework adapters + merge policies.
 The 30-second hello-world (works against any framework that emits OTel,
 LangSmith, or JSONL traces):
 
-    pip install synapse-protocol
+    pip install synapse-protocol-py
     synapse audit ./your-traces.json   # see the silent conflicts you missed
 
 Live integration into your own stack:

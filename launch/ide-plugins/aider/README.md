@@ -17,7 +17,7 @@ a checkpoint we can audit against.
 
 ### Step 1 — Install Synapse
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 ```
 
 ### Step 2 — Install the git post-commit hook

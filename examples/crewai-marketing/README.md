@@ -18,7 +18,7 @@ collision is caught and surfaced live in your browser.
 
 ```bash
 # 1. Install
-pip install synapse-protocol crewai
+pip install synapse-protocol-py crewai
 
 # 2. Start the live dashboard (opens a browser tab)
 synapse watch --session crew_demo

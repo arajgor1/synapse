@@ -1,4 +1,4 @@
-# `@synapse-protocol/sdk` — TypeScript SDK
+# `synapse-protocol` — TypeScript SDK
 
 TypeScript / JavaScript client for the Synapse coordination protocol. Mirrors the Python SDK at `sdk-python/`.
 
@@ -7,15 +7,15 @@ TypeScript / JavaScript client for the Synapse coordination protocol. Mirrors th
 ## Install
 
 ```bash
-npm install @synapse-protocol/sdk
+npm install synapse-protocol
 # or
-pnpm add @synapse-protocol/sdk
+pnpm add synapse-protocol
 ```
 
 ## Quickstart
 
 ```ts
-import { Agent, Bus, MockAdapter } from "@synapse-protocol/sdk";
+import { Agent, Bus, MockAdapter } from "synapse-protocol";
 
 const bus = new Bus({ url: "redis://localhost:6379/0" });
 await bus.connect();

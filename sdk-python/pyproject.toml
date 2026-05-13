@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "synapse-protocol"
+name = "synapse-protocol-py"
 version = "0.2.8"
 description = "Audit + coordination layer for agentic teams that span vendors — one envelope log across AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, and Hermes"
 readme = "README.md"
@@ -34,7 +34,7 @@ synapse-mcp = "synapse.mcp.server:main"
 [project.optional-dependencies]
 # Live coordination runtime: Redis bus + Postgres state graph + envelope IDs.
 # Required only when calling synapse.intend() / synapse.install() / synapse up.
-# The audit CLI does NOT need any of these — `pip install synapse-protocol`
+# The audit CLI does NOT need any of these — `pip install synapse-protocol-py`
 # alone is enough to run `synapse audit ./traces.json`.
 live = [
     "redis[hiredis]>=5.0,<6",
@@ -71,9 +71,9 @@ Issues = "https://github.com/arajgor1/synapse/issues"
 [tool.hatch.build.targets.wheel]
 packages = ["synapse"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"synapse/cli/_data/docker-compose.yml" = "synapse/cli/_data/docker-compose.yml"
-"synapse/cli/_data/migrations" = "synapse/cli/_data/migrations"
+# Data files under synapse/cli/_data/ are already picked up by
+# `packages = ["synapse"]`. Don't force-include them again or PyPI
+# rejects the wheel with "duplicate filename in local headers".
 
 [tool.ruff]
 line-length = 100

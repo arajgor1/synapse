@@ -8,7 +8,7 @@
 ## In 60 seconds
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse audit ./traces.json
 ```
 

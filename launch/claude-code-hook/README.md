@@ -61,7 +61,7 @@ claude
 - This is a **wrapper** path — the hook fires on Claude Code's tool dispatch, but reduced fidelity vs SDK-native integration:
   - Cannot extract beliefs from tool *output* (no LLM-call-result access).
   - Only file-path-level scope, not deeper semantic.
-- For full live semantic detection, use `pip install synapse-protocol[live]` with one of the 12 SDK adapters.
+- For full live semantic detection, use `pip install synapse-protocol-py[live]` with one of the 12 SDK adapters.
 
 ## Same hook for Codex CLI / Aider
 

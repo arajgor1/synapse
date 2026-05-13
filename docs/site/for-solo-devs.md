@@ -6,7 +6,7 @@ You run Cursor in your IDE and Claude Code in a terminal, simultaneously, on the
 
 ### 1. Install
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 ```
 
 ### 2. Tag each agent session

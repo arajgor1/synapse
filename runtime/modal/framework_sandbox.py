@@ -279,7 +279,7 @@ def run_paperclip(api_keys: dict[str, str]) -> dict[str, Any]:
     1. Clone https://github.com/paperclipai/paperclip
     2. npm install
     3. Identify task assignment / agent execution layer
-    4. Wire @synapse-protocol/sdk (TypeScript SDK) into Paperclip's
+    4. Wire synapse-protocol (TypeScript SDK) into Paperclip's
        task lifecycle hooks
     5. Run a small scenario with two agents on overlapping scopes
     """
@@ -644,7 +644,7 @@ def real_product_dev_paperclip(api_keys: dict[str, str]) -> dict[str, Any]:
           "private": true,
           "dependencies": {
             "@anthropic-ai/sdk": "^0.40.0",
-            "@synapse-protocol/sdk": "file:/tmp/synapse-ts-sdk",
+            "synapse-protocol": "file:/tmp/synapse-ts-sdk",
             "ioredis": "^5.4.1"
           }
         }
@@ -744,7 +744,7 @@ def real_product_dev_openclaw(api_keys: dict[str, str]) -> dict[str, Any]:
           "private": true,
           "dependencies": {
             "@anthropic-ai/sdk": "^0.40.0",
-            "@synapse-protocol/sdk": "file:/tmp/synapse-ts-sdk",
+            "synapse-protocol": "file:/tmp/synapse-ts-sdk",
             "ioredis": "^5.4.1"
           }
         }

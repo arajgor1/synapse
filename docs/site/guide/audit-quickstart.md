@@ -1,7 +1,7 @@
 # Quickstart — audit a trace
 
 ```bash
-pip install synapse-protocol
+pip install synapse-protocol-py
 synapse audit ./traces.json
 ```
 

@@ -21,7 +21,7 @@ Search "Synapse Coordination" in VS Code's Extensions panel.
 
 ## Usage
 
-1. Install Synapse: `pip install synapse-protocol`
+1. Install Synapse: `pip install synapse-protocol-py`
 2. **Recommended (v0.2.3+):** start the live coordination dashboard from
    a terminal — `synapse watch --session my_demo`. The extension then
    tails `.synapse/runs/<session>.jsonl` automatically.
@@ -37,7 +37,7 @@ Search "Synapse Coordination" in VS Code's Extensions panel.
 ## Underlying integration
 
 The extension shells out to the `synapse-mcp` binary (installed by
-`pip install synapse-protocol`) for tool calls and the `synapse audit`
+`pip install synapse-protocol-py`) for tool calls and the `synapse audit`
 CLI for offline trace analysis. Same surface as Cursor / Continue / Cline
 under the hood — VS Code just adds the GUI commands and status bar.
 

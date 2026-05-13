@@ -51,7 +51,7 @@
         "synapse.synapseCmd": {
           "type": "string",
           "default": "synapse",
-          "description": "Path to the `synapse` CLI (default assumes it's on PATH after `pip install synapse-protocol`)."
+          "description": "Path to the `synapse` CLI (default assumes it's on PATH after `pip install synapse-protocol-py`)."
         },
         "synapse.autoStartWatcherOnLaunch": {
           "type": "boolean",
