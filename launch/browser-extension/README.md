@@ -43,8 +43,8 @@ artifacts; a thin proxy at `audit.synapse.dev/api/audit` would:
 3. Read the conflict count from its outputs
 4. Return `{conflicts, report_url}`
 
-This proxy doesn't ship in v0.2.2 — extension currently shows
-"endpoint unreachable" until you deploy your own backend or wait for
+This proxy isn't part of the published bundle — the extension currently
+shows "endpoint unreachable" until you deploy your own backend or use
 the hosted version.
 
 ## Submission checklist

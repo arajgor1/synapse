@@ -98,7 +98,7 @@ LangSmith and raw JSONL importers are also shipped as fallbacks for ecosystems t
 
 ## Implementation plan
 
-See `docs/roadmap/v0.2-observability-and-safety.md` for the 5-week shipping plan with concrete deliverables, success metrics, and demo gallery.
+The 5-week shipping plan that scoped v0.2 has now shipped (v0.2.0 → v0.2.8). See [`CHANGELOG.md`](../../CHANGELOG.md) and the [public roadmap](../../docs/roadmap/) for the current state.
 
 The first PR (week 1) ships:
 1. `sdk-python/synapse/audit/` (importers + scope inference + report)
@@ -134,7 +134,8 @@ We considered focusing on live integration only and adding audit later. Rejected
 
 - v0.1 launch summary: `README.md`
 - Real product-dev test results: `bench/results/real_app_*.json`
-- v0.2 roadmap: `docs/roadmap/v0.2-observability-and-safety.md`
+- Roadmap (current + shipped): `docs/roadmap/README.md`
+- CHANGELOG: `CHANGELOG.md`
 - ADR-0001 architecture baseline
 - ADR-0002 protocol v1.0 freeze
 - OpenInference spec: https://github.com/Arize-ai/openinference

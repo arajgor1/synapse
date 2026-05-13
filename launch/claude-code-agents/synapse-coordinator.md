@@ -143,7 +143,7 @@ See `/synapse-resolve-conflict` for the decision tree.
 
 If your diagnostic shows the user hit a bug:
 
-1. **Check `bench/REAL_LIFE_TESTING.md`** for known limitations.
+1. **Check [`bench/PUBLIC_BENCHMARK.md`](../../bench/PUBLIC_BENCHMARK.md)** for known limitations + carry-forward backlog.
 2. **Reproduce with the smallest possible script** (≤30 LOC).
 3. **Print the relevant `_runtime` state**:
    ```python

@@ -109,7 +109,7 @@ extensions (`dev_a`, `dev_b`, `dev_c`) all wrapped with Synapse, all writing
 to the same `src/utils/dedupe.py`, verifying CONFLICTs route correctly.
 
 Result: see `bench/results/product_dev_real_openclaw_*.json` and
-`bench/REAL_LIFE_TESTING.md` Phase 7 section.
+the [`bench/PUBLIC_BENCHMARK.md`](../../../bench/PUBLIC_BENCHMARK.md) Phase 7 section.
 
 ## Status
 

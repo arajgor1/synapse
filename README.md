@@ -137,7 +137,7 @@ We share the conflict taxonomy and SCF-aligned metrics:
 We differ in three ways:
 1. **Audit-on-existing-trace-exports** with no middleware deployment, no agent-runtime patching, no hand-authored process model. SCF requires inline blocking; Synapse runs post-hoc on what your agents already emit.
 2. **FS-watcher path for IDE/CLI agents** (Claude Code, Cursor, Codex CLI, Aider) that don't expose live coordination hooks.
-3. **Real-world evidence on real published SDKs.** All 12 framework adapters confirmed patching the real published SDK at install time (see `tests/test_adapter_health.py`). **All 12 additionally verified through real LLM-driven dispatch with INTENTIONs persisted end-to-end in a Modal sandbox** — autogen, langchain, langgraph, smolagents, crewai, agno, openai_agents, pydantic_ai, llama_index, google_adk, otel_live, hermes (see `bench/REAL_LIFE_TESTING.md` + `bench/results/v022_real_llm_e2e_*.json`). v0.2.3 closed the remaining 4 framework-specific internal-scheduler cross-loop bugs via per-loop state pools. SCF's evaluation uses simulated agents.
+3. **Real-world evidence on real published SDKs.** All 11 framework adapters (10 Python + 1 Node) verified through real LLM-driven dispatch with INTENTIONs persisted end-to-end in a Modal sandbox — autogen, crewai, langgraph, smolagents, agno, llama_index, pydantic_ai, openai_agents, google_adk, hermes (Python) + openclaw (TypeScript). The cross-vendor cooperative-build proof in [`bench/results/v32_app_bundle/`](bench/results/v32_app_bundle/) shows all 10 Python adapters collaborating on one Synapse session to produce a runnable Flask app, with byte-for-byte reproducibility across runs (v26 ↔ v27). Full history in [`bench/PUBLIC_BENCHMARK.md`](bench/PUBLIC_BENCHMARK.md). SCF's evaluation, by contrast, uses simulated agents.
 
 ### Framework coverage (10 Python + 1 Node)
 
@@ -180,7 +180,7 @@ Hold the agent behavior constant (real LangGraph multi-orchestrator run, May 8 2
 | Shared coordination.md | 2 | 0 | 0 of 3 |
 | **Synapse `MergePolicy.auto_merge`** | **0** | **4 auto-merged** | **3 of 3** |
 
-Source data + scoring oracle: [`bench/results/v02_pitch_phase1/`](bench/results/v02_pitch_phase1/RESULTS_REAL.md). Full 1-pager with caveats: [`docs/launch/PITCH_1PAGER.md`](docs/launch/PITCH_1PAGER.md). Honest IRL trust check on every claim: [`bench/TESTING_PROTOCOL.md`](bench/TESTING_PROTOCOL.md).
+Source data + scoring oracle: [`bench/results/v02_pitch_phase1/`](bench/results/v02_pitch_phase1/RESULTS_REAL.md). Honest IRL trust check on every claim: [`bench/PUBLIC_BENCHMARK.md`](bench/PUBLIC_BENCHMARK.md).
 
 ---
 
@@ -325,51 +325,55 @@ npm install @synapse-protocol/sdk
 
 | Framework | Python | TypeScript |
 |---|---|---|
-| LangGraph | ✅ | ✅ (LangGraph.js) |
+| AutoGen (Microsoft) | ✅ | — |
 | CrewAI | ✅ | — |
-| AutoGen (0.4+) | ✅ | — |
-| OpenAI Agents SDK | ✅ | — |
+| LangGraph (LangChain) | ✅ | ✅ (LangGraph.js) |
+| smolagents (HuggingFace) | ✅ | — |
+| Agno | ✅ | — |
+| LlamaIndex | ✅ | — |
 | Pydantic AI | ✅ | — |
-| smolagents | ✅ | — |
-| Vercel AI SDK | — | ✅ |
+| OpenAI Agents SDK | ✅ | — |
+| Google ADK | ✅ | — |
 | Hermes Agent | ✅ | — |
-| Paperclip AI | — | ✅ |
 | OpenClaw | — | ✅ |
 
 Don't see yours? `synapse.intend()` (Python) and `synapse.intendWith()` (TypeScript) are universal context-manager APIs that work in *any* codebase.
 
 ## Status
 
-**v0.2.1-alpha — feature-complete, launch-ready, tagged.**
+**v0.2.8 — cross-vendor cooperative-build proof shipped, tagged, released.**
 
 - Protocol spec: [`spec/protocol-v1.0/`](spec/protocol-v1.0/) (frozen at v1.0)
-- Python SDK: 249 tests passing
-- TypeScript SDK: 233 tests passing
-- 6 live benchmarks in [`bench/benchmarks.md`](bench/benchmarks.md), all real-LLM
+- Python SDK: 374 tests passing
+- 11 framework adapters verified end-to-end (10 Python + 1 Node)
+- Cross-vendor cooperative-build proof: [`bench/results/v32_app_bundle/`](bench/results/v32_app_bundle/) — 10 vendor agents → 1 running Flask app
+- Public benchmark history: [`bench/PUBLIC_BENCHMARK.md`](bench/PUBLIC_BENCHMARK.md)
 - Architecture decisions in [`spec/adr/`](spec/adr/)
-- Roadmap: [`docs/roadmap/v0.2-observability-and-safety.md`](docs/roadmap/v0.2-observability-and-safety.md)
+- Roadmap: [`docs/roadmap/`](docs/roadmap/)
 
 ## Tests
 
 ```
-Python:     249 tests
-TypeScript: 233 tests
-Total:      482 tests passing
-Regressions across 5 weeks of dev: 0
+Python:     374 tests passing
+v0.2.6 → v0.2.8 regressions: 0
 ```
 
-## Live benchmarks (real Anthropic Haiku, real Modal sandboxes)
+Run with `cd sdk-python && python -m pytest -q`.
+
+## Live benchmarks (real LLM calls, real Modal sandboxes)
 
 | # | Demo | Headline |
 |---|---|---|
-| 1 | Instagram-clone backend (4 engineers) | 3 stale-base overwrites caught |
-| 2 | Data analysis pipeline (3 agents, disjoint files) | 2 BELIEF divergences caught (semantic conflicts scope-overlap can't see) |
-| 3 | Auto-merge demo (3 engineers + same file) | 3/3 fields preserved (vs 2/3 baseline) |
-| 4 | Cross-framework test (LangGraph + CrewAI on one session) | 3 conflicts including 2 cross-framework |
-| 5 | **SDLC benchmark — multi-tenant SaaS billing platform (6 agents, 4 stages)** | **Coherence 0.33 → 0.93** (2.8x improvement) |
-| 6 | **Autonomous observer test (LangGraph orchestrator + 4 workers)** | **0 conflicts caught** — orchestrator pre-deconflicted. Honest finding that narrowed the pitch. |
+| 1 | **Cross-vendor cooperative app build (v32)** | **10 vendor SDKs → 1 Flask app, `GET /todos → 200`** |
+| 2 | **Convergence bench across 10 adapters (v26 ↔ v27)** | **10/10 V1_PASS deterministic, byte-for-byte reproducible** |
+| 3 | Instagram-clone backend (4 engineers) | 3 stale-base overwrites caught |
+| 4 | Data analysis pipeline (3 agents, disjoint files) | 2 BELIEF divergences caught (semantic conflicts scope-overlap can't see) |
+| 5 | Auto-merge demo (3 engineers + same file) | 3/3 fields preserved (vs 2/3 baseline) |
+| 6 | Cross-framework test (LangGraph + CrewAI on one session) | 3 conflicts including 2 cross-framework |
+| 7 | **SDLC benchmark — multi-tenant SaaS billing platform (6 agents, 4 stages)** | **Coherence 0.33 → 0.93** (2.8x improvement) |
+| 8 | AgenticFlict benchmark (5,408 real AI-coding-agent PRs) | **F1 = 0.865, recall = 1.000** on structural scope-overlap |
 
-Full numbers + capture artifacts: [`bench/benchmarks.md`](bench/benchmarks.md) and [`bench/results/`](bench/results/).
+Full numbers + capture artifacts: [`bench/PUBLIC_BENCHMARK.md`](bench/PUBLIC_BENCHMARK.md), [`bench/benchmarks.md`](bench/benchmarks.md), and [`bench/results/`](bench/results/).
 
 ## Self-hosted by design
 
@@ -381,8 +385,10 @@ Apache 2.0 — see [`LICENSE`](LICENSE).
 
 ## Contributing
 
-Issues + PRs welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md). The protocol spec changes go through [`spec/adr/`](spec/adr/) — open an ADR before proposing breaking changes.
+Issues + PRs welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) + [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md). The protocol spec changes go through [`spec/adr/`](spec/adr/) — open an ADR before proposing breaking changes.
+
+For security issues, see [`SECURITY.md`](SECURITY.md). For help, see [`SUPPORT.md`](SUPPORT.md).
 
 ---
 
-Built by Aadit Rajgor · v0.2.1-alpha · 2026
+Built by Aadit Rajgor · v0.2.8 · 2026

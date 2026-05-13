@@ -100,7 +100,7 @@ Then point the [Team Health dashboard](https://github.com/arajgor1/synapse/tree/
 - **Apache 2.0 license** — no copyleft, safe for enterprise embedding
 - **BYO-LLM** — Synapse never sends your traces to a third-party LLM unless you configure it to. The audit pipeline is pure deterministic Python.
 - **No telemetry** — Synapse doesn't phone home
-- **W3C PROV-O alignment** (planned for v0.2.3) — audit trail compatible with regulated-industry provenance requirements
+- **W3C PROV-O–aligned audit trail** — envelope log is compatible with regulated-industry provenance requirements (see [`spec/protocol-v1.0/`](../../spec/protocol-v1.0/))
 - **Self-hostable** — both audit and live runtime
 - **Vendor-neutral** — no lock-in to any LLM provider, agent framework, or cloud
 
@@ -118,11 +118,14 @@ So you don't waste cycles evaluating us against the wrong category:
 
 ---
 
-## Pilot conversation
+## Get in touch
 
-Ready to evaluate? We're looking for design partners running 5+ agents on shared repos. Email or open a GitHub issue with:
-- # of agents in your stack + which frameworks
+Evaluating Synapse for an enterprise deployment? Open a GitHub
+[Discussion](https://github.com/arajgor1/synapse/discussions) or email
+the maintainer (see [SUPPORT.md](../../SUPPORT.md)) with:
+
+- Number of agents in your stack + which frameworks
 - Trace export format (OpenInference / Bedrock / Vertex / Azure / other)
 - One specific cross-agent failure you'd like Synapse to catch
 
-We'll walk you through a 30-minute audit on a real export.
+A 30-minute audit on a real export shows what Synapse would have caught.

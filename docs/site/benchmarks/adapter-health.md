@@ -2,7 +2,7 @@
 
 Every adapter is verified against the real published SDK by `tests/test_adapter_health.py` on every release.
 
-**11 of 11 pass** as of v0.2.2.
+**11 of 11 pass** as of v0.2.8 (10 Python + 1 Node TypeScript).
 
 | Framework | Real SDK package | Status |
 |---|---|---|

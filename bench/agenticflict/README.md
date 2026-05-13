@@ -32,7 +32,7 @@ python bench/agenticflict/run_benchmark.py
 
 Takes ~30 seconds on a single CPU. No LLM, no Modal, $0.
 
-## Latest results (Synapse v0.2.2-pre)
+## Latest results (Synapse v0.2.8)
 
 See `bench/results/agenticflict_benchmark.json` for the full output.
 Headline: **F1 = 0.865, recall = 1.000, precision = 0.763** on 5,408

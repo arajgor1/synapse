@@ -1,6 +1,6 @@
 # MergePolicy reference
 
-When ``synapse.intend()`` detects a CONFLICT, the configured **MergePolicy** decides what to do. v0.2.2 ships ten built-in policies — five low-level primitives and five higher-level templates that cover the patterns real users actually need.
+When ``synapse.intend()`` detects a CONFLICT, the configured **MergePolicy** decides what to do. Synapse ships ten built-in policies — five low-level primitives and five higher-level templates that cover the patterns real users actually need.
 
 Pass a policy via ``synapse.install(merge_policy=...)`` (process default) or per-call via ``synapse.intend(merge_policy=...)``. Strings, attribute references, and direct instances all work:
 

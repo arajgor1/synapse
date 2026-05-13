@@ -1,4 +1,4 @@
-# Organic test report — Synapse v0.2.5
+# Organic test report — Synapse v0.2.8
 
 > **What this document is.** Every result here is from running each
 > integration's CANONICAL example — the pattern documented in the
