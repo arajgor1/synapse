@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "synapse-protocol-py"
-version = "0.2.8"
-description = "Audit + coordination layer for agentic teams that span vendors — one envelope log across AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, and Hermes"
+version = "0.2.9"
+description = "Audit, observability, conflict detection, intent capture, and reasoning capture for agentic teams that span vendor SDKs — AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, Hermes"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Aadit Rajgor", email = "aadityarajgor27@gmail.com" }]
@@ -21,10 +21,13 @@ classifiers = [
 ]
 
 dependencies = [
-    # Core deps for `synapse audit` (the wedge) — keep this list tiny.
-    # Audit reads existing trace exports; it has zero infrastructure needs.
+    # Core deps for `synapse audit` AND `synapse.intend()` in zero-infra mode
+    # (in-memory bus + SQLite). Keep this list tiny.
     "pydantic>=2.6,<3",
     "jsonschema>=4.20",
+    # python-ulid mints envelope msg_ids; needed by Envelope.make() even in
+    # zero-infra mode. Pure Python, ~30KB, no transitive deps.
+    "python-ulid>=2.2,<4",
 ]
 
 [project.scripts]
@@ -39,7 +42,8 @@ synapse-mcp = "synapse.mcp.server:main"
 live = [
     "redis[hiredis]>=5.0,<6",
     "asyncpg>=0.29,<0.31",
-    "python-ulid>=2.2,<4",
+    # python-ulid moved to base deps in v0.2.9 so zero-infra
+    # mode (in-memory bus + SQLite) works without [live].
 ]
 dev = [
     "pytest>=8",

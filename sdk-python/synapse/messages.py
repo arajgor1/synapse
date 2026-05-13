@@ -29,7 +29,7 @@ def _ulid_str_or_raise() -> str:
     if not _ULID_AVAILABLE:
         raise ImportError(
             "Envelope.make() requires the 'live' extras. "
-            "Install with `pip install synapse-protocol[live]` to mint envelopes. "
+            "Install with `pip install synapse-protocol-py[live]` to mint envelopes. "
             "If you only need to AUDIT existing traces, use synapse.audit "
             "directly — it doesn't need this code path."
         )

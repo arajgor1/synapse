@@ -1,6 +1,6 @@
 {
   "name": "synapse-protocol",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Synapse — audit, observability, conflict detection, intent capture, and reasoning capture for agentic teams that span vendor SDKs. TypeScript SDK.",
   "keywords": [
     "agents",

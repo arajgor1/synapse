@@ -5,6 +5,32 @@ All notable changes to Synapse will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.9] — 2026-05-13
+
+### Fixed
+- **Zero-infra mode now actually works after a bare `pip install`.**
+  v0.2.8 advertised "no Redis, no Postgres, no env vars" but `Envelope.make()`
+  threw "requires the 'live' extras" because `python-ulid` (needed to mint
+  envelope msg_ids) was in the `[live]` optional-dependency group. Moved
+  `python-ulid>=2.2,<4` from `[live]` into base dependencies — it's
+  pure-Python, ~30KB, no transitive deps. `[live]` now only holds
+  `redis[hiredis]` + `asyncpg` (the actual multi-process needs).
+- **Error message in `Envelope.make()` updated** to refer to
+  `synapse-protocol-py` (the published PyPI name) instead of the stale
+  `synapse-protocol`.
+
+### Verified
+- End-to-end install from PyPI and npm both pass on a clean machine:
+  - `pip install synapse-protocol-py==0.2.9` → `synapse.intend()` round-trip
+    mints real ULID envelope IDs and fires real `stale_base_overwrite`
+    CONFLICTs when two agents target the same scope, all in zero-infra
+    mode without `[live]` extras.
+  - `npm install synapse-protocol@0.2.9` → 52 named exports, `Bus`,
+    `MockAdapter`, `intendWith`, `MergePolicy`, `wrapExtensionWithSynapse`
+    all importable; framework adapters round-trip without errors.
+
+---
+
 ## [0.2.8] — 2026-05-12
 
 ### Added

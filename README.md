@@ -343,7 +343,13 @@ Don't see yours? `synapse.intend()` (Python) and `synapse.intendWith()` (TypeScr
 
 ## Status
 
-**v0.2.8 — cross-vendor cooperative-build proof shipped, tagged, released.**
+**v0.2.9 — current published version on PyPI + npm.**
+
+The v0.2.8 release shipped the cross-vendor cooperative-build proof (see the
+[v32 bundle](bench/results/v32_app_bundle/)). v0.2.9 is the first patch:
+moves `python-ulid` from the `[live]` extras into the base dependencies
+so the zero-infra mode (in-memory bus + auto-SQLite) actually works after
+a bare `pip install synapse-protocol-py` without needing the `[live]` extras.
 
 - Protocol spec: [`spec/protocol-v1.0/`](spec/protocol-v1.0/) (frozen at v1.0)
 - Python SDK: 374 tests passing
@@ -393,4 +399,4 @@ For security issues, see [`SECURITY.md`](SECURITY.md). For help, see [`SUPPORT.m
 
 ---
 
-Built by Aadit Rajgor · v0.2.8 · 2026
+Built by Aadit Rajgor · v0.2.9 · 2026

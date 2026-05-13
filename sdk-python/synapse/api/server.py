@@ -50,7 +50,7 @@ Live coordination:
   WS   /v1/stream             — WebSocket: live INTENTION + CONFLICT events
 
 Run:
-    pip install 'synapse-protocol[gateway]'
+    pip install 'synapse-protocol-py[gateway]'
     synapse api                # zero-infra defaults
     synapse api --port 9000    # custom port
     synapse api --bind 0.0.0.0 # LAN-accessible (warns)
@@ -75,7 +75,7 @@ except ImportError:  # pragma: no cover
     _FASTAPI_AVAILABLE = False
     raise ImportError(
         "synapse.api requires the [gateway] extras. "
-        "Install with `pip install 'synapse-protocol[gateway]'`."
+        "Install with `pip install 'synapse-protocol-py[gateway]'`."
     )
 
 import synapse

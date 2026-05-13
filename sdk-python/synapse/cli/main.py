@@ -217,7 +217,7 @@ def _cmd_api(args) -> int:
         from synapse.api.server import serve
     except ImportError as e:
         print(f"synapse api: missing dependency -- {e}", file=sys.stderr)
-        print("Install with: pip install 'synapse-protocol[gateway]'", file=sys.stderr)
+        print("Install with: pip install 'synapse-protocol-py[gateway]'", file=sys.stderr)
         return 2
     serve(host=args.bind, port=args.port, log_level=args.log_level)
     return 0

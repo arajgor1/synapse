@@ -67,7 +67,7 @@ Cost: $0 (the action is free). PR comments add a Synapse summary alongside CodeR
 Best for: shops where multiple cloud agents (Bedrock / Devin / internal LangGraph) act on the same repo concurrently and need pre-merge blocking.
 
 ```bash
-pip install 'synapse-protocol[live]'
+pip install 'synapse-protocol-py[live]'
 synapse up   # local Redis + Postgres via docker-compose
 ```
 

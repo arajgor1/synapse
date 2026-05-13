@@ -1,7 +1,7 @@
 # Live mode
 
 ```bash
-pip install 'synapse-protocol[live]'
+pip install 'synapse-protocol-py[live]'
 synapse up
 python -c "import synapse; synapse.install(framework='langgraph')"
 ```
