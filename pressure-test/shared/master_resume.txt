@@ -1,0 +1,56 @@
+Jordan Avery — Senior Software Engineer
+============================================
+Email:    jordan.avery@example.com
+GitHub:   github.com/javery-eng
+LinkedIn: linkedin.com/in/jordan-avery-eng
+Location: Austin, TX · open to remote · willing to travel
+
+PROFILE
+-------
+8 years building distributed systems and ML infrastructure. Last three
+years leading platform/agent teams that shipped real products at series-A
+to series-C startups. Comfortable with Python + Go + TypeScript. Have
+designed and operated multi-region Postgres clusters, Kafka pipelines,
+and the LLM-orchestration layer at my current employer.
+
+WORK
+----
+Aug 2023 — present  | Staff Software Engineer · Helix AI (Series B)
+  - Designed the inter-agent coordination layer used by the entire
+    automation product (~2M agent dispatches / day at peak).
+  - Reduced mean tool-call latency from 240ms to 38ms by introducing a
+    sharded Redis cache layer in front of the policy-decision service.
+  - Mentored 4 ICs from junior to mid-level; ran the team's interview
+    loop for the past 18 months.
+
+Mar 2021 — Jul 2023 | Senior Software Engineer · Loomstack (Series A)
+  - Owned the Kafka-based ingest pipeline (15B events/day at exit).
+  - Built the observability stack on top of OpenTelemetry + ClickHouse
+    that the SRE team uses today.
+  - Shipped the first production deployment of a multi-tenant LLM
+    orchestration feature; eventually became 30% of company revenue.
+
+Jul 2018 — Feb 2021 | Software Engineer · Cantos (early stage)
+  - Wrote the original Postgres → Snowflake CDC pipeline.
+  - First engineer hired post-founders. Did everything from frontend
+    onboarding flows to Terraform/AWS infra to interview ops.
+
+EDUCATION
+---------
+2018  B.S. Computer Science · University of Texas at Austin
+      Magna Cum Laude · advisor: Dr. Rachel Bandel
+      Senior thesis on consensus protocols under arbitrary clock drift.
+
+SELECTED PROJECTS
+-----------------
+* Authored `kafka-consumer-balancer` (3.2k GitHub stars) — partition
+  rebalancing tool used in production at three named companies.
+* Co-author on two OSS papers cited in the Materialize and Pinot docs.
+* Maintain `pyparquet-fast`, a C-extension Parquet writer.
+
+KEYWORDS
+--------
+Python, Go, TypeScript, Kafka, Postgres, Redis, OpenTelemetry,
+Kubernetes, Terraform, ML infrastructure, LLM orchestration,
+multi-agent systems, distributed systems, observability, platform
+engineering, team leadership, mentoring.
