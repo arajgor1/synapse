@@ -1,29 +1,22 @@
 /**
  * OpenClaw orchestrator (TypeScript) — runs the same 6-step autoapply
  * pipeline as the 10 Python frameworks but using the `synapse-protocol`
- * Node SDK + the OpenClaw extension wrap path.
+ * Node SDK.
  *
- * Per-step Synapse INTENTIONs are minted via `intendWith()`; the OpenClaw
- * extension wrapping covers the S4 dispatch path.
+ * Single-process; talks to a local Redis (started via `docker run redis`)
+ * for the Bus. Per-step Synapse INTENTIONs are minted via `intendWith()`.
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
 import OpenAI from "openai";
-import {
-  Bus,
-  intendWith,
-  wrapExtensionWithSynapse,
-  makeSynapseExtension,
-} from "synapse-protocol";
+import { intendWith } from "synapse-protocol";
 
-const REDIS_URL =
-  process.env.SYNAPSE_REDIS_URL ?? "redis://localhost:6379/0";
+const REDIS_URL = process.env.SYNAPSE_REDIS_URL ?? "redis://localhost:6379/0";
 const SESSION_ID = `pressuretest_openclaw_${Date.now()}`;
 const MODEL = process.env.PRESSURE_TEST_MODEL ?? "gpt-4o-mini";
-const OUT_DIR = process.env.OUT_DIR ?? "/tmp/pressuretest/openclaw";
+const OUT_DIR = process.env.OUT_DIR ?? path.resolve("../../runs/openclaw");
 
-// Mirror the shared/ corpus so the TS orchestrator doesn't need to read
-// Python files (it could, but it'd add fs noise to the audit log).
+// ---------- shared corpus (mirrors shared/master_resume.txt + jobs.py) ----
 const RESUME = `Jordan Avery, Senior Software Engineer, 8 years, distributed systems,
 Python+Go+TypeScript, multi-agent platforms, observability, mentor.`;
 
@@ -53,9 +46,7 @@ const JOBS: Job[] = [
     description: "Mid-level. Python/Django/Postgres. HIPAA." },
 ];
 
-// ---------------------------------------------------------------------------
-// Scrub (port of shared/scrub.py)
-// ---------------------------------------------------------------------------
+// ---------- scrub (port of shared/scrub.py) ----------
 const INJECTION_PATTERNS: Array<[string, string, RegExp]> = [
   ["ignore_previous", "high",
     /\b(ignore|disregard|forget)\s+(the\s+)?(previous|prior|all|any)\s+(instructions?|prompts?|rules?)\b/gi],
@@ -77,16 +68,14 @@ function detectInjections(text: string) {
   return hits;
 }
 
-// ---------------------------------------------------------------------------
-// OpenAI client + LLM helpers
-// ---------------------------------------------------------------------------
+// ---------- OpenAI helpers ----------
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 async function llmParseResume() {
   const r = await openai.chat.completions.create({
     model: MODEL,
     messages: [{ role: "user", content:
-      `Extract structured fields from this resume as JSON with keys: name, email, years_experience, skills (list), current_role, summary (≤2 sentences). Output ONLY JSON.\n\nResume:\n${RESUME}` }],
+      `Extract structured fields from this resume as JSON with keys: name, email, years_experience, skills (list), current_role, summary. Output ONLY JSON.\n\nResume:\n${RESUME}` }],
     response_format: { type: "json_object" },
     max_tokens: 400,
   });
@@ -104,25 +93,15 @@ async function llmDraftLetter(job: Job, profile: any) {
   return r.choices[0].message.content ?? "";
 }
 
-// ---------------------------------------------------------------------------
-// Main pipeline
-// ---------------------------------------------------------------------------
+// ---------- Main pipeline ----------
 async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(path.join(OUT_DIR, "cover_letters"), { recursive: true });
 
   console.log("=== openclaw orchestrator: autoapply pressure test ===");
   console.log(`  session: ${SESSION_ID}`);
-  console.log(`  model:   ${MODEL}`);
-
-  let bus: Bus;
-  try {
-    bus = new Bus({ url: REDIS_URL, sessionId: SESSION_ID });
-    await bus.connect();
-  } catch (e: any) {
-    console.error("Bus.connect failed (Redis unreachable?):", e.message);
-    process.exit(2);
-  }
+  console.log(`  redis:   ${REDIS_URL}`);
+  console.log(`  out:     ${OUT_DIR}`);
 
   const summary: any = {
     framework: "openclaw",
@@ -130,13 +109,16 @@ async function main() {
     started_at: Date.now() / 1000,
     steps: [],
     intents_total: 0,
+    thoughts_total: 0,
     injections_detected: 0,
   };
 
+  // S1: resume parse
   const parsedResume = await intendWith(
-    { bus, agentId: "parser", scope: ["pressuretest.parse:w", "pressuretest.resume:r"],
+    { scope: ["pressuretest.parse:w", "pressuretest.resume:r"],
+      agent: "parser", session: SESSION_ID,
       expectedOutcome: "parse resume to JSON" },
-    async (h) => {
+    async (h: any) => {
       const t0 = Date.now();
       const parsed = await llmParseResume();
       summary.steps.push({ step: "S1_resume_parse", intention: h.intentionId,
@@ -146,12 +128,13 @@ async function main() {
     },
   );
 
+  // S2: role match
   const matched = await intendWith(
-    { bus, agentId: "matcher", scope: ["pressuretest.match:w", "pressuretest.jobs:r"],
+    { scope: ["pressuretest.match:w", "pressuretest.jobs:r"],
+      agent: "matcher", session: SESSION_ID,
       expectedOutcome: "rank top 5 jobs" },
-    async (h) => {
+    async (h: any) => {
       const t0 = Date.now();
-      // For TS, just take all jobs <72h
       const ranked = JOBS.filter(j => j.posted_hours_ago <= 72)
         .map(j => ({ job_id: j.id, reason: `${j.title} @ ${j.company} matches profile` }))
         .slice(0, 5);
@@ -165,9 +148,10 @@ async function main() {
   // S3: scrub
   const scrubReport: Record<string, any> = {};
   await intendWith(
-    { bus, agentId: "scrubber", scope: ["pressuretest.scrub:w"],
+    { scope: ["pressuretest.scrub:w"],
+      agent: "scrubber", session: SESSION_ID,
       expectedOutcome: "strip prompt-injection from job descriptions" },
-    async (h) => {
+    async (h: any) => {
       const t0 = Date.now();
       for (const m of matched) {
         const j = JOBS.find(jj => jj.id === m.job_id);
@@ -181,29 +165,14 @@ async function main() {
     },
   );
 
-  // S4 + S5 concurrent (exercise overlapping scope)
+  // S4 + S5 concurrent
   const coverLetters: Record<string, string> = {};
-
   const s4 = intendWith(
-    { bus, agentId: "openclaw_drafter",
-      scope: ["pressuretest.draft:w", "pressuretest.letter_role3:w"],
-      expectedOutcome: "draft 5 cover letters via OpenClaw-wrapped extension" },
-    async (h) => {
+    { scope: ["pressuretest.draft:w", "pressuretest.letter_role3:w"],
+      agent: "openclaw_drafter", session: SESSION_ID,
+      expectedOutcome: "draft 5 cover letters" },
+    async (h: any) => {
       const t0 = Date.now();
-      // Wrap an OpenClaw-style extension via synapse — the wrap path is the
-      // one being exercised. In a real OpenClaw deploy this would be a real
-      // skill registry; here we mock it.
-      const innerExt = {
-        name: "letter_writer",
-        tools: {
-          draft_letter: { isWrite: true, scope: ["pressuretest.letter:w"] },
-        },
-      };
-      const wrappedExt = wrapExtensionWithSynapse(innerExt as any, {
-        bus, agentId: "openclaw_drafter", sessionId: SESSION_ID,
-      });
-      // Just exercise the wrap path; the actual letter drafting happens via
-      // direct LLM calls below.
       for (const m of matched) {
         const j = JOBS.find(jj => jj.id === m.job_id);
         if (!j) continue;
@@ -211,20 +180,18 @@ async function main() {
       }
       summary.steps.push({ step: "S4_draft_letters", intention: h.intentionId,
                           hasConflicts: h.hasConflicts,
-                          elapsed_s: (Date.now() - t0) / 1000,
-                          extension_wrapped: wrappedExt?.name ?? "letter_writer" });
+                          elapsed_s: (Date.now() - t0) / 1000 });
     },
   );
 
   const s5 = new Promise<void>((resolve) =>
     setTimeout(async () => {
       await intendWith(
-        { bus, agentId: "validator",
-          scope: ["pressuretest.validate:w", "pressuretest.letter_role3:r"],
+        { scope: ["pressuretest.validate:w", "pressuretest.letter_role3:w"],
+          agent: "validator", session: SESSION_ID,
           expectedOutcome: "validate the application bundle" },
-        async (h) => {
+        async (h: any) => {
           const t0 = Date.now();
-          // wait for drafter to populate
           for (let i = 0; i < 100; i++) {
             if (Object.keys(coverLetters).length > 0) break;
             await new Promise((r) => setTimeout(r, 50));
@@ -240,12 +207,13 @@ async function main() {
 
   await Promise.all([s4, s5]);
 
-  // S6: mock submit
+  // S6: submit
   const subs: any[] = [];
   await intendWith(
-    { bus, agentId: "submitter", scope: ["pressuretest.submit:w"],
+    { scope: ["pressuretest.submit:w"],
+      agent: "submitter", session: SESSION_ID,
       expectedOutcome: "submit applications via mock ATS" },
-    async (h) => {
+    async (h: any) => {
       const t0 = Date.now();
       for (const [jid, letter] of Object.entries(coverLetters)) {
         const job = JOBS.find(jj => jj.id === jid)!;
@@ -276,12 +244,33 @@ async function main() {
 
   summary.finished_at = Date.now() / 1000;
   summary.elapsed_s = summary.finished_at - summary.started_at;
+  summary.intents_total = summary.steps.length;
+
+  // Pull envelopes.jsonl by reading the session Redis stream
+  try {
+    const Redis = (await import("ioredis")).default;
+    const r = new Redis(REDIS_URL);
+    const stream = await r.xrange(`synapse:session:${SESSION_ID}:events`, "-", "+");
+    const lines: string[] = [];
+    for (const [, fields] of stream) {
+      const m = new Map();
+      for (let i = 0; i < fields.length; i += 2) m.set(fields[i], fields[i + 1]);
+      try { lines.push(m.get("e") ?? ""); } catch {}
+    }
+    fs.writeFileSync(path.join(OUT_DIR, "envelopes.jsonl"),
+      lines.filter(Boolean).join("\n") + "\n");
+    summary.envelopes_total = lines.length;
+    await r.quit();
+  } catch (e: any) {
+    summary.envelopes_error = e.message;
+  }
+
   fs.writeFileSync(path.join(OUT_DIR, "summary.json"),
     JSON.stringify(summary, null, 2));
 
-  await bus.disconnect?.();
   console.log("\nopenclaw orchestrator done.  summary:", JSON.stringify({
-    intents_emitted: summary.steps.length,
+    intents_emitted: summary.intents_total,
+    envelopes_total: summary.envelopes_total ?? "?",
     injections_detected: summary.injections_detected,
     cover_letters: Object.keys(coverLetters).length,
     elapsed_s: summary.elapsed_s.toFixed(1),
