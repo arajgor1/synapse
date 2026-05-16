@@ -1176,7 +1176,7 @@ def v02_autonomous_observer_run(api_keys: dict[str, str]) -> dict[str, Any]:
                 proc.terminate()
                 return {
                     "exit_code": -1,
-                    "stdout": "".join(captured)[-100000:],
+                    "stdout": "".join(captured)[-500000:],
                     "stderr": "TIMEOUT",
                     "elapsed_seconds": round(time.time() - started, 1),
                     "captures": {},
@@ -1185,7 +1185,7 @@ def v02_autonomous_observer_run(api_keys: dict[str, str]) -> dict[str, Any]:
     except Exception as e:
         return {
             "exit_code": -2,
-            "stdout": "".join(captured)[-100000:],
+            "stdout": "".join(captured)[-500000:],
             "stderr": f"streaming exception: {e}",
             "elapsed_seconds": round(time.time() - started, 1),
             "captures": {},
@@ -1207,7 +1207,7 @@ def v02_autonomous_observer_run(api_keys: dict[str, str]) -> dict[str, Any]:
 
     return {
         "exit_code": proc_returncode,
-        "stdout": proc_stdout_full[-100000:],
+        "stdout": proc_stdout_full[-500000:],
         "stderr": "",
         "elapsed_seconds": round(time.time() - started, 1),
         "captures": captures,
@@ -1247,7 +1247,7 @@ def v02_multi_orchestrator_run(api_keys: dict[str, str]) -> dict[str, Any]:
                 proc.terminate()
                 return {
                     "exit_code": -1,
-                    "stdout": "".join(captured)[-100000:],
+                    "stdout": "".join(captured)[-500000:],
                     "stderr": "TIMEOUT",
                     "elapsed_seconds": round(time.time() - started, 1),
                 }
@@ -1255,14 +1255,14 @@ def v02_multi_orchestrator_run(api_keys: dict[str, str]) -> dict[str, Any]:
     except Exception as e:
         return {
             "exit_code": -2,
-            "stdout": "".join(captured)[-100000:],
+            "stdout": "".join(captured)[-500000:],
             "stderr": f"streaming exception: {e}",
             "elapsed_seconds": round(time.time() - started, 1),
         }
 
     return {
         "exit_code": proc.returncode,
-        "stdout": "".join(captured)[-100000:],
+        "stdout": "".join(captured)[-500000:],
         "stderr": "",
         "elapsed_seconds": round(time.time() - started, 1),
     }
@@ -1307,7 +1307,7 @@ def v02_ci_loop_run(api_keys: dict[str, str]) -> dict[str, Any]:
                 proc.terminate()
                 return {
                     "exit_code": -1,
-                    "stdout": "".join(captured)[-100000:],
+                    "stdout": "".join(captured)[-500000:],
                     "stderr": "TIMEOUT",
                     "elapsed_seconds": round(time.time() - started, 1),
                 }
@@ -1315,14 +1315,14 @@ def v02_ci_loop_run(api_keys: dict[str, str]) -> dict[str, Any]:
     except Exception as e:
         return {
             "exit_code": -2,
-            "stdout": "".join(captured)[-100000:],
+            "stdout": "".join(captured)[-500000:],
             "stderr": f"streaming exception: {e}",
             "elapsed_seconds": round(time.time() - started, 1),
         }
 
     return {
         "exit_code": proc.returncode,
-        "stdout": "".join(captured)[-100000:],
+        "stdout": "".join(captured)[-500000:],
         "stderr": "",
         "elapsed_seconds": round(time.time() - started, 1),
     }
@@ -1361,7 +1361,7 @@ def v02_strands_real_run(api_keys: dict[str, str]) -> dict[str, Any]:
                 proc.terminate()
                 return {
                     "exit_code": -1,
-                    "stdout": "".join(captured)[-100000:],
+                    "stdout": "".join(captured)[-500000:],
                     "stderr": "TIMEOUT",
                     "elapsed_seconds": round(time.time() - started, 1),
                 }
@@ -1369,14 +1369,14 @@ def v02_strands_real_run(api_keys: dict[str, str]) -> dict[str, Any]:
     except Exception as e:
         return {
             "exit_code": -2,
-            "stdout": "".join(captured)[-100000:],
+            "stdout": "".join(captured)[-500000:],
             "stderr": f"streaming exception: {e}",
             "elapsed_seconds": round(time.time() - started, 1),
         }
 
     return {
         "exit_code": proc.returncode,
-        "stdout": "".join(captured)[-100000:],
+        "stdout": "".join(captured)[-500000:],
         "stderr": "",
         "elapsed_seconds": round(time.time() - started, 1),
     }
@@ -1419,7 +1419,7 @@ def v022_framework_races_run(api_keys: dict[str, str]) -> dict[str, Any]:
                 proc.terminate()
                 return {
                     "exit_code": -1,
-                    "stdout": "".join(captured)[-100000:],
+                    "stdout": "".join(captured)[-500000:],
                     "stderr": "TIMEOUT",
                     "elapsed_seconds": round(time.time() - started, 1),
                 }
@@ -1427,14 +1427,14 @@ def v022_framework_races_run(api_keys: dict[str, str]) -> dict[str, Any]:
     except Exception as e:
         return {
             "exit_code": -2,
-            "stdout": "".join(captured)[-100000:],
+            "stdout": "".join(captured)[-500000:],
             "stderr": f"streaming exception: {e}",
             "elapsed_seconds": round(time.time() - started, 1),
         }
 
     return {
         "exit_code": proc.returncode,
-        "stdout": "".join(captured)[-100000:],
+        "stdout": "".join(captured)[-500000:],
         "stderr": "",
         "elapsed_seconds": round(time.time() - started, 1),
     }
@@ -1477,15 +1477,15 @@ def v022_adapter_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
             captured.append(line)
             if time.time() - started > 2400:
                 proc.terminate()
-                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                return {"exit_code": -1, "stdout": "".join(captured)[-500000:],
                         "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
         proc.wait()
     except Exception as e:
-        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+        return {"exit_code": -2, "stdout": "".join(captured)[-500000:],
                 "stderr": f"streaming exception: {e}",
                 "elapsed_seconds": round(time.time() - started, 1)}
 
-    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-500000:],
             "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
 
 
@@ -1545,15 +1545,15 @@ def v022_adapter_e2e_v4_run(api_keys: dict[str, str]) -> dict[str, Any]:
             captured.append(line)
             if time.time() - started > 2400:
                 proc.terminate()
-                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                return {"exit_code": -1, "stdout": "".join(captured)[-500000:],
                         "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
         proc.wait()
     except Exception as e:
-        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+        return {"exit_code": -2, "stdout": "".join(captured)[-500000:],
                 "stderr": f"streaming exception: {e}",
                 "elapsed_seconds": round(time.time() - started, 1)}
 
-    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-500000:],
             "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
 
 
@@ -1614,15 +1614,15 @@ def v022_real_llm_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
             captured.append(line)
             if time.time() - started > 2400:
                 proc.terminate()
-                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                return {"exit_code": -1, "stdout": "".join(captured)[-500000:],
                         "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
         proc.wait()
     except Exception as e:
-        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+        return {"exit_code": -2, "stdout": "".join(captured)[-500000:],
                 "stderr": f"streaming exception: {e}",
                 "elapsed_seconds": round(time.time() - started, 1)}
 
-    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-500000:],
             "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
 
 
@@ -1696,14 +1696,14 @@ def organic_e2e_run(api_keys: dict[str, str]) -> dict[str, Any]:
             captured.append(line)
             if time.time() - started > 2400:
                 proc.terminate()
-                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                return {"exit_code": -1, "stdout": "".join(captured)[-500000:],
                         "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
         proc.wait()
     except Exception as e:
-        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+        return {"exit_code": -2, "stdout": "".join(captured)[-500000:],
                 "stderr": f"streaming exception: {e}",
                 "elapsed_seconds": round(time.time() - started, 1)}
-    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-500000:],
             "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
 
 
@@ -1928,7 +1928,9 @@ def public_benchmark_run(api_keys: dict[str, str]) -> dict[str, Any]:
     #   SYNAPSE_BENCH_V15=1 → v15 rock-solid (autogen + hermes)
     #   SYNAPSE_BENCH_V14=1 → v14 real multi-round workflows
     #   default              → v1-v13 minimal probes
-    if api_keys.get("SYNAPSE_BENCH_PRESSURE_TEST_V3") == "1":
+    if api_keys.get("SYNAPSE_BENCH_PRESSURE_TEST_V4") == "1":
+        bench_payload = "/opt/synapse-payloads/pressure_test_v4_webapp.py"
+    elif api_keys.get("SYNAPSE_BENCH_PRESSURE_TEST_V3") == "1":
         bench_payload = "/opt/synapse-payloads/pressure_test_v3_webapp.py"
     elif api_keys.get("SYNAPSE_BENCH_PRESSURE_TEST_V2") == "1":
         bench_payload = "/opt/synapse-payloads/pressure_test_v2_solo_build.py"
@@ -1986,14 +1988,14 @@ def public_benchmark_run(api_keys: dict[str, str]) -> dict[str, Any]:
             captured.append(line)
             if time.time() - started > 3500:
                 proc.terminate()
-                return {"exit_code": -1, "stdout": "".join(captured)[-100000:],
+                return {"exit_code": -1, "stdout": "".join(captured)[-500000:],
                         "stderr": "TIMEOUT", "elapsed_seconds": round(time.time() - started, 1)}
         proc.wait()
     except Exception as e:
-        return {"exit_code": -2, "stdout": "".join(captured)[-100000:],
+        return {"exit_code": -2, "stdout": "".join(captured)[-500000:],
                 "stderr": f"streaming exception: {e}",
                 "elapsed_seconds": round(time.time() - started, 1)}
-    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-100000:],
+    return {"exit_code": proc.returncode, "stdout": "".join(captured)[-500000:],
             "stderr": "", "elapsed_seconds": round(time.time() - started, 1)}
 
 
@@ -2020,6 +2022,7 @@ def public_benchmark() -> None:
         "SYNAPSE_BENCH_PRESSURE_TEST": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST", ""),
         "SYNAPSE_BENCH_PRESSURE_TEST_V2": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V2", ""),
         "SYNAPSE_BENCH_PRESSURE_TEST_V3": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V3", ""),
+        "SYNAPSE_BENCH_PRESSURE_TEST_V4": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V4", ""),
         "OPENAI_API_KEY":    os.environ.get("OPENAI_API_KEY", ""),
     }
     if not api_keys["GOOGLE_API_KEY"]:
@@ -2065,6 +2068,7 @@ def public_benchmark_full() -> None:
         "SYNAPSE_BENCH_PRESSURE_TEST": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST", ""),
         "SYNAPSE_BENCH_PRESSURE_TEST_V2": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V2", ""),
         "SYNAPSE_BENCH_PRESSURE_TEST_V3": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V3", ""),
+        "SYNAPSE_BENCH_PRESSURE_TEST_V4": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V4", ""),
         "OPENAI_API_KEY":    os.environ.get("OPENAI_API_KEY", ""),
     }
     if not api_keys["GOOGLE_API_KEY"]:
