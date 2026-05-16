@@ -1,8 +1,88 @@
-# Pressure-test synthesis — 11 frameworks × autoapply pipeline
+# Pressure-test synthesis — Synapse v0.2.9 across 11 frameworks
 
 **Date:** 2026-05-15
 **Synapse version under test:** 0.2.9 (PyPI: `synapse-protocol-py` · npm: `synapse-protocol`)
 **Owner:** Aadit Rajgor
+
+## TL;DR — what got built and what passed
+
+| Test | What each framework did | Result |
+|---|---|---|
+| **v2** (latest, recommended) | Solo-build a working Flask Todo webapp from scratch (4 file writes per framework, each wrapped in `synapse.intend()`) | **10 / 10 Python frameworks built apps that actually serve `GET /todos → 200` locally.** OpenClaw (TS) v1-only. |
+| v1 (historical) | 6-step autoapply pipeline (resume parse → role match → scrub → cover letter draft → validate → mock submit) | 11/11 frameworks fired intents cleanly; **OpenClaw produced full artifacts**, the 10 Python runs hit a JSON-shape bug in MY parser (downstream cover letters were empty; intents+resume+THOUGHTs still captured). |
+
+## v2 — Each framework built a working webapp
+
+Each of the 10 Python frameworks ran 4 file-write steps as a single
+Synapse-instrumented build. Each step was wrapped in `synapse.intend()`
+with a scope that intentionally overlapped with the next file's scope
+(`app.code:w`) to give the L2 router an opportunity to fire CONFLICT
+envelopes.
+
+The produced webapp (4 files) lives in each repo's `webapp/` directory.
+
+### Per-framework v2 results (all 10 PASSed)
+
+| Framework | INTENTs | THOUGHTs | CONFLICTs | App runs (`GET /todos`) | POST + GET round-trip | Build elapsed |
+|---|---|---|---|---|---|---|
+| autogen        | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | — |
+| hermes         | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 12.9s |
+| openai_agents  | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 19.5s |
+| pydantic_ai    | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 9.0s |
+| smolagents     | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 10.0s |
+| agno           | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 8.4s |
+| langgraph      | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 8.4s |
+| llama_index    | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 9.9s |
+| crewai         | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 12.1s |
+| google_adk     | 4 | 1 | 0 | ✅ 200 | ✅ 200 + 1 todo | 9.3s |
+
+**Aggregate v2:**
+- Frameworks tested: **10**
+- Webapps that actually run locally (verified `GET /todos = 200` + POST + GET round-trip): **10/10**
+- Total INTENT envelopes: **40** (4 per framework × 10)
+- Total resolution rate: **40/40 = 100%** (no orphaned intents)
+- Total THOUGHT envelopes: **10** (PSEUDO_THOUGHT capture, all 10 Python frameworks)
+- Total CONFLICT envelopes: **0** (despite intentional W↔W scope overlap on S1↔S2 with gate_ms=150)
+
+### v2 finding — CONFLICT detection still doesn't fire under live W↔W overlap
+
+This is the same finding as v1 BUT now under deliberately stronger
+conditions (W↔W on the same scope, gate_ms=150, S1+S2 launched via
+`asyncio.gather` so both intents are live concurrently). Still 0 CONFLICTs.
+
+Hypothesis (needs verification in the L2 router code path):
+- The router's overlap check might be running AFTER the local fast-path
+  resolution clears the intent.
+- gate_ms applies to the inbox-drain window after the intent fires, but
+  the actual overlap check happens at INTENT-emit time — and S1's intent
+  may resolve before S2 fires.
+- The router may be detecting overlap but classifying it as a
+  resource-sharing INFO event rather than a CONFLICT envelope.
+
+**This is the strongest open Synapse v0.2.10 carry-forward.** The
+campaign verified 4 of 5 pillars cleanly; the conflict pillar needs
+direct router-internals testing to figure out why it doesn't trigger
+under what should be a textbook overlap scenario.
+
+### How to run a v2 webapp locally
+
+Pick any of the 10 Python repos, `git clone`, then:
+
+```bash
+cd <repo>/webapp
+pip install flask
+python main.py            # serves on port 5001
+# or programmatically:
+python -c "import main; c=main.app.test_client(); print(c.get('/todos').status_code)"
+# → 200
+```
+
+Verified locally: all 10 webapps respond 200 to GET, accept POST, and
+persist the posted todo across a subsequent GET.
+
+---
+
+## v1 (historical) — Autoapply pipeline test
 
 ## Workload
 

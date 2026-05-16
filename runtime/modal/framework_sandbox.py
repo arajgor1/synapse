@@ -1928,7 +1928,9 @@ def public_benchmark_run(api_keys: dict[str, str]) -> dict[str, Any]:
     #   SYNAPSE_BENCH_V15=1 → v15 rock-solid (autogen + hermes)
     #   SYNAPSE_BENCH_V14=1 → v14 real multi-round workflows
     #   default              → v1-v13 minimal probes
-    if api_keys.get("SYNAPSE_BENCH_PRESSURE_TEST") == "1":
+    if api_keys.get("SYNAPSE_BENCH_PRESSURE_TEST_V2") == "1":
+        bench_payload = "/opt/synapse-payloads/pressure_test_v2_solo_build.py"
+    elif api_keys.get("SYNAPSE_BENCH_PRESSURE_TEST") == "1":
         bench_payload = "/opt/synapse-payloads/pressure_test_v1.py"
     elif api_keys.get("SYNAPSE_BENCH_V32") == "1":
         bench_payload = "/opt/synapse-payloads/public_benchmark_v32.py"
@@ -2014,6 +2016,7 @@ def public_benchmark() -> None:
         "SYNAPSE_BENCH_V31": os.environ.get("SYNAPSE_BENCH_V31", ""),
         "SYNAPSE_BENCH_V32": os.environ.get("SYNAPSE_BENCH_V32", ""),
         "SYNAPSE_BENCH_PRESSURE_TEST": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST", ""),
+        "SYNAPSE_BENCH_PRESSURE_TEST_V2": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V2", ""),
         "OPENAI_API_KEY":    os.environ.get("OPENAI_API_KEY", ""),
     }
     if not api_keys["GOOGLE_API_KEY"]:
@@ -2057,6 +2060,7 @@ def public_benchmark_full() -> None:
         "SYNAPSE_BENCH_V31": os.environ.get("SYNAPSE_BENCH_V31", ""),
         "SYNAPSE_BENCH_V32": os.environ.get("SYNAPSE_BENCH_V32", ""),
         "SYNAPSE_BENCH_PRESSURE_TEST": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST", ""),
+        "SYNAPSE_BENCH_PRESSURE_TEST_V2": os.environ.get("SYNAPSE_BENCH_PRESSURE_TEST_V2", ""),
         "OPENAI_API_KEY":    os.environ.get("OPENAI_API_KEY", ""),
     }
     if not api_keys["GOOGLE_API_KEY"]:
