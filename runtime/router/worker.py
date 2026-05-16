@@ -153,7 +153,20 @@ class Router:
             parent_msg_id=env.msg_id,
             tenant_id=env.tenant_id,
         )
+        # Two-channel emit:
+        # 1) inbox  — for the conflicted agent's framework to react (resolution flow)
+        # 2) session — for the session-wide audit log so external auditors,
+        #    dashboards, and downstream observability tools can find it
+        #    without reaching into per-agent inboxes (v0.2.10 fix).
         await self.bus.publish_inbox(env.agent_id, conflict_env)
+        try:
+            await self.bus.publish_session(conflict_env)
+        except Exception as audit_err:
+            logger.warning(
+                "router: publish_session(CONFLICT) failed (%s) — audit log will "
+                "be missing this CONFLICT envelope. Resolution path still "
+                "works via inbox.", audit_err,
+            )
         logger.warning(
             "CONFLICT (%s) routed to %s: intention=%s overlaps with %d "
             "intention(s) (%d active, %d recent) on scopes %s",

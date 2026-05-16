@@ -263,14 +263,39 @@ class Agent:
                         f"by {recent_count} other agent(s) — your write "
                         f"would clobber their changes unless you pull first."
                     )
-                conflicts.append(Conflict(
+                synthetic_conflict = Conflict(
                     intention_id=envelope.msg_id,
                     conflicting_intentions=cis,
                     kind=kind_str,
                     overlapping_scopes=sorted(overlapping_all),
                     suggested_resolution="pivot",
                     rationale=rationale,
-                ))
+                )
+                conflicts.append(synthetic_conflict)
+                # v0.2.10 fix: ALSO publish the CONFLICT envelope to the
+                # session stream so external auditors / observability
+                # dashboards can find it without reaching into per-agent
+                # inboxes. The fast path used to short-circuit and never
+                # publish CONFLICT to the session stream — measurement
+                # scripts relying on the session log saw 0 conflicts even
+                # under live W↔W overlap. Match the L2 router worker's
+                # two-channel pattern (inbox for resolution + session for
+                # audit).
+                try:
+                    conflict_env = Envelope.make(
+                        type=MessageType.CONFLICT,
+                        agent_id="router_local",  # in-process emitter id
+                        session_id=self.session,
+                        payload=synthetic_conflict,
+                        parent_msg_id=envelope.msg_id,
+                        tenant_id=self.tenant_id,
+                    )
+                    await self._bus.publish_session(conflict_env)
+                except Exception as e:
+                    logger.warning(
+                        "agent.emit_intention: publish_session(CONFLICT) "
+                        "failed (%s); audit log will miss this CONFLICT", e,
+                    )
                 # Also briefly check the inbox in case the router has
                 # already enriched a CONFLICT with tier/rationale.
                 router_conflicts = await self._wait_for_signals(

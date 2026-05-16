@@ -87,7 +87,7 @@ def wrap_hf_model_for_nla(*args, **kwargs):  # lazy import — torch is optional
     from synapse.llm_nla_hf import wrap_hf_model_for_nla as _impl
     return _impl(*args, **kwargs)
 
-__version__ = "0.2.9"
+__version__ = "0.2.10"
 __all__ = [
     # v0.1 surface
     "Agent",

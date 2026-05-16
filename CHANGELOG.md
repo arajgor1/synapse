@@ -5,6 +5,49 @@ All notable changes to Synapse will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.10] — 2026-05-15
+
+### Fixed — CONFLICT envelopes now appear in the session audit log
+
+**The bug:** the L2 router (and the in-process fast-path router inside
+`Agent.emit_intention`) emitted CONFLICT envelopes only to the
+*conflicted agent's inbox* (`bus.publish_inbox`) — never to the session
+events stream (`bus.publish_session`). Result: any external observer
+reading `synapse:session:{id}:events` (audit consumers, dashboards,
+the pressure-test framework that surfaced this) saw 0 CONFLICT
+envelopes even when CONFLICTs were firing correctly internally.
+
+The conflict-resolution flow always worked (the conflicted agent's
+framework gets the CONFLICT in its inbox + `IntentionHandle.has_conflicts`
+is True). What was broken was the **audit pillar's visibility into
+conflicts** — the strongest single open finding from the v0.2.9
+pressure-test campaign across 11 frameworks.
+
+**The fix:** Both the L2 router worker
+(`runtime/router/worker.py::_emit_conflict`) and the in-process fast
+path (`sdk-python/synapse/agent.py::emit_intention`) now publish each
+CONFLICT envelope to BOTH:
+- the conflicted agent's inbox (resolution path, unchanged)
+- the session events stream (audit path, NEW)
+
+Verified locally: a 50ms-apart W↔W overlap on `app.code:w` between two
+agents now produces CONFLICT envelopes visible in
+`synapse:session:{id}:events`. Pre-fix this stream was 0 CONFLICTs;
+post-fix it's 2 (one per direction).
+
+### Added
+- New regression test setup will be added in v2 of the pressure-test
+  campaign to assert that `xrange(synapse:session:*:events)` contains
+  CONFLICT envelopes after a deliberate W↔W overlap.
+
+### Carry-forward to v0.2.11
+- TS SDK does not yet have a `wrap_openai_for_thoughts` equivalent
+  (open from v0.2.9).
+- TS SDK's bus client should mirror the same two-channel CONFLICT
+  publish pattern.
+
+---
+
 ## [0.2.9] — 2026-05-13
 
 ### Fixed

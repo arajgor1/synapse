@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "synapse-protocol-py"
-version = "0.2.9"
+version = "0.2.10"
 description = "Audit, observability, conflict detection, intent capture, and reasoning capture for agentic teams that span vendor SDKs — AutoGen, CrewAI, LangGraph, smolagents, Agno, LlamaIndex, Pydantic AI, OpenAI Agents SDK, Google ADK, Hermes"
 readme = "README.md"
 license = { text = "Apache-2.0" }
