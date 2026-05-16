@@ -1,15 +1,78 @@
-# Pressure-test synthesis — Synapse v0.2.9 across 11 frameworks
+# Pressure-test synthesis — Synapse across 11 frameworks
 
-**Date:** 2026-05-15
-**Synapse version under test:** 0.2.9 (PyPI: `synapse-protocol-py` · npm: `synapse-protocol`)
+**Latest test date:** 2026-05-16 (v3)
+**Latest Synapse version under test:** 0.2.10 (PyPI: `synapse-protocol-py`)
 **Owner:** Aadit Rajgor
 
 ## TL;DR — what got built and what passed
 
 | Test | What each framework did | Result |
 |---|---|---|
-| **v2** (latest, recommended) | Solo-build a working Flask Todo webapp from scratch (4 file writes per framework, each wrapped in `synapse.intend()`) | **10 / 10 Python frameworks built apps that actually serve `GET /todos → 200` locally.** OpenClaw (TS) v1-only. |
+| **v3** (latest, the deliverable) | **Solo-build a real autoapply WEBAPP** — Flask + Jinja2 templates + Bootstrap UI + AI-fingerprint scrubber + mock-apply endpoint (9 files per framework, each via `synapse.intend()`). Tests v0.2.10 CONFLICT-audit fix under live W↔W scope overlap. | **10 / 10 Python frameworks built webapps that render in a browser, accept resume input, run the scrubber, and serve the mock-apply endpoint.** Plus: **CONFLICT envelopes now visible in the audit log** (4 per framework × 10 = 40 CONFLICTs total) — validates the v0.2.10 router fix end-to-end. |
+| v2 (historical) | Solo-build a Flask Todo JSON API (4 file writes) | 10/10 served `GET /todos → 200`, but no HTML UI — was a JSON API, not a webapp. v3 supersedes this. |
 | v1 (historical) | 6-step autoapply pipeline (resume parse → role match → scrub → cover letter draft → validate → mock submit) | 11/11 frameworks fired intents cleanly; **OpenClaw produced full artifacts**, the 10 Python runs hit a JSON-shape bug in MY parser (downstream cover letters were empty; intents+resume+THOUGHTs still captured). |
+
+---
+
+## v3 — Each framework built a runnable autoapply webapp
+
+### Per-framework v3 results (all 10 PASSed)
+
+| Framework | INTENTs | THOUGHTs | CONFLICTs | HTML renders | Scrubber works | Mock apply | Elapsed |
+|---|---|---|---|---|---|---|---|
+| autogen        | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 50.9s |
+| hermes         | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 47.5s |
+| openai_agents  | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 50.5s |
+| pydantic_ai    | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 49.5s |
+| smolagents     | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 46.5s |
+| agno           | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 51.0s |
+| langgraph      | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 52.7s |
+| llama_index    | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 47.8s |
+| crewai         | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 50.9s |
+| google_adk     | 9 | 1 | **4** | ✅ 200 | ✅ 1 det | ✅ 200 | 48.3s |
+
+### Aggregate v3
+| Metric | Value |
+|---|---|
+| Frameworks tested | **10** |
+| Webapps that render HTML in browser | **10 / 10** |
+| Total INTENT envelopes | **90** (9 per framework × 10) |
+| Resolution rate | **100%** |
+| Total THOUGHT envelopes | **10** (PSEUDO_THOUGHT capture across all 10) |
+| **Total CONFLICT envelopes (NEW)** | **40** (was 0 pre-v0.2.10 → **v0.2.10 audit fix validated**) |
+| Scrubber endpoint catches injection | **10 / 10** |
+| Mock-apply endpoint works | **10 / 10** |
+
+### The v0.2.10 CONFLICT-audit fix is validated end-to-end
+
+The strongest open finding from the v2 campaign was that CONFLICT envelopes never appeared in the session audit log even when the router was correctly firing them. v3 was run with v0.2.10 — and every framework now shows **4 CONFLICT envelopes per build session** in its `webapp/envelopes.jsonl`. Direct proof the two-channel CONFLICT publish (inbox + session) fix works under real load across all 10 Python adapters.
+
+### How to run any v3 webapp locally
+
+```bash
+git clone https://github.com/arajgor1/{framework}-autoapply
+cd {framework}-autoapply/webapp
+pip install flask
+python main.py
+# open http://localhost:5001/ in your browser
+```
+
+You'll see a Bootstrap-styled page with:
+* Resume input form (left column)
+* "Analyze" button → shows AI-scrubber's prompt-injection detections + cleaned text
+* Live list of 8 mock jobs (right column) with per-role "Apply" buttons
+* Application status list at the bottom
+
+Verified locally for all 10 frameworks before pushing — every webapp passes:
+* `GET /` → 200 (Bootstrap-styled HTML, 4930 bytes)
+* `POST /api/analyze` → 200 (scrubber catches injection patterns)
+* `POST /api/apply/j1` → 200 (mock-apply endpoint returns `{ok: true}`)
+* `GET /api/jobs` → 200 (returns 8 jobs)
+* `GET /jobs` → 200 (full table view)
+
+---
+
+## v2 (historical) — Flask Todo JSON API
 
 ## v2 — Each framework built a working webapp
 
