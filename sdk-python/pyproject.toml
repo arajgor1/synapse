@@ -41,7 +41,7 @@ synapse-mcp = "synapse.mcp.server:main"
 # alone is enough to run `synapse audit ./traces.json`.
 live = [
     "redis[hiredis]>=5.0,<6",
-    "asyncpg>=0.29,<0.31",
+    "asyncpg>=0.29,<0.32",
     # python-ulid moved to base deps in v0.2.9 so zero-infra
     # mode (in-memory bus + SQLite) works without [live].
 ]
