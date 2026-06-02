@@ -40,7 +40,7 @@ synapse-mcp = "synapse.mcp.server:main"
 # The audit CLI does NOT need any of these — `pip install synapse-protocol-py`
 # alone is enough to run `synapse audit ./traces.json`.
 live = [
-    "redis[hiredis]>=5.0,<6",
+    "redis[hiredis]>=5.0,<8",
     "asyncpg>=0.29,<0.31",
     # python-ulid moved to base deps in v0.2.9 so zero-infra
     # mode (in-memory bus + SQLite) works without [live].
